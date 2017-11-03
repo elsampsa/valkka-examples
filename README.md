@@ -9,6 +9,10 @@ To check that Valkka and its python3 bindings are in place, run "python3 quickte
 
 Documentation is, at the moment, the python3 source code itself (I will be adding shortly more python3 examples plus more explanations in the existing python3 programs).  You should also study the main Valkka repository page first.
 
+To replicate a single rtsp stream into various streams, use the "unicast_to_multicast.bash" script and "multicast.sdp".  You can give "multicast.sdp" various times as an argument to "multiple_stream.py":
+
+    python3 multiple_stream.py multicast.sdp multicast.sdp ...
+
 ## Authors
 Sampsa Riikonen
 
