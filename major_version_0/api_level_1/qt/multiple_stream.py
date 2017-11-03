@@ -40,7 +40,6 @@ class FilterChain:
     self.av_fifo         =FrameFifo          ("av_fifo",10)                 
     self.avthread        =AVThread           ("avthread",       self.av_fifo, self.gl_in_filter) # [av_fifo] -->> (avthread) --> {gl_in_filter}
     self.av_in_filter    =FifoFrameFilter    ("av_in_filter",   self.av_fifo)
-    self.live_out_filter =InfoFrameFilter    ("live_out_filter",self.av_in_filter)
     
     self.ctx=LiveConnectionContext()
     self.ctx.slot=slot
@@ -49,7 +48,7 @@ class FilterChain:
     else:
       self.ctx.connection_type=LiveConnectionType_sdp
     self.ctx.address=self.address
-    self.ctx.framefilter=self.live_out_filter
+    self.ctx.framefilter=self.av_in_filter
     
     self.avthread.startCall()
     self.avthread.decodingOnCall()
@@ -62,7 +61,7 @@ class FilterChain:
     return self.ctx
         
   def getLiveFilter(self):
-    return self.live_out_filter
+    return self.av_in_filter
   
   def getWindowId(self):
     return self.window_id
