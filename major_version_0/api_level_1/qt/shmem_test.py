@@ -1,5 +1,5 @@
 """
-single_stream.py : A demo program: streaming from a single rtsp camera
+shmem_test.py : A demo program: streaming from a single rtsp camera to X-window system, and through shmem to another python process
 
 Copyright 2017 Sampsa Riikonen
 
@@ -188,4 +188,4 @@ def main():
 if (__name__=="__main__"):
   main()
 
-  
+   

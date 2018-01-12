@@ -7,10 +7,7 @@ Authors: Sampsa Riikonen
 
 This file is part of the Valkka Python3 examples library
 
-Valkka Python3 examples library is free software: you can redistribute it and/or modify
-it under the terms of the MIT License
- 
-This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
+Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
 @file    multiple_stream.py
 @author  Sampsa Riikonen
@@ -23,12 +20,41 @@ from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
 from valkka.valkka_core import *
 
+"""
+WARNING: please understand adn try "single_stream_rtsp.py" first
+"""
 
 class FilterChain:
   """
-    filtergraph:
-    --> {FifoFrameFilter:av_in_filter} --> [FrameFifo:av_fifo] -->> (AVThread:avthread) --> {FifoFrameFilter:gl_in_gilter} -->
-    """
+  So, you've learned from
+    
+  https://elsampsa.github.io/valkka-core/html/process_chart.html
+  
+  that:
+  
+  * Concatenating FrameFilters, creates a simple callback cascade
+  * Threads write to a FrameFilter
+  * Threads read from a FrameFifo
+  * FrameFifos have an internal stack of pre-reserved frames
+  
+  In this class, we implement a part of the filterchain - so that we don't have to write it explicitly for each camera.
+  
+  The filtergraph (**) here looks like this:
+  
+  --> {FifoFrameFilter:av_in_filter} --> [FrameFifo:av_fifo] -->> (AVThread:avthread) --> {FifoFrameFilter:gl_in_gilter} -->
+  
+  Parameters:
+  
+  :param gl_in_filter:  Bitmap (decoded) frames are written here
+  :param window_id:     Video is dumped into this x-window
+  :address:             Stream source: either filename (supposedly an sdp file) or "rtsp://.." rtsp address
+  :slot:                Slot number identifying this stream
+  
+  Some rarameters accessed through a get method
+  
+  :param getConnectionCtx: Returns the connection context that can be passed to LiveThread.
+  
+  """
   
   def __init__(self, gl_in_filter, window_id, address, slot):
     self.gl_in_filter =gl_in_filter
@@ -37,9 +63,9 @@ class FilterChain:
     self.slot         =slot
     self.render_ctx   =None
     
-    self.av_fifo         =FrameFifo          ("av_fifo",10)                 
+    self.av_fifo         =FrameFifo          ("av_fifo",10)
     self.avthread        =AVThread           ("avthread",       self.av_fifo, self.gl_in_filter) # [av_fifo] -->> (avthread) --> {gl_in_filter}
-    self.av_in_filter    =FifoFrameFilter    ("av_in_filter",   self.av_fifo)
+    self.av_in_filter    =FifoFrameFilter    ("av_in_filter",   self.av_fifo)                    # LiveThread will write into this filter (through LiveConnectionContext)
     
     self.ctx=LiveConnectionContext()
     self.ctx.slot=slot
@@ -60,9 +86,6 @@ class FilterChain:
   def getConnectionCtx(self):
     return self.ctx
         
-  def getLiveFilter(self):
-    return self.av_in_filter
-  
   def getWindowId(self):
     return self.window_id
   
@@ -72,6 +95,7 @@ class FilterChain:
   def decodingOff(self):
     self.avthread.decodingOffCall()
 
+  # These two setters and getters are used simply to save the render context id
   def setRenderCtx(self,n):
     self.render_ctx=n
     
@@ -123,17 +147,19 @@ class MyGui(QtWidgets.QMainWindow):
     
   def openValkka(self):
     """
-    filtergraph:
+    Filtergraph:
     (LiveThread:livethread) --> FilterChain --> {FifoFrameFilter:gl_in_gilter} --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread)
+    
+    See "single_stream_rtsp.py" for more details !
     """
-    self.glthread        =OpenGLThread ("glthread",
-                                        self.n_streams*10,     # n720p
+    self.glthread        =OpenGLThread ("glthread",            # name
+                                        self.n_streams*10,     # n720p          # bitmap frames are pre-reserved on the GPU
                                         self.n_streams*10,     # n1080p
                                         0,                     # n1440p
                                         0,                     # n4K
                                         self.n_streams*10,     # naudio
                                         100,                   # msbuftime
-                                        -1                     # thread affinity
+                                        -1                     # thread affinity.  -1 == not bound to any specific processor
                                         )
     
     self.gl_fifo         =self.glthread.getFifo() # get gl_fifo from glthread
