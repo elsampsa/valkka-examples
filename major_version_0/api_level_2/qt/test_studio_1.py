@@ -35,8 +35,15 @@ class ConfigDialog(QtWidgets.QDialog):
       "n1440p"  : 10,
       "n4K"     : 10,
       "naudio"  : 10,
-      "verbose" : 0
+      "verbose" : 0,
+      "live affinity" : -1,
+      "gl affinity"   : -1,
+      "dec affinity start" : -1,
+      "dec affinity stop"  : -1
     }
+    
+    # ["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
+    self.plis=["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
     
     self.partag ={}
     self.partext={}
@@ -58,7 +65,7 @@ class ConfigDialog(QtWidgets.QDialog):
     
     self.lay_pars =QtWidgets.QGridLayout(self.pars)
     
-    for i, key in enumerate(["n720p","n1080p","n1440p","n4K","naudio","verbose"]):
+    for i, key in enumerate(self.plis):
       t1 = self.partag [key] =QtWidgets.QLabel(key,self.pars)
       t2 = self.partext[key] =QtWidgets.QLineEdit(self.pars)
       self.lay_pars.addWidget(t1,i,0)
@@ -84,7 +91,7 @@ class ConfigDialog(QtWidgets.QDialog):
   
     
   def putPars(self):
-    for i, key in enumerate(["n720p","n1080p","n1440p","n4K","naudio","verbose"]):
+    for i, key in enumerate(self.plis):
       t2 = self.partext[key]
       t2.setText(str(self.pardic[key]))
     st=""
@@ -99,7 +106,7 @@ class ConfigDialog(QtWidgets.QDialog):
     for key in self.pardic:
       print(">>>",key,key.__class__)
     """
-    for i, key in enumerate(["n720p","n1080p","n1440p","n4K","naudio","verbose"]):
+    for i, key in enumerate(self.plis):
       # print(">>>>",key,key.__class__)
       # print(">>",key,self.partext[key].text())
       self.pardic[key]=int(self.partext[key].text())
@@ -181,30 +188,39 @@ class MyGui(QtWidgets.QMainWindow):
   def openValkka(self):
     self.livethread=LiveThread(         # starts live stream services (using live555)
       name   ="live_thread",
-      verbose=False
+      verbose=False,
+      affinity=self.pardic["live affinity"]
     )
 
     self.openglthread=OpenGLThread(     # starts frame presenting services
       name    ="mythread",
-      n720p   =10,  # reserve stacks of YUV video frames for various resolutions
-      n1080p  =10,
-      n1440p  =0,
-      n4K     =0,
-      naudio  =10,
-      verbose =False
+      n720p   =self.pardic["n720p"],   # reserve stacks of YUV video frames for various resolutions
+      n1080p  =self.pardic["n1080p"],
+      n1440p  =self.pardic["n1440p"],
+      n4K     =self.pardic["n4K"],
+      naudio  =self.pardic["naudio"],
+      verbose =False,
+      affinity=self.pardic["gl affinity"]
       )
-
 
     tokens     =[]
     self.chains=[]
     cc=1
+    
+    a=self.pardic["dec affinity start"]
+    
     for qframe, address in self.videoframes:
       # now livethread and openglthread are running
+      if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
+      
+      print("openValkka: setting decoder thread on processor",a)
+      
       chain=BasicFilterchain(       # decoding and branching the stream happens here
         livethread  =self.livethread, 
         openglthread=self.openglthread,
         address     =address,
-        slot        =cc
+        slot        =cc,
+        affinity    =a
         )
   
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
@@ -215,6 +231,7 @@ class MyGui(QtWidgets.QMainWindow):
       
       chain.decodingOn() # tell the decoding thread to start its job
       cc+=1 # TODO: crash when repeating the same slot number ..?
+      a +=1
       
   
   def closeValkka(self):
