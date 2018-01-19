@@ -86,7 +86,8 @@ class MyGui(QtWidgets.QMainWindow):
                                         -1          # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
                                         )
     
-    self.livethread      =LiveThread         ("livethread", # name 
+    self.livethread      =LiveThread         ("livethread", # name
+                                              0,            # size of input fifo
                                               -1            # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
                                               )
     

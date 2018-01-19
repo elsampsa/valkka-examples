@@ -36,6 +36,7 @@ class ConfigDialog(QtWidgets.QDialog):
       "n4K"     : 10,
       "naudio"  : 10,
       "verbose" : 0,
+      "msbuftime" :100,
       "live affinity" : -1,
       "gl affinity"   : -1,
       "dec affinity start" : -1,
@@ -43,7 +44,7 @@ class ConfigDialog(QtWidgets.QDialog):
     }
     
     # ["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
-    self.plis=["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
+    self.plis=["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "msbuftime", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
     
     self.partag ={}
     self.partext={}
@@ -200,6 +201,7 @@ class MyGui(QtWidgets.QMainWindow):
       n4K     =self.pardic["n4K"],
       naudio  =self.pardic["naudio"],
       verbose =False,
+      msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
       )
 
