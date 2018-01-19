@@ -19,6 +19,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
 import json
+import os
 from valkka.api2.threads import LiveThread, OpenGLThread
 from valkka.api2.chains import BasicFilterchain
 
@@ -40,7 +41,8 @@ class ConfigDialog(QtWidgets.QDialog):
       "live affinity" : -1,
       "gl affinity"   : -1,
       "dec affinity start" : -1,
-      "dec affinity stop"  : -1
+      "dec affinity stop"  : -1,
+      "ok"                 : True
     }
     
     # ["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
@@ -72,14 +74,20 @@ class ConfigDialog(QtWidgets.QDialog):
       self.lay_pars.addWidget(t1,i,0)
       self.lay_pars.addWidget(t2,i,1)
     
-    self.save_button =QtWidgets.QPushButton("SAVE",self.lower)
-    self.run_button  =QtWidgets.QPushButton("RUN",self.lower)
+    self.save_button    =QtWidgets.QPushButton("SAVE",self.lower)
+    self.run_button     =QtWidgets.QPushButton("RUN",self.lower)
+    self.ffplay_button  =QtWidgets.QPushButton("FFPLAY",self.lower)
+    self.vlc_button     =QtWidgets.QPushButton("VLC",self.lower)
     
     self.save_button.clicked.connect(self.save_button_slot)
     self.run_button.clicked.connect(self.run_button_slot)
+    self.ffplay_button.clicked.connect(self.ffplay_button_slot)
+    self.vlc_button.clicked.connect(self.vlc_button_slot)
     
     self.lay_lower.addWidget(self.save_button)
     self.lay_lower.addWidget(self.run_button)
+    self.lay_lower.addWidget(self.ffplay_button)
+    self.lay_lower.addWidget(self.vlc_button)
     
     self.readPars()
     # print(self.pardic)
@@ -115,7 +123,7 @@ class ConfigDialog(QtWidgets.QDialog):
     self.pardic["cams"]=[]
     for cam in self.cams.toPlainText().split("\n"):
       address=cam.strip()
-      if (len(address)>0):
+      if (len(address)>0 and (address.find("#")==-1)):
         self.pardic["cams"].append(address)
       
     
@@ -126,6 +134,7 @@ class ConfigDialog(QtWidgets.QDialog):
       pass
     else:
       self.pardic=json.loads(f.read())
+      self.pardic["ok"]=True
       print(">",self.pardic)
       f.close()
     
@@ -147,6 +156,27 @@ class ConfigDialog(QtWidgets.QDialog):
     self.getPars()
     print("running with",self.pardic)
     self.done(0)
+    
+    
+  def ffplay_button_slot(self):
+    self.getPars()
+    for cam in self.pardic["cams"]:
+      os.system("ffplay "+cam+" &")
+      
+  
+  def vlc_button_slot(self):
+    self.getPars()
+    for cam in self.pardic["cams"]:
+      os.system("vlc "+cam+" &")
+  
+    
+    
+  # *** events ***
+  
+  def closeEvent(self,e):
+    self.pardic["ok"]=False
+    super(e)
+    
     
     
     
@@ -262,10 +292,13 @@ def main():
   pardic=conf.exec_()
   
   print("got",pardic)
+
+  # return
   
-  mg=MyGui(pardic)
-  mg.show()
-  app.exec_()
+  if (pardic["ok"]):
+    mg=MyGui(pardic)
+    mg.show()
+    app.exec_()
 
 
 if (__name__=="__main__"):
