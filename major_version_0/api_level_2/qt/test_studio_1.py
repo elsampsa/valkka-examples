@@ -75,17 +75,20 @@ class ConfigDialog(QtWidgets.QDialog):
       self.lay_pars.addWidget(t2,i,1)
     
     self.save_button    =QtWidgets.QPushButton("SAVE",self.lower)
-    self.run_button     =QtWidgets.QPushButton("RUN",self.lower)
+    self.run_button     =QtWidgets.QPushButton("RUN (QT)",self.lower)
+    self.run2_button    =QtWidgets.QPushButton("RUN",self.lower)
     self.ffplay_button  =QtWidgets.QPushButton("FFPLAY",self.lower)
     self.vlc_button     =QtWidgets.QPushButton("VLC",self.lower)
     
-    self.save_button.clicked.connect(self.save_button_slot)
-    self.run_button.clicked.connect(self.run_button_slot)
+    self.save_button.  clicked.connect(self.save_button_slot)
+    self.run_button.   clicked.connect(self.run_button_slot)
+    self.run2_button.  clicked.connect(self.run2_button_slot)
     self.ffplay_button.clicked.connect(self.ffplay_button_slot)
-    self.vlc_button.clicked.connect(self.vlc_button_slot)
+    self.vlc_button.   clicked.connect(self.vlc_button_slot)
     
     self.lay_lower.addWidget(self.save_button)
     self.lay_lower.addWidget(self.run_button)
+    self.lay_lower.addWidget(self.run2_button)
     self.lay_lower.addWidget(self.ffplay_button)
     self.lay_lower.addWidget(self.vlc_button)
     
@@ -154,6 +157,13 @@ class ConfigDialog(QtWidgets.QDialog):
     
   def run_button_slot(self):
     self.getPars()
+    print("running with",self.pardic)
+    self.done(0)
+    
+    
+  def run2_button_slot(self):
+    self.getPars()
+    self.pardic["no_qt"]=True
     print("running with",self.pardic)
     self.done(0)
     
@@ -257,7 +267,12 @@ class MyGui(QtWidgets.QMainWindow):
   
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
 
-      win_id =int(qframe.winId())
+      if ("no_qt" in self.pardic):
+        # create our own x-windowses
+        win_id=self.openglthread.createWindow()
+      else:
+        win_id =int(qframe.winId())
+      
       token  =self.openglthread.connect(slot=cc,window_id=win_id)
       tokens.append(token)
       
