@@ -1,7 +1,7 @@
 """
 single_stream.py : A demo program: streaming from a single rtsp camera
 
-Copyright 2017 Sampsa Riikonen
+Copyright 2017, 2018 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

@@ -1,7 +1,7 @@
 """
 multiple_stream.py : A demo program streaming from various rtsp cameras and other sources (defined per .sdp files)
 
-Copyright 2017 Sampsa Riikonen
+Copyright 2017, 2018 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

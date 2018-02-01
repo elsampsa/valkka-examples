@@ -1,7 +1,7 @@
 """
 shmem_test.py : A demo program: streaming from a single rtsp camera to X-window system, and through shmem to another python process
 
-Copyright 2017 Sampsa Riikonen
+Copyright 2017, 2018 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
