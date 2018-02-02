@@ -108,7 +108,7 @@ class MovementDetector(Analyzer):
       if (self.debug): cv2.imshow("SimpleMovementDetector_channels-delta0",delta)
       delta  = cv2.threshold(delta, 100, 1, cv2.THRESH_BINARY)[1] # TODO: how much treshold here..?
       val=delta.sum()/(delta.shape[0]*delta.shape[1])
-      # print("MovementDetector: val=",val)
+      # print(self.pre,"MovementDetector: val=",val)
       self.prevframe=modframe.copy()
       
       if (val>=self.treshold): # one promille ok .. there is movement

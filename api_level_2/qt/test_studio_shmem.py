@@ -1,5 +1,5 @@
 """
-test_studio_detector.py : Test live streaming with Qt.  Send a copies of the streams to OpenCV movement detector processes.
+test_studio_shmem.py : Test live streaming with Qt.  Send copyies of the streams to OpenCV processes
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -13,7 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @author  Sampsa Riikonen
 @date    2018
 @version 0.1
-@brief   Test live streaming with Qt.  Send copies of the streams to OpenCV movement detector processes.
+@brief   Test live streaming with Qt.  Send copies of the streams to OpenCV processes
 
 
 In the main text field, write live video sources, one to each line, e.g.
@@ -58,6 +58,8 @@ from valkka.api2.chains import ShmemFilterchain
 from valkka.api2.tools import parameterInitCheck
 from valkkathread import QValkkaThread
 from analyzer import MovementDetector
+
+pre="test_studio_shmem : "
 
  
 class ValkkaOpenCVProcess(ValkkaProcess):
@@ -162,75 +164,6 @@ class ValkkaOpenCVProcess(ValkkaProcess):
   
   
   
-class ValkkaMovementDetectorProcess(ValkkaOpenCVProcess):
-  
-  
-  incoming_signal_defs={ # each key corresponds to a front- and backend methods
-    "test_"    : {"test_int": int, "test_str": str},
-    "stop_"    : [],
-    "ping_"    : {"message":str}
-    }
-  
-  outgoing_signal_defs={
-    "pong_o"    : {"message":str},
-    "start_move": {},
-    "stop_move" : {}
-    }
-  
-  # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
-  class Signals(QtCore.QObject):  
-    pong_o     =QtCore.pyqtSignal(object)
-    start_move =QtCore.pyqtSignal()
-    stop_move  =QtCore.pyqtSignal()
-  
-  
-  parameter_defs={
-    "n_buffer"   : (int,10),
-    "n_bytes"    : int,
-    "shmem_name" : str
-    }
-  
-  
-  def __init__(self,name,**kwargs):
-    super().__init__(name,**kwargs)
-    self.signals =self.Signals()
-    parameterInitCheck(ValkkaMovementDetectorProcess.parameter_defs, kwargs, self)
-    # self.analyzer=MovementDetector(verbose=True)
-    self.analyzer=MovementDetector(treshold=0.0001)
-  
-  
-  def cycle_(self):
-    index, isize = self.client.pull()
-    if (index==None):
-      # print(self.pre,"Client timed out..")
-      pass
-    else:
-      # print(self.pre,"Client index, size =",index, isize)
-      data=self.client.shmem_list[index]
-      img=data.reshape((1080//4,1920//4,3))
-      result =self.analyzer(img)
-      # print(self.pre,">>>",data[0:10])
-      
-      if   (result==MovementDetector.state_same):
-        pass
-      elif (result==MovementDetector.state_start):
-        self.sendSignal_(name="start_move")
-      elif (result==MovementDetector.state_stop):
-        self.sendSignal_(name="stop_move")
-      
-      
-  # ** frontend methods handling received outgoing signals ***
-  def start_move(self):
-    print(self.pre,"At frontend: got movement")
-    self.signals.start_move.emit()
-  
-  
-  def stop_move(self):
-    print(self.pre,"At frontend: movement stopped")
-    self.signals.stop_move.emit()
-  
-  
-  
 class ConfigDialog(QtWidgets.QDialog):
   
   def __init__(self,parent=None):
@@ -291,7 +224,7 @@ class ConfigDialog(QtWidgets.QDialog):
     self.lay_lower.addWidget(self.run_button)
     
     self.readPars()
-    # print(self.pardic)
+    # print(pre,self.pardic)
     self.putPars()
     
     
@@ -312,13 +245,13 @@ class ConfigDialog(QtWidgets.QDialog):
     
   def getPars(self):
     """
-    print(">>",self.pardic)
+    print(pre,">>",self.pardic)
     for key in self.pardic:
-      print(">>>",key,key.__class__)
+      print(pre,">>>",key,key.__class__)
     """
     for i, key in enumerate(self.plis):
-      # print(">>>>",key,key.__class__)
-      # print(">>",key,self.partext[key].text())
+      # print(pre,">>>>",key,key.__class__)
+      # print(pre,">>",key,self.partext[key].text())
       self.pardic[key]=int(self.partext[key].text())
       
     self.pardic["cams"]=[]
@@ -336,7 +269,7 @@ class ConfigDialog(QtWidgets.QDialog):
     else:
       self.pardic=json.loads(f.read())
       self.pardic["ok"]=True
-      print(">",self.pardic)
+      print(pre,">",self.pardic)
       f.close()
     
     
@@ -355,7 +288,7 @@ class ConfigDialog(QtWidgets.QDialog):
     
   def run_button_slot(self):
     self.getPars()
-    print("running with",self.pardic)
+    print(pre,"running with",self.pardic)
     self.done(0)
     
   
@@ -369,42 +302,6 @@ class ConfigDialog(QtWidgets.QDialog):
     
     
 class MyGui(QtWidgets.QMainWindow):
-
-
-  class Frame:
-    
-    def __init__(self,parent):
-      self.widget=QtWidgets.QWidget(parent)
-      self.lay  =QtWidgets.QVBoxLayout(self.widget)
-      
-      self.text =QtWidgets.QLabel("",self.widget)
-      self.text_stylesheet=self.text.styleSheet()
-      
-      self.video=QtWidgets.QFrame(self.widget)
-      self.lay.addWidget(self.text)
-      self.lay.addWidget(self.video)
-      self.text.setSizePolicy(QtWidgets.QSizePolicy.Minimum,QtWidgets.QSizePolicy.Minimum)
-      self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
-      self.set_still()
-      
-    def setText(self,txt):
-      self.text.setText(txt)
-      
-      
-    def getVideoFrameId(self):
-      return int(self.video.winId())
-      
-
-    def set_still(self):
-      self.setText("still")
-      self.widget.setStyleSheet(self.text_stylesheet)
-      
-      
-    def set_moving(self):
-      self.setText("MOVING")
-      self.widget.setStyleSheet("QLabel {border: 2px; border-style:solid; border-color: red; margin:0 px; padding:0 px; border-radius:8px;}")
-      
-
 
   debug=False
   # debug=True
@@ -431,14 +328,14 @@ class MyGui(QtWidgets.QMainWindow):
     self.setCentralWidget(self.w)
     self.lay=QtWidgets.QGridLayout(self.w)
     
-    self.frames     =[] # frames with movement detector alert and video
-    self.addresses  =self.pardic["cams"]
+    self.videoframes=[]
+    self.addresses=self.pardic["cams"]
     
     for i, address in enumerate(self.addresses):
-      fr =self.Frame(self.w)
-      print("setupUi: layout index, address : ",i//4,i%4,address)
-      self.lay.addWidget(fr.widget,i//4,i%4)
-      self.frames.append((fr,address)) # list of (QFrame, address) pairs
+      fr=QtWidgets.QFrame(self.w)
+      print(pre,"setupUi: layout index, address : ",i//4,i%4,address)
+      self.lay.addWidget(fr,i//4,i%4)
+      self.videoframes.append((fr,address)) # list of (QFrame, address) pairs
 
     
   def openValkka(self):
@@ -459,7 +356,7 @@ class MyGui(QtWidgets.QMainWindow):
       msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
       )
-
+    
     if (self.openglthread.hadVsync()):
       w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
 
@@ -470,11 +367,11 @@ class MyGui(QtWidgets.QMainWindow):
     
     a=self.pardic["dec affinity start"]
     
-    for frame, address in self.frames:
+    for qframe, address in self.videoframes:
       # now livethread and openglthread are running
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       
-      print("openValkka: setting decoder thread on processor",a)
+      print(pre,"openValkka: setting decoder thread on processor",a)
       
       chain=ShmemFilterchain(       # decoding and branching the stream happens here
         livethread  =self.livethread, 
@@ -490,18 +387,14 @@ class MyGui(QtWidgets.QMainWindow):
         )
     
       shmem_name, n_buffer, n_bytes =chain.getShmemPars()
-      # print("shmem_name, n_buffer, n_bytes",shmem_name,n_buffer,n_bytes)
+      # print(pre,"shmem_name, n_buffer, n_bytes",shmem_name,n_buffer,n_bytes)
       
-      # process=ValkkaOpenCVProcess("process_"+str(cc),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
-      process=ValkkaMovementDetectorProcess("process_"+str(cc),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
-      
-      process.signals.start_move.connect(frame.set_moving)
-      process.signals.stop_move.connect(frame.set_still)
+      process=ValkkaOpenCVProcess("process_"+str(cc),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
       
       self.chains.append(chain)
       self.processes.append(process)
 
-      win_id =frame.getVideoFrameId()
+      win_id =int(qframe.winId())
       
       token  =self.openglthread.connect(slot=cc,window_id=win_id)
       tokens.append(token)
@@ -523,18 +416,18 @@ class MyGui(QtWidgets.QMainWindow):
   
   
   def stopProcesses(self):
+    # self.thread.stop()
     for p in self.processes:
       p.stop()
-    print("stopping QThread")
     self.thread.stop()
-    # self.thread.quit() # nopes ..
-    print("QThread stopped")
+    self.thread.wait()
     
-    
+        
   def closeEvent(self,e):
-    print("closeEvent!")
+    print(pre,"closeEvent!")
     self.stopProcesses()
     super().closeEvent(e)
+
 
 
 def main():
@@ -544,7 +437,7 @@ def main():
   conf=ConfigDialog()
   pardic=conf.exec_()
   
-  print("got",pardic)
+  print(pre,"got",pardic)
 
   # return
   

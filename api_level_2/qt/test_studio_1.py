@@ -1,5 +1,5 @@
 """
-test_studio_shmem.py : Test live streaming with Qt.  Send copyies of the streams to OpenCV processes
+test_studio_1.py : Test live streaming with Qt
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -9,11 +9,11 @@ This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    test_studio_shmem.py
+@file    test_studio_1.py
 @author  Sampsa Riikonen
 @date    2018
 @version 0.1
-@brief   Test live streaming with Qt.  Send copies of the streams to OpenCV processes
+@brief   Test live streaming with Qt
 
 
 In the main text field, write live video sources, one to each line, e.g.
@@ -48,120 +48,15 @@ This Qt test program produces a config file.  You might want to remove that conf
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
-import cv2
 import sys
 import json
 import os
-from valkka.valkka_core import XInitThreads
-from valkka.api2.threads import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
-from valkka.api2.chains import ShmemFilterchain
-from valkka.api2.tools import parameterInitCheck
-from valkkathread import QValkkaThread
-from analyzer import MovementDetector
+from valkka.api2.threads import LiveThread, OpenGLThread
+from valkka.api2.chains import BasicFilterchain
+
+pre="test_studio : " # aux string for debugging 
 
  
-class ValkkaOpenCVProcess(ValkkaProcess):
-  
-  
-  incoming_signal_defs={ # each key corresponds to a front- and backend methods
-    "test_"    : {"test_int": int, "test_str": str},
-    "stop_"    : [],
-    "ping_"    : {"message":str}
-    }
-  
-  outgoing_signal_defs={
-    "pong_o"    : {"message":str}
-    }
-  
-  # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
-  class Signals(QtCore.QObject):  
-    pong_o  =QtCore.pyqtSignal(object)
-  
-  
-  parameter_defs={
-    "n_buffer"   : (int,10),
-    "n_bytes"    : int,
-    "shmem_name" : str
-    }
-  
-  
-  def __init__(self,name,**kwargs):
-    super().__init__(name,**kwargs)
-    self.signals =self.Signals()
-    parameterInitCheck(ValkkaOpenCVProcess.parameter_defs, kwargs, self)
-    
-    
-  def preRun_(self):
-    """Create the shared memory client after fork
-    """
-    # XInitThreads() # doesn't help
-    self.client=ShmemClient(
-      name          =self.shmem_name, 
-      n_ringbuffer  =self.n_buffer,   # size of ring buffer
-      n_bytes       =self.n_bytes,    # size of the RGB image
-      mstimeout     =1000,            # client timeouts if nothing has been received in 1000 milliseconds
-      verbose       =False
-    )
-    
-    
-  def cycle_(self):
-    index, isize = self.client.pull()
-    if (index==None):
-      print(self.pre,"Client timed out..")
-    else:
-      print(self.pre,"Client index, size =",index, isize)
-      data=self.client.shmem_list[index]
-      img=data.reshape((1080//4,1920//4,3))
-      """ # WARNING: the x-server doesn't like this, i.e., we're creating a window from a separate python multiprocess, so the program will crash
-      print(self.pre,"Visualizing with OpenCV")
-      cv2.imshow("openCV_window",img)
-      cv2.waitKey(1)
-      """
-      print(self.pre,">>>",data[0:10])
-      
-      # res=self.analyzer(img) # does something .. returns something ..
-      
-  
-  # *** backend methods corresponding to incoming signals ***
-  def stop_(self):
-    self.running=False
-  
-  
-  def test_(self,test_int=0,test_str="nada"):
-    print(self.pre,"test_ signal received with",test_int,test_str)
-    
-  
-  def ping_(self,message="nada"):
-    print(self.pre,"At backend: ping_ received",message,"sending it back to front")
-    self.sendSignal_(name="pong_o",message=message)
-  
-  
-  # ** frontend methods launching incoming signals
-  def stop(self):
-    self.sendSignal(name="stop_")
-  
-  
-  def test(self,**kwargs):
-    dictionaryCheck(self.incoming_signal_defs["test_"],kwargs)
-    kwargs["name"]="test_"
-    self.sendSignal(**kwargs)
-    
-    
-  def ping(self,**kwargs):
-    dictionaryCheck(self.incoming_signal_defs["ping_"],kwargs)
-    kwargs["name"]="ping_"
-    self.sendSignal(**kwargs)
-  
-  
-  # ** frontend methods handling received outgoing signals ***
-  def pong_o(self,message="nada"):
-    print(self.pre,"At frontend: pong got message",message)
-    ns=Namespace()
-    ns.message=message
-    self.signals.pong_o.emit(ns)
-  
-  
-  
 class ConfigDialog(QtWidgets.QDialog):
   
   def __init__(self,parent=None):
@@ -213,16 +108,25 @@ class ConfigDialog(QtWidgets.QDialog):
       self.lay_pars.addWidget(t2,i,1)
     
     self.save_button    =QtWidgets.QPushButton("SAVE",self.lower)
-    self.run_button     =QtWidgets.QPushButton("RUN",self.lower)
+    self.run_button     =QtWidgets.QPushButton("RUN (QT)",self.lower)
+    self.run2_button    =QtWidgets.QPushButton("RUN",self.lower)
+    self.ffplay_button  =QtWidgets.QPushButton("FFPLAY",self.lower)
+    self.vlc_button     =QtWidgets.QPushButton("VLC",self.lower)
     
     self.save_button.  clicked.connect(self.save_button_slot)
     self.run_button.   clicked.connect(self.run_button_slot)
+    self.run2_button.  clicked.connect(self.run2_button_slot)
+    self.ffplay_button.clicked.connect(self.ffplay_button_slot)
+    self.vlc_button.   clicked.connect(self.vlc_button_slot)
     
     self.lay_lower.addWidget(self.save_button)
     self.lay_lower.addWidget(self.run_button)
+    self.lay_lower.addWidget(self.run2_button)
+    self.lay_lower.addWidget(self.ffplay_button)
+    self.lay_lower.addWidget(self.vlc_button)
     
     self.readPars()
-    # print(self.pardic)
+    # print(pre,self.pardic)
     self.putPars()
     
     
@@ -243,13 +147,13 @@ class ConfigDialog(QtWidgets.QDialog):
     
   def getPars(self):
     """
-    print(">>",self.pardic)
+    print(pre,self.pardic)
     for key in self.pardic:
-      print(">>>",key,key.__class__)
+      print(pre,key,key.__class__)
     """
     for i, key in enumerate(self.plis):
-      # print(">>>>",key,key.__class__)
-      # print(">>",key,self.partext[key].text())
+      # print(pre,key,key.__class__)
+      # print(pre,key,self.partext[key].text())
       self.pardic[key]=int(self.partext[key].text())
       
     self.pardic["cams"]=[]
@@ -267,7 +171,7 @@ class ConfigDialog(QtWidgets.QDialog):
     else:
       self.pardic=json.loads(f.read())
       self.pardic["ok"]=True
-      print(">",self.pardic)
+      print(pre,">",self.pardic)
       f.close()
     
     
@@ -286,15 +190,36 @@ class ConfigDialog(QtWidgets.QDialog):
     
   def run_button_slot(self):
     self.getPars()
-    print("running with",self.pardic)
+    print(pre,"running with",self.pardic)
     self.done(0)
     
+    
+  def run2_button_slot(self):
+    self.getPars()
+    self.pardic["no_qt"]=True
+    print(pre,"running with",self.pardic)
+    self.done(0)
+    
+    
+  def ffplay_button_slot(self):
+    self.getPars()
+    for cam in self.pardic["cams"]:
+      os.system("ffplay "+cam+" &")
+      
   
+  def vlc_button_slot(self):
+    self.getPars()
+    for cam in self.pardic["cams"]:
+      os.system("vlc "+cam+" &")
+  
+    
+    
   # *** events ***
   
   def closeEvent(self,e):
     self.pardic["ok"]=False
-    super(e)
+    super().closeEvent(e)
+    # e.accept()
     
     
     
@@ -306,14 +231,23 @@ class MyGui(QtWidgets.QMainWindow):
 
   def __init__(self,pardic,parent=None):
     super(MyGui, self).__init__()
-    # XInitThreads()
     self.pardic=pardic
     self.initVars()
     self.setupUi()
     if (self.debug): 
       return
     self.openValkka()
-    self.startProcesses()
+    self.start_streams()
+    
+    
+  def getWidget(self, parent): # gets a new widget from OpenGLThread
+    # QtCore.Qt.ForeignWindow
+    win_id=self.openglthread.createWindow()
+    q_win =QtGui.QWindow.fromWinId(win_id) 
+    q_wid =QtWidgets.QWidget.createWindowContainer(q_win,parent=parent,flags=QtCore.Qt.ForeignWindow)
+    # print(pre,"getWidget: win_id, q_win, q_wid",win_id,q_win,q_wid)
+    # return q_wid
+    return q_wid
     
     
   def initVars(self):
@@ -329,12 +263,13 @@ class MyGui(QtWidgets.QMainWindow):
     self.videoframes=[]
     self.addresses=self.pardic["cams"]
     
+    # """
     for i, address in enumerate(self.addresses):
       fr=QtWidgets.QFrame(self.w)
-      print("setupUi: layout index, address : ",i//4,i%4,address)
+      print(pre,"setupUi: layout index, address : ",i//4,i%4,address)
       self.lay.addWidget(fr,i//4,i%4)
       self.videoframes.append((fr,address)) # list of (QFrame, address) pairs
-
+    # """
     
   def openValkka(self):
     self.livethread=LiveThread(         # starts live stream services (using live555)
@@ -354,13 +289,21 @@ class MyGui(QtWidgets.QMainWindow):
       msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
       )
+
+    """ # this seems not to work..
+    # at this point, we can request windows from the OpenGLThread
+    for i, address in enumerate(self.addresses):
+      fr=self.getWidget(self.w)
+      print(pre,"setupUi: layout index, address : ",i//4,i%4,address)
+      self.lay.addWidget(fr,i//4,i%4)
+      self.videoframes.append((fr,address)) # list of (QFrame, address) pairs
+    """
     
     if (self.openglthread.hadVsync()):
       w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
 
-    tokens        =[]
-    self.chains   =[]
-    self.processes=[]
+    tokens     =[]
+    self.chains=[]
     cc=1
     
     a=self.pardic["dec affinity start"]
@@ -369,30 +312,23 @@ class MyGui(QtWidgets.QMainWindow):
       # now livethread and openglthread are running
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       
-      print("openValkka: setting decoder thread on processor",a)
+      print(pre,"openValkka: setting decoder thread on processor",a)
       
-      chain=ShmemFilterchain(       # decoding and branching the stream happens here
+      chain=BasicFilterchain(       # decoding and branching the stream happens here
         livethread  =self.livethread, 
         openglthread=self.openglthread,
         address     =address,
         slot        =cc,
-        affinity    =a,
-        # this filterchain creates a shared memory server
-        shmem_name             ="test_studio_"+str(cc),
-        shmem_image_dimensions =(1920//4,1080//4),  # Images passed over shmem are quarter of the full-hd reso
-        shmem_image_interval   =1000,               # YUV => RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer
-        shmem_ringbuffer_size  =10                  # Size of the shmem ringbuffer
+        affinity    =a
         )
-    
-      shmem_name, n_buffer, n_bytes =chain.getShmemPars()
-      # print("shmem_name, n_buffer, n_bytes",shmem_name,n_buffer,n_bytes)
-      
-      process=ValkkaOpenCVProcess("process_"+str(cc),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
-      
-      self.chains.append(chain)
-      self.processes.append(process)
+  
+      self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
 
-      win_id =int(qframe.winId())
+      if ("no_qt" in self.pardic):
+        # create our own x-windowses
+        win_id=self.openglthread.createWindow()
+      else:
+        win_id =int(qframe.winId())
       
       token  =self.openglthread.connect(slot=cc,window_id=win_id)
       tokens.append(token)
@@ -401,31 +337,23 @@ class MyGui(QtWidgets.QMainWindow):
       cc+=1 # TODO: crash when repeating the same slot number ..?
       a +=1
       
-      
-    # finally, give the multiprocesses to a qthread that's reading their message pipe
-    self.thread =QValkkaThread(processes=self.processes)
+  
+  def closeValkka(self):
+    pass
+  
+  
+  def start_streams(self):
+    pass
     
-  
-  def startProcesses(self):
-    for p in self.processes:
-      p.start()
-      # p.startAsThread() # debugging
-    self.thread.start()
-  
-  
-  def stopProcesses(self):
-    # self.thread.stop()
-    for p in self.processes:
-      p.stop()
-    self.thread.stop()
-    self.thread.wait()
     
-        
+  def stop_streams(self):
+    pass
+    
   def closeEvent(self,e):
-    print("closeEvent!")
-    self.stopProcesses()
-    super().closeEvent(e)
-
+    print(pre,"closeEvent!")
+    self.stop_streams()
+    self.closeValkka()
+    e.accept()
 
 
 def main():
@@ -435,7 +363,7 @@ def main():
   conf=ConfigDialog()
   pardic=conf.exec_()
   
-  print("got",pardic)
+  print(pre,"got",pardic)
 
   # return
   
