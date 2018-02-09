@@ -274,6 +274,7 @@ class MyGui(QtWidgets.QMainWindow):
   def openValkka(self):
     self.livethread=LiveThread(         # starts live stream services (using live555)
       name   ="live_thread",
+      # verbose=True,
       verbose=False,
       affinity=self.pardic["live affinity"]
     )
@@ -285,6 +286,7 @@ class MyGui(QtWidgets.QMainWindow):
       n1440p  =self.pardic["n1440p"],
       n4K     =self.pardic["n4K"],
       naudio  =self.pardic["naudio"],
+      # verbose =True,
       verbose =False,
       msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
@@ -319,7 +321,9 @@ class MyGui(QtWidgets.QMainWindow):
         openglthread=self.openglthread,
         address     =address,
         slot        =cc,
-        affinity    =a
+        affinity    =a,
+        # verbose     =True
+        verbose     =False
         )
   
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
@@ -339,7 +343,8 @@ class MyGui(QtWidgets.QMainWindow):
       
   
   def closeValkka(self):
-    pass
+    self.chains=[]
+    # this removes references and the destructors are called ..
   
   
   def start_streams(self):
