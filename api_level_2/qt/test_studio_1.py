@@ -240,14 +240,13 @@ class MyGui(QtWidgets.QMainWindow):
     self.start_streams()
     
     
-  def getWidget(self, parent): # gets a new widget from OpenGLThread
+  def getWidget(self, parent): # gets a new widget from OpenGLThread generated window
     # QtCore.Qt.ForeignWindow
-    win_id=self.openglthread.createWindow()
-    q_win =QtGui.QWindow.fromWinId(win_id) 
-    q_wid =QtWidgets.QWidget.createWindowContainer(q_win,parent=parent,flags=QtCore.Qt.ForeignWindow)
-    # print(pre,"getWidget: win_id, q_win, q_wid",win_id,q_win,q_wid)
-    # return q_wid
-    return q_wid
+    win_id   =self.openglthread.createWindow()
+    q_window =QtGui.QWindow.fromWinId(win_id)
+    q_widget =QtWidgets.QWidget.createWindowContainer(q_window,parent=parent) # ,flags=QtCore.Qt.ForeignWindow)
+    print(pre,"getWidget: win_id, q_window, q_widget",win_id,q_window,q_widget)
+    return win_id, q_widget
     
     
   def initVars(self):
@@ -263,13 +262,14 @@ class MyGui(QtWidgets.QMainWindow):
     self.videoframes=[]
     self.addresses=self.pardic["cams"]
     
-    # """
+    """
     for i, address in enumerate(self.addresses):
-      fr=QtWidgets.QFrame(self.w)
+      fr     =QtWidgets.QFrame(self.w)
+      win_id =int(fr.winId())
       print(pre,"setupUi: layout index, address : ",i//4,i%4,address)
       self.lay.addWidget(fr,i//4,i%4)
-      self.videoframes.append((fr,address)) # list of (QFrame, address) pairs
-    # """
+      self.videoframes.append((fr,win_id,address)) # list of (QFrame, address) pairs
+    """
     
   def openValkka(self):
     self.livethread=LiveThread(         # starts live stream services (using live555)
@@ -292,14 +292,16 @@ class MyGui(QtWidgets.QMainWindow):
       affinity=self.pardic["gl affinity"]
       )
 
-    """ # this seems not to work..
+    #"""
+    # this seems not to work..
     # at this point, we can request windows from the OpenGLThread
     for i, address in enumerate(self.addresses):
-      fr=self.getWidget(self.w)
+      win_id, fr =self.getWidget(self.w)
+      print(pre,"setupUi: win_id : ", win_id)
       print(pre,"setupUi: layout index, address : ",i//4,i%4,address)
       self.lay.addWidget(fr,i//4,i%4)
-      self.videoframes.append((fr,address)) # list of (QFrame, address) pairs
-    """
+      self.videoframes.append((fr,win_id,address)) # list of (QFrame, address) pairs
+    #"""
     
     if (self.openglthread.hadVsync()):
       w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
@@ -310,7 +312,7 @@ class MyGui(QtWidgets.QMainWindow):
     
     a=self.pardic["dec affinity start"]
     
-    for qframe, address in self.videoframes:
+    for qframe, win_id, address in self.videoframes:
       # now livethread and openglthread are running
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       
@@ -330,11 +332,13 @@ class MyGui(QtWidgets.QMainWindow):
 
       if ("no_qt" in self.pardic):
         # create our own x-windowses
-        win_id=self.openglthread.createWindow()
+        win_id_=self.openglthread.createWindow()
       else:
-        win_id =int(qframe.winId())
+        win_id_ =win_id
+        print(pre,"win_id_",win_id_)
       
-      token  =self.openglthread.connect(slot=cc,window_id=win_id)
+      
+      token  =self.openglthread.connect(slot=cc,window_id=win_id_)
       tokens.append(token)
       
       chain.decodingOn() # tell the decoding thread to start its job
