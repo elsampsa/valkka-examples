@@ -1,5 +1,5 @@
 """
-test_studio_shmem.py : Test live streaming with Qt.  Send copyies of the streams to OpenCV processes
+test_studio_shmem.py : Test live streaming with Qt.  Send a copies of the streams via shared memory to a python multiprocess
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -13,7 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @author  Sampsa Riikonen
 @date    2018
 @version 0.1
-@brief   Test live streaming with Qt.  Send copies of the streams to OpenCV processes
+@brief   Test live streaming with Qt.  Send copies of the streams to OpenCV movement detector processes.
 
 
 In the main text field, write live video sources, one to each line, e.g.
@@ -52,255 +52,35 @@ import cv2
 import sys
 import json
 import os
-from valkka.valkka_core import XInitThreads
 from valkka.api2.threads import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2.chains import ShmemFilterchain
 from valkka.api2.tools import parameterInitCheck
-from valkkathread import QValkkaThread
+from valkkathread import QValkkaThread, QValkkaOpenCVProcess
 from analyzer import MovementDetector
+from demo_base import ConfigDialog, TestWidget0, TestWidget, getForeignWidget, WidgetPair
+
 
 pre="test_studio_shmem : "
-
  
-class ValkkaOpenCVProcess(ValkkaProcess):
+   
+class MyConfigDialog(ConfigDialog):
   
   
-  incoming_signal_defs={ # each key corresponds to a front- and backend methods
-    "test_"    : {"test_int": int, "test_str": str},
-    "stop_"    : [],
-    "ping_"    : {"message":str}
-    }
-  
-  outgoing_signal_defs={
-    "pong_o"    : {"message":str}
-    }
-  
-  # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
-  class Signals(QtCore.QObject):  
-    pong_o  =QtCore.pyqtSignal(object)
-  
-  
-  parameter_defs={
-    "n_buffer"   : (int,10),
-    "n_bytes"    : int,
-    "shmem_name" : str
-    }
-  
-  
-  def __init__(self,name,**kwargs):
-    super().__init__(name,**kwargs)
-    self.signals =self.Signals()
-    parameterInitCheck(ValkkaOpenCVProcess.parameter_defs, kwargs, self)
+  def setConfigPars(self):
+    self.tooltips={        # how about some tooltips?
+      }
+    self.pardic.update({}) # add more parameter key/value pairs
+    self.plis +=[]         # list of parameter keys that are saved to config file
+    self.config_fname="test_studio_shmem.config" # define the config file name
+
+
+  def extra(self):
+    self.run2_button.hide()    
+    self.ffplay_button.hide() 
+    self.vlc_button.hide() 
     
-    
-  def preRun_(self):
-    """Create the shared memory client after fork
-    """
-    # XInitThreads() # doesn't help
-    self.client=ShmemClient(
-      name          =self.shmem_name, 
-      n_ringbuffer  =self.n_buffer,   # size of ring buffer
-      n_bytes       =self.n_bytes,    # size of the RGB image
-      mstimeout     =1000,            # client timeouts if nothing has been received in 1000 milliseconds
-      verbose       =False
-    )
-    
-    
-  def cycle_(self):
-    index, isize = self.client.pull()
-    if (index==None):
-      print(self.pre,"Client timed out..")
-    else:
-      print(self.pre,"Client index, size =",index, isize)
-      data=self.client.shmem_list[index]
-      img=data.reshape((1080//4,1920//4,3))
-      """ # WARNING: the x-server doesn't like this, i.e., we're creating a window from a separate python multiprocess, so the program will crash
-      print(self.pre,"Visualizing with OpenCV")
-      cv2.imshow("openCV_window",img)
-      cv2.waitKey(1)
-      """
-      print(self.pre,">>>",data[0:10])
-      
-      # res=self.analyzer(img) # does something .. returns something ..
-      
-  
-  # *** backend methods corresponding to incoming signals ***
-  def stop_(self):
-    self.running=False
-  
-  
-  def test_(self,test_int=0,test_str="nada"):
-    print(self.pre,"test_ signal received with",test_int,test_str)
-    
-  
-  def ping_(self,message="nada"):
-    print(self.pre,"At backend: ping_ received",message,"sending it back to front")
-    self.sendSignal_(name="pong_o",message=message)
-  
-  
-  # ** frontend methods launching incoming signals
-  def stop(self):
-    self.sendSignal(name="stop_")
-  
-  
-  def test(self,**kwargs):
-    dictionaryCheck(self.incoming_signal_defs["test_"],kwargs)
-    kwargs["name"]="test_"
-    self.sendSignal(**kwargs)
-    
-    
-  def ping(self,**kwargs):
-    dictionaryCheck(self.incoming_signal_defs["ping_"],kwargs)
-    kwargs["name"]="ping_"
-    self.sendSignal(**kwargs)
-  
-  
-  # ** frontend methods handling received outgoing signals ***
-  def pong_o(self,message="nada"):
-    print(self.pre,"At frontend: pong got message",message)
-    ns=Namespace()
-    ns.message=message
-    self.signals.pong_o.emit(ns)
-  
-  
-  
-class ConfigDialog(QtWidgets.QDialog):
-  
-  def __init__(self,parent=None):
-    super().__init__(parent)
-    
-    self.pardic={
-      "cams"    : [],
-      "n720p"   : 10,  # reserve stacks of YUV video frames for various resolutions
-      "n1080p"  : 10,
-      "n1440p"  : 10,
-      "n4K"     : 10,
-      "naudio"  : 10,
-      "verbose" : 0,
-      "msbuftime" :100,
-      "live affinity" : -1,
-      "gl affinity"   : -1,
-      "dec affinity start" : -1,
-      "dec affinity stop"  : -1,
-      "ok"                 : True
-    }
-    
-    # ["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
-    self.plis=["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "msbuftime", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
-    
-    self.partag ={}
-    self.partext={}
-    
-    self.lay=QtWidgets.QVBoxLayout(self)
-    
-    self.upper =QtWidgets.QWidget(self)
-    self.lower =QtWidgets.QWidget(self)
-    self.lay.addWidget(self.upper)
-    self.lay.addWidget(self.lower)
-    
-    self.lay_upper =QtWidgets.QHBoxLayout(self.upper)
-    self.lay_lower =QtWidgets.QHBoxLayout(self.lower)
-    
-    self.cams  =QtWidgets.QTextEdit(self.upper)
-    self.lay_upper.addWidget(self.cams)
-    self.pars  =QtWidgets.QWidget(self.upper)
-    self.lay_upper.addWidget(self.pars)
-    
-    self.lay_pars =QtWidgets.QGridLayout(self.pars)
-    
-    for i, key in enumerate(self.plis):
-      t1 = self.partag [key] =QtWidgets.QLabel(key,self.pars)
-      t2 = self.partext[key] =QtWidgets.QLineEdit(self.pars)
-      self.lay_pars.addWidget(t1,i,0)
-      self.lay_pars.addWidget(t2,i,1)
-    
-    self.save_button    =QtWidgets.QPushButton("SAVE",self.lower)
-    self.run_button     =QtWidgets.QPushButton("RUN",self.lower)
-    
-    self.save_button.  clicked.connect(self.save_button_slot)
-    self.run_button.   clicked.connect(self.run_button_slot)
-    
-    self.lay_lower.addWidget(self.save_button)
-    self.lay_lower.addWidget(self.run_button)
-    
-    self.readPars()
-    # print(pre,self.pardic)
-    self.putPars()
-    
-    
-  def exec_(self):
-    super().exec_()
-    return self.pardic
-  
-    
-  def putPars(self):
-    for i, key in enumerate(self.plis):
-      t2 = self.partext[key]
-      t2.setText(str(self.pardic[key]))
-    st=""
-    for cam in self.pardic["cams"]:
-      st+=cam+"\n"
-    self.cams.setText(st)
-      
-    
-  def getPars(self):
-    """
-    print(pre,">>",self.pardic)
-    for key in self.pardic:
-      print(pre,">>>",key,key.__class__)
-    """
-    for i, key in enumerate(self.plis):
-      # print(pre,">>>>",key,key.__class__)
-      # print(pre,">>",key,self.partext[key].text())
-      self.pardic[key]=int(self.partext[key].text())
-      
-    self.pardic["cams"]=[]
-    for cam in self.cams.toPlainText().split("\n"):
-      address=cam.strip()
-      if (len(address)>0 and (address.find("#")==-1)):
-        self.pardic["cams"].append(address)
-      
-    
-  def readPars(self):
-    try:
-      f=open("test_studio_1.config","r")
-    except:
-      pass
-    else:
-      self.pardic=json.loads(f.read())
-      self.pardic["ok"]=True
-      print(pre,">",self.pardic)
-      f.close()
-    
-    
-  def savePars(self):
-    f=open("test_studio_1.config","w")
-    f.write(json.dumps(self.pardic))
-    f.close()
-    
-    
-  # *** slots ***
-  
-  def save_button_slot(self):
-    self.getPars()
-    self.savePars()
-    
-    
-  def run_button_slot(self):
-    self.getPars()
-    print(pre,"running with",self.pardic)
-    self.done(0)
-    
-  
-  # *** events ***
-  
-  def closeEvent(self,e):
-    self.pardic["ok"]=False
-    super(e)
-    
-    
-    
-    
+
+        
 class MyGui(QtWidgets.QMainWindow):
 
   debug=False
@@ -308,7 +88,6 @@ class MyGui(QtWidgets.QMainWindow):
 
   def __init__(self,pardic,parent=None):
     super(MyGui, self).__init__()
-    # XInitThreads()
     self.pardic=pardic
     self.initVars()
     self.setupUi()
@@ -327,17 +106,9 @@ class MyGui(QtWidgets.QMainWindow):
     self.w=QtWidgets.QWidget(self)
     self.setCentralWidget(self.w)
     self.lay=QtWidgets.QGridLayout(self.w)
+    self.addresses  =self.pardic["cams"]
     
-    self.videoframes=[]
-    self.addresses=self.pardic["cams"]
-    
-    for i, address in enumerate(self.addresses):
-      fr=QtWidgets.QFrame(self.w)
-      print(pre,"setupUi: layout index, address : ",i//4,i%4,address)
-      self.lay.addWidget(fr,i//4,i%4)
-      self.videoframes.append((fr,address)) # list of (QFrame, address) pairs
-
-    
+  
   def openValkka(self):
     self.livethread=LiveThread(         # starts live stream services (using live555)
       name   ="live_thread",
@@ -356,18 +127,20 @@ class MyGui(QtWidgets.QMainWindow):
       msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
       )
-    
+
     if (self.openglthread.hadVsync()):
       w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
 
-    tokens        =[]
-    self.chains   =[]
-    self.processes=[]
-    cc=1
-    
+    tokens           =[]
+    self.chains      =[]
+    self.processes   =[]
+    self.widget_pairs=[]
+    self.videoframes =[]
+    cs=1
+    cc=0
     a=self.pardic["dec affinity start"]
     
-    for qframe, address in self.videoframes:
+    for address in self.addresses:
       # now livethread and openglthread are running
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       
@@ -377,10 +150,10 @@ class MyGui(QtWidgets.QMainWindow):
         livethread  =self.livethread, 
         openglthread=self.openglthread,
         address     =address,
-        slot        =cc,
+        slot        =cs,
         affinity    =a,
         # this filterchain creates a shared memory server
-        shmem_name             ="test_studio_"+str(cc),
+        shmem_name             ="test_studio_"+str(cs),
         shmem_image_dimensions =(1920//4,1080//4),  # Images passed over shmem are quarter of the full-hd reso
         shmem_image_interval   =1000,               # YUV => RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer
         shmem_ringbuffer_size  =10                  # Size of the shmem ringbuffer
@@ -389,20 +162,27 @@ class MyGui(QtWidgets.QMainWindow):
       shmem_name, n_buffer, n_bytes =chain.getShmemPars()
       # print(pre,"shmem_name, n_buffer, n_bytes",shmem_name,n_buffer,n_bytes)
       
-      process=ValkkaOpenCVProcess("process_"+str(cc),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
-      
+      process=QValkkaOpenCVProcess("process_"+str(cs),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
+            
       self.chains.append(chain)
       self.processes.append(process)
 
-      win_id =int(qframe.winId())
+      win_id      =self.openglthread.createWindow(show=False)
+      widget_pair =WidgetPair(self.w,win_id,TestWidget0)
+      fr          =widget_pair.getWidget()
+      self.widget_pairs.append(widget_pair)
+    
+      print(pre,"setupUi: layout index, address : ",cc//4,cc%4,address)
+      self.lay.addWidget(fr,cc//4,cc%4)
+      self.videoframes.append(fr)
       
-      token  =self.openglthread.connect(slot=cc,window_id=win_id)
+      token  =self.openglthread.connect(slot=cs,window_id=win_id)
       tokens.append(token)
       
       chain.decodingOn() # tell the decoding thread to start its job
-      cc+=1 # TODO: crash when repeating the same slot number ..?
+      cs+=1 # TODO: crash when repeating the same slot number ..?
       a +=1
-      
+      cc+=1
       
     # finally, give the multiprocesses to a qthread that's reading their message pipe
     self.thread =QValkkaThread(processes=self.processes)
@@ -416,31 +196,30 @@ class MyGui(QtWidgets.QMainWindow):
   
   
   def stopProcesses(self):
-    # self.thread.stop()
     for p in self.processes:
       p.stop()
+    print(pre,"stopping QThread")
     self.thread.stop()
-    self.thread.wait()
+    # self.thread.quit() # nopes ..
+    print(pre,"QThread stopped")
     
-        
+    
   def closeEvent(self,e):
     print(pre,"closeEvent!")
     self.stopProcesses()
+    self.chains=[]
+    self.videoframes=[]
+    self.widget_pairs=[]
     super().closeEvent(e)
 
 
 
 def main():
   app=QtWidgets.QApplication(["test_app"])
-  
-  
-  conf=ConfigDialog()
+  conf=MyConfigDialog()
   pardic=conf.exec_()
-  
-  print(pre,"got",pardic)
-
+  # print(pre,"got",pardic)
   # return
-  
   if (pardic["ok"]):
     mg=MyGui(pardic)
     mg.show()

@@ -1,5 +1,5 @@
 """
-valkkathread.py : A frontend thread for ValkkaProcesses
+valkkathread.py : Multiprocesses / Qt intercommunication through pipes and signals.  See the test_studio_*.py for examples.
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -13,7 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @author  Sampsa Riikonen
 @date    2017
 @version 0.1
-@brief   A frontend thread for ValkkaProcesses
+@brief   Multiprocesses / Qt intercommunication through pipes and signals
 
 
 When using python multiprocesses with Qt, we need a frontend thread that reads the process communication pipes and turns the messages sent by the process into Qt signals.
@@ -22,7 +22,7 @@ When using python multiprocesses with Qt, we need a frontend thread that reads t
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
 import time
-from valkka.api2.threads import ValkkaProcess, Namespace, safe_select
+from valkka.api2.threads import ValkkaProcess, Namespace, safe_select, ShmemClient
 from valkka.api2.tools import *
 
 
@@ -96,6 +96,108 @@ class QValkkaProcess(ValkkaProcess):
   
   
 
+class QValkkaOpenCVProcess(ValkkaProcess):
+  """A multiprocess with Qt signals, using OpenCV
+  """
+  
+  incoming_signal_defs={ # each key corresponds to a front- and backend methods
+    "test_"    : {"test_int": int, "test_str": str},
+    "stop_"    : [],
+    "ping_"    : {"message":str}
+    }
+  
+  outgoing_signal_defs={
+    "pong_o"    : {"message":str}
+    }
+  
+  # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
+  class Signals(QtCore.QObject):  
+    pong_o  =QtCore.pyqtSignal(object)
+  
+  
+  parameter_defs={
+    "n_buffer"   : (int,10),
+    "n_bytes"    : int,
+    "shmem_name" : str
+    }
+  
+  
+  def __init__(self,name,**kwargs):
+    super().__init__(name,**kwargs)
+    self.signals =self.Signals()
+    parameterInitCheck(QValkkaOpenCVProcess.parameter_defs, kwargs, self)
+    
+    
+  def preRun_(self):
+    """Create the shared memory client after fork
+    """
+    self.client=ShmemClient(
+      name          =self.shmem_name, 
+      n_ringbuffer  =self.n_buffer,   # size of ring buffer
+      n_bytes       =self.n_bytes,    # size of the RGB image
+      mstimeout     =1000,            # client timeouts if nothing has been received in 1000 milliseconds
+      verbose       =False
+    )
+    
+    
+  def cycle_(self):
+    index, isize = self.client.pull()
+    if (index==None):
+      print(self.pre,"Client timed out..")
+    else:
+      print(self.pre,"Client index, size =",index, isize)
+      data=self.client.shmem_list[index]
+      img=data.reshape((1080//4,1920//4,3))
+      """ # WARNING: the x-server doesn't like this, i.e., we're creating a window from a separate python multiprocess, so the program will crash
+      print(self.pre,"Visualizing with OpenCV")
+      cv2.imshow("openCV_window",img)
+      cv2.waitKey(1)
+      """
+      print(self.pre,">>>",data[0:10])
+      
+      # res=self.analyzer(img) # does something .. returns something ..
+      
+  
+  # *** backend methods corresponding to incoming signals ***
+  def stop_(self):
+    self.running=False
+  
+  
+  def test_(self,test_int=0,test_str="nada"):
+    print(self.pre,"test_ signal received with",test_int,test_str)
+    
+  
+  def ping_(self,message="nada"):
+    print(self.pre,"At backend: ping_ received",message,"sending it back to front")
+    self.sendSignal_(name="pong_o",message=message)
+  
+  
+  # ** frontend methods launching incoming signals
+  def stop(self):
+    self.sendSignal(name="stop_")
+  
+  
+  def test(self,**kwargs):
+    dictionaryCheck(self.incoming_signal_defs["test_"],kwargs)
+    kwargs["name"]="test_"
+    self.sendSignal(**kwargs)
+    
+    
+  def ping(self,**kwargs):
+    dictionaryCheck(self.incoming_signal_defs["ping_"],kwargs)
+    kwargs["name"]="ping_"
+    self.sendSignal(**kwargs)
+  
+  
+  # ** frontend methods handling received outgoing signals ***
+  def pong_o(self,message="nada"):
+    print(self.pre,"At frontend: pong got message",message)
+    ns=Namespace()
+    ns.message=message
+    self.signals.pong_o.emit(ns)
+  
+  
+  
 class QValkkaThread(QtCore.QThread):
   """A QThread that sits between multiprocesses message pipe and Qt's signal system
   
