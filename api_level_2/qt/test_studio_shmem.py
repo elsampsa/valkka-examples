@@ -57,7 +57,7 @@ from valkka.api2.chains import ShmemFilterchain
 from valkka.api2.tools import parameterInitCheck
 from valkkathread import QValkkaThread, QValkkaOpenCVProcess
 from analyzer import MovementDetector
-from demo_base import ConfigDialog, TestWidget0, TestWidget, getForeignWidget, WidgetPair
+from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
 
 pre="test_studio_shmem : "
