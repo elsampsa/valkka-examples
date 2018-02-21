@@ -56,7 +56,7 @@ import os
 import time
 from valkka.api2.threads import LiveThread, OpenGLThread
 from valkka.api2.chains import BasicFilterchain
-from demo_base import ConfigDialog, TestWidget0, TestWidget, getForeignWidget, WidgetPair
+from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
 pre="test_studio : " # aux string for debugging 
 
@@ -167,7 +167,7 @@ class MyGui(QtWidgets.QMainWindow):
           # fr     =getForeignWidget(self.w, win_id)
           
           # (2) Let Qt create the widget
-          # fr =TestWidget(self.w); win_id =int(fr.winId()) 
+          # fr =TestWidget0(self.w); win_id =int(fr.winId()) 
           
           # """
           # (3) Again, let Valkka create the window, but put on top a translucent widget (that catches mouse gestures)

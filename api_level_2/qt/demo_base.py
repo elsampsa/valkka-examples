@@ -16,7 +16,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui, QtOpenGL # Qt5
+from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 import json
 import os
@@ -31,11 +31,12 @@ class TestWidget0(QtWidgets.QWidget):
         print("double click!")
 
     
+"""
 class TestWidget(QtOpenGL.QGLWidget):
   
   def mouseDoubleClickEvent(self,e):
         print("double click!")
-  
+"""
   
   
 def getForeignWidget(parent, win_id): 
