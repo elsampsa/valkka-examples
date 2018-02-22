@@ -178,6 +178,8 @@ class ConfigDialog(QtWidgets.QDialog):
     
   def putPars(self):
     for i, key in enumerate(self.plis):
+      if ((key not in self.partext) or (key not in self.pardic)):
+        raise(AssertionError("Your config file "+self.config_fname+" is corrupt or out-of-date.  Remove it and try again"))
       t2 = self.partext[key]
       t2.setText(str(self.pardic[key]))
     st=""
