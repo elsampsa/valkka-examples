@@ -139,6 +139,7 @@ class MyGui(QtWidgets.QMainWindow):
     self.ctx.connection_type=LiveConnectionType_rtsp # this is an rtsp connection
     self.ctx.address=self.stream_address             # stream address, i.e. "rtsp://.."
     self.ctx.framefilter=self.live_out_filter        # where the received frames are written to.  See filterchain (**)
+    self.ctx.msreconnect=0                           # do not attempt to reconnect if stream dies
         
     # send the information about the stream to LiveThread
     print("registering stream")

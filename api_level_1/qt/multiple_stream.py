@@ -75,6 +75,7 @@ class FilterChain:
       self.ctx.connection_type=LiveConnectionType_sdp
     self.ctx.address=self.address
     self.ctx.framefilter=self.av_in_filter
+    self.ctx.msreconnect=0 # do reconnection if the stream dies out
     
     self.avthread.startCall()
     self.avthread.decodingOnCall()

@@ -227,7 +227,7 @@ class MyGui(QtWidgets.QMainWindow):
       n1080p  =self.pardic["n1080p"],
       n1440p  =self.pardic["n1440p"],
       n4K     =self.pardic["n4K"],
-      naudio  =self.pardic["naudio"],
+      # naudio  =self.pardic["naudio"], # obsolete
       verbose =False,
       msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
