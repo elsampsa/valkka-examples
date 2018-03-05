@@ -49,7 +49,7 @@ For benchmarking purposes, you can launch the video streams with:
 This Qt test program produces a config file.  You might want to remove that config file after updating the program.
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui, QtOpenGL # Qt5
+from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 import json
 import os
@@ -149,7 +149,8 @@ class MyGui(QtWidgets.QMainWindow):
         slot        =cs,
         affinity    =a,
         # verbose     =True
-        verbose     =False
+        verbose     =False,
+        msreconnect =10000
         )
   
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..

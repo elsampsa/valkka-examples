@@ -52,7 +52,6 @@ import cv2
 import sys
 import json
 import os
-from valkka.valkka_core import XInitThreads
 from valkka.api2.threads import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2.chains import ShmemFilterchain
 from valkka.api2.tools import parameterInitCheck
@@ -260,7 +259,8 @@ class MyGui(QtWidgets.QMainWindow):
         shmem_name             ="test_studio_"+str(cs),
         shmem_image_dimensions =(1920//4,1080//4),  # Images passed over shmem are quarter of the full-hd reso
         shmem_image_interval   =1000,               # YUV => RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer
-        shmem_ringbuffer_size  =10                  # Size of the shmem ringbuffer
+        shmem_ringbuffer_size  =10,                 # Size of the shmem ringbuffer
+        msreconnect =10000
         )
     
       shmem_name, n_buffer, n_bytes =chain.getShmemPars()

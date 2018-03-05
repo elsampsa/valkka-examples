@@ -255,6 +255,7 @@ class QValkkaThread(QtCore.QThread):
  
   def stop(self):
     self.loop=False
+    self.wait()
  
  
   def __getattr__(self,attr):
