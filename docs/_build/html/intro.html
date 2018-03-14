@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>About Valkka &mdash; valkka_examples 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
+    <link rel="next" title="Installing" href="requirements.html" />
+    <link rel="prev" title="Valkka Examples" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="requirements.html" title="Installing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Valkka Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="intro"></span><div class="section" id="about-valkka">
+<h1>About Valkka<a class="headerlink" href="#about-valkka" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-problem">
+<h2>The problem<a class="headerlink" href="#the-problem" title="Permalink to this headline">¶</a></h2>
+<p><em>So, yet another media player?  I need to stream video into my python/Qt program and I want something that can be developed fast and is easy to integrate into my code.  What&#8217;s here for me?</em></p>
+<p>If you just need to stream video from your IP cameras, decode it and show it on the screen, we recommend a standard media player, say, VCL and its python bindings.</p>
+<p>However, if you need to stream video and <em>simultaneously</em> (1) present it on the screen, (2) analyze it with machine vision, (3) write it to disk, and even (4) recast it to other clients, stock media players won&#8217;t do.</p>
+<p>Such requirements are typical in large-scale video surveillance, management and analysis solutions.  Demand for them is growing rapidly due to continuous decline in IP camera prices and growing computing power.</p>
+<p>As a solution, you might try connect to the <em>same</em> camera 4 times and decode the stream 4 times - but then you&#8217;ll burn all that CPU for nothing (you should decode only once).  And try to scale that only to, say, 20+ cameras.  In order avoid too many connections to your IP cameras (this is typically limited by the camera), you might desperately try your luck even with the multicast loopback.  We&#8217;ve been there and it&#8217;s not a good idea.  And how about pluggin in your favorite machine vision/learning module, written with OpenCV or TensorFlow?</p>
+</div>
+<div class="section" id="the-solution">
+<h2>The solution<a class="headerlink" href="#the-solution" title="Permalink to this headline">¶</a></h2>
+<p>Valkka will solve the problem for you; It is a programming library and an API to do just that - large scale video surveillance, management and analysis programs, from the comfort of python3.  Welcome to internet of things in video surveillance!</p>
+<p>With Valkka, you can create complex pipings (&#8220;filtergraphs&#8221;) of media streams from the camera, to screen, machine vision subroutines, to disk, to the net, etc.  The code runs at the cpp level with threads, thread-safe queues, mutexes, semaphores, etc.  All those gory details are hidden from the API user that programs filtergraphs at the python level only.  Valkka can also share frames between python processes (and from there, with OpenCV, TensorFlow, etc.)</p>
+<p>If you got interested, we recommend that you do the tutorial, and use the examples as a starting point.</p>
+<p>This manual has a special emphasis for Qt and OpenCV.  You can create video streaming applications using PyQt: streaming video to widgets, and connect the signals from your machine vision subprograms to the Qt signal/slot system - and beyond.</p>
+<p>A test/benchmarking Qt test suite is provided here.</p>
+<p>For more technical information, check out the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/process_chart.html">library architecture page</a></p>
+<p>Finally, here is a small sample from the tutorial.  You&#8217;ll get the idea.</p>
+<div class="highlight-python"><div class="highlight"><pre>main branch, streaming
+(LiveThread:livethread) --&gt; {FifoFrameFilter:live_out_filter} --&gt; [FrameFifo: av_fifo]
+                                                                          |
+                                                                          |
+{ForkFrameFilter: fork_filter} &lt;----(AVThread:avthread) &lt;&lt; ---------------+  main branch, decoding
+               |
+      branch 1 +--&gt; {FifoFrameFilter:gl_in_gilter} --&gt; [OpenGLFrameFifo:gl_fifo] --&gt;&gt; (OpenGLThread:glthread) --&gt; To X-Window System
+               |
+      branch 2 +--&gt; {IntervalFrameFilter: interval_filter} --&gt; {SwScaleFrameFilter: sws_filter} --&gt; {SharedMemFrameFilter: shmem_filter}
+                                                                                                                  |
+                                                                                              To OpenCV  &lt;--------+
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-project">
+<h2>The project<a class="headerlink" href="#the-project" title="Permalink to this headline">¶</a></h2>
+<p>Valkka is in early beta stage.  Even so, you can do lot of stuff with it - all the things we have promised here in the intro, at least.  Check out the tentative project timetable <a class="reference internal" href="timetable.html#timetable"><span>here</span></a></p>
+<p>Valkka is open source software, licensed under the GNU Affero General Public License.  We also offer other licenses (mostly LGPL).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">About Valkka</a><ul>
+<li><a class="reference internal" href="#the-problem">The problem</a></li>
+<li><a class="reference internal" href="#the-solution">The solution</a></li>
+<li><a class="reference internal" href="#the-project">The project</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Valkka Examples</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="requirements.html"
+                        title="next chapter">Installing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/intro.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="requirements.html" title="Installing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Valkka Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017 Sampsa Riikonen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

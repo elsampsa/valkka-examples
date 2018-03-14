@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Lesson 7 : Decode, save, visualize, analyze and re-transmit &mdash; valkka_examples 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
+    <link rel="up" title="Tutorial" href="tutorial.html" />
+    <link rel="next" title="&lt;no title&gt;" href="testsuite.html" />
+    <link rel="prev" title="Lesson 6 : Writing / reading stream" href="lesson_6.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="testsuite.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lesson_6.html" title="Lesson 6 : Writing / reading stream"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="tutorial.html" accesskey="U">Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lesson-7-decode-save-visualize-analyze-and-re-transmit">
+<h1>Lesson 7 : Decode, save, visualize, analyze and re-transmit<a class="headerlink" href="#lesson-7-decode-save-visualize-analyze-and-re-transmit" title="Permalink to this headline">¶</a></h1>
+<p>This lesson demonstrates the full power of Valkka.  We do simultaneously a lot of stuff, namely, save the stream to disk, decode it to bitmap, visualize it in two different x windows, pass the decoded frames to an OpenCV analyzer and re-transmit the stream to a multicast address.</p>
+<p>Only a single connection to the IP camera is required and the stream is decoded only once.</p>
+<p>This can be achieved with the following filtergraph:</p>
+<div class="highlight-python"><div class="highlight"><pre>main branch
+(LiveThread:livethread) --&gt; {ForkFrameFilter3: fork_filter}
+                                         |
+                            branch 1 &lt;---+
+                                         |
+                            branch 2 &lt;---+
+                                         |
+                            branch 3 &lt;---+
+
+branch 1 : recast
+--&gt; {FifoFrameFilter:fifo_filter_1} --&gt; [LiveFifo:live_fifo_1] --&gt;&gt; (LiveThread:livethread2_1)
+
+branch 2 : save to disk
+--&gt; (FileFrameFilter:file_filter_2)
+
+branch 3 : decode
+--&gt; {FifoFrameFilter:fifo_filter_3} --&gt; [FrameFifo: av_fifo_3] ---&gt;&gt; (AVThread:avthread_3) --+
+                                                                                             |
+ {ForkFrameFilter: fork_filter_3} &lt;----------------------------------------------------------+
+                 |
+      branch 3.1 +--&gt; {FifoFrameFilter:gl_in_filter_3_1} --&gt; [OpenGLFrameFifo:gl_fifo_3_1] --&gt;&gt; (OpenGLThread:glthread_3_1) --&gt; to two x-windows
+                 |
+      branch 3.2 +--&gt; {IntervalFrameFilter: interval_filter_3_2} --&gt; {SwScaleFrameFilter: sws_filter_3_2} --&gt; {SharedMemFrameFilter: shmem_filter_3_2}
+</pre></div>
+</div>
+<p>There is a new naming convention: the names of filters, threads and fifos are tagged with &#8220;_branch_sub-branch&#8221;.</p>
+<p>Programming the filtergraph tree is started from the outer leaves, moving towards the main branch:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># ** branch 3.1 **</span>
+<span class="n">glthread_3_1</span>     <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># parameters are as follows: thread name, n720p, n1080p, n1440p, n4K</span>
+<span class="n">gl_fifo_3_1</span>      <span class="o">=</span><span class="n">glthread_3_1</span><span class="o">.</span><span class="n">getFifo</span><span class="p">()</span>
+<span class="n">gl_in_filter_3_1</span> <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;gl_in_filter_3_1&quot;</span><span class="p">,</span><span class="n">gl_fifo_3_1</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="o">...</span>
+<span class="c1"># *** branch 3 ***</span>
+<span class="n">av_fifo_3</span>      <span class="o">=</span><span class="n">FrameFifo</span><span class="p">(</span><span class="s2">&quot;av_fifo_3&quot;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fork_filter_3</span>  <span class="o">=</span><span class="n">ForkFrameFilter</span><span class="p">(</span><span class="s2">&quot;fork_filter_3&quot;</span><span class="p">,</span> <span class="n">gl_in_filter_3_1</span><span class="p">,</span> <span class="n">interval_filter_3_2</span><span class="p">)</span>
+<span class="n">fifo_filter_3</span>  <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;fifo_filter_3&quot;</span><span class="p">,</span><span class="n">av_fifo_3</span><span class="p">)</span>
+<span class="n">avthread_3</span>     <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread_3&quot;</span><span class="p">,</span><span class="n">av_fifo_3</span><span class="p">,</span><span class="n">fork_filter_3</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="o">...</span>
+<span class="c1"># *** main branch ***</span>
+<span class="n">livethread</span>  <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread_1&quot;</span><span class="p">)</span>
+<span class="n">fork_filter</span> <span class="o">=</span><span class="n">ForkFrameFilter3</span><span class="p">(</span><span class="s2">&quot;fork_filter&quot;</span><span class="p">,</span><span class="n">fifo_filter_1</span><span class="p">,</span><span class="n">file_filter_2</span><span class="p">,</span><span class="n">fifo_filter_3</span><span class="p">)</span>
+<span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fork_filter</span><span class="p">)</span> <span class="c1"># stream from 192.168.1.41 is sent to fork_filter with slot number 2</span>
+</pre></div>
+</div>
+<p>The full code can be downloaded from <a class="reference download internal" href="_downloads/lesson_7_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a>.</p>
+<p>The OpenCV client program for reading shared memory can be found from <a class="reference internal" href="lesson_4.html#opencv-client"><span>[lesson 4]</span></a>.</p>
+<p>Testing the shared multicast stream was explained in <a class="reference internal" href="lesson_5.html#multicast"><span>[lesson 5]</span></a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lesson_6.html"
+                        title="previous chapter">Lesson 6 : Writing / reading stream</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testsuite.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lesson_7.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="testsuite.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lesson_6.html" title="Lesson 6 : Writing / reading stream"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="tutorial.html" >Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017 Sampsa Riikonen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

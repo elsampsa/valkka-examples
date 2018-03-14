@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Lesson 6 : Writing / reading stream &mdash; valkka_examples 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
+    <link rel="up" title="Tutorial" href="tutorial.html" />
+    <link rel="next" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit" href="lesson_7.html" />
+    <link rel="prev" title="Lesson 5 : Sending frames to a multicast address" href="lesson_5.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lesson_5.html" title="Lesson 5 : Sending frames to a multicast address"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="tutorial.html" accesskey="U">Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lesson-6-writing-reading-stream">
+<h1>Lesson 6 : Writing / reading stream<a class="headerlink" href="#lesson-6-writing-reading-stream" title="Permalink to this headline">¶</a></h1>
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_6_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p>In this lesson, we are (a) writing from a live stream to a file and (b) read the file, decode the stream and present it on the screen.  The filtergraph goes like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>*** writing ***
+
+(LiveThread:livethread) --&gt; {FileFrameFilter:file_filter}
+
+*** reading ***
+
+reading part
+(FileThread:filethread) --&gt; {BlockingFifoFrameFilter:av_filter} --&gt; [FrameFifo:av_fifo]
+                                                                           |
+decoding part                                                              |
+    (AVThread:avthread) &lt;&lt; ------------------------------------------------+
+              |
+              |                                                                         Presentation part
+              +---&gt; {FifoFrameFilter:gl_in_filter} --&gt; [OpenGLFrameFifo:gl_fifo] --&gt;&gt; (OpenGLThread:glthread)
+</pre></div>
+</div>
+<p>Note that live and file streams are treated on an equal basis and with a similar filtergraph.  We could also send the file over the net as a multicast stream.  This is left as an excercise.</p>
+<p>Writing is done simply by piping the stream into a FileFrameFilter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** writing ***</span>
+<span class="n">livethread</span>   <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
+<span class="n">file_filter</span>  <span class="o">=</span><span class="n">FileFrameFilter</span><span class="p">(</span><span class="s2">&quot;file_filter&quot;</span><span class="p">)</span>
+<span class="c1"># file_filter  =BriefInfoFrameFilter(&quot;info_filter&quot;) # uncomment this to do debugging (i.e., are you getting any frames?)</span>
+<span class="c1"># stream from 192.168.1.41, tag frames with slot number 1 and write to file_filter</span>
+<span class="n">ctx</span>          <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">file_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Keep in mind that it is the LiveThread that &#8220;drives&#8221; the writing to the disk (in the first filtergraph, there is just one thread, the LiveThread)</p>
+<p>For reading, decoding and presenting, we instantiate the threads and construct the filtergraph as usual:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** reading ***</span>
+<span class="n">glthread</span>      <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># parameters are as follows: thread name, n720p, n1080p, n1440p, n4K</span>
+<span class="n">gl_fifo</span>       <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFifo</span><span class="p">()</span>
+<span class="n">gl_in_filter</span>  <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;gl_in_filter&quot;</span><span class="p">,</span><span class="n">gl_fifo</span><span class="p">)</span>
+
+<span class="c1"># used by both reading and decoding parts</span>
+<span class="n">av_fifo</span>       <span class="o">=</span><span class="n">FrameFifo</span><span class="p">(</span><span class="s2">&quot;av_fifo&quot;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># reading part</span>
+<span class="n">av_filter</span>     <span class="o">=</span><span class="n">BlockingFifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;av_filter&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">)</span>
+<span class="n">filethread</span>    <span class="o">=</span><span class="n">FileThread</span><span class="p">(</span><span class="s2">&quot;filethread&quot;</span><span class="p">)</span>
+<span class="n">file_ctx</span>      <span class="o">=</span><span class="n">FileContext</span><span class="p">(</span><span class="s2">&quot;kokkelis.mkv&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_filter</span><span class="p">)</span> <span class="c1"># read from file &quot;kokkelis.mkv&quot;, tag frames with slot number 1 and write to av_filter</span>
+
+<span class="c1"># decoding part</span>
+<span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">,</span><span class="n">gl_in_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Starting LiveThread will stream the frames to FileFrameFilter.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** writing ***</span>
+<span class="c1"># start streaming</span>
+<span class="n">livethread</span> <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">livethread</span> <span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">livethread</span> <span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In order to start writing to disk, FileFrameFilter&#8217;s &#8220;activate&#8221; method must be called with the filename.  Only matroska (.mkv) files are supported:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># start writing to a file</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;writing to file&quot;</span><span class="p">)</span>
+<span class="n">file_filter</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="s2">&quot;kokkelis.mkv&quot;</span><span class="p">)</span>
+
+<span class="c1"># stream for 30 secs</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="c1"># close the file</span>
+<span class="n">file_filter</span><span class="o">.</span><span class="n">deActivate</span><span class="p">()</span>
+
+<span class="c1"># stop livethread</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Let&#8217;s setup stream decoding, presenting, etc. as usual:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** reading ***</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;reading file&quot;</span><span class="p">)</span>
+<span class="n">glthread</span>   <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">filethread</span> <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">avthread</span>   <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+
+<span class="c1"># start decoding</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">decodingOnCall</span><span class="p">()</span>
+
+<span class="c1"># create an x-window</span>
+<span class="n">window_id</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">newRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+
+<span class="c1"># maps stream with slot 1 to window &quot;window_id&quot;</span>
+<span class="n">context_id</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderContextCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Open the file by sending it a call with the FileContext (file_ctx) identifying the file stream:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s2">&quot;open file&quot;</span><span class="p">)</span>
+<span class="n">filethread</span><span class="o">.</span><span class="n">openFileStreamCall</span><span class="p">(</span><span class="n">file_ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Playing, seeking and stopping is done as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s2">&quot;play file&quot;</span><span class="p">)</span>
+<span class="n">filethread</span><span class="o">.</span><span class="n">playFileStreamCall</span><span class="p">(</span><span class="n">file_ctx</span><span class="p">)</span>
+
+<span class="c1"># play the file for 10 secs</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># let&#39;s seek to seekpoint 2 seconds</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;seeking&quot;</span><span class="p">)</span>
+<span class="n">file_ctx</span><span class="o">.</span><span class="n">seektime_</span><span class="o">=</span><span class="mi">2000</span>
+<span class="n">filethread</span><span class="o">.</span><span class="n">seekFileStreamCall</span><span class="p">(</span><span class="n">file_ctx</span><span class="p">)</span>
+
+<span class="c1"># pause for 3 secs</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;pausing&quot;</span><span class="p">)</span>
+<span class="n">filethread</span><span class="o">.</span><span class="n">stopFileStreamCall</span><span class="p">(</span><span class="n">file_ctx</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># continue playing for 5 secs</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;play again&quot;</span><span class="p">)</span>
+<span class="n">filethread</span><span class="o">.</span><span class="n">playFileStreamCall</span><span class="p">(</span><span class="n">file_ctx</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, exit:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+<span class="n">filethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">avthread</span>  <span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">glthread</span>  <span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lesson_5.html"
+                        title="previous chapter">Lesson 5 : Sending frames to a multicast address</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="lesson_7.html"
+                        title="next chapter">Lesson 7 : Decode, save, visualize, analyze and re-transmit</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lesson_6.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lesson_5.html" title="Lesson 5 : Sending frames to a multicast address"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="tutorial.html" >Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017 Sampsa Riikonen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

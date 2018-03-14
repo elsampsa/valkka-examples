@@ -208,7 +208,6 @@ class QValkkaThread(QtCore.QThread):
   The processes have methods that launch ingoing signals (like ping(message="hello")) and Qt signals that can be connected to slots (e.g. process.signals.pong_o.connect(slot))
   """
   
-  
   def __init__(self,timeout=1,processes=[]):
     super().__init__()
     self.pre=self.__class__.__name__+" : "
@@ -238,10 +237,7 @@ class QValkkaThread(QtCore.QThread):
       rlis.append(key)
     
     while self.loop:
-      # tlis=select.select(rlis,wlis,elis)
-      # print(self.pre,"select")
       tlis=safe_select(rlis,wlis,elis,timeout=self.timeout)
-      # print(self.pre,"did select")
       for pipe in tlis[0]:
         p=self.process_by_pipe[pipe] # let's find the process that sent the message to the pipe
         # print("receiving from",p,"with pipe",pipe)

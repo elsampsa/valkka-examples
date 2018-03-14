@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Lesson 2 : Decoding &mdash; valkka_examples 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
+    <link rel="up" title="Tutorial" href="tutorial.html" />
+    <link rel="next" title="Lesson 3 : Streaming to the X-Window System" href="lesson_3.html" />
+    <link rel="prev" title="Lesson 1 : Receiving frames from an IP camera" href="lesson_1.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-Window System"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="tutorial.html" accesskey="U">Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lesson-2-decoding">
+<h1>Lesson 2 : Decoding<a class="headerlink" href="#lesson-2-decoding" title="Permalink to this headline">¶</a></h1>
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_2_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p>Let&#8217;s consider the following filtergraph:</p>
+<div class="highlight-python"><div class="highlight"><pre>Streaming part                                                                          | Decoding part
+                                                                                        |
+(LiveThread:livethread) --&gt; {FifoFrameFilter:live_out_filter} --&gt; [FrameFifo: av_fifo] --&gt;&gt; (AVThread:avthread) --&gt; {InfoFrameFilter:info_filter}
+</pre></div>
+</div>
+<p>Compared to the previous lesson, we have lot&#8217;s of new stuff here.</p>
+<p>The &#8220;entry point&#8221; framefilter &#8220;live_out_filter&#8221; writes to a class called &#8220;FrameFifo&#8221;.</p>
+<p>FrameFifo is a &#8220;first-in-first-out&#8221; (fifo) queue for frames.  One thread writes frames to the fifo, while the other one reads them, like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>LiveThread writes frames --&gt;&gt; [f5 f4 f3 f2 f1] --&gt;&gt; AVThread reads frames
+</pre></div>
+</div>
+<p>So it acts as a bridge between independently running threads.  In our notation the &#8220;&gt;&gt;&#8221; arrow is used to emphasize cross-over between threads.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">FrameFifo has an internal stack of pre-reserved frames and mutex protection.  This works &#8220;under the hood&#8221; and is no concern for the API user.</p>
+</div>
+<p>In order to write into the FrameFifo, we need a special frame filter class FifoFrameFilter.</p>
+<p>AVThread, on the other hand, reads directly from the fifo.  To keep things consistent, we follow this rule:</p>
+<p><strong>Threads write into FrameFilter.  Threads read from FrameFifo</strong></p>
+<p>Finally, there is business as usual, on the &#8220;Decoding part&#8221;: we could continue FrameFilter chains from AVThread, fork them, etc. as in the previous lesson.  In this example, we just print out the decoded (bitmap) frames.</p>
+<p>The complete filterchain can be constructed like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># used by both streaming and decoding parts</span>
+<span class="n">av_fifo</span>         <span class="o">=</span><span class="n">FrameFifo</span><span class="p">(</span><span class="s2">&quot;av_fifo&quot;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># streaming part</span>
+<span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
+<span class="n">live_out_filter</span> <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">)</span>
+
+<span class="c1"># decoding part</span>
+<span class="n">info_filter</span>     <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;info_filter&quot;</span><span class="p">)</span>
+<span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">,</span><span class="n">info_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As usual, create a context describing the connection:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Start both LiveThread and AVThread:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Order AVThread to start decoding:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">avthread</span><span class="o">.</span><span class="n">decodingOnCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Start streaming:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, stop streaming:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># stop decoding</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">decodingOffCall</span><span class="p">()</span>
+
+<span class="c1"># stop threads</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You will see output like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>...
+...
+InfoFrameFilter: info_filter start dump&gt;&gt;
+InfoFrameFilter: FRAME   : &lt;Frame: size=0/0 timestamp=1519997727455 subsession_index=0 slot=1 / AVFRAME&gt;
+InfoFrameFilter: PAYLOAD : []
+InfoFrameFilter:&lt;AVFrame height         : 1080
+AVFrame width          : 1920
+AVFrame linesizes      : 1920 960 960
+AVFrame format         : 12
+AVCodecContext pix_fmt : 12
+&gt;
+InfoFrameFilter: timediff: -48
+InfoFrameFilter: info_filter &lt;&lt;end dump
+...
+...
+</pre></div>
+</div>
+<p>So, instead of H264 packets, we have decoded bitmap frames here.</p>
+<p>In the next lesson, we&#8217;ll dump them on the screen.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There are several FrameFifo and Thread classes in Valkka.  See the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/inherits.html">inheritance diagram</a>.  Only a small subset of the methods should be called by the API user.  These typically end with the word &#8220;Call&#8221; (and are marked with the &#8220;&lt;pyapi&gt;&#8221; tag).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lesson_1.html"
+                        title="previous chapter">Lesson 1 : Receiving frames from an IP camera</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="lesson_3.html"
+                        title="next chapter">Lesson 3 : Streaming to the X-Window System</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lesson_2.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-Window System"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="tutorial.html" >Tutorial</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017 Sampsa Riikonen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>

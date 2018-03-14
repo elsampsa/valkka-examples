@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Programming with Qt &mdash; valkka_examples 1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
+    <link rel="next" title="&lt;no title&gt;" href="testsuite.html" />
+    <link rel="prev" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit" href="lesson_7.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="testsuite.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="programming-with-qt">
+<h1>Programming with Qt<a class="headerlink" href="#programming-with-qt" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="general-aspects">
+<h2>General aspects<a class="headerlink" href="#general-aspects" title="Permalink to this headline">¶</a></h2>
+<p>Valkka can be used with any GUI framework, say, with GTK or Qt.  Here we have an emphasis on Qt, but the general guidelines discussed here, apply to any other GUI framework as well.  Concrete examples are provided only for Qt.</p>
+<p>For any GUI framework, this is what you want to do:</p>
+<ol class="arabic simple">
+<li>At the GUI&#8217;s main window constructor, program your filtergraph and create signal/slot connections to Valkka&#8217;s methods</li>
+<li>Still at the main window ctor, start all threads</li>
+<li>Start your GUI frameworks execution loop</li>
+<li>At main window close event, close all threads</li>
+</ol>
+<p>X-windows, i.e. &#8220;widgets&#8221; in the Qt slang, can be created at the Qt side and passed to Valkka.  Alternatively, x-windows can be created at the Valkka side and passed to Qt as &#8220;foreign widgets&#8221;.  We recommend the latter approach.</p>
+<p>Complex filterchains per camera should be encapsulated in classes, like we did in the <a class="reference internal" href="lesson_3.html#multiple-streams"><span>tutorial</span></a>.</p>
+<p>Some typical filterclasses are readily accessible at the API 2 level and are suitable for direct integration into your Qt program.</p>
+</div>
+<div class="section" id="python-multiprocessing">
+<h2>Python multiprocessing<a class="headerlink" href="#python-multiprocessing" title="Permalink to this headline">¶</a></h2>
+<p>In <a class="reference internal" href="lesson_4.html#opencv-client"><span>lesson 4</span></a> of the tutorial, we launched a separate python interpreter running a client program that was using shared frames from the camera.</p>
+<p>That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with python3&#8217;s <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a> library.</p>
+<p>Using python multiprocesses in a Qt program complicates things a bit, but not that much.  We simply need a way to map from events taking place at the multiprocess into signals at the main Qt program.  This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.</p>
+<p>Let&#8217;s state that graphically:</p>
+<div class="highlight-python"><div class="highlight"><pre>Qt main loop running with signals and slots
+    |
+    +--- QThread receiving/sending signals --- writing/reading communication pipes
+         ==&gt; use an instance of QValkkaThread               |
+                                                       +----+----+
+                                                       |    |    |
+                                                       python multiprocesses doing their thing
+                                                       and writing/reading their communication pipes
+                                                       ==&gt; subclass from api2.threads.ValkkaProcess
+</pre></div>
+</div>
+<p>For interprocess communication with the Qt signal/slot system, you can use the following strategy:</p>
+<div class="highlight-python"><div class="highlight"><pre>+--------------------------------------+
+|                                      |
+| QValkkaThread (derived from QThread) |
+|  watching the communication pipe     |
+|                   +----- reads &quot;ping&quot;|
+|                   |               |  |
++-------------------|------------------+
+                    |               |
+ +------------------|-------+       |        ...
+ | Frontend methods |       |       ^          :
+ |                  |       |      pipe        :
+ | def ping():  &lt;---+       |       |          :
+ |   do something           |       |          :
+ |   (say, send a qt signal)|       |          :
+ |                          |       |          :
+ | def pong(): # qt slot    |       |          :
+ |   sendSignal(&quot;pong&quot;) ---------+  |          :
+ |                          |    |  |          :    api2.threads.ValkkaProcess
+ +--------------------------+    |  |          :
+ | Backend methods          |    |  |          :    Backend is running in the &quot;background&quot; at its own memory space
+ |                          |    |  |          :
+ | sendSignal_(&quot;ping&quot;)  -------&gt;----+          :
+ |                          |    |             :
+ | watching childpipe &lt;------- childpipe       :
+ |                 |        |                  :
+ | def pong_():  &lt;-+        |                  :
+ |  do something            |                  :
+ |                          |                  :
+ +--------------------------+                ..:
+</pre></div>
+</div>
+<p>Two stripped-down sample programs are provided in</p>
+<div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
+
+  multiprocessing_demo.py
+  multiprocessing_demo_signals.py
+</pre></div>
+</div>
+</div>
+<div class="section" id="drawing-video-to-a-widget">
+<h2>Drawing video to a widget<a class="headerlink" href="#drawing-video-to-a-widget" title="Permalink to this headline">¶</a></h2>
+<p>TODO</p>
+</div>
+<div class="section" id="streaming-from-several-cameras">
+<h2>Streaming from several cameras<a class="headerlink" href="#streaming-from-several-cameras" title="Permalink to this headline">¶</a></h2>
+<p>For decoding, visualizing and analyzing a large number of cameras, filterchains should be encapsulated in classes, like we did in tutorial, <a class="reference internal" href="lesson_3.html#multiple-streams"><span>lesson 3</span></a>.</p>
+<p>API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Programming with Qt</a><ul>
+<li><a class="reference internal" href="#general-aspects">General aspects</a></li>
+<li><a class="reference internal" href="#python-multiprocessing">Python multiprocessing</a></li>
+<li><a class="reference internal" href="#drawing-video-to-a-widget">Drawing video to a widget</a></li>
+<li><a class="reference internal" href="#streaming-from-several-cameras">Streaming from several cameras</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lesson_7.html"
+                        title="previous chapter">Lesson 7 : Decode, save, visualize, analyze and re-transmit</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="testsuite.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/qt_notes.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="testsuite.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2017 Sampsa Riikonen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
+    </div>
+  </body>
+</html>
