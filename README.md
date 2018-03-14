@@ -2,7 +2,7 @@
 
 Massive video streaming for Linux - Python3 API and Qt examples.
 
-Everything you need is [here](https://elsampsa.github.io/valkka_examples/)
+Everything you need is [here](https://elsampsa.github.io/valkka-examples/)
 
 ## Authors
 Sampsa Riikonen
