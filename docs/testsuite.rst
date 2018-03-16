@@ -25,6 +25,7 @@ test_studio_detector.py    | Like *test_studio_1.py*, but with a simple
 test_studio_file.py        Read and play stream from a matroska file
 ========================== ==================================================
 
+.. note:: When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh ("vsync") should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with "export vblank_mode=0".  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the "glxgears" command (in package "mesa-utils").  Glxgears should report 1000+ frames per second with vsync disabled.
 
 test_studio_1.py
 ----------------
@@ -131,9 +132,9 @@ Do this:
 
 This is similar to *test_studio_1.py*.  In addition to presenting the streams on-screen, the decoded frames are passed, once in a second, to OpenCV movement detectors.  When movement is detected, a signal is sent with the Qt signal/slot system to the screen.
 
-This test program is also used in the *gold stardard test*.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  We should be able to run this test with a large number of cameras for a long period of time and check for memory consumption.
+This test program is also used in the *gold stardard test*.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  One should be able to run this test with a large number of cameras for a long period of time without excessive memory consumption, or system instabilities.
 
-In our case, the test consists currently of running 10 full-hd (1080p) cameras for N days on a desktop with eight Intel i7-4770 cores, Xeon E3-1200 v3 integrated graphics and 16GB memory.
+In our case, the test consists currently of running 10 full-hd (1080p) cameras for several days on a desktop with eight Intel i7-4770 cores, Xeon E3-1200 v3 integrated graphics and 16GB memory.
 
 
 

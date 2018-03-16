@@ -88,6 +88,10 @@
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh (&#8220;vsync&#8221;) should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with &#8220;export vblank_mode=0&#8221;.  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the &#8220;glxgears&#8221; command (in package &#8220;mesa-utils&#8221;).  Glxgears should report 1000+ frames per second with vsync disabled.</p>
+</div>
 <div class="section" id="test-studio-1-py">
 <h2>test_studio_1.py<a class="headerlink" href="#test-studio-1-py" title="Permalink to this headline">¶</a></h2>
 <p>Do this:</p>
@@ -248,8 +252,8 @@ python3 test_studio_detector.py
 </pre></div>
 </div>
 <p>This is similar to <em>test_studio_1.py</em>.  In addition to presenting the streams on-screen, the decoded frames are passed, once in a second, to OpenCV movement detectors.  When movement is detected, a signal is sent with the Qt signal/slot system to the screen.</p>
-<p>This test program is also used in the <em>gold stardard test</em>.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  We should be able to run this test with a large number of cameras for a long period of time and check for memory consumption.</p>
-<p>In our case, the test consists currently of running 10 full-hd (1080p) cameras for N days on a desktop with eight Intel i7-4770 cores, Xeon E3-1200 v3 integrated graphics and 16GB memory.</p>
+<p>This test program is also used in the <em>gold stardard test</em>.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  One should be able to run this test with a large number of cameras for a long period of time without excessive memory consumption, or system instabilities.</p>
+<p>In our case, the test consists currently of running 10 full-hd (1080p) cameras for several days on a desktop with eight Intel i7-4770 cores, Xeon E3-1200 v3 integrated graphics and 16GB memory.</p>
 </div>
 </div>
 

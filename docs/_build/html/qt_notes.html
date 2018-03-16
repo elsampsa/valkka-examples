@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
-    <link rel="next" title="The PyQt testsuite" href="testsuite.html" />
+    <link rel="next" title="Project timetable" href="timetable.html" />
     <link rel="prev" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit" href="lesson_7.html" /> 
   </head>
   <body role="document">
@@ -35,7 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="testsuite.html" title="The PyQt testsuite"
+          <a href="timetable.html" title="Project timetable"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
@@ -161,11 +161,11 @@
 <p>For decoding, visualizing and analyzing a large number of cameras, filterchains should be encapsulated in classes, like we did in tutorial, <a class="reference internal" href="lesson_3.html#multiple-streams"><span>lesson 3</span></a>.</p>
 <p>API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.</p>
 </div>
-<div class="section" id="why-not-just-use-c">
-<h2>Why not just use C++?<a class="headerlink" href="#why-not-just-use-c" title="Permalink to this headline">¶</a></h2>
-<p>That&#8217;s actually a good idea.  There is no obligation to use Valkka from python - the API is usable from cpp as well.</p>
-<p>If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing things explained here.  You can use Valkka&#8217;s FrameFifo and Thread infrastructure to create a QThread that&#8217;s reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).</p>
-<p>Examples of using the API from cpp will be added to this documentation someday..</p>
+<div class="section" id="use-c-instead-of-python">
+<h2>Use C++ instead of Python?<a class="headerlink" href="#use-c-instead-of-python" title="Permalink to this headline">¶</a></h2>
+<p>There is no obligation to use Valkka from python - the API is usable from cpp as well.</p>
+<p>If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing stuff considered here.  You can use Valkka&#8217;s FrameFifo and Thread infrastructure to create a QThread that&#8217;s reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).</p>
+<p>Examples of using the API from cpp will be added to this documentation in the near future.</p>
 </div>
 </div>
 
@@ -182,7 +182,7 @@
 <li><a class="reference internal" href="#python-multiprocessing">Python multiprocessing</a></li>
 <li><a class="reference internal" href="#drawing-video-into-a-widget">Drawing video into a widget</a></li>
 <li><a class="reference internal" href="#streaming-from-several-cameras">Streaming from several cameras</a></li>
-<li><a class="reference internal" href="#why-not-just-use-c">Why not just use C++?</a></li>
+<li><a class="reference internal" href="#use-c-instead-of-python">Use C++ instead of Python?</a></li>
 </ul>
 </li>
 </ul>
@@ -191,8 +191,8 @@
   <p class="topless"><a href="lesson_7.html"
                         title="previous chapter">Lesson 7 : Decode, save, visualize, analyze and re-transmit</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="testsuite.html"
-                        title="next chapter">The PyQt testsuite</a></p>
+  <p class="topless"><a href="timetable.html"
+                        title="next chapter">Project timetable</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -224,7 +224,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="testsuite.html" title="The PyQt testsuite"
+          <a href="timetable.html" title="Project timetable"
              >next</a> |</li>
         <li class="right" >
           <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"

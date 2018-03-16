@@ -151,13 +151,13 @@ For decoding, visualizing and analyzing a large number of cameras, filterchains 
 API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.
 
  
-Why not just use C++?
----------------------
+Use C++ instead of Python?
+--------------------------
 
-That's actually a good idea.  There is no obligation to use Valkka from python - the API is usable from cpp as well.
+There is no obligation to use Valkka from python - the API is usable from cpp as well.
 
-If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing things explained here.  You can use Valkka's FrameFifo and Thread infrastructure to create a QThread that's reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).
+If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing stuff considered here.  You can use Valkka's FrameFifo and Thread infrastructure to create a QThread that's reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).
 
-Examples of using the API from cpp will be added to this documentation someday..
+Examples of using the API from cpp will be added to this documentation in the near future.
 
 

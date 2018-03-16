@@ -18,7 +18,7 @@ The problem
 
 *So, yet another media player?  I need to stream video into my python/Qt program and I want something that can be developed fast and is easy to integrate into my code.  What's here for me?*
 
-If you just need to stream video from your IP cameras, decode it and show it on the screen, we recommend a standard media player, say, VCL and its python bindings.
+If you just need to stream video from your IP cameras, decode it and show it on the screen, we recommend a standard media player, say, VLC and its python bindings.
 
 However, if you need to stream video and *simultaneously* (1) present it on the screen, (2) analyze it with machine vision, (3) write it to disk, and even (4) recast it to other clients, stock media players won't do.
 

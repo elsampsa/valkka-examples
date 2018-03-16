@@ -82,8 +82,7 @@ Things to keep in mind:
 
   * ..now production users can install with pip(3) certain revisions of the software (see :ref:`here <production>`)
     
-  
-  
+
 Dependencies
 ------------
 
