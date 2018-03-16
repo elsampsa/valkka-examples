@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Programming with Qt &mdash; valkka_examples 1 documentation</title>
+    <title>Integrating with Qt &mdash; valkka_examples 1 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
-    <link rel="next" title="&lt;no title&gt;" href="testsuite.html" />
+    <link rel="next" title="The PyQt testsuite" href="testsuite.html" />
     <link rel="prev" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit" href="lesson_7.html" /> 
   </head>
   <body role="document">
@@ -35,7 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="testsuite.html" title="&lt;no title&gt;"
+          <a href="testsuite.html" title="The PyQt testsuite"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
@@ -49,8 +49,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="programming-with-qt">
-<h1>Programming with Qt<a class="headerlink" href="#programming-with-qt" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="integrating-with-qt">
+<h1>Integrating with Qt<a class="headerlink" href="#integrating-with-qt" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="general-aspects">
 <h2>General aspects<a class="headerlink" href="#general-aspects" title="Permalink to this headline">¶</a></h2>
 <p>Valkka can be used with any GUI framework, say, with GTK or Qt.  Here we have an emphasis on Qt, but the general guidelines discussed here, apply to any other GUI framework as well.  Concrete examples are provided only for Qt.</p>
@@ -114,22 +114,58 @@
  +--------------------------+                ..:
 </pre></div>
 </div>
-<p>Two stripped-down sample programs are provided in</p>
+<p>The class <strong>api2.threads.ValkkaProcess</strong> provides a model class that has been derived from python&#8217;s <strong>multiprocessing.Process</strong> class.  In ValkkaProcess, the class has both &#8220;frontend&#8221; and &#8220;backend&#8221; methods.</p>
+<p>Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), while backend methods are called only from within the processes &#8220;run&#8221; method - i.e. at the &#8220;other side&#8221; of the fork, where the forked process lives in its own virtual memory space.</p>
+<p>A signalling scheme between back- and frontend is provided in the ValkkaProcess class.  Don&#8217;t be afraid - the ValkkaProcess class is just a few lines of python code!</p>
+<p>Also, two stripped-down sample programs are provided in</p>
 <div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
 
   multiprocessing_demo.py
   multiprocessing_demo_signals.py
 </pre></div>
 </div>
+<p>Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system.</p>
 </div>
-<div class="section" id="drawing-video-to-a-widget">
-<h2>Drawing video to a widget<a class="headerlink" href="#drawing-video-to-a-widget" title="Permalink to this headline">¶</a></h2>
-<p>TODO</p>
+<div class="section" id="drawing-video-into-a-widget">
+<h2>Drawing video into a widget<a class="headerlink" href="#drawing-video-into-a-widget" title="Permalink to this headline">¶</a></h2>
+<p>As you learned in the tutorial, we use the X-window window ids like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">context_id</span><span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderContextCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">window_id</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That creates a mapping: all frames with slot number &#8220;1&#8221; are directed to an X-window with a window id &#8220;window_id&#8221; (the last number &#8220;0&#8221; is the z-stacking and is not currently used).</p>
+<p>We can use the window id of an existing Qt widget &#8220;some_widget&#8221; like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">window_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">some_widget</span><span class="o">.</span><span class="n">winId</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>There is a stripped-down example of this in</p>
+<div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_1/qt/
+
+  single_stream_rtsp.py
+</pre></div>
+</div>
+<p>However, it&#8217;s a better idea to let Valkka create the X-window (with correct visual parameters, no XSignals, etc.) and embed that X-window into Qt.  This can be done with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">foreign_window</span> <span class="o">=</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QWindow</span><span class="o">.</span><span class="n">fromWinId</span><span class="p">(</span><span class="n">win_id</span><span class="p">)</span>
+<span class="n">foreign_widget</span> <span class="o">=</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="o">.</span><span class="n">createWindowContainer</span><span class="p">(</span><span class="n">foreign_window</span><span class="p">,</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where &#8220;win_id&#8221; is the window_id returned by Valkka, &#8220;parent&#8221; is the parent widget of the widget we&#8217;re creating here and &#8220;foreign_widget&#8221; is the resulting widget we&#8217;re going to use in Qt.</p>
+<p>However, &#8220;foreign_widget&#8221; created this way does not catch mouse gestures.  This can be solved by placing a &#8220;dummy&#8221; QWidget on top of the &#8220;foreign_widget&#8221; (using a layout).  An example of this can be found in</p>
+<div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_1/qt/
+
+  single_stream_rtsp_1.py
+</pre></div>
+</div>
 </div>
 <div class="section" id="streaming-from-several-cameras">
 <h2>Streaming from several cameras<a class="headerlink" href="#streaming-from-several-cameras" title="Permalink to this headline">¶</a></h2>
 <p>For decoding, visualizing and analyzing a large number of cameras, filterchains should be encapsulated in classes, like we did in tutorial, <a class="reference internal" href="lesson_3.html#multiple-streams"><span>lesson 3</span></a>.</p>
 <p>API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.</p>
+</div>
+<div class="section" id="why-not-just-use-c">
+<h2>Why not just use C++?<a class="headerlink" href="#why-not-just-use-c" title="Permalink to this headline">¶</a></h2>
+<p>That&#8217;s actually a good idea.  There is no obligation to use Valkka from python - the API is usable from cpp as well.</p>
+<p>If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing things explained here.  You can use Valkka&#8217;s FrameFifo and Thread infrastructure to create a QThread that&#8217;s reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).</p>
+<p>Examples of using the API from cpp will be added to this documentation someday..</p>
 </div>
 </div>
 
@@ -141,11 +177,12 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Programming with Qt</a><ul>
+<li><a class="reference internal" href="#">Integrating with Qt</a><ul>
 <li><a class="reference internal" href="#general-aspects">General aspects</a></li>
 <li><a class="reference internal" href="#python-multiprocessing">Python multiprocessing</a></li>
-<li><a class="reference internal" href="#drawing-video-to-a-widget">Drawing video to a widget</a></li>
+<li><a class="reference internal" href="#drawing-video-into-a-widget">Drawing video into a widget</a></li>
 <li><a class="reference internal" href="#streaming-from-several-cameras">Streaming from several cameras</a></li>
+<li><a class="reference internal" href="#why-not-just-use-c">Why not just use C++?</a></li>
 </ul>
 </li>
 </ul>
@@ -155,7 +192,7 @@
                         title="previous chapter">Lesson 7 : Decode, save, visualize, analyze and re-transmit</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="testsuite.html"
-                        title="next chapter">&lt;no title&gt;</a></p>
+                        title="next chapter">The PyQt testsuite</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -187,7 +224,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="testsuite.html" title="&lt;no title&gt;"
+          <a href="testsuite.html" title="The PyQt testsuite"
              >next</a> |</li>
         <li class="right" >
           <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"

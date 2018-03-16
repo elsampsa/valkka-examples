@@ -15,9 +15,9 @@ Let's consider the following filtergraph:
     
 Compared to the previous lesson, we have lot's of new stuff here.
 
-The "entry point" framefilter "live_out_filter" writes to a class called "FrameFifo".  
+So, again, LiveThread writes frames to "live_out_filter".  "live_out_filter" in turn writes to a class called "FrameFifo".
 
-FrameFifo is a "first-in-first-out" (fifo) queue for frames.  One thread writes frames to the fifo, while the other one reads them, like this:
+FrameFifo is a "first-in-first-out" (fifo) queue for frames.  One thread writes frames to the fifo, while another thread reads them, like this:
 
 ::
 
@@ -32,6 +32,19 @@ In order to write into the FrameFifo, we need a special frame filter class FifoF
 AVThread, on the other hand, reads directly from the fifo.  To keep things consistent, we follow this rule:
 
 **Threads write into FrameFilter.  Threads read from FrameFifo**
+
+Let's list all the symbols used until now and the corresponding objects:
+
+====== ============ ==================================
+Symbol Base class   Explanation
+====== ============ ==================================
+()     Thread       An independently running thread
+>>                  Crossover between two threads
+{}     FrameFilter  A framefilter
+[]     FrameFifo    A fifo (first-in-first-out) queue
+====== ============ ==================================
+
+It's a good idea to use this consistent notation throughout your program development.
 
 Finally, there is business as usual, on the "Decoding part": we could continue FrameFilter chains from AVThread, fork them, etc. as in the previous lesson.  In this example, we just print out the decoded (bitmap) frames.
 

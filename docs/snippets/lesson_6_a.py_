@@ -4,123 +4,115 @@
     from valkka.valkka_core import *
     
     """
-    main branch
-    (LiveThread:livethread) --> {ForkFrameFilter3: fork_filter}
-                                             |
-                                branch 1 <---+ 
-                                             |
-                                branch 2 <---+
-                                             |
-                                branch 3 <---+
-                                                                    
-    branch 1 : recast
-    --> {FifoFrameFilter:fifo_filter_1} --> [LiveFifo:live_fifo_1] -->> (LiveThread:livethread2_1) 
+    *** writing ***
     
-    branch 2 : save to disk
-    --> (FileFrameFilter:file_filter_2)
+    (LiveThread:livethread) --> {FileFrameFilter:file_filter}
     
-    branch 3 : decode
-    --> {FifoFrameFilter:fifo_filter_3} --> [FrameFifo: av_fifo_3] --->> (AVThread:avthread_3) --+
-                                                                                                 |
-     {ForkFrameFilter: fork_filter_3} <----------------------------------------------------------+
-                     |
-          branch 3.1 +--> {FifoFrameFilter:gl_in_filter_3_1} --> [OpenGLFrameFifo:gl_fifo_3_1] -->> (OpenGLThread:glthread_3_1) --> to two x-windows
-                     |
-          branch 3.2 +--> {IntervalFrameFilter: interval_filter_3_2} --> {SwScaleFrameFilter: sws_filter_3_2} --> {SharedMemFrameFilter: shmem_filter_3_2}
+    *** reading ***
+    
+    reading part
+    (FileThread:filethread) --> {BlockingFifoFrameFilter:av_filter} --> [FrameFifo:av_fifo] 
+                                                                               |
+    decoding part                                                              |
+        (AVThread:avthread) << ------------------------------------------------+    
+                  |
+                  |                                                                         Presentation part
+                  +---> {FifoFrameFilter:gl_in_filter} --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread)
     """
     
-    # *** branch 1 ***
-    livethread2_1 =LiveThread("livethread2_1",20) # reserve stack for incoming frames
-    live_fifo_1   =livethread2_1.getFifo()
-    fifo_filter_1 =FifoFrameFilter("fifo_filter_1",live_fifo_1)
-    out_ctx =LiveOutboundContext(LiveConnectionType_sdp, "224.1.168.91", 2, 50000) # frames with slot number 2 are sent to port 50000
     
-    # *** branch 2 ***
-    file_filter_2    =FileFrameFilter("file_filter_2")
+    # *** writing ***
+    livethread   =LiveThread("livethread")
+    file_filter  =FileFrameFilter("file_filter")
+    # file_filter  =BriefInfoFrameFilter("info_filter") # uncomment this to do debugging (i.e., are you getting any frames?)
+    # stream from 192.168.1.41, tag frames with slot number 1 and write to file_filter
+    ctx          =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, file_filter) 
     
-    # ** branch 3.1 **
-    glthread_3_1     =OpenGLThread ("glthread", 10, 10, 0, 0) # parameters are as follows: thread name, n720p, n1080p, n1440p, n4K
-    gl_fifo_3_1      =glthread_3_1.getFifo()
-    gl_in_filter_3_1 =FifoFrameFilter("gl_in_filter_3_1",gl_fifo_3_1)
+    # *** reading ***
+    glthread      =OpenGLThread ("glthread", 10, 10, 0, 0) # parameters are as follows: thread name, n720p, n1080p, n1440p, n4K
+    gl_fifo       =glthread.getFifo()
+    gl_in_filter  =FifoFrameFilter("gl_in_filter",gl_fifo)
     
-    # ** branch 3.2 **
-    image_interval=1000  # YUV => RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer
-    width  =1920//4      # CPU YUV => RGB interpolation
-    height =1080//4      # CPU YUV => RGB interpolation
-    cc     =3            # its rgb
-    shmem_name    ="lesson_4"      # This identifies posix shared memory - must be unique
-    shmem_bytes   =width*height*cc # Size for each element in the ringbuffer
-    shmem_buffers =10              # Size of the shmem ringbuffer
+    # used by both reading and decoding parts
+    av_fifo       =FrameFifo("av_fifo",10) 
     
-    shmem_filter_3_2    =SharedMemFrameFilter(shmem_name, shmem_buffers, shmem_bytes) # shmem id, buffers, bytes per buffer
-    sws_filter_3_2      =SwScaleFrameFilter("sws_filter", width, height, shmem_filter_3_2)
-    interval_filter_3_2 =TimeIntervalFrameFilter("interval_filter", image_interval, sws_filter_3_2)
+    # reading part
+    av_filter     =BlockingFifoFrameFilter("av_filter",av_fifo)
+    filethread    =FileThread("filethread")
+    file_ctx      =FileContext("kokkelis.mkv", 1, av_filter) # read from file "kokkelis.mkv", tag frames with slot number 1 and write to av_filter
     
-    # *** branch 3 ***
-    av_fifo_3      =FrameFifo("av_fifo_3",10)
-    fork_filter_3  =ForkFrameFilter("fork_filter_3", gl_in_filter_3_1, interval_filter_3_2)
-    fifo_filter_3  =FifoFrameFilter("fifo_filter_3",av_fifo_3)
-    avthread_3     =AVThread("avthread_3",av_fifo_3,fork_filter_3)
+    # decoding part
+    avthread        =AVThread("avthread",av_fifo,gl_in_filter)
     
-    # *** main branch ***
-    livethread  =LiveThread("livethread_1")
-    fork_filter =ForkFrameFilter3("fork_filter",fifo_filter_1,file_filter_2,fifo_filter_3)
-    ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, fork_filter) # stream from 192.168.1.41 is sent to fork_filter with slot number 2
     
-    # start threads
-    glthread_3_1   .startCall()
-    avthread_3     .startCall()
-    livethread     .startCall()
-    livethread2_1  .startCall()
+    # *** writing ***
+    # start streaming
+    livethread .startCall()
+    livethread .registerStreamCall(ctx)
+    livethread .playStreamCall(ctx)
     
-    # start decoding
-    avthread_3 .decodingOnCall()
+    time.sleep(5) # TODO: this is needed.. otherwise config frames are missed.  Fix
     
-    livethread    .registerStreamCall(ctx) # receive frames
-    livethread    .playStreamCall(ctx)
-    # livethread2_1 .registerOutboundCall(out_ctx) # send frames
+    # start writing to a file
+    print("writing to file")
+    file_filter.activate("kokkelis.mkv")
     
-    # create two X windows
-    window_id =glthread_3_1.createWindow()
-    glthread_3_1.newRenderGroupCall(window_id)
-    window_id2=glthread_3_1.createWindow()
-    glthread_3_1.newRenderGroupCall(window_id2)
-    
-    # maps stream with slot 2 to window "window_id"
-    context_id  =glthread_3_1.newRenderContextCall(2,window_id,0)
-    # maps stream with slot 2 also to window "window_id2"
-    context_id2 =glthread_3_1.newRenderContextCall(2,window_id2,0)
-    
-    # stream for 10 secs
-    time.sleep(10)
-    
-    # .. after that start writing stream to disk
-    file_filter_2.activate("kokkelis.mkv")
-    
-    # keep on streaming for 30 secs
+    # stream for 30 secs
     time.sleep(30)
     
     # close the file
-    file_filter_2.deActivate()
+    file_filter.deActivate()
     
-    glthread_3_1.delRenderContextCall(context_id)
-    glthread_3_1.delRenderContextCall(context_id2)
-    glthread_3_1.delRenderGroupCall(window_id)
-    glthread_3_1.delRenderGroupCall(window_id2)
+    # stop livethread
+    livethread.stopCall()
     
-    # stop decoding
-    avthread_3 .decodingOffCall()
     
-    # stop threads
-    glthread_3_1   .stopCall()
-    avthread_3     .stopCall()
-    livethread     .stopCall()
-    livethread2_1  .stopCall()
+    # *** reading ***
+    print("reading file")
+    glthread   .startCall()
+    filethread .startCall()
+    avthread   .startCall()
     
-    # invokes the garbage collection => cpp level destructors
-    glthread_3_1   =None
-    avthread_3     =None
-    livethread     =None
-    livethread2_1  =None
+    # start decoding
+    avthread.decodingOnCall()
+    
+    # create an x-window
+    window_id =glthread.createWindow()
+    glthread.newRenderGroupCall(window_id)
+    
+    # maps stream with slot 1 to window "window_id"
+    context_id =glthread.newRenderContextCall(1, window_id, 0)
+    
+    print("open file")
+    filethread.openFileStreamCall(file_ctx)
+    
+    print("play file")
+    filethread.playFileStreamCall(file_ctx)
+    
+    # play the file for 10 secs
+    time.sleep(10)
+    
+    # let's seek to seekpoint 2 seconds
+    print("seeking")
+    file_ctx.seektime_=2000
+    filethread.seekFileStreamCall(file_ctx)
+    
+    # pause for 3 secs
+    print("pausing")
+    filethread.stopFileStreamCall(file_ctx)
+    time.sleep(3)
+    
+    # continue playing for 5 secs
+    print("play again")
+    filethread.playFileStreamCall(file_ctx)
+    time.sleep(5)
+    
+    glthread.delRenderContextCall(context_id)
+    glthread.delRenderGroupCall(window_id)
+    
+    # exit
+    filethread.stopCall()
+    avthread  .stopCall()
+    glthread  .stopCall()
     
     print("bye")

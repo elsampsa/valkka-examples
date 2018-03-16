@@ -112,6 +112,7 @@ That chain can be created in python like this:
     filter_2        =InfoFrameFilter("filter_2",filter_3)
     live_out_filter =InfoFrameFilter("live_out_filter",filter_2)
     
+    
 The output when running the python code looks like this:
     
 ::

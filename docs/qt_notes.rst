@@ -1,5 +1,5 @@
 
-Programming with Qt
+Integrating with Qt
 ===================
 
 General aspects
@@ -78,9 +78,14 @@ For interprocess communication with the Qt signal/slot system, you can use the f
     |                          |                  :
     +--------------------------+                ..:
           
-    
+          
+The class **api2.threads.ValkkaProcess** provides a model class that has been derived from python's **multiprocessing.Process** class.  In ValkkaProcess, the class has both "frontend" and "backend" methods.  
 
-Two stripped-down sample programs are provided in
+Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), while backend methods are called only from within the processes "run" method - i.e. at the "other side" of the fork, where the forked process lives in its own virtual memory space.
+
+A signalling scheme between back- and frontend is provided in the ValkkaProcess class.  Don't be afraid - the ValkkaProcess class is just a few lines of python code!
+          
+Also, two stripped-down sample programs are provided in
 
 ::
 
@@ -89,13 +94,54 @@ Two stripped-down sample programs are provided in
     multiprocessing_demo.py
     multiprocessing_demo_signals.py
 
+Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system.
     
-Drawing video to a widget
--------------------------
+Drawing video into a widget
+---------------------------
 
-TODO
-    
-    
+As you learned in the tutorial, we use the X-window window ids like this:
+
+::
+
+  context_id=glthread.newRenderContextCall(1,window_id,0)
+
+
+That creates a mapping: all frames with slot number "1" are directed to an X-window with a window id "window_id" (the last number "0" is the z-stacking and is not currently used).
+
+We can use the window id of an existing Qt widget "some_widget" like this:
+
+
+::
+
+  window_id=int(some_widget.winId())
+  
+There is a stripped-down example of this in
+
+::
+
+  valkka_examples/api_level_1/qt/
+  
+    single_stream_rtsp.py
+  
+
+However, it's a better idea to let Valkka create the X-window (with correct visual parameters, no XSignals, etc.) and embed that X-window into Qt.  This can be done with:
+
+::
+
+  foreign_window =QtGui.QWindow.fromWinId(win_id)
+  foreign_widget =QtWidgets.QWidget.createWindowContainer(foreign_window,parent=parent)
+
+  
+where "win_id" is the window_id returned by Valkka, "parent" is the parent widget of the widget we're creating here and "foreign_widget" is the resulting widget we're going to use in Qt.
+
+However, "foreign_widget" created this way does not catch mouse gestures.  This can be solved by placing a "dummy" QWidget on top of the "foreign_widget" (using a layout).  An example of this can be found in
+
+::
+
+  valkka_examples/api_level_1/qt/
+  
+    single_stream_rtsp_1.py
+
     
 Streaming from several cameras
 ------------------------------
@@ -104,9 +150,14 @@ For decoding, visualizing and analyzing a large number of cameras, filterchains 
 
 API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.
 
-
  
+Why not just use C++?
+---------------------
 
+That's actually a good idea.  There is no obligation to use Valkka from python - the API is usable from cpp as well.
 
+If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing things explained here.  You can use Valkka's FrameFifo and Thread infrastructure to create a QThread that's reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).
+
+Examples of using the API from cpp will be added to this documentation someday..
 
 

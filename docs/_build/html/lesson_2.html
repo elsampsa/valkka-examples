@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
     <link rel="up" title="Tutorial" href="tutorial.html" />
-    <link rel="next" title="Lesson 3 : Streaming to the X-Window System" href="lesson_3.html" />
+    <link rel="next" title="Lesson 3 : Streaming to the X-window system" href="lesson_3.html" />
     <link rel="prev" title="Lesson 1 : Receiving frames from an IP camera" href="lesson_1.html" /> 
   </head>
   <body role="document">
@@ -36,7 +36,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-Window System"
+          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-window system"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"
@@ -61,8 +61,8 @@
 </pre></div>
 </div>
 <p>Compared to the previous lesson, we have lot&#8217;s of new stuff here.</p>
-<p>The &#8220;entry point&#8221; framefilter &#8220;live_out_filter&#8221; writes to a class called &#8220;FrameFifo&#8221;.</p>
-<p>FrameFifo is a &#8220;first-in-first-out&#8221; (fifo) queue for frames.  One thread writes frames to the fifo, while the other one reads them, like this:</p>
+<p>So, again, LiveThread writes frames to &#8220;live_out_filter&#8221;.  &#8220;live_out_filter&#8221; in turn writes to a class called &#8220;FrameFifo&#8221;.</p>
+<p>FrameFifo is a &#8220;first-in-first-out&#8221; (fifo) queue for frames.  One thread writes frames to the fifo, while another thread reads them, like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>LiveThread writes frames --&gt;&gt; [f5 f4 f3 f2 f1] --&gt;&gt; AVThread reads frames
 </pre></div>
 </div>
@@ -74,6 +74,39 @@
 <p>In order to write into the FrameFifo, we need a special frame filter class FifoFrameFilter.</p>
 <p>AVThread, on the other hand, reads directly from the fifo.  To keep things consistent, we follow this rule:</p>
 <p><strong>Threads write into FrameFilter.  Threads read from FrameFifo</strong></p>
+<p>Let&#8217;s list all the symbols used until now and the corresponding objects:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="23%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Symbol</th>
+<th class="head">Base class</th>
+<th class="head">Explanation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>()</td>
+<td>Thread</td>
+<td>An independently running thread</td>
+</tr>
+<tr class="row-odd"><td>&gt;&gt;</td>
+<td>&nbsp;</td>
+<td>Crossover between two threads</td>
+</tr>
+<tr class="row-even"><td>{}</td>
+<td>FrameFilter</td>
+<td>A framefilter</td>
+</tr>
+<tr class="row-odd"><td>[]</td>
+<td>FrameFifo</td>
+<td>A fifo (first-in-first-out) queue</td>
+</tr>
+</tbody>
+</table>
+<p>It&#8217;s a good idea to use this consistent notation throughout your program development.</p>
 <p>Finally, there is business as usual, on the &#8220;Decoding part&#8221;: we could continue FrameFilter chains from AVThread, fork them, etc. as in the previous lesson.  In this example, we just print out the decoded (bitmap) frames.</p>
 <p>The complete filterchain can be constructed like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># used by both streaming and decoding parts</span>
@@ -153,7 +186,7 @@ InfoFrameFilter: info_filter &lt;&lt;end dump
                         title="previous chapter">Lesson 1 : Receiving frames from an IP camera</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="lesson_3.html"
-                        title="next chapter">Lesson 3 : Streaming to the X-Window System</a></p>
+                        title="next chapter">Lesson 3 : Streaming to the X-window system</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -185,7 +218,7 @@ InfoFrameFilter: info_filter &lt;&lt;end dump
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-Window System"
+          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-window system"
              >next</a> |</li>
         <li class="right" >
           <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"

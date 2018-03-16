@@ -6,7 +6,7 @@
 Valkka Examples
 ===============
 
-WARNING: this is still under construction
+WARNING: this is still under construction - some features may not work correctly
 
 
 .. toctree::
@@ -14,9 +14,9 @@ WARNING: this is still under construction
    
    intro
    requirements
+   testsuite
    tutorial
    qt_notes
-   testsuite
    timetable
    license
    authors

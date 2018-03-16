@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
-    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="next" title="The PyQt testsuite" href="testsuite.html" />
     <link rel="prev" title="About Valkka" href="intro.html" /> 
   </head>
   <body role="document">
@@ -35,7 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="tutorial.html" title="Tutorial"
+          <a href="testsuite.html" title="The PyQt testsuite"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="intro.html" title="About Valkka"
@@ -52,7 +52,7 @@
   <div class="section" id="installing">
 <span id="requirements"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
-<li>Install two pre-built packages: the valkka-core debian package and the valkka bindings (a python .whl package) from <a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">here</a></li>
+<li>You need to install two pre-built packages, available by clicking <a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">here</a></li>
 </ol>
 <ul>
 <li><p class="first">Install the valkka-core debian (.deb) package with:</p>
@@ -66,10 +66,18 @@ sudo apt-get -f install
 </pre></div>
 </div>
 </li>
-<li><p class="first">You can find OpenCV debian packages there as well, in the case you need them</p>
+<li><p class="first">OpenCV and its python bindings (as debian packages) are provided as well.  Install also them (if not already installed in your system).</p>
 </li>
 </ul>
 <ol class="arabic simple" start="2">
+<li>Install PyQt (needed for the Qt test/demo suite) with:</li>
+</ol>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade PyQt5
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
 <li>Download this very package (valkka-examples) with</li>
 </ol>
 <blockquote>
@@ -82,15 +90,16 @@ git checkout 0.3.0
 </pre></div>
 </div>
 </div></blockquote>
-<ol class="arabic simple" start="3">
+<ol class="arabic simple" start="4">
 <li>Test the installation with:</li>
 </ol>
 <blockquote>
 <div><div class="highlight-python"><div class="highlight"><pre>python3 quicktest.py
 </pre></div>
 </div>
-<p>and you&#8217;re all set for the tutorial</p>
+<p>and you&#8217;re all set.</p>
 </div></blockquote>
+<p>Next, try out the <a class="reference internal" href="testsuite.html#testsuite"><span>PyQt test/demo</span></a> suite or learn to program with the <a class="reference internal" href="tutorial.html#tutorial"><span>tutorial</span></a>.</p>
 </div>
 
 
@@ -103,8 +112,8 @@ git checkout 0.3.0
   <p class="topless"><a href="intro.html"
                         title="previous chapter">About Valkka</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="tutorial.html"
-                        title="next chapter">Tutorial</a></p>
+  <p class="topless"><a href="testsuite.html"
+                        title="next chapter">The PyQt testsuite</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -136,7 +145,7 @@ git checkout 0.3.0
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="tutorial.html" title="Tutorial"
+          <a href="testsuite.html" title="The PyQt testsuite"
              >next</a> |</li>
         <li class="right" >
           <a href="intro.html" title="About Valkka"

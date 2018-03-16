@@ -1,9 +1,11 @@
 
+.. _tutorial:
+
 Tutorial
 ========
 
-Using this tutorial
--------------------
+Using the tutorial
+------------------
 
 Once you have installed this package with git, the example codes of this tutorial can be run like this:
 
@@ -22,6 +24,10 @@ Before starting with the tutorial, you need at least:
 - Valkka and its python bindings installed (instructions :ref:`here <requirements>`)
 - OpenCV installed (instructions :ref:`here <requirements>`)
 - An RTSP camera connected to your router
+
+  - Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market
+  - If your camera is onvif compliant, then it support RTSP and RTP
+
 - Basic knowledge of media streaming in linux:
 
   - How to connect to an rtsp camera (e.g. "ffplay rtsp://username:passwd@ip_address")

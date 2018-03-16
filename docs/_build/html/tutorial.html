@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
     <link rel="next" title="Lesson 1 : Receiving frames from an IP camera" href="lesson_1.html" />
-    <link rel="prev" title="Installing" href="requirements.html" /> 
+    <link rel="prev" title="The PyQt testsuite" href="testsuite.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -38,7 +38,7 @@
           <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="requirements.html" title="Installing"
+          <a href="testsuite.html" title="The PyQt testsuite"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
       </ul>
@@ -50,9 +50,9 @@
           <div class="body" role="main">
             
   <div class="section" id="tutorial">
-<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="using-this-tutorial">
-<h2>Using this tutorial<a class="headerlink" href="#using-this-tutorial" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="using-the-tutorial">
+<h2>Using the tutorial<a class="headerlink" href="#using-the-tutorial" title="Permalink to this headline">¶</a></h2>
 <p>Once you have installed this package with git, the example codes of this tutorial can be run like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>cd valkka_examples/api_level_1/tutorial
 python3 lesson_1_a.py
@@ -67,7 +67,11 @@ python3 lesson_1_a.py
 <li>At least 4 GB of total memory (as modern linux distros take around 2 GB out of that)</li>
 <li>Valkka and its python bindings installed (instructions <a class="reference internal" href="requirements.html#requirements"><span>here</span></a>)</li>
 <li>OpenCV installed (instructions <a class="reference internal" href="requirements.html#requirements"><span>here</span></a>)</li>
-<li>An RTSP camera connected to your router</li>
+<li>An RTSP camera connected to your router<ul>
+<li>Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market</li>
+<li>If your camera is onvif compliant, then it support RTSP and RTP</li>
+</ul>
+</li>
 <li>Basic knowledge of media streaming in linux:<ul>
 <li>How to connect to an rtsp camera (e.g. &#8220;ffplay <a class="reference external" href="rtsp://username:passwd&#64;ip_address">rtsp://username:passwd&#64;ip_address</a>&#8221;)</li>
 <li>What are RTSP, SDP, etc., what is H264 and how video is streamed, etc.</li>
@@ -118,7 +122,7 @@ python3 lesson_1_a.py
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Tutorial</a><ul>
-<li><a class="reference internal" href="#using-this-tutorial">Using this tutorial</a></li>
+<li><a class="reference internal" href="#using-the-tutorial">Using the tutorial</a></li>
 <li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li><a class="reference internal" href="#lessons">Lessons</a></li>
 </ul>
@@ -126,8 +130,8 @@ python3 lesson_1_a.py
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="requirements.html"
-                        title="previous chapter">Installing</a></p>
+  <p class="topless"><a href="testsuite.html"
+                        title="previous chapter">The PyQt testsuite</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="lesson_1.html"
                         title="next chapter">Lesson 1 : Receiving frames from an IP camera</a></p>
@@ -165,7 +169,7 @@ python3 lesson_1_a.py
           <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"
              >next</a> |</li>
         <li class="right" >
-          <a href="requirements.html" title="Installing"
+          <a href="testsuite.html" title="The PyQt testsuite"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
       </ul>

@@ -30,14 +30,6 @@ class TestWidget0(QtWidgets.QWidget):
   def mouseDoubleClickEvent(self,e):
         print("double click!")
 
-    
-"""
-class TestWidget(QtOpenGL.QGLWidget):
-  
-  def mouseDoubleClickEvent(self,e):
-        print("double click!")
-"""
-  
   
 def getForeignWidget(parent, win_id): 
     """Valkka creates a window.  The window is used to generate the widget.. however.. here we loose the interaction with the window .. clicks on it, etc. (were detached from the qt system)

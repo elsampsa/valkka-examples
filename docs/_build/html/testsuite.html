@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>&lt;no title&gt; &mdash; valkka_examples 1 documentation</title>
+    <title>The PyQt testsuite &mdash; valkka_examples 1 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples 1 documentation" href="index.html" />
-    <link rel="next" title="Licenses" href="license.html" />
-    <link rel="prev" title="Lesson 2" href="lesson_2.html" /> 
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="Installing" href="requirements.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +35,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="license.html" title="Licenses"
+          <a href="tutorial.html" title="Tutorial"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="lesson_2.html" title="Lesson 2"
+          <a href="requirements.html" title="Installing"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
       </ul>
@@ -49,19 +49,231 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  
+  <div class="section" id="the-pyqt-testsuite">
+<span id="testsuite"></span><h1>The PyQt testsuite<a class="headerlink" href="#the-pyqt-testsuite" title="Permalink to this headline">¶</a></h1>
+<p>So, you have installed valkka-core and valkka-examples as instructed <a class="reference internal" href="requirements.html#requirements"><span>here</span></a>.  The same hardware requirements apply here as in the <a class="reference internal" href="tutorial.html#tutorial"><span>tutorial</span></a>.</p>
+<p>The PyQt testsuite is available at</p>
+<div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
+</pre></div>
+</div>
+<p>The testsuite is intended for demonstration, benchmarking and ultimate debugging.  Currently the testsuite consists of the following programs:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File</th>
+<th class="head">Explanation</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>test_studio_1.py</td>
+<td><div class="first last line-block">
+<div class="line">Live stream from several rtsp cameras</div>
+<div class="line">and/or from sources defined in an sdp file</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>test_studio_detector.py</td>
+<td><div class="first last line-block">
+<div class="line">Like <em>test_studio_1.py</em>, but with a simple</div>
+<div class="line">OpenCV analyzer per stream: a movement detector</div>
+<div class="line">The <em>gold standard test</em> (see below)</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>test_studio_file.py</td>
+<td>Read and play stream from a matroska file</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="test-studio-1-py">
+<h2>test_studio_1.py<a class="headerlink" href="#test-studio-1-py" title="Permalink to this headline">¶</a></h2>
+<p>Do this:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd valkka_examples/api_level_2/qt/
+python3 test_studio_1.py
+</pre></div>
+</div>
+<p>The program launches with the following menu:</p>
+<a class="reference internal image-reference" href="_images/test_config.png"><img alt="_images/test_config.png" src="_images/test_config.png" style="width: 40%;" /></a>
+<p>The field on the left is used to specify stream sources, one source per line.  For IP cameras, use &#8220;<a class="reference external" href="rtsp://">rtsp://</a>&#8221;, for sdp files, just give the filename.  In the above example, we are connecting to two rtsp IP cams.</p>
+<p>The fields on the right are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field name</th>
+<th class="head">What it does</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>n720p</td>
+<td>Number of pre-reserved frames for 720p resolution</td>
+</tr>
+<tr class="row-odd"><td>n1080p</td>
+<td>Number of pre-reserved frames for 1080p resolution</td>
+</tr>
+<tr class="row-even"><td>n1440p</td>
+<td>etc.</td>
+</tr>
+<tr class="row-odd"><td>n4K</td>
+<td>etc.</td>
+</tr>
+<tr class="row-even"><td>naudio</td>
+<td>(not used)</td>
+</tr>
+<tr class="row-odd"><td>verbose</td>
+<td>(not used)</td>
+</tr>
+<tr class="row-even"><td>msbuftime</td>
+<td>Frame buffering time in milliseconds</td>
+</tr>
+<tr class="row-odd"><td>live affinity</td>
+<td>Bind the streaming thread to a core</td>
+</tr>
+<tr class="row-even"><td>gl affinity</td>
+<td>Bind the frame presentation thread to a core</td>
+</tr>
+<tr class="row-odd"><td>dec affinity start</td>
+<td>Bind decoding threads to cores (first core)</td>
+</tr>
+<tr class="row-even"><td>dec affinity stop</td>
+<td>Bind decoding threads to cores (last core)</td>
+</tr>
+<tr class="row-odd"><td>replicate</td>
+<td>Dump each stream to screen this many times</td>
+</tr>
+</tbody>
+</table>
+<p>As you learned from the tutorial, in Valkka, frames are pre-reserved on the GPU.  If you&#8217;re planning to use 720p and 1080p cameras, reserve, say 200 frames for both.</p>
+<p>Decoded frames are being queued for &#8220;msbuftime&#8221; milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you&#8217;ll need and the more lag you get into your live streaming.  A nice value is 300.</p>
+<p>Replicate demonstrates how Valkka can dump the stream (that&#8217;s decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode a stream more than once.</p>
+<p>In Valkka, all threads can be bound to a certain processor core.  Value &#8220;-1&#8221; indicates that the thread is unbound.  You can launch, say, KSysGuard in Kubuntu, to watch how the kernel bounces the threads from one processor to another.  To get rid of that, you can bind the threads for example like this:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="79%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field name</th>
+<th class="head">value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>live affinity</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><td>gl affinity</td>
+<td>2</td>
+</tr>
+<tr class="row-even"><td>dec affinity start</td>
+<td>3</td>
+</tr>
+<tr class="row-odd"><td>dec affinity stop</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p>Now LiveThread (the thread that streams from cameras) stays at core 1, all OpenGL operations and frame presenting at core 2.  Let&#8217;s imagine you have ten decoders running, then they will placed like this:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Core</th>
+<th class="head">Decoder thread</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>core 3</td>
+<td>1, 4, 7, 10</td>
+</tr>
+<tr class="row-odd"><td>core 4</td>
+<td>2, 5, 8</td>
+</tr>
+<tr class="row-even"><td>core 5</td>
+<td>3, 6, 9</td>
+</tr>
+</tbody>
+</table>
+<p>Before starting the test suite, you can use the script</p>
+<div class="highlight-python"><div class="highlight"><pre>valkka_examples/aux/
+
+  process_crowd.bash
+</pre></div>
+</div>
+<p>To throw all system processes into core 0.</p>
+<p>Is all this fiddling with thread affinities needed?  Not really - just use value &#8220;-1&#8221; on those fields if you think it doesn&#8217;t make any difference.</p>
+<p>It certainly doesn&#8217;t matter if you&#8217;re streaming and decoding just a few streams.  You can test how many streams your linux box is able to stream, decode and present by observing the core loads with, say, KSysGuard.  When all cores are screaming nearly 100% and smog is coming out of your pc, you&#8217;ll start to observe frame dropping.  You can test if thread affinities help.</p>
+<p>Finally, the buttons that launch the test, do the following:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Button</th>
+<th class="head">What it does?</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>SAVE</td>
+<td>Saves the test configuration (yes, save it)</td>
+</tr>
+<tr class="row-odd"><td><strong>RUN(QT)</strong></td>
+<td>Runs THE TEST (after saving, press this!)</td>
+</tr>
+<tr class="row-even"><td>RUN</td>
+<td>Runs the test without Qt</td>
+</tr>
+<tr class="row-odd"><td>FFPLAY</td>
+<td>Runs the streams in ffplay instead (if installed)</td>
+</tr>
+<tr class="row-even"><td>VLC</td>
+<td>Runs the streams in vlc instead (if installed)</td>
+</tr>
+</tbody>
+</table>
+<p>RUN(QT) is the thing you want to do.</p>
+</div>
+<div class="section" id="test-studio-detector-py">
+<h2>test_studio_detector.py<a class="headerlink" href="#test-studio-detector-py" title="Permalink to this headline">¶</a></h2>
+<p>Do this:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd valkka_examples/api_level_2/qt/
+python3 test_studio_detector.py
+</pre></div>
+</div>
+<p>This is similar to <em>test_studio_1.py</em>.  In addition to presenting the streams on-screen, the decoded frames are passed, once in a second, to OpenCV movement detectors.  When movement is detected, a signal is sent with the Qt signal/slot system to the screen.</p>
+<p>This test program is also used in the <em>gold stardard test</em>.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  We should be able to run this test with a large number of cameras for a long period of time and check for memory consumption.</p>
+<p>In our case, the test consists currently of running 10 full-hd (1080p) cameras for N days on a desktop with eight Intel i7-4770 cores, Xeon E3-1200 v3 integrated graphics and 16GB memory.</p>
+</div>
+</div>
+
 
           </div>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The PyQt testsuite</a><ul>
+<li><a class="reference internal" href="#test-studio-1-py">test_studio_1.py</a></li>
+<li><a class="reference internal" href="#test-studio-detector-py">test_studio_detector.py</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="lesson_2.html"
-                        title="previous chapter">Lesson 2</a></p>
+  <p class="topless"><a href="requirements.html"
+                        title="previous chapter">Installing</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="license.html"
-                        title="next chapter">Licenses</a></p>
+  <p class="topless"><a href="tutorial.html"
+                        title="next chapter">Tutorial</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -93,10 +305,10 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="license.html" title="Licenses"
+          <a href="tutorial.html" title="Tutorial"
              >next</a> |</li>
         <li class="right" >
-          <a href="lesson_2.html" title="Lesson 2"
+          <a href="requirements.html" title="Installing"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples 1 documentation</a> &raquo;</li> 
       </ul>

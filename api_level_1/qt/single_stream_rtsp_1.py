@@ -1,5 +1,5 @@
 """
-single_stream_rtsp.py : A demo program: streaming from a single rtsp camera
+single_stream_rtsp_1.py : A demo program: streaming from a single rtsp camera.  Using x window create by Valkka.
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -9,16 +9,59 @@ This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    single_stream_rtsp.py
+@file    single_stream_rtsp_1.py
 @author  Sampsa Riikonen
-@date    2017
+@date    2018
 @version 0.1
-@brief   A demo program: streaming from a single rtsp camera
+@brief   A demo program: streaming from a single rtsp camera.  Using x window create by Valkka.
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
 from valkka.valkka_core import *
+
+
+class TestWidget0(QtWidgets.QWidget):
+  
+  def mouseDoubleClickEvent(self,e):
+        print("double click!")
+
+
+class WidgetPair:
+  """Creates a "foreign" QWidget by using the X window id win_id.  Another "top" widget is placed on top of the foreign widget that catches the mouse gestures.  
+  
+  :param parent:       Parent (a QWidget) of the widget pair
+  :param win_id:       An X-window id of the foreign window (that's used for streaming)
+  :param widget_class: Class of the top widget
+  """
+  
+  def __init__(self,parent,win_id,widget_class):
+    self.win_id =win_id
+    self.foreign_window =QtGui.QWindow.fromWinId(win_id)
+    self.foreign_widget =QtWidgets.QWidget.createWindowContainer(self.foreign_window,parent=parent)
+    
+    self.widget =widget_class(self.foreign_widget)
+    self.lay   =QtWidgets.QHBoxLayout(self.foreign_widget)
+    self.lay.addWidget(self.widget)
+    
+    
+  def getStreamWindowId():
+    """Returns the X-window id for streaming
+    """
+    return self.win_id
+  
+  
+  def getTopWidget():
+    """Returns the widget that catches mouse gestures
+    """
+    return self.widget
+  
+  
+  def getWidget(self):
+    """Returns the foreign widget (where the stream is going).  This widget is used in layouts.
+    """
+    return self.foreign_widget
+
 
 
 class MyGui(QtWidgets.QMainWindow):
@@ -41,11 +84,11 @@ class MyGui(QtWidgets.QMainWindow):
 
   def setupUi(self):
     self.setGeometry(QtCore.QRect(100,100,500,500))
-    self.videoframe=QtWidgets.QFrame(self)
-    self.setCentralWidget(self.videoframe)
-    self.window_id=int(self.videoframe.winId())
-
+    self.w=QtWidgets.QWidget(self)
+    self.setCentralWidget(self.w)
+    self.lay=QtWidgets.QVBoxLayout(self.w)
     
+
   def openValkka(self):
     """Creates thread instances, creates filter chain, starts threads
     
@@ -107,12 +150,21 @@ class MyGui(QtWidgets.QMainWindow):
                                               ) 
     
     self.av_in_filter    =FifoFrameFilter    ("av_in_filter",   self.av_fifo)
-    self.live_out_filter =InfoFrameFilter    ("live_out_filter",self.av_in_filter)
+    # self.live_out_filter =InfoFrameFilter    ("live_out_filter",self.av_in_filter)
+    self.live_out_filter =self.av_in_filter # no verbosity
+    
     
     # Start all threads
     self.glthread.  startCall()
     self.livethread.startCall()
     self.avthread  .startCall()
+  
+    # Get an x-window from OpenGLThread once it's been started:
+    self.window_id =self.glthread.createWindow(show=False)
+    self.pair      =WidgetPair(self.w,self.window_id,TestWidget0)
+    self.pair.getWidget().setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
+    self.lay.addWidget(self.pair.getWidget())
+    
   
   
   def closeValkka(self):

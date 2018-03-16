@@ -306,4 +306,4 @@ There are many ways to organize threads, render contexes (slot to x window mappi
 
 One could even opt for an architecture, where there is a LiveThread and OpenGLThread for each individual stream (however, this is not recommended).
 
-Level 2 API provides ready-made filtergraph classes for different purposes (similar to class LiveStream constructed here).
+The level 2 API provides ready-made filtergraph classes for different purposes (similar to class LiveStream constructed here).

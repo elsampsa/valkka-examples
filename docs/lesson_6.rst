@@ -24,7 +24,7 @@ In this lesson, we are (a) writing from a live stream to a file and (b) read the
                 +---> {FifoFrameFilter:gl_in_filter} --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread)
 
 
-Note that live and file streams are treated on an equal basis and with a similar filtergraph.  We could also send the file over the net as a multicast stream.  This is left as an excercise.
+Note that live and file streams are treated on an equal basis and with a similar filtergraph.  We could also send the file over the net as a multicast stream.
 
 Writing is done simply by piping the stream into a FileFrameFilter:
                 

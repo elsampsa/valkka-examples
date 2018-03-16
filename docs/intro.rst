@@ -37,7 +37,7 @@ If you got interested, we recommend that you do the tutorial, and use the exampl
 
 This manual has a special emphasis for Qt and OpenCV.  You can create video streaming applications using PyQt: streaming video to widgets, and connect the signals from your machine vision subprograms to the Qt signal/slot system - and beyond.  
 
-A test/benchmarking Qt test suite is provided here.
+A test/benchmarking Qt test suite is provided :ref:`here <testsuite>`.
 
 For more technical information, check out the `library architecture page <https://elsampsa.github.io/valkka-core/html/process_chart.html>`_
 

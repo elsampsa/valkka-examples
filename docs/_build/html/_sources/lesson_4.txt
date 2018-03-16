@@ -289,4 +289,4 @@ Finally, start reading frames:
     else:
       print("timeout")
 
-Cpp documentation for Valkka shared memory classes be found :ref:`here<https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html>`_
+Cpp documentation for Valkka shared memory classes be found `here. <https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html>`_
