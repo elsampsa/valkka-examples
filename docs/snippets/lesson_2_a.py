@@ -29,7 +29,7 @@ avthread.decodingOnCall()
 
 livethread.registerStreamCall(ctx)
 livethread.playStreamCall(ctx)
-time.sleep(5) # TODO: fix: if no sleep here, the thread won't exit!
+time.sleep(5)
 
 # stop decoding
 # avthread.decodingOffCall()

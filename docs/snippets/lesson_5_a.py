@@ -4,8 +4,6 @@ from valkka.valkka_core import *
 (LiveThread:livethread) --> {InfoFrameFilter:info_filter) --> {FifoFrameFilter:fifo_filter} --> [LiveFifo:live_fifo] -->> (LiveThread:livethread2) 
 """
 
-# TODO: clean up at cpp level
-
 livethread  =LiveThread("livethread")
 livethread2 =LiveThread("livethread2",20) # reserve stack for incoming frames
 live_fifo   =livethread2.getFifo()
@@ -24,10 +22,11 @@ livethread. registerStreamCall(ctx)
 livethread. playStreamCall(ctx)
 
 time.sleep(120)
+# time.sleep(5)
 
 livethread. stopStreamCall(ctx)
 livethread. deregisterStreamCall(ctx)
-livethread2.deregisterOutbound(out_ctx)
+livethread2.deregisterOutboundCall(out_ctx)
 
 livethread. stopCall();
 livethread2.stopCall();

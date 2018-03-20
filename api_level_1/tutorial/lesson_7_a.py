@@ -63,7 +63,8 @@ avthread_3     =AVThread("avthread_3",av_fifo_3,fork_filter_3)
 # *** main branch ***
 livethread  =LiveThread("livethread_1")
 fork_filter =ForkFrameFilter3("fork_filter",fifo_filter_1,file_filter_2,fifo_filter_3)
-ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, fork_filter) # stream from 192.168.1.41 is sent to fork_filter with slot number 2
+# ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, fork_filter) # stream from 192.168.1.41 is sent to fork_filter with slot number 2
+ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:123456@192.168.0.134", 2, fork_filter) # stream from 192.168.1.41 is sent to fork_filter with slot number 2
 
 # start threads
 glthread_3_1   .startCall()
@@ -76,7 +77,7 @@ avthread_3 .decodingOnCall()
 
 livethread    .registerStreamCall(ctx) # receive frames
 livethread    .playStreamCall(ctx)
-# livethread2_1 .registerOutboundCall(out_ctx) # send frames
+livethread2_1 .registerOutboundCall(out_ctx) # send frames
 
 # create two X windows
 window_id =glthread_3_1.createWindow()

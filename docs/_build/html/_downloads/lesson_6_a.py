@@ -49,7 +49,7 @@ livethread .startCall()
 livethread .registerStreamCall(ctx)
 livethread .playStreamCall(ctx)
 
-time.sleep(5) # TODO: this is needed.. otherwise config frames are missed.  Fix
+# time.sleep(5) # TODO: this is needed.. otherwise config frames are missed.  Fix
 
 # start writing to a file
 print("writing to file")
