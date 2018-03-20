@@ -74,7 +74,7 @@ Stop and exit
   
   livethread. stopStreamCall(ctx)
   livethread. deregisterStreamCall(ctx)
-  livethread2.deregisterOutbound(out_ctx)
+  livethread2.deregisterOutboundCall(out_ctx)
 
   livethread. stopCall();
   livethread2.stopCall();
