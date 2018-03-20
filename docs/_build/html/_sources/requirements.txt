@@ -45,7 +45,7 @@ Installing
   ::
   
       cd valkka-examples
-      git checkout 0.3.5
+      git checkout 0.3.6
       
       
 4. Test the installation with:

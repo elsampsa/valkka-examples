@@ -6,8 +6,12 @@
 Valkka Examples
 ===============
 
-WARNING: this is still under construction - some features may not work correctly
+With Valkka you can:
 
+- Create complex video streaming solutions from python, using Qt
+- Plug-in your OpenCV machine vision module
+- Scale to large number of IP cameras
+- Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice
 
 .. toctree::
    :maxdepth: 2
