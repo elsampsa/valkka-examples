@@ -2,6 +2,8 @@
 Lesson 7 : Decode, save, visualize, analyze and re-transmit
 ===========================================================
 
+**Download lesson** :download:`[here]<snippets/lesson_7_a.py>`
+
 This lesson demonstrates the full power of Valkka.  We do simultaneously a lot of stuff, namely, save the stream to disk, decode it to bitmap, visualize it in two different x windows, pass the decoded frames to an OpenCV analyzer and re-transmit the stream to a multicast address.
 
 Only a single connection to the IP camera is required and the stream is decoded only once.

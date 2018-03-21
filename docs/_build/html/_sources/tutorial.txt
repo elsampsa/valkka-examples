@@ -48,3 +48,5 @@ Lessons
    lesson_5
    lesson_6
    lesson_7
+   lesson_8
+

@@ -22,11 +22,24 @@ openglthread=OpenGLThread(
 chain=BasicFilterchain( # decoding and branching the stream happens here
   livethread  =livethread, 
   openglthread=openglthread,
-  address     =address,
+  address     ="rtsp://admin:nordic12345@192.168.1.41",
   slot        =1,
   affinity    =-1,
   verbose     =False,
-  msreconnect =10000
+  msreconnect =10000 # if no frames in ten seconds, try to reconnect
 )
+
+# create a window
+win_id =openglthread.createWindow()
+
+# create a stream-to-window mapping
+token  =openglthread.connect(slot=1,window_id=win_id) # present frames with slot number 1 at window win_id
+
+# start decoding
+chain.decodingOn()
+# stream for 20 secs
+time.sleep(20)
+
+chain.decodingOff()
 
 print("bye")

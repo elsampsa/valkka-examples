@@ -1,1 +1,8 @@
 major_version_0/api_level_2/qt/test_studio_1.config
+api_level_2/qt/*.config
+api_level_2/qt/*.config.*
+git_rm_tag.bash
+git_tag.bash
+setver.bash
+add_untracked.bash
+cleanpy.bash

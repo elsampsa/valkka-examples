@@ -64,6 +64,7 @@ avthread_3     =AVThread("avthread_3",av_fifo_3,fork_filter_3)
 livethread  =LiveThread("livethread_1")
 fork_filter =ForkFrameFilter3("fork_filter",fifo_filter_1,file_filter_2,fifo_filter_3)
 ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, fork_filter) # stream from 192.168.1.41 is sent to fork_filter with slot number 2
+# ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:123456@192.168.0.134", 2, fork_filter) # stream from 192.168.1.41 is sent to fork_filter with slot number 2
 
 # start threads
 glthread_3_1   .startCall()
@@ -92,14 +93,21 @@ context_id2 =glthread_3_1.newRenderContextCall(2,window_id2,0)
 # stream for 10 secs
 time.sleep(10)
 
+print("writing to disk")
 # .. after that start writing stream to disk
 file_filter_2.activate("kokkelis.mkv")
 
-# keep on streaming for 30 secs
-time.sleep(30)
+time.sleep(10) # write for 10 secs
 
 # close the file
 file_filter_2.deActivate()
+
+# keep on streaming for 10 secs
+# time.sleep(30)
+time.sleep(10)
+
+# close the file
+# file_filter_2.deActivate()
 
 glthread_3_1.delRenderContextCall(context_id)
 glthread_3_1.delRenderContextCall(context_id2)
@@ -110,15 +118,18 @@ glthread_3_1.delRenderGroupCall(window_id2)
 avthread_3 .decodingOffCall()
 
 # stop threads
-glthread_3_1   .stopCall()
+# a comment: threads use the same resources.  Common frames are freed by a thread, while another thread might be using it still.  May result in segfaults at program exit - this will be sorted out asap
 avthread_3     .stopCall()
-livethread     .stopCall()
 livethread2_1  .stopCall()
+livethread     .stopCall()
+glthread_3_1   .stopCall()
 
+#"""
 # invokes the garbage collection => cpp level destructors
 glthread_3_1   =None
 avthread_3     =None
 livethread     =None
 livethread2_1  =None
+#"""
 
 print("bye")
