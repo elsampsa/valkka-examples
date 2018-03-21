@@ -55,18 +55,22 @@
 <li>You need to install two pre-built packages, available by clicking <a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">here</a></li>
 </ol>
 <ul>
-<li><p class="first">Install the valkka-core debian (.deb) package with:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo dpkg -i package_name
+<li><p class="first">Download the valkka-core debian (.deb) package and use:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo dpkg -i Valkka*.deb
 sudo apt-get -f install
 </pre></div>
 </div>
 </li>
-<li><p class="first">Install the python3 binary package (.whl) with:</p>
-<div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade package_name
+<li><p class="first">Download the python3 binary package (.whl) and use:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade Valkka*.whl
 </pre></div>
 </div>
 </li>
-<li><p class="first">OpenCV and its python bindings (as debian packages) are provided as well.  Install also them (if not already installed in your system).</p>
+<li><p class="first">OpenCV and its python bindings (as debian packages) are provided as well (with working high-gui).  Download them and use:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo dpkg -i OpenCV*.deb
+sudo apt-get -f install
+</pre></div>
+</div>
 </li>
 </ul>
 <ol class="arabic simple" start="2">
