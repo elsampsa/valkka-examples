@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_1.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.3.6 
+@version 0.4.0 
 @brief   Test live streaming with Qt
 
 
@@ -54,8 +54,8 @@ import sys
 import json
 import os
 import time
-from valkka.api2.threads import LiveThread, OpenGLThread
-from valkka.api2.chains import BasicFilterchain
+from valkka.api2 import LiveThread, OpenGLThread
+from valkka.api2 import BasicFilterchain
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
 pre="test_studio : " # aux string for debugging 
@@ -115,10 +115,10 @@ class MyGui(QtWidgets.QMainWindow):
 
     self.openglthread=OpenGLThread(     # starts frame presenting services
       name    ="mythread",
-      n720p   =self.pardic["n720p"],   # reserve stacks of YUV video frames for various resolutions
-      n1080p  =self.pardic["n1080p"],
-      n1440p  =self.pardic["n1440p"],
-      n4K     =self.pardic["n4K"],
+      n_720p   =self.pardic["n_720p"],   # reserve stacks of YUV video frames for various resolutions
+      n_1080p  =self.pardic["n_1080p"],
+      n_1440p  =self.pardic["n_1440p"],
+      n_4K     =self.pardic["n_4K"],
       # naudio  =self.pardic["naudio"], # obsolete
       # verbose =True,
       verbose =False,

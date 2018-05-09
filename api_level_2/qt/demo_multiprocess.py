@@ -1,5 +1,5 @@
 """
-valkkathread.py : Multiprocesses / Qt intercommunication through pipes and signals.  See the test_studio_*.py for examples.
+demo_multiprocess.py : Multiprocesses / Qt intercommunication through pipes and signals.  See the test_studio_*.py for examples.
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -9,10 +9,10 @@ This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    valkkathread.py
+@file    demo_multiprocess.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.3.6 
+@version 0.4.0 
 @brief   Multiprocesses / Qt intercommunication through pipes and signals
 
 
@@ -22,7 +22,7 @@ When using python multiprocesses with Qt, we need a frontend thread that reads t
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
 import time
-from valkka.api2.threads import ValkkaProcess, Namespace, safe_select, ShmemClient
+from valkka.api2 import ValkkaProcess, Namespace, safe_select, ShmemClient, ShmemRGBClient
 from valkka.api2.tools import *
 
 
@@ -97,7 +97,7 @@ class QValkkaProcess(ValkkaProcess):
   
 
 class QValkkaOpenCVProcess(ValkkaProcess):
-  """A multiprocess with Qt signals, using OpenCV
+  """A multiprocess with Qt signals, using OpenCV.  Reads RGB images from shared memory
   """
   
   incoming_signal_defs={ # each key corresponds to a front- and backend methods
@@ -117,7 +117,7 @@ class QValkkaOpenCVProcess(ValkkaProcess):
   
   parameter_defs={
     "n_buffer"   : (int,10),
-    "n_bytes"    : int,
+    "image_dimensions" : tuple,
     "shmem_name" : str
     }
   
@@ -126,15 +126,18 @@ class QValkkaOpenCVProcess(ValkkaProcess):
     super().__init__(name,**kwargs)
     self.signals =self.Signals()
     parameterInitCheck(QValkkaOpenCVProcess.parameter_defs, kwargs, self)
+    typeCheck(self.image_dimensions[0],int)
+    typeCheck(self.image_dimensions[1],int)
     
     
   def preRun_(self):
     """Create the shared memory client after fork
     """
-    self.client=ShmemClient(
-      name          =self.shmem_name, 
-      n_ringbuffer  =self.n_buffer,   # size of ring buffer
-      n_bytes       =self.n_bytes,    # size of the RGB image
+    self.client=ShmemRGBClient(
+      name         =self.shmem_name, 
+      n_ringbuffer =self.n_buffer,   # size of ring buffer
+      width        =self.image_dimensions[0],
+      height       =self.image_dimensions[1],
       mstimeout     =1000,            # client timeouts if nothing has been received in 1000 milliseconds
       verbose       =False
     )
@@ -147,7 +150,7 @@ class QValkkaOpenCVProcess(ValkkaProcess):
     else:
       print(self.pre,"Client index, size =",index, isize)
       data=self.client.shmem_list[index]
-      img=data.reshape((1080//4,1920//4,3))
+      img=data.reshape((self.image_dimensions[1],self.image_dimensions[0],3))
       """ # WARNING: the x-server doesn't like this, i.e., we're creating a window from a separate python multiprocess, so the program will crash
       print(self.pre,"Visualizing with OpenCV")
       cv2.imshow("openCV_window",img)

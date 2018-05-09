@@ -1,5 +1,5 @@
 """
-shmem_test_encoded.py : Stream encoded H264 frames from a single rtsp camera to a python process (no decoding)
+shmem_test_encoded.py : Stream encoded H264 frames from a single rtsp camera (no decoding).  Share H264 stream to another python process.
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -9,11 +9,11 @@ This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    single_stream.py
+@file    shmem_test_encoded.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.3.6 
-@brief   Stream encoded H264 frames from a single rtsp camera to a python process (no decoding)
+@version 0.4.0 
+@brief   Stream encoded H264 frames from a single rtsp camera (no decoding).  Share H264 stream to another python process.
 """
 
 import sys
@@ -25,12 +25,12 @@ shmem_name_tag="shmem_bridge"
 
 
 def client(stop_event):
-  print(">",stop_event)
+  # print(">",stop_event)
   
   index_p =new_intp()
   isize_p =new_intp()
   
-  rb=SharedMemRingBuffer(shmem_name_tag,10,30*1024*1024,2000,False)
+  rb=SharedMemRingBuffer(shmem_name_tag,10,30*1024*1024,1000,False) # name, cells, bytes, mstimeout, not server
   
   print("Getting shmem buffers")
   shmem_list=[]
@@ -60,37 +60,18 @@ class ValkkaContext:
   def openValkka(self):
     """Creates thread instances, creates filter chain, starts threads
     
-    So, you've learned from
+    filtergraph:
     
-    https://elsampsa.github.io/valkka-core/html/process_chart.html
-    
-    that:
-    
-    * Concatenating FrameFilters, creates a callback cascade
-    * Threads write to a FrameFilter
-    * Threads read from a FrameFifo
-    * FrameFifos have an internal stack of pre-reserved frames
-    * Threads are not python threads, so there are no global intepreter lock (GIL) problems in this code
-    
-    The filtergraph (**) for this case:
-    
-    (LiveThread:livethread) --> {InfoFrameFilter:live_out_filter} --> {SharedMemFrameFilter:shmem_filter}
+    (LiveThread:livethread) --> {InfoFrameFilter:live_out_filter} --> {ShmemFrameFilter:shmem_filter}
     """
     
-    self.livethread      =LiveThread         ("livethread", # name 
-                                              0,            # size of input fifo
-                                              -1            # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
-                                              )
-    """
-    Start constructing the filter chain.  Follow the filtergraph (**) from end to beginning.
-    """
+    self.livethread      =LiveThread("livethread")
     # reserve 10 frames, 300 KB each
-    self.shmem_filter   =SharedMemFrameFilter (shmem_name_tag,10,300*1024)
-    # SharedMemFrameFilter instantiates the server side of shmem bridge
+    self.shmem_filter   =ShmemFrameFilter(shmem_name_tag,10,300*1024)
+    # ShmemFrameFilter instantiates the server side of shmem bridge
     # in a separate process do:
     # rb=SharedMemRingBuffer(shmem_name_tag,10,30*1024*1024,False) # shmem ring buffer on the client side
-    
-    self.live_out_filter =InfoFrameFilter    ("live_out_filter",self.shmem_filter)
+    self.live_out_filter =InfoFrameFilter("live_out_filter",self.shmem_filter)
     
     # Start all threads
     self.livethread.startCall()
@@ -141,10 +122,8 @@ def main():
   vc.start_streams()
   time.sleep(10)
   vc.stop_streams()
-  vc.closeValkka()
-  
+  vc.closeValkka()  
   ev.set()
-  time.sleep(5)
   print("bye!")
 
 

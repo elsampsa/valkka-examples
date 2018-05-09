@@ -54,63 +54,61 @@
   <div class="section" id="lesson-6-writing-reading-stream">
 <h1>Lesson 6 : Writing / reading stream<a class="headerlink" href="#lesson-6-writing-reading-stream" title="Permalink to this headline">¶</a></h1>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_6_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>In this lesson, we are (a) writing from a live stream to a file and (b) read the file, decode the stream and present it on the screen.  The filtergraph goes like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>*** writing ***
+<p>In this lesson, we are (a) writing from a live stream to a file and (b) reading the file, decoding the stream and presenting it on the screen.  The filtergraph goes like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>*** (a) writing ***
 
 (LiveThread:livethread) --&gt; {FileFrameFilter:file_filter}
 
-*** reading ***
 
-reading part
-(FileThread:filethread) --&gt; {BlockingFifoFrameFilter:av_filter} --&gt; [FrameFifo:av_fifo]
-                                                                           |
-decoding part                                                              |
-    (AVThread:avthread) &lt;&lt; ------------------------------------------------+
-              |
-              |                                                                         Presentation part
-              +---&gt; {FifoFrameFilter:gl_in_filter} --&gt; [OpenGLFrameFifo:gl_fifo] --&gt;&gt; (OpenGLThread:glthread)
+*** (b) reading ***
+
+Reading part
+(FileThread:filethread) -----+
+                             |
+Decoding part                |
+(AVThread:avthread) &lt;&lt; ------+
+      |
+      |     Presentation part
+      +--&gt;&gt; (OpenGLThread:glthread)
 </pre></div>
 </div>
 <p>Note that live and file streams are treated on an equal basis and with a similar filtergraph.  We could also send the file over the net as a multicast stream.</p>
-<p>Writing is done simply by piping the stream into a FileFrameFilter:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** writing ***</span>
-<span class="n">livethread</span>   <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
-<span class="n">file_filter</span>  <span class="o">=</span><span class="n">FileFrameFilter</span><span class="p">(</span><span class="s2">&quot;file_filter&quot;</span><span class="p">)</span>
-<span class="c1"># file_filter  =BriefInfoFrameFilter(&quot;info_filter&quot;) # uncomment this to do debugging (i.e., are you getting any frames?)</span>
-<span class="c1"># stream from 192.168.1.41, tag frames with slot number 1 and write to file_filter</span>
-<span class="n">ctx</span>          <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">file_filter</span><span class="p">)</span>
+<p>Let&#8217;s start by importing Valkka:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
-<p>Keep in mind that it is the LiveThread that &#8220;drives&#8221; the writing to the disk (in the first filtergraph, there is just one thread, the LiveThread)</p>
-<p>For reading, decoding and presenting, we instantiate the threads and construct the filtergraph as usual:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** reading ***</span>
-<span class="n">glthread</span>      <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># parameters are as follows: thread name, n720p, n1080p, n1440p, n4K</span>
-<span class="n">gl_fifo</span>       <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFifo</span><span class="p">()</span>
-<span class="n">gl_in_filter</span>  <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;gl_in_filter&quot;</span><span class="p">,</span><span class="n">gl_fifo</span><span class="p">)</span>
-
-<span class="c1"># used by both reading and decoding parts</span>
-<span class="n">av_fifo</span>       <span class="o">=</span><span class="n">FrameFifo</span><span class="p">(</span><span class="s2">&quot;av_fifo&quot;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<p>Writing is done by piping the stream into a FileFrameFilter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">file_filter</span>  <span class="o">=</span><span class="n">FileFrameFilter</span><span class="p">(</span><span class="s2">&quot;file_filter&quot;</span><span class="p">)</span>
+<span class="n">livethread</span>   <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For reading, decoding and presenting, we construct the filtergraph as usual, from end-to-beginning:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># presentation part</span>
+<span class="n">glthread</span>      <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
+<span class="n">gl_in_filter</span>  <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFilter</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For file streams, the execution should block for frame bursts, so we request a blocking input FrameFilter from the AVThread:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">avthread</span>      <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">gl_in_filter</span><span class="p">)</span>
+<span class="n">av_in_filter</span>  <span class="o">=</span><span class="n">avthread</span><span class="o">.</span><span class="n">getBlockingFrameFilter</span><span class="p">()</span>
 
 <span class="c1"># reading part</span>
-<span class="n">av_filter</span>     <span class="o">=</span><span class="n">BlockingFifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;av_filter&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">)</span>
 <span class="n">filethread</span>    <span class="o">=</span><span class="n">FileThread</span><span class="p">(</span><span class="s2">&quot;filethread&quot;</span><span class="p">)</span>
-<span class="n">file_ctx</span>      <span class="o">=</span><span class="n">FileContext</span><span class="p">(</span><span class="s2">&quot;kokkelis.mkv&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_filter</span><span class="p">)</span> <span class="c1"># read from file &quot;kokkelis.mkv&quot;, tag frames with slot number 1 and write to av_filter</span>
-
-<span class="c1"># decoding part</span>
-<span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">,</span><span class="n">gl_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Starting LiveThread will stream the frames to FileFrameFilter.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** writing ***</span>
-<span class="c1"># start streaming</span>
-<span class="n">livethread</span> <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<p>Starting LiveThread will stream the frames to FileFrameFilter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span> <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+
+<span class="n">ctx</span>          <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">file_filter</span><span class="p">)</span>
+<span class="c1"># stream from 192.168.1.41, tag frames with slot number 1 and write to file_filter</span>
+
 <span class="n">livethread</span> <span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">livethread</span> <span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In order to start writing to disk, FileFrameFilter&#8217;s &#8220;activate&#8221; method must be called with the filename.  Only matroska (.mkv) files are supported:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># start writing to a file</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;writing to file&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s2">&quot;writing to file&quot;</span><span class="p">)</span>
 <span class="n">file_filter</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="s2">&quot;kokkelis.mkv&quot;</span><span class="p">)</span>
 
 <span class="c1"># stream for 30 secs</span>
@@ -123,9 +121,8 @@ decoding part                                                              |
 <span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Let&#8217;s setup stream decoding, presenting, etc. as usual:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** reading ***</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;reading file&quot;</span><span class="p">)</span>
+<p>File &#8220;kokkelis.mkv&#8221; has been created.  Next, let&#8217;s setup stream decoding, presenting, etc. as usual and read the file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s2">&quot;reading file&quot;</span><span class="p">)</span>
 <span class="n">glthread</span>   <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">filethread</span> <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span>   <span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
@@ -143,6 +140,7 @@ decoding part                                                              |
 </div>
 <p>Open the file by sending it a call with the FileContext (file_ctx) identifying the file stream:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s2">&quot;open file&quot;</span><span class="p">)</span>
+<span class="n">file_ctx</span> <span class="o">=</span><span class="n">FileContext</span><span class="p">(</span><span class="s2">&quot;kokkelis.mkv&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span> <span class="c1"># read from file &quot;kokkelis.mkv&quot;, tag frames with slot number 1 and write to av_in_filter</span>
 <span class="n">filethread</span><span class="o">.</span><span class="n">openFileStreamCall</span><span class="p">(</span><span class="n">file_ctx</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -172,6 +170,8 @@ decoding part                                                              |
 <p>Finally, exit:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+
+<span class="c1"># exit</span>
 <span class="n">filethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">avthread</span>  <span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">glthread</span>  <span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>

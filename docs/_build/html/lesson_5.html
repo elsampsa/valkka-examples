@@ -54,23 +54,21 @@
   <div class="section" id="lesson-5-sending-frames-to-a-multicast-address">
 <h1>Lesson 5 : Sending frames to a multicast address<a class="headerlink" href="#lesson-5-sending-frames-to-a-multicast-address" title="Permalink to this headline">¶</a></h1>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_5_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p><strong>TODO</strong> can&#8217;t listen to rtsp server port in both threads!</p>
 <p>In this lesson, we are receiving frames from an IP camera using LiveThread and recast those frames to a multicast address using another LiveThread. The filterchain looks like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:info_filter) --&gt; {FifoFrameFilter:fifo_filter} --&gt; [LiveFifo:live_fifo] --&gt;&gt; (LiveThread:livethread2)
+<div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:info_filter) --&gt;&gt; (LiveThread:livethread2)
 </pre></div>
 </div>
-<p>Let&#8217;s start by importing Valkka and instantiating two LiveThreads:</p>
+<p>Let&#8217;s start by importing Valkka:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
-
-<span class="n">livethread</span>  <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
-<span class="n">livethread2</span> <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread2&quot;</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span> <span class="c1"># reserve stack for incoming frames</span>
-<span class="n">live_fifo</span>   <span class="o">=</span><span class="n">livethread2</span><span class="o">.</span><span class="n">getFifo</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Here we have requested a special FrameFifo from the LiveThread that can be used to feed the frames.</p>
-<p>Construct the filtergraph:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">fifo_filter</span> <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;in_live_filter&quot;</span><span class="p">,</span><span class="n">live_fifo</span><span class="p">)</span>
-<span class="n">info_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;info_filter&quot;</span><span class="p">,</span><span class="n">fifo_filter</span><span class="p">)</span>
+<p>Construct the filtergraph from end-to-beginning:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread2</span>    <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread2&quot;</span><span class="p">)</span>
+<span class="n">live_in_filter</span> <span class="o">=</span><span class="n">livethread2</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+<span class="n">info_filter</span>    <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;info_filter&quot;</span><span class="p">,</span><span class="n">live_in_filter</span><span class="p">)</span>
+<span class="n">livethread</span>     <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start threads:</p>
@@ -78,12 +76,11 @@
 <span class="n">livethread2</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Define incoming and outgoing (multicast) streams:</p>
+<p>Define stream source: incoming frames from IP camera 192.168.1.41 are tagged with slot number &#8220;2&#8221; and they are written to &#8220;info_filter&#8221;:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span>     <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">info_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>i.e., incoming frames from IP camera 192.168.1.41 are tagged with slot number &#8220;2&#8221; and they are written to &#8220;info_filter&#8221;.</p>
-<p>All outgoing frames with slot number &#8220;2&#8221; are sent to port 50000:</p>
+<p>Define stream sink: all outgoing frames with slot number &#8220;2&#8221; are sent to port 50000:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">out_ctx</span> <span class="o">=</span><span class="n">LiveOutboundContext</span><span class="p">(</span><span class="n">LiveConnectionType_sdp</span><span class="p">,</span> <span class="s2">&quot;224.1.168.91&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">50000</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -93,23 +90,23 @@
 <span class="n">livethread</span><span class="o">.</span> <span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Stream and recast to multicast for two minutes:</p>
+<p>Stream and recast to multicast for a while:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
+
+<span class="n">livethread</span><span class="o">.</span> <span class="n">stopStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">livethread</span><span class="o">.</span> <span class="n">deregisterStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">livethread2</span><span class="o">.</span><span class="n">deregisterOutboundCall</span><span class="p">(</span><span class="n">out_ctx</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Stop and exit</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span> <span class="n">stopStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-<span class="n">livethread</span><span class="o">.</span> <span class="n">deregisterStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-<span class="n">livethread2</span><span class="o">.</span><span class="n">deregisterOutboundCall</span><span class="p">(</span><span class="n">out_ctx</span><span class="p">)</span>
-
-<span class="n">livethread</span><span class="o">.</span> <span class="n">stopCall</span><span class="p">();</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span> <span class="n">stopCall</span><span class="p">();</span>
 <span class="n">livethread2</span><span class="o">.</span><span class="n">stopCall</span><span class="p">();</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p id="multicast">To receive the multicast stream, you need this file, save it as &#8220;multicast.sdp&#8221;:</p>
-<div class="highlight-python"><div class="highlight"><pre>v=0
+<p>To receive the multicast stream, you need this file, save it as &#8220;multicast.sdp&#8221;:</p>
+<div class="highlight-python" id="multicast"><div class="highlight"><pre>v=0
 o=- 0 0 IN IP4 127.0.0.1
 s=No Name
 c=IN IP4 224.1.168.91
@@ -121,11 +118,11 @@ a=fmtp:96 packetization-mode=1
 a=control:streamid=0
 </pre></div>
 </div>
-<p>Then you can test that the stream is multicasted with:</p>
+<p>Then you can test that the stream is multicasted (while running the python script) with:</p>
 <div class="highlight-python"><div class="highlight"><pre>ffplay multicast.sdp
 </pre></div>
 </div>
-<p>(feel free to launch that command several times simultaneously)</p>
+<p>(feel free to launch this command several times simultaneously)</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Receiving and recasting the stream can also be done using a single LiveThread only.  This is left as an excercise.</p>

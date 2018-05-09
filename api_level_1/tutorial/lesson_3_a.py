@@ -1,38 +1,67 @@
+#<hide>
+"""
+filtergraph:
+
+Streaming part                                                                           
+(LiveThread:livethread)---+
+                          |
+Decoding part             |
+(AVThread:avthread) <<----+    
+ |
+ |       Presentation part
+ +--->> (OpenGLThread:glthread)
+"""
+#</hide>
+#<hide>
 import time
 from valkka.valkka_core import *
-"""
- 
-Streaming part                                                                           
-(LiveThread:livethread) --> {FifoFrameFilter:live_out_filter} --> [FrameFifo: av_fifo] 
-                                                                           |
-Decoding part                                                              |
-    (AVThread:avthread) << ------------------------------------------------+    
-              |
-              |                                                                         Presentation part
-              +---> {FifoFrameFilter:gl_in_filter} --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread)
-"""
+#</hide>
+"""<rtf>
+Let's consider the following filtergraph with streaming, decoding and presentation:
 
-# parameters are as follows: thread name, n720p, n1080p, n1440p, n4K
-glthread        =OpenGLThread ("glthread", 10, 10, 0, 0)
-                                        
-# used by both streaming and decoding parts
-av_fifo         =FrameFifo("av_fifo",10) 
+::
 
-# used by decoding and presentation parts
-gl_fifo         =glthread.getFifo()
-gl_in_filter    =FifoFrameFilter("gl_in_filter",gl_fifo)
+  Streaming part                                                                           
+  (LiveThread:livethread)---+
+                            |
+  Decoding part             |
+  (AVThread:avthread) <<----+    
+  |
+  |       Presentation part
+  +--->> (OpenGLThread:glthread)
+  
+  
+Compared to the previous lesson, we're continuying the filterchain from AVThread to OpenGLThread.  OpenGLThread is responsible for sending the frames to designated x windows.
+
+.. note:: OpenGLThread uses OpenGL texture streaming.  YUV interpolation to RGB is done on the GPU, using the shader language.
+    
+Start constructing the filterchain from end-to-beginning:
+<rtf>"""
+# presentation part
+glthread        =OpenGLThread ("glthread")
+gl_in_filter    =glthread.getFrameFilter()
+
+
+"""<rtf>
+We requested a framefilter from the OpenGLThread.  It is passed to the AVThread:
+<rtf>"""
+# decoding part
+avthread        =AVThread("avthread",gl_in_filter)
+av_in_filter    =avthread.getFrameFilter()
 
 # streaming part
 livethread      =LiveThread("livethread")
-live_out_filter =FifoFrameFilter("live_out_filter",av_fifo)
 
-# decoding part
-avthread        =AVThread("avthread",av_fifo,gl_in_filter)
+"""<rtf>
+Define the connection to the IP camera as usual, with **slot number** "1":
 
-# define connection to camera
-ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, live_out_filter)
+.. _connection:
+<rtf>"""
+ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
 
-# start threads
+"""<rtf>
+Start all threads and register the live stream:
+<rtf>"""
 glthread.startCall()
 avthread.startCall()
 livethread.startCall()
@@ -43,11 +72,30 @@ avthread.decodingOnCall()
 livethread.registerStreamCall(ctx)
 livethread.playStreamCall(ctx)
 
-# create an X-window
+"""<rtf>
+Now comes the new bit.  First, we create a new X window on the screen:
+<rtf>"""
 window_id =glthread.createWindow()
-glthread.newRenderGroupCall(window_id)
-context_id=glthread.newRenderContextCall(1,window_id,0)
 
+"""<rtf>
+We could also use the window id of an existing X window.
+  
+Next, we create a new "render group" to the OpenGLThread.  Render group is a place where we can render bitmaps - in this case it's just the X window.
+<rtf>"""
+glthread.newRenderGroupCall(window_id)
+
+"""<rtf>
+We still need a "render context".  Render context is a mapping from a frame source (in this case, the IP camera) to a certain render group (X window) on the screen:
+<rtf>"""
+context_id=glthread.newRenderContextCall(1,window_id,0) # slot, render group, z
+
+"""<rtf>
+The first argument to newRenderContextCall is the **slot number**.  We defined the slot number for the IP camera when we used the :ref:`LiveConnectionContext <connection>`.
+
+Now, each time a frame with slot number "1" arrives to OpenGLThread it will be rendered to render group "window_id".
+
+Stream for a while, and finally, close all threads:
+<rtf>"""
 time.sleep(10)
 
 glthread.delRenderContextCall(context_id)
@@ -60,10 +108,5 @@ avthread.decodingOffCall()
 livethread.stopCall()
 avthread.stopCall()
 glthread.stopCall()
-
-# invokes the garbage collection => cpp level destructors
-livethread=None
-avthread  =None
-glthread  =None
 
 print("bye")

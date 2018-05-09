@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_detector.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.3.6 
+@version 0.4.0 
 @brief   Test live streaming with Qt.  Send copies of the streams to OpenCV movement detector processes.
 
 
@@ -52,10 +52,10 @@ import cv2
 import sys
 import json
 import os
-from valkka.api2.threads import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
-from valkka.api2.chains import ShmemFilterchain
-from valkka.api2.tools import parameterInitCheck
-from valkkathread import QValkkaThread, QValkkaOpenCVProcess
+from valkka.api2 import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
+from valkka.api2 import ShmemFilterchain
+from valkka.api2 import parameterInitCheck
+from demo_multiprocess import QValkkaThread, QValkkaOpenCVProcess
 from analyzer import MovementDetector
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
@@ -85,17 +85,10 @@ class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
     stop_move  =QtCore.pyqtSignal()
   
   
-  parameter_defs={
-    "n_buffer"   : (int,10),
-    "n_bytes"    : int,
-    "shmem_name" : str
-    }
-  
-  
   def __init__(self,name,**kwargs):
-    super().__init__(name,**kwargs)
+    super().__init__(name,**kwargs) # does parameterInitCheck
     self.signals =self.Signals()
-    parameterInitCheck(QValkkaMovementDetectorProcess.parameter_defs, kwargs, self)
+    # # parameterInitCheck(QValkkaMovementDetectorProcess.parameter_defs, kwargs, self)
     # self.analyzer=MovementDetector(verbose=True)
     self.analyzer=MovementDetector(treshold=0.0001)
   
@@ -108,16 +101,21 @@ class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
     else:
       # print(self.pre,"Client index, size =",index, isize)
       data=self.client.shmem_list[index]
-      img=data.reshape((1080//4,1920//4,3))
-      result =self.analyzer(img)
-      # print(self.pre,">>>",data[0:10])
-      if   (result==MovementDetector.state_same):
+      try:
+        img=data.reshape((self.image_dimensions[1],self.image_dimensions[0],3))
+      except:
+        print("QValkkaMovementDetectorProcess: WARNING: could not reshape image")
         pass
-      elif (result==MovementDetector.state_start):
-        self.sendSignal_(name="start_move")
-      elif (result==MovementDetector.state_stop):
-        self.sendSignal_(name="stop_move")
-      
+      else:
+        result =self.analyzer(img)
+        # print(self.pre,">>>",data[0:10])
+        if   (result==MovementDetector.state_same):
+          pass
+        elif (result==MovementDetector.state_start):
+          self.sendSignal_(name="start_move")
+        elif (result==MovementDetector.state_stop):
+          self.sendSignal_(name="stop_move")
+        
       
   # ** frontend methods handling received outgoing signals ***
   def start_move(self):
@@ -222,10 +220,10 @@ class MyGui(QtWidgets.QMainWindow):
 
     self.openglthread=OpenGLThread(     # starts frame presenting services
       name    ="mythread",
-      n720p   =self.pardic["n720p"],   # reserve stacks of YUV video frames for various resolutions
-      n1080p  =self.pardic["n1080p"],
-      n1440p  =self.pardic["n1440p"],
-      n4K     =self.pardic["n4K"],
+      n_720p   =self.pardic["n_720p"],   # reserve stacks of YUV video frames for various resolutions
+      n_1080p  =self.pardic["n_1080p"],
+      n_1440p  =self.pardic["n_1440p"],
+      n_4K     =self.pardic["n_4K"],
       # naudio  =self.pardic["naudio"], # obsolete
       verbose =False,
       msbuftime=self.pardic["msbuftime"],
@@ -263,10 +261,10 @@ class MyGui(QtWidgets.QMainWindow):
         msreconnect =10000
         )
     
-      shmem_name, n_buffer, n_bytes =chain.getShmemPars()
+      shmem_name, n_buffer, shmem_image_dimensions =chain.getShmemPars()
       # print(pre,"shmem_name, n_buffer, n_bytes",shmem_name,n_buffer,n_bytes)
       
-      process=QValkkaMovementDetectorProcess("process_"+str(cs),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
+      process=QValkkaMovementDetectorProcess("process_"+str(cs),shmem_name=shmem_name, n_buffer=n_buffer, image_dimensions=shmem_image_dimensions)
             
       self.chains.append(chain)
       self.processes.append(process)

@@ -1,57 +1,67 @@
+"""<rtf>
+In this lesson, we are (a) writing from a live stream to a file and (b) reading the file, decoding the stream and presenting it on the screen.  The filtergraph goes like this:
+
+::
+
+    *** (a) writing ***
+    
+    (LiveThread:livethread) --> {FileFrameFilter:file_filter}
+
+
+    *** (b) reading ***
+    
+    Reading part
+    (FileThread:filethread) -----+
+                                 |
+    Decoding part                |
+    (AVThread:avthread) << ------+    
+          |
+          |     Presentation part
+          +-->> (OpenGLThread:glthread)
+
+Note that live and file streams are treated on an equal basis and with a similar filtergraph.  We could also send the file over the net as a multicast stream.
+
+Let's start by importing Valkka:
+<rtf>"""
 import time
 from valkka.valkka_core import *
 
-"""
-*** writing ***
-
-(LiveThread:livethread) --> {FileFrameFilter:file_filter}
-
-*** reading ***
-
-reading part
-(FileThread:filethread) --> {BlockingFifoFrameFilter:av_filter} --> [FrameFifo:av_fifo] 
-                                                                           |
-decoding part                                                              |
-    (AVThread:avthread) << ------------------------------------------------+    
-              |
-              |                                                                         Presentation part
-              +---> {FifoFrameFilter:gl_in_filter} --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread)
-"""
-
-
-# *** writing ***
-livethread   =LiveThread("livethread")
+"""<rtf>
+Writing is done by piping the stream into a FileFrameFilter:
+<rtf>"""
 file_filter  =FileFrameFilter("file_filter")
-# file_filter  =BriefInfoFrameFilter("info_filter") # uncomment this to do debugging (i.e., are you getting any frames?)
-# stream from 192.168.1.41, tag frames with slot number 1 and write to file_filter
-ctx          =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, file_filter) 
+livethread   =LiveThread("livethread")
 
-# *** reading ***
-glthread      =OpenGLThread ("glthread", 10, 10, 0, 0) # parameters are as follows: thread name, n720p, n1080p, n1440p, n4K
-gl_fifo       =glthread.getFifo()
-gl_in_filter  =FifoFrameFilter("gl_in_filter",gl_fifo)
+"""<rtf>
+For reading, decoding and presenting, we construct the filtergraph as usual, from end-to-beginning:
+<rtf>"""
+# presentation part
+glthread      =OpenGLThread ("glthread")
+gl_in_filter  =glthread.getFilter()
 
-# used by both reading and decoding parts
-av_fifo       =FrameFifo("av_fifo",10) 
+"""<rtf>
+For file streams, the execution should block for frame bursts, so we request a blocking input FrameFilter from the AVThread:
+<rtf>"""
+avthread      =AVThread("avthread",gl_in_filter)
+av_in_filter  =avthread.getBlockingFrameFilter()  
 
 # reading part
-av_filter     =BlockingFifoFrameFilter("av_filter",av_fifo)
 filethread    =FileThread("filethread")
-file_ctx      =FileContext("kokkelis.mkv", 1, av_filter) # read from file "kokkelis.mkv", tag frames with slot number 1 and write to av_filter
 
-# decoding part
-avthread        =AVThread("avthread",av_fifo,gl_in_filter)
-
-
-# *** writing ***
-# start streaming
+"""<rtf>
+Starting LiveThread will stream the frames to FileFrameFilter:
+<rtf>"""
 livethread .startCall()
+
+ctx          =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, file_filter) 
+# stream from 192.168.1.41, tag frames with slot number 1 and write to file_filter
+
 livethread .registerStreamCall(ctx)
 livethread .playStreamCall(ctx)
 
-# time.sleep(5) # TODO: this is needed.. otherwise config frames are missed.  Fix
-
-# start writing to a file
+"""<rtf>
+In order to start writing to disk, FileFrameFilter's "activate" method must be called with the filename.  Only matroska (.mkv) files are supported:
+<rtf>"""
 print("writing to file")
 file_filter.activate("kokkelis.mkv")
 
@@ -64,8 +74,9 @@ file_filter.deActivate()
 # stop livethread
 livethread.stopCall()
 
-
-# *** reading ***
+"""<rtf>
+File "kokkelis.mkv" has been created.  Next, let's setup stream decoding, presenting, etc. as usual and read the file:
+<rtf>"""
 print("reading file")
 glthread   .startCall()
 filethread .startCall()
@@ -81,9 +92,16 @@ glthread.newRenderGroupCall(window_id)
 # maps stream with slot 1 to window "window_id"
 context_id =glthread.newRenderContextCall(1, window_id, 0)
 
+"""<rtf>
+Open the file by sending it a call with the FileContext (file_ctx) identifying the file stream:
+<rtf>"""
 print("open file")
+file_ctx =FileContext("kokkelis.mkv", 1, av_in_filter) # read from file "kokkelis.mkv", tag frames with slot number 1 and write to av_in_filter
 filethread.openFileStreamCall(file_ctx)
 
+"""<rtf>
+Playing, seeking and stopping is done as follows:
+<rtf>"""
 print("play file")
 filethread.playFileStreamCall(file_ctx)
 
@@ -105,6 +123,9 @@ print("play again")
 filethread.playFileStreamCall(file_ctx)
 time.sleep(5)
 
+"""<rtf>
+Finally, exit:
+<rtf>"""
 glthread.delRenderContextCall(context_id)
 glthread.delRenderGroupCall(window_id)
 

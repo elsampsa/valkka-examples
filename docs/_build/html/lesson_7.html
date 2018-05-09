@@ -54,9 +54,9 @@
   <div class="section" id="lesson-7-decode-save-visualize-analyze-and-re-transmit">
 <h1>Lesson 7 : Decode, save, visualize, analyze and re-transmit<a class="headerlink" href="#lesson-7-decode-save-visualize-analyze-and-re-transmit" title="Permalink to this headline">¶</a></h1>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_7_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>This lesson demonstrates the full power of Valkka.  We do simultaneously a lot of stuff, namely, save the stream to disk, decode it to bitmap, visualize it in two different x windows, pass the decoded frames to an OpenCV analyzer and re-transmit the stream to a multicast address.</p>
+<p>In this example, we do simultaneously a lot of stuff, namely, save the stream to disk, decode it to bitmap, visualize it in two different x windows, pass the decoded frames to an OpenCV analyzer and re-transmit the stream to a multicast address.</p>
 <p>Only a single connection to the IP camera is required and the stream is decoded only once.</p>
-<p>This can be achieved with the following filtergraph:</p>
+<p>The filtergraph looks like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>main branch
 (LiveThread:livethread) --&gt; {ForkFrameFilter3: fork_filter}
                                          |
@@ -67,40 +67,53 @@
                             branch 3 &lt;---+
 
 branch 1 : recast
---&gt; {FifoFrameFilter:fifo_filter_1} --&gt; [LiveFifo:live_fifo_1] --&gt;&gt; (LiveThread:livethread2_1)
+--&gt;&gt; (LiveThread:livethread2_1)
 
 branch 2 : save to disk
 --&gt; (FileFrameFilter:file_filter_2)
 
 branch 3 : decode
---&gt; {FifoFrameFilter:fifo_filter_3} --&gt; [FrameFifo: av_fifo_3] ---&gt;&gt; (AVThread:avthread_3) --+
-                                                                                             |
- {ForkFrameFilter: fork_filter_3} &lt;----------------------------------------------------------+
+--&gt;&gt; {AVThread:avthread_3} ------------+
+                                       |
+  {ForkFrameFilter: fork_filter_3} &lt;---+
                  |
-      branch 3.1 +--&gt; {FifoFrameFilter:gl_in_filter_3_1} --&gt; [OpenGLFrameFifo:gl_fifo_3_1] --&gt;&gt; (OpenGLThread:glthread_3_1) --&gt; to two x-windows
+      branch 3.1 +---&gt;&gt; (OpenGLThread:glthread_3_1) --&gt; to two x-windows
                  |
-      branch 3.2 +--&gt; {IntervalFrameFilter: interval_filter_3_2} --&gt; {SwScaleFrameFilter: sws_filter_3_2} --&gt; {SharedMemFrameFilter: shmem_filter_3_2}
+      branch 3.2 +----&gt; {IntervalFrameFilter: interval_filter_3_2} --&gt; {SwScaleFrameFilter: sws_filter_3_2} --&gt; {RGBSharedMemFrameFilter: shmem_filter_3_2}
 </pre></div>
 </div>
 <p>There is a new naming convention: the names of filters, threads and fifos are tagged with &#8220;_branch_sub-branch&#8221;.</p>
-<p>Programming the filtergraph tree is started from the outer leaves, moving towards the main branch:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># ** branch 3.1 **</span>
-<span class="n">glthread_3_1</span>     <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># parameters are as follows: thread name, n720p, n1080p, n1440p, n4K</span>
-<span class="n">gl_fifo_3_1</span>      <span class="o">=</span><span class="n">glthread_3_1</span><span class="o">.</span><span class="n">getFifo</span><span class="p">()</span>
-<span class="n">gl_in_filter_3_1</span> <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;gl_in_filter_3_1&quot;</span><span class="p">,</span><span class="n">gl_fifo_3_1</span><span class="p">)</span>
-<span class="o">...</span>
-<span class="o">...</span>
+<p>Programming the filtergraph tree is started as usual, from the outer leaves, moving towards the main branch:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># *** branch 1 ***</span>
+<span class="n">livethread2_1</span>    <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread2_1&quot;</span><span class="p">)</span>
+<span class="n">live2_in_filter</span>  <span class="o">=</span><span class="n">livethread2_1</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+
+<span class="c1"># *** branch 2 ***</span>
+<span class="n">file_filter_2</span>    <span class="o">=</span><span class="n">FileFrameFilter</span><span class="p">(</span><span class="s2">&quot;file_filter_2&quot;</span><span class="p">)</span>
+
+<span class="c1"># *** branch 3.1 ***</span>
+<span class="n">glthread_3_1</span>     <span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
+<span class="n">gl_in_filter_3_1</span> <span class="o">=</span><span class="n">glthread_3_1</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+
+<span class="c1"># *** branch 3.2 ***</span>
+<span class="n">image_interval</span><span class="o">=</span><span class="mi">1000</span>  <span class="c1"># YUV =&gt; RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer</span>
+<span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>      <span class="c1"># CPU YUV =&gt; RGB interpolation</span>
+<span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>      <span class="c1"># CPU YUV =&gt; RGB interpolation</span>
+<span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
+<span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
+
+<span class="n">shmem_filter_3_2</span>    <span class="o">=</span><span class="n">RGBShmemFrameFilter</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="n">sws_filter_3_2</span>      <span class="o">=</span><span class="n">SwScaleFrameFilter</span><span class="p">(</span><span class="s2">&quot;sws_filter&quot;</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">shmem_filter_3_2</span><span class="p">)</span>
+<span class="n">interval_filter_3_2</span> <span class="o">=</span><span class="n">TimeIntervalFrameFilter</span><span class="p">(</span><span class="s2">&quot;interval_filter&quot;</span><span class="p">,</span> <span class="n">image_interval</span><span class="p">,</span> <span class="n">sws_filter_3_2</span><span class="p">)</span>
+
 <span class="c1"># *** branch 3 ***</span>
-<span class="n">av_fifo_3</span>      <span class="o">=</span><span class="n">FrameFifo</span><span class="p">(</span><span class="s2">&quot;av_fifo_3&quot;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">fork_filter_3</span>  <span class="o">=</span><span class="n">ForkFrameFilter</span><span class="p">(</span><span class="s2">&quot;fork_filter_3&quot;</span><span class="p">,</span> <span class="n">gl_in_filter_3_1</span><span class="p">,</span> <span class="n">interval_filter_3_2</span><span class="p">)</span>
-<span class="n">fifo_filter_3</span>  <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;fifo_filter_3&quot;</span><span class="p">,</span><span class="n">av_fifo_3</span><span class="p">)</span>
-<span class="n">avthread_3</span>     <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread_3&quot;</span><span class="p">,</span><span class="n">av_fifo_3</span><span class="p">,</span><span class="n">fork_filter_3</span><span class="p">)</span>
-<span class="o">...</span>
-<span class="o">...</span>
+<span class="n">fork_filter_3</span>  <span class="o">=</span><span class="n">ForkFrameFilter</span><span class="p">(</span><span class="s2">&quot;fork_3&quot;</span><span class="p">,</span><span class="n">gl_in_filter_3_1</span><span class="p">,</span><span class="n">interval_filter_3_2</span><span class="p">)</span>
+<span class="n">avthread_3</span>     <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread_3&quot;</span><span class="p">,</span><span class="n">fork_filter_3</span><span class="p">)</span>
+<span class="n">av3_in_filter</span>  <span class="o">=</span><span class="n">avthread_3</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+
 <span class="c1"># *** main branch ***</span>
 <span class="n">livethread</span>  <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread_1&quot;</span><span class="p">)</span>
-<span class="n">fork_filter</span> <span class="o">=</span><span class="n">ForkFrameFilter3</span><span class="p">(</span><span class="s2">&quot;fork_filter&quot;</span><span class="p">,</span><span class="n">fifo_filter_1</span><span class="p">,</span><span class="n">file_filter_2</span><span class="p">,</span><span class="n">fifo_filter_3</span><span class="p">)</span>
-<span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fork_filter</span><span class="p">)</span> <span class="c1"># stream from 192.168.1.41 is sent to fork_filter with slot number 2</span>
+<span class="n">fork_filter</span> <span class="o">=</span><span class="n">ForkFrameFilter3</span><span class="p">(</span><span class="s2">&quot;fork_filter&quot;</span><span class="p">,</span><span class="n">live2_in_filter</span><span class="p">,</span><span class="n">file_filter_2</span><span class="p">,</span><span class="n">av3_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The full code can be downloaded from <a class="reference download internal" href="_downloads/lesson_7_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a>.</p>

@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    multiple_stream.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.3.6 
+@version 0.4.0 
 @brief   A demo program streaming from various rtsp cameras and other sources (defined per .sdp files)
 """
 
@@ -20,9 +20,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
 from valkka.valkka_core import *
 
-"""
-WARNING: please understand adn try "single_stream_rtsp.py" first
-"""
+
 
 class FilterChain:
   """
@@ -63,9 +61,8 @@ class FilterChain:
     self.slot         =slot
     self.render_ctx   =None
     
-    self.av_fifo         =FrameFifo          ("av_fifo",10)
-    self.avthread        =AVThread           ("avthread",       self.av_fifo, self.gl_in_filter) # [av_fifo] -->> (avthread) --> {gl_in_filter}
-    self.av_in_filter    =FifoFrameFilter    ("av_in_filter",   self.av_fifo)                    # LiveThread will write into this filter (through LiveConnectionContext)
+    self.avthread    =AVThread("avthread",self.gl_in_filter)
+    self.av_in_filter=self.avthread.getFrameFilter()
     
     self.ctx=LiveConnectionContext()
     self.ctx.slot=slot
@@ -104,7 +101,10 @@ class FilterChain:
     return self.render_ctx
 
   def stop(self):
-    self.avthread.stopCall() # TODO: this should be called at garbage collection => c++ destructor
+    self.avthread.stopCall()
+
+  def __del__(self): # call at garbage collection
+    self.stop()
 
 
 class MyGui(QtWidgets.QMainWindow):
@@ -153,20 +153,20 @@ class MyGui(QtWidgets.QMainWindow):
     
     See "single_stream_rtsp.py" for more details !
     """
-    self.glthread        =OpenGLThread ("glthread",            # name
-                                        self.n_streams*10,     # n720p          # bitmap frames are pre-reserved on the GPU
-                                        self.n_streams*10,     # n1080p
-                                        0,                     # n1440p
-                                        0,                     # n4K
-                                        self.n_streams*10,     # naudio
-                                        100,                   # msbuftime
-                                        -1                     # thread affinity.  -1 == not bound to any specific processor
-                                        )
+    self.gl_ctx =OpenGLFrameFifoContext();
+    self.gl_ctx.n_720p    =20;
+    self.gl_ctx.n_1080p   =20;
+    self.gl_ctx.n_1440p   =20;
+    self.gl_ctx.n_4K      =20;
+    self.gl_ctx.n_setup   =20;
+    self.gl_ctx.n_signal  =20;
+    self.gl_ctx.flush_when_full =False;
+      
+    self.glthread     =OpenGLThread("glthread", self.gl_ctx);
+    self.gl_in_filter =self.glthread.getFrameFilter();
+    self.livethread   =LiveThread("livethread")
     
-    self.gl_fifo         =self.glthread.getFifo() # get gl_fifo from glthread
-    self.gl_in_filter    =FifoFrameFilter    ("gl_in_filter", self.gl_fifo)
-    self.livethread      =LiveThread         ("livethread")
-    
+    # Start threads
     self.glthread.  startCall()
     self.livethread.startCall()
     

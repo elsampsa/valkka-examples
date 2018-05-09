@@ -1,16 +1,41 @@
-import time
-from valkka.valkka_core import *
-"""  
+#<hide>
+"""
+filtergraph:
                                                                     branch 1
                                                                    +------------> {GateFrameFilter: gate_filter}
 main branch                                                        |                 | 
 (LiveThread:livethread) --> {ForkFrameFilter:live_out_filter}  --> |                 +--- {InfoFrameFilter: info_filter}
                                                                    |
                                                                    +-------------> {FileFrameFilter: file_filter}
-                                                                   branch 2         
-                                                                                                                                                                          
+                                                                   branch 2 
 """
+#</hide>
+#<hide>
+import time
+from valkka.valkka_core import *
+#</hide>
+"""<rtf>
+As a final trivial example for this lesson, we fork the FrameFilter chain into two:
 
+::
+
+    filtergraph:
+                                                                       branch 1
+                                                                       +------------> {GateFrameFilter: gate_filter}
+    main branch                                                        |                 | 
+    (LiveThread:livethread) --> {ForkFrameFilter:live_out_filter}  --> |                 +--- {InfoFrameFilter: info_filter}
+                                                                       |
+                                                                       +-------------> {FileFrameFilter: file_filter}
+                                                                       branch 2         
+                                                                                    
+Frames are fed to a ForkFrameFilter that copies the stream into two branches.
+
+At branch 1, there is an on/off gate.  When the gate is on, the frames are passed further on to the verbose InfoFrameFilter.
+
+At branch 2, frames are written to a file
+
+The filtergraph can be implemented in python like this:
+<rtf>"""
 # branch 1
 info_filter     =InfoFrameFilter("info_filter")
 gate_filter     =GateFrameFilter("gate_filter",info_filter)
@@ -22,8 +47,15 @@ file_filter     =FileFrameFilter("file_filter")
 live_out_filter =ForkFrameFilter("live_out_filter",gate_filter,file_filter)
 livethread      =LiveThread("livethread")
 
+#<hide>
 # define the connection
 ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, live_out_filter)
+#</hide>
+"""<rtf>
+Like in the previous example, when constructing programmatically the framefilter chain, we start from the outer leafs of the tree (in this case, from "info_filter", etc.) and move from the outer edge towards the main branch.
+    
+Let's run it like this:
+<rtf>"""
 
 # close the gate before streaming
 gate_filter.unSet()
@@ -47,3 +79,11 @@ file_filter.deActivate()
 livethread.stopCall()
 
 print("bye")
+
+"""<rtf>
+Here we first close the gate, so no information about the frames is printed to the terminal.  We write the stream to the disk by calling "activate" method of the FileFrameFilter.  After 5 secs. we turn on the gate and start getting information about the frames into the screen.  Finally we close the file by calling "deActivate".
+
+You can play the resulting "stream.mkv" with your favorite media player.
+
+.. note:: Valkka is *not* a mediaplayer that understands thousands of codecs and container formats.  Emphasis is on an internally consistent (for that a single or a few codec/container formats are enough, i.e. what we write we can also read) video management library.  At the moment only H264 video is accepted.  Container format is matroska (mkv).
+<rtf>"""

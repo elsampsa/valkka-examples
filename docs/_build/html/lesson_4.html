@@ -58,78 +58,61 @@
 <p><strong>Download server side</strong> <a class="reference download internal" href="_downloads/lesson_4_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
 <p>By now, we have learned how to receive, decode and send streams to the x window system.  In this chapter, we do all that, but at the same time, also send copies of the decoded frames to another python process.</p>
 <p>The filtergraph looks like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>streaming part
-(LiveThread:livethread) --&gt; {FifoFrameFilter:live_out_filter} --&gt; [FrameFifo: av_fifo]
-                                                                          |
-                                                                          |
-{ForkFrameFilter: fork_filter} &lt;----(AVThread:avthread) &lt;&lt; ---------------+  main branch, decoding
+<div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) -------------------------------------+  main branch, streaming
+                                                             |
+{ForkFrameFilter: fork_filter} &lt;----(AVThread:avthread) &lt;&lt; --+  main branch, decoding
                |
-      branch 1 +--&gt; {FifoFrameFilter:gl_in_gilter} --&gt; [OpenGLFrameFifo:gl_fifo] --&gt;&gt; (OpenGLThread:glthread)
+      branch 1 +-&gt;&gt; (OpenGLThread:glthread)
                |
-      branch 2 +--&gt; {IntervalFrameFilter: interval_filter} --&gt; {SwScaleFrameFilter: sws_filter} --&gt; {SharedMemFrameFilter: shmem_filter}
+      branch 2 +--&gt; {IntervalFrameFilter: interval_filter} --&gt; {SwScaleFrameFilter: sws_filter} --&gt; {RGBSharedMemFrameFilter: shmem_filter}
 </pre></div>
 </div>
 <p>We are using the ForkFrameFilter to branch the decoded stream into two branches.  Branch 1 goes to screen, while branch 2 does a lot of new stuff.</p>
 <p>In branch 2, IntervalFrameFilter passes a frame through on regular intervals.  In our case we are going to use an interval of 1 second, i.e. even if your camera is sending 25 fps, at the other side of IntervalFrameFilter we&#8217;ll be observing only 1 fps.</p>
-<p>SwScaleFrameFilter does YUV =&gt; RGB interpolation on the CPU.  The final, interpolated RGB frame is passed to the posix shared memory with the SharedMemFrameFilter.  From there it can be read by another python process.</p>
-<p>Remember that branch 1 does YUV =&gt; RGB interpolation as well, but on the GPU (and at 25 fps rate).</p>
+<p>SwScaleFrameFilter does YUV =&gt; RGB interpolation on the CPU.  The final, interpolated RGB frame is passed to the posix shared memory with the RGBSharedMemFrameFilter.  From there it can be read by another python process.</p>
+<p>(Remember that branch 1 does YUV =&gt; RGB interpolation as well, but on the GPU (and at 25 fps rate))</p>
 <p>To summarize, branch 1 interpolates once a second a frame to RGB and passes it to shared memory.  The size of the frame can be adjusted.</p>
-<p>Let&#8217;s start the construction of the filtergraph by defining some parameters.  The interval frames are passed to SwScaleFrameFilter will be 1000 milliseconds.  The image dimensions of the frame passed into shared memory, will be one quarter of a full-hd frame:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># IntervalTimeFilter</span>
+<p>Let&#8217;s start the construction of the filtergraph by defining some parameters.  Frames are passed to SwScaleFrameFilter at 1000 millisecond intervals.  The image dimensions of the frame passed into shared memory, will be one quarter of a full-hd frame:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
 <span class="n">image_interval</span><span class="o">=</span><span class="mi">1000</span>  <span class="c1"># YUV =&gt; RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer</span>
 
-<span class="c1"># CPU interpolation</span>
+<span class="c1"># define rgb image dimensions</span>
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
-<span class="n">cc</span>     <span class="o">=</span><span class="mi">3</span> <span class="c1"># its rgb</span>
 </pre></div>
 </div>
-<p>SharedMemFrameFilter (shared memory) requiers as parameters a unique name, size of shared memory ring-buffer and the size of each element in the ring-buffer:</p>
+<p>RGBSharedMemFrameFilter needs also a unique name and the size of the shared memory ring-buffer:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># posix shared memory</span>
 <span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
-<span class="n">shmem_bytes</span>   <span class="o">=</span><span class="n">width</span><span class="o">*</span><span class="n">height</span><span class="o">*</span><span class="n">cc</span> <span class="c1"># Size for each element in the ringbuffer</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 </pre></div>
 </div>
-<p>Next, we construct the filterchain as usual:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># parameters are as follows: thread name, n720p, n1080p, n1440p, n4K</span>
-<span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="c1"># used by both streaming and decoding parts</span>
-<span class="n">av_fifo</span>         <span class="o">=</span><span class="n">FrameFifo</span><span class="p">(</span><span class="s2">&quot;av_fifo&quot;</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># branch 1</span>
-<span class="n">gl_fifo</span>         <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFifo</span><span class="p">()</span>
-<span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;gl_in_filter&quot;</span><span class="p">,</span><span class="n">gl_fifo</span><span class="p">)</span>
+<p>Next, we construct the filterchain as usual, from end-to-beginning:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># branch 1</span>
+<span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
+<span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 
 <span class="c1"># branch 2</span>
-<span class="n">shmem_filter</span>    <span class="o">=</span><span class="n">SharedMemFrameFilter</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">shmem_bytes</span><span class="p">)</span> <span class="c1"># shmem id, buffers, bytes per buffer</span>
-<span class="c1"># shmem_filter    =BriefInfoFrameFilter(&quot;shmem&quot;) # nice way for debugging if you are actually getting stream here ..</span>
+<span class="n">shmem_filter</span>    <span class="o">=</span><span class="n">RGBShmemFrameFilter</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="c1"># shmem_filter    =BriefInfoFrameFilter(&quot;shmem&quot;) # a nice way for debugging to see of you are actually getting any frames here ..</span>
 <span class="n">sws_filter</span>      <span class="o">=</span><span class="n">SwScaleFrameFilter</span><span class="p">(</span><span class="s2">&quot;sws_filter&quot;</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">shmem_filter</span><span class="p">)</span>
 <span class="n">interval_filter</span> <span class="o">=</span><span class="n">TimeIntervalFrameFilter</span><span class="p">(</span><span class="s2">&quot;interval_filter&quot;</span><span class="p">,</span> <span class="n">image_interval</span><span class="p">,</span> <span class="n">sws_filter</span><span class="p">)</span>
 
 <span class="c1"># fork</span>
 <span class="n">fork_filter</span>     <span class="o">=</span><span class="n">ForkFrameFilter</span><span class="p">(</span><span class="s2">&quot;fork_filter&quot;</span><span class="p">,</span> <span class="n">gl_in_filter</span><span class="p">,</span> <span class="n">interval_filter</span><span class="p">)</span>
 
-<span class="c1"># main branch, streaming</span>
+<span class="c1"># main branch</span>
+<span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">fork_filter</span><span class="p">)</span>
+<span class="n">av_in_filter</span>    <span class="o">=</span><span class="n">avthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 <span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
-<span class="n">live_out_filter</span> <span class="o">=</span><span class="n">FifoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">)</span>
-
-<span class="c1"># main branch, decoding</span>
-<span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">av_fifo</span><span class="p">,</span><span class="n">fork_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If that got you all fuzzy, recall that programming the tree structure is started from the outer leafs of the tree, and moving hierarchically towards the main branch.</p>
-</div>
 <p>Define connection to camera: frames from 192.168.1.41 are written to live_out_filter and tagged with slot number 1:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start processes, stream for 60 seconds and exit:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># start threads</span>
-<span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 
@@ -165,7 +148,7 @@
 <p>Next we need a separate python process, a client, that reads the frames.  Two versions are provided, the API level 2 being the most compact one.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">In the previous lessons, all streaming has taken place at the cpp level.  Here we are starting to use posix shared memory and semaphores in order to share frames between python processes.  However, don&#8217;t expect posix shared memory and semaphores to keep up with several full-hd cameras running at 25+ fps!  Such high-throughput should be implemented at the cpp level using multithreading, while only defining the connections at the python level.</p>
+<p class="last">In the previous lessons, all streaming has taken place at the cpp level.  Here we are starting to use posix shared memory and semaphores in order to share frames between python processes.  However, don&#8217;t expect posix shared memory and semaphores to keep up with several full-hd cameras running at 25+ fps!  Such high-throughput should be implemented at the cpp level using multithreading (while defining only the connections at the python level)</p>
 </div>
 </div>
 <div class="section" id="client-side-api-level-2">
@@ -174,20 +157,19 @@
 <p>This is a <em>separate</em> python program for reading the frames that are written by Valkka to the shared memory.</p>
 <p>The parameters used both in the server side (above) and on the client side (below) <strong>must be exactly the same</strong> and the client program should be started <em>after</em> the server program (and while the server is running).  Otherwise undefined behaviour will occur.</p>
 <p>The used shmem_name(s) should be same in both server and client, but different for another server/client pair.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka.api2.threads</span> <span class="kn">import</span> <span class="n">ShmemClient</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
-<span class="n">cc</span>     <span class="o">=</span><span class="mi">3</span> <span class="c1"># its rgb</span>
 
-<span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
-<span class="n">shmem_bytes</span>   <span class="o">=</span><span class="n">width</span><span class="o">*</span><span class="n">height</span><span class="o">*</span><span class="n">cc</span> <span class="c1"># Size for each element in the ringbuffer</span>
+<span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be same as in the server side</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 
-<span class="n">client</span><span class="o">=</span><span class="n">ShmemClient</span><span class="p">(</span>
+<span class="n">client</span><span class="o">=</span><span class="n">ShmemRGBClient</span><span class="p">(</span>
   <span class="n">name</span>          <span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
   <span class="n">n_ringbuffer</span>  <span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
-  <span class="n">n_bytes</span>       <span class="o">=</span><span class="n">shmem_bytes</span><span class="p">,</span>
+  <span class="n">width</span>         <span class="o">=</span><span class="n">width</span><span class="p">,</span>
+  <span class="n">height</span>        <span class="o">=</span><span class="n">height</span><span class="p">,</span>
   <span class="n">mstimeout</span>     <span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
   <span class="n">verbose</span>       <span class="o">=</span><span class="bp">False</span>
 <span class="p">)</span>
@@ -206,24 +188,23 @@
 <p>The <em>client.shmem_list</em> is a list of numpy arrays, while <em>isize</em> defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.</p>
 </div>
 <div class="section" id="client-side-opencv">
-<span id="opencv-client"></span><h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download client side openCV example</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client_opencv.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Permalink to this headline">¶</a></h2>
+<p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client_opencv.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
 <p>OpenCV is a popular machine vision library.  We modify the previous example to make it work with openCV like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">from</span> <span class="nn">valkka.api2.threads</span> <span class="kn">import</span> <span class="n">ShmemClient</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
-<span class="n">cc</span>     <span class="o">=</span><span class="mi">3</span> <span class="c1"># its rgb</span>
 
-<span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
-<span class="n">shmem_bytes</span>   <span class="o">=</span><span class="n">width</span><span class="o">*</span><span class="n">height</span><span class="o">*</span><span class="n">cc</span> <span class="c1"># Size for each element in the ringbuffer</span>
+<span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be same as in the server side</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 
-<span class="n">client</span><span class="o">=</span><span class="n">ShmemClient</span><span class="p">(</span>
+<span class="n">client</span><span class="o">=</span><span class="n">ShmemRGBClient</span><span class="p">(</span>
   <span class="n">name</span>          <span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
   <span class="n">n_ringbuffer</span>  <span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
-  <span class="n">n_bytes</span>       <span class="o">=</span><span class="n">shmem_bytes</span><span class="p">,</span>
+  <span class="n">width</span>         <span class="o">=</span><span class="n">width</span><span class="p">,</span>
+  <span class="n">height</span>        <span class="o">=</span><span class="n">height</span><span class="p">,</span>
   <span class="n">mstimeout</span>     <span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
   <span class="n">verbose</span>       <span class="o">=</span><span class="bp">False</span>
 <span class="p">)</span>
@@ -235,6 +216,7 @@
   <span class="k">else</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span>
     <span class="n">img</span> <span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">height</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="c1"># img2 =imutils.resize(img, width=500)</span>
     <span class="n">img</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;valkka_opencv_demo&quot;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -251,20 +233,17 @@
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
-<span class="n">cc</span>     <span class="o">=</span><span class="mi">3</span> <span class="c1"># its rgb</span>
 
 <span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
-<span class="n">shmem_bytes</span>   <span class="o">=</span><span class="n">width</span><span class="o">*</span><span class="n">height</span><span class="o">*</span><span class="n">cc</span> <span class="c1"># Size for each element in the ringbuffer</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 </pre></div>
 </div>
-<p>The wrapped cpp level class is SharedMemRingBuffer (at the server side, SharedMemFrameFilter is using SharedMemRingBuffer):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">shmem</span><span class="o">=</span><span class="n">SharedMemRingBuffer</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">shmem_bytes</span><span class="p">,</span> <span class="mi">1000</span> <span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c1"># shmem id, buffers, bytes per buffer, timeout, False=this is a client</span>
+<p>The wrapped cpp class is <em>SharedMemRingBufferRGB</em> (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">shmem</span><span class="o">=</span><span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
 </pre></div>
 </div>
 <p>We are using integer pointers from python:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># pointers at the python side:</span>
-<span class="n">index_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># shmem index</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">index_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># shmem index</span>
 <span class="n">isize_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># size of data</span>
 </pre></div>
 </div>

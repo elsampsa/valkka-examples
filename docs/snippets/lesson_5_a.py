@@ -1,38 +1,75 @@
+#<hide>
+"""
+filtergraph:
+
+(LiveThread:livethread) --> {InfoFrameFilter:info_filter) -->> (LiveThread:livethread2) 
+
+"""
+#</hide>
+"""<rtf>
+
+**TODO** can't listen to rtsp server port in both threads!
+
+In this lesson, we are receiving frames from an IP camera using LiveThread and recast those frames to a multicast address using another LiveThread. The filterchain looks like this:
+
+:: 
+
+  (LiveThread:livethread) --> {InfoFrameFilter:info_filter) -->> (LiveThread:livethread2) 
+  
+Let's start by importing Valkka:
+<rtf>"""
 import time
 from valkka.valkka_core import *
-"""
-(LiveThread:livethread) --> {InfoFrameFilter:info_filter) --> {FifoFrameFilter:fifo_filter} --> [LiveFifo:live_fifo] -->> (LiveThread:livethread2) 
-"""
 
-livethread  =LiveThread("livethread")
-livethread2 =LiveThread("livethread2",20) # reserve stack for incoming frames
-live_fifo   =livethread2.getFifo()
+"""<rtf>
+Construct the filtergraph from end-to-beginning:
+<rtf>"""
+livethread2    =LiveThread("livethread2")
+live_in_filter =livethread2.getFrameFilter()
+info_filter    =InfoFrameFilter("info_filter",live_in_filter)
+livethread     =LiveThread("livethread")
 
-fifo_filter =FifoFrameFilter("in_live_filter",live_fifo)
-info_filter =InfoFrameFilter("info_filter",fifo_filter)
-
+"""<rtf>
+Start threads:
+<rtf>"""
 livethread. startCall()
 livethread2.startCall()
 
-out_ctx =LiveOutboundContext(LiveConnectionType_sdp, "224.1.168.91", 2, 50000)
+"""<rtf>
+Define stream source: incoming frames from IP camera 192.168.1.41 are tagged with slot number "2" and they are written to "info_filter":
+<rtf>"""
 ctx     =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, info_filter)
 
+"""<rtf>
+Define stream sink: all outgoing frames with slot number "2" are sent to port 50000:
+<rtf>"""
+out_ctx =LiveOutboundContext(LiveConnectionType_sdp, "224.1.168.91", 2, 50000)
+
+"""<rtf>
+Start playing:
+<rtf>"""
 livethread2.registerOutboundCall(out_ctx)
 livethread. registerStreamCall(ctx)
 livethread. playStreamCall(ctx)
 
+"""<rtf>
+Stream and recast to multicast for a while:
+<rtf>"""
 time.sleep(120)
-# time.sleep(5)
 
 livethread. stopStreamCall(ctx)
 livethread. deregisterStreamCall(ctx)
 livethread2.deregisterOutboundCall(out_ctx)
 
+"""<rtf>
+Stop and exit
+<rtf>"""
 livethread. stopCall();
 livethread2.stopCall();
 
 print("bye")
 
+#<hide>
 """
 create a file "multicast.sdp" with the following lines:
 
@@ -51,3 +88,4 @@ Then you can test that the stream is multicasted with:
 
 ffplay multicast.sdp
 """
+#</hide>

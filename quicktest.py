@@ -10,12 +10,21 @@ print("   Loaded from  ",valkka.__file__)
 """
 print("   Testing Valkka classes")
 live =LiveThread("live")
-inp  =FrameFifo("fifo",10)
+inp  =FrameFifo("fifo")
 ff   =FifoFrameFilter("fifo",inp)
 out  =DummyFrameFilter("dummy")
-av   =AVThread("av",inp,out)
+av   =AVThread("av",out)
 gl   =OpenGLThread("gl")
-ctx  =LiveConnectionContext()
+
+av_in =av.getFrameFilter();
+gl_in =gl.getFrameFilter();
+
+ctx=LiveConnectionContext()
+ctx.slot=1
+ctx.connection_type=LiveConnectionType_rtsp
+ctx.address="rtsp://admin:12345@192.168.0.157"
+ctx2=LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:12345@192.168.0.157", 1, out)
+
 print("   Valkka classes ok")
 print()
 

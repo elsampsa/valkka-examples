@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    single_stream_rtsp.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.3.6 
+@version 0.4.0 
 @brief   A demo program: streaming from a single rtsp camera
 """
 
@@ -24,7 +24,7 @@ from valkka.valkka_core import *
 class MyGui(QtWidgets.QMainWindow):
   """A simple Qt main window.  
   
-  Creating the filterchain and starting valkka threads is done in method openValkka.  Stopping valkka threads done in closeValkka.
+  Creating the filterchain and starting valkka threads is done in method openValkka.  Stopping valkka threads is done in closeValkka.
   """
 
   def __init__(self,parent=None,stream_address=None):
@@ -47,67 +47,34 @@ class MyGui(QtWidgets.QMainWindow):
 
     
   def openValkka(self):
-    """Creates thread instances, creates filter chain, starts threads
-    
-    So, you've learned from
-    
-    https://elsampsa.github.io/valkka-core/html/process_chart.html
-    
-    that:
-    
-    * Concatenating FrameFilters, creates a simple callback cascade
-    * Threads write to a FrameFilter
-    * Threads read from a FrameFifo
-    * FrameFifos have an internal stack of pre-reserved frames
-    * Threads are not python threads, so there are no global intepreter lock (GIL) problems in this code
-    
-    The filtergraph (**) here looks like this:
-    
-    (LiveThread:livethread) --> {InfoFrameFilter:live_out_filter} --> {FifoFrameFilter:av_in_filter} --> [FrameFifo:av_fifo] -->> (AVThread:avthread) --> {FifoFrameFilter:gl_in_gilter} -->  
-    --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread)
     """
+    filtergraph:
     
-    """
-    Instantiate OpenGLThread.  This thread does all openGL calls.  It also times and presents all frames.  Memory is pre-reserved on the GPU, so we have to specify how many frames are reserved for every resolution.  You can use the following formula:
+    (LiveThread:livethread) --> {InfoFrameFilter:live_out_filter} -->> (AVThread:avthread) -->> (OpenGLThread:glthread)
+    
+    First instantiate OpenGLThread.  This thread does all openGL calls.  It also times and presents all frames.  Memory is pre-reserved on the GPU, so we have to specify how many frames are reserved for each resolution.  You can use the following formula:
     
     Number of frames for resolution n = buffering time * (frames per second of one camera) * number of cameras for resolution n
+    
+    Number of frames (and other parameters) are defined with OpenGLFrameFifoContext
     """
-    self.glthread        =OpenGLThread ("glthread", # name
-                                        10,         # n720p
-                                        10,         # n1080p
-                                        0,          # n1440p
-                                        0,          # n4K
-                                        100,        # buffering time in milliseconds
-                                        -1          # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
-                                        )
+    self.gl_ctx =OpenGLFrameFifoContext();
+    self.gl_ctx.n_720p    =20;
+    self.gl_ctx.n_1080p   =20;
+    self.gl_ctx.n_1440p   =20;
+    self.gl_ctx.n_4K      =20;
+    self.gl_ctx.n_setup   =20;
+    self.gl_ctx.n_signal  =20;
+    self.gl_ctx.flush_when_full =False;
+      
+    self.glthread        =OpenGLThread("glthread", self.gl_ctx);
+    self.gl_in_filter    =self.glthread.getFrameFilter();
     
-    self.livethread      =LiveThread ("livethread", # name
-                                      0,            # size of input fifo
-                                      -1            # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
-                                      )
-    """
-    Start constructing the filter chain.  Follow the filtergraph (**) from end to beginning.
+    self.avthread        =AVThread("avthread",self.gl_in_filter)
+    self.av_in_filter    =self.avthread.getFrameFilter();
+    self.live_out_filter =InfoFrameFilter("live_out_filter",self.av_in_filter)
     
-    Some details:
-    
-    * OpenGLFrameFifo is a special FrameFifo - it must be requested from OpenGLThread.  This is because OpenGLThread handles all OpenGL calls, that are also needed to create the pre-reserved stack of frames, cached on the GPU (aka "pixel buffer objects")
-    
-    * Decoding thread AVThread reads from "av_fifo" and writes to "gl_in_filter"
-    """
-    self.gl_fifo         =self.glthread.getFifo()
-    self.gl_in_filter    =FifoFrameFilter    ("gl_in_filter",   self.gl_fifo)
-    
-    self.av_fifo         =FrameFifo          ("av_fifo",10)        # FrameFifo is 10 frames long.  Payloads in the frames adapt automatically to the streamed data.
-    
-    # [av_fifo] -->> (avthread) --> {gl_in_filter}
-    self.avthread        =AVThread           ("avthread",          # name    
-                                              self.av_fifo,        # read from
-                                              self.gl_in_filter,   # write to
-                                              -1                   # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
-                                              ) 
-    
-    self.av_in_filter    =FifoFrameFilter    ("av_in_filter",   self.av_fifo)
-    self.live_out_filter =InfoFrameFilter    ("live_out_filter",self.av_in_filter)
+    self.livethread      =LiveThread("livethread")
     
     # Start all threads
     self.glthread.  startCall()

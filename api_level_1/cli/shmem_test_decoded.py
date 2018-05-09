@@ -1,5 +1,5 @@
 """
-shmem_test.py : Stream decoded (bitmap) frames from a single rtsp camera to a python process
+shmem_test_decoded.py : Stream decoded (bitmap) frames from a single rtsp camera.  Share the bitmap between python processes.
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -9,11 +9,11 @@ This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    single_stream.py
+@file    shmem_test_decoded.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.3.6 
-@brief   Stream decoded (bitmap) frames from a single rtsp camera to a python process
+@version 0.4.0 
+@brief   Stream decoded (bitmap) frames from a single rtsp camera.  Share the bitmap between python processes.
 """
 
 import sys
@@ -24,11 +24,11 @@ from valkka.valkka_core import *
 shmem_name_tag="shmem_bridge"
 
 
-def client():
+def client(stop_event):
   index_p =new_intp()
   isize_p =new_intp()
   
-  rb=SharedMemRingBuffer(shmem_name_tag,10,30*1024*1024,False)
+  rb=SharedMemRingBuffer(shmem_name_tag,10,30*1024*1024,1000,False) # name, cells, bytes, mstimeout, not server
   
   print("Getting shmem buffers")
   shmem_list=[]
@@ -37,11 +37,14 @@ def client():
   
   print("Reading shmem buffers")
   while(True):
-    rb.clientPull(index_p, isize_p);
-    index=intp_value(index_p); isize=intp_value(isize_p)
-    print("Current index, size=",index,isize)
-    print("Payload=",shmem_list[index][0:min(isize,10)])
-    
+    ok=rb.clientPull(index_p, isize_p);
+    if ok:
+      index=intp_value(index_p); isize=intp_value(isize_p)
+      print("Current index, size=",index,isize)
+      print("Payload=",shmem_list[index][0:min(isize,10)])
+    else:
+      print("Semaphore timed out")
+    if (stop_event.is_set()): break
 
 
 class ValkkaContext:
@@ -53,49 +56,23 @@ class ValkkaContext:
   def openValkka(self):
     """Creates thread instances, creates filter chain, starts threads
     
-    So, you've learned from
+    filtergraph:
     
-    https://elsampsa.github.io/valkka-core/html/process_chart.html
-    
-    that:
-    
-    * Concatenating FrameFilters, creates a callback cascade
-    * Threads write to a FrameFilter
-    * Threads read from a FrameFifo
-    * FrameFifos have an internal stack of pre-reserved frames
-    * Threads are not python threads, so there are no global intepreter lock (GIL) problems in this code
-    
-    The filtergraph (**) for this case:
-    
-    (LiveThread:livethread) --> {InfoFrameFilter:live_out_filter} --> {FifoFrameFilter:av_in_filter} --> [FrameFifo:av_fifo] -->> (AVThread:avthread) --> {SwsScaleFrameFilter:sws_scale_filter} --> {SharedMemFrameFilter:shmem_filter}
+    (LiveThread:livethread) --> {InfoFrameFilter:live_out_filter} -->> (AVThread:avthread) --> {SwsScaleFrameFilter:sws_scale_filter} --> {RGBShmemFrameFilter:shmem_filter}
     """
+    # construct filtergraph from right to the left
     
-    self.livethread      =LiveThread         ("livethread", # name 
-                                              0,            # size of input fifo
-                                              -1            # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
-                                              )
-    """
-    Start constructing the filter chain.  Follow the filtergraph (**) from end to beginning.
-    """
-    # reserve 10 frames, 30 MB each
-    self.shmem_filter   =SharedMemFrameFilter (shmem_name_tag,10,30*1024*1024)
+    # reserve 10 frames for 300x300 pixel images.  Semaphore timeout is 1000 ms
+    self.shmem_filter    =RGBShmemFrameFilter(shmem_name_tag, 10, 300, 300, 1000)
+    
     # SharedMemFrameFilter instantiates the server side of shmem bridge
     # in a separate process do:
     # rb=SharedMemRingBuffer(shmem_name_tag,10,30*1024*1024,False) # shmem ring buffer on the client side
+    self.sws_scale_filter=SwScaleFrameFilter(shmem_name_tag, 300, 300, self.shmem_filter)
     
-    self.sws_scale_filter=SwsScaleFrameFilter ("sws_scale",self.shmem_filter)
-    
-    self.av_fifo         =FrameFifo          ("av_fifo",10)        # FrameFifo is 10 frames long.  Payloads in the frames adapt automatically to the streamed data.
-    
-    # [av_fifo] -->> (avthread) --> {gl_in_filter}
-    self.avthread        =AVThread           ("avthread",              # name    
-                                              self.av_fifo,            # read from
-                                              self.sws_scale_filter,   # write to
-                                              -1                       # thread affinity: -1 = no affinity, n = id of processor where the thread is bound
-                                              ) 
-    
-    self.av_in_filter    =FifoFrameFilter    ("av_in_filter",   self.av_fifo)
-    self.live_out_filter =InfoFrameFilter    ("live_out_filter",self.av_in_filter)
+    self.avthread        =AVThread        ("avthread",self.sws_scale_filter)    
+    self.live_out_filter =InfoFrameFilter ("live_out_filter",self.avthread.getFrameFilter()) # request input framefilter from AVThread
+    self.livethread      =LiveThread      ("livethread")
     
     # Start all threads
     self.livethread.startCall()
@@ -144,16 +121,18 @@ def main():
   vc=ValkkaContext(sys.argv[1])
   vc.openValkka()
   
-  p=multiprocessing.Process(target=client) # create a multiprocess that runs method "client"
+  ev=multiprocessing.Event()
+  p=multiprocessing.Process(target=client,args=(ev,)) # create a multiprocess that runs method "client"
   p.start()
   # .. so, here we have forked a multiprocess.  You could also start method "client" from a completely independent process
   
   vc.start_streams()
-  time.sleep(10)
+  time.sleep(5)
   vc.stop_streams()
   vc.closeValkka()
-  
-  p.stop()
+  print("valkka threads closed")
+  ev.set()
+  print("client process exit requested")
 
 
 if (__name__=="__main__"):

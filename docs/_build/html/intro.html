@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples  documentation" href="index.html" />
     <link rel="next" title="Installing" href="requirements.html" />
-    <link rel="prev" title="Valkka Examples" href="index.html" /> 
+    <link rel="prev" title="LibValkka Examples" href="index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -38,7 +38,7 @@
           <a href="requirements.html" title="Installing"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Valkka Examples"
+          <a href="index.html" title="LibValkka Examples"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
       </ul>
@@ -61,7 +61,7 @@
 </div>
 <div class="section" id="the-solution">
 <h2>The solution<a class="headerlink" href="#the-solution" title="Permalink to this headline">¶</a></h2>
-<p>Valkka will solve the problem for you; It is a programming library and an API to do just that - large scale video surveillance, management and analysis programs, from the comfort of python3.  Welcome to internet of things in video surveillance!</p>
+<p>Valkka will solve the problem for you; It is a programming library and an API to do just that - large scale video surveillance, management and analysis programs, from the comfort of python3.</p>
 <p>With Valkka, you can create complex pipings (&#8220;filtergraphs&#8221;) of media streams from the camera, to screen, machine vision subroutines, to disk, to the net, etc.  The code runs at the cpp level with threads, thread-safe queues, mutexes, semaphores, etc.  All those gory details are hidden from the API user that programs filtergraphs at the python level only.  Valkka can also share frames between python processes (and from there, with OpenCV, TensorFlow, etc.)</p>
 <p>If you got interested, we recommend that you do the tutorial, and use the examples as a starting point.</p>
 <p>This manual has a special emphasis for Qt and OpenCV.  You can create video streaming applications using PyQt: streaming video to widgets, and connect the signals from your machine vision subprograms to the Qt signal/slot system - and beyond.</p>
@@ -69,14 +69,14 @@
 <p>For more technical information, check out the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/process_chart.html">library architecture page</a></p>
 <p>Finally, here is a small sample from the tutorial.  You&#8217;ll get the idea.</p>
 <div class="highlight-python"><div class="highlight"><pre>main branch, streaming
-(LiveThread:livethread) --&gt; {FifoFrameFilter:live_out_filter} --&gt; [FrameFifo: av_fifo]
-                                                                          |
-                                                                          |
-{ForkFrameFilter: fork_filter} &lt;----(AVThread:avthread) &lt;&lt; ---------------+  main branch, decoding
+(LiveThread:livethread) --&gt; ----------------------------------+
+                                                              |
+                                                              |
+{ForkFrameFilter: fork_filter} &lt;----(AVThread:avthread) &lt;&lt; ---+  main branch, decoding
                |
-      branch 1 +--&gt; {FifoFrameFilter:gl_in_gilter} --&gt; [OpenGLFrameFifo:gl_fifo] --&gt;&gt; (OpenGLThread:glthread) --&gt; To X-Window System
+      branch 1 +--&gt;&gt; (OpenGLThread:glthread) --&gt; To X-Window System
                |
-      branch 2 +--&gt; {IntervalFrameFilter: interval_filter} --&gt; {SwScaleFrameFilter: sws_filter} --&gt; {SharedMemFrameFilter: shmem_filter}
+      branch 2 +---&gt; {IntervalFrameFilter: interval_filter} --&gt; {SwScaleFrameFilter: sws_filter} --&gt; {RGBSharedMemFrameFilter: shmem_filter}
                                                                                                                   |
                                                                                               To OpenCV  &lt;--------+
 </pre></div>
@@ -107,7 +107,7 @@
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Valkka Examples</a></p>
+                        title="previous chapter">LibValkka Examples</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="requirements.html"
                         title="next chapter">Installing</a></p>
@@ -145,7 +145,7 @@
           <a href="requirements.html" title="Installing"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Valkka Examples"
+          <a href="index.html" title="LibValkka Examples"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
       </ul>

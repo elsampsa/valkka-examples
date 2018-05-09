@@ -29,7 +29,7 @@ As a solution, you might try connect to the *same* camera 4 times and decode the
 The solution
 ------------
 
-Valkka will solve the problem for you; It is a programming library and an API to do just that - large scale video surveillance, management and analysis programs, from the comfort of python3.  Welcome to internet of things in video surveillance!
+Valkka will solve the problem for you; It is a programming library and an API to do just that - large scale video surveillance, management and analysis programs, from the comfort of python3.
 
 With Valkka, you can create complex pipings ("filtergraphs") of media streams from the camera, to screen, machine vision subroutines, to disk, to the net, etc.  The code runs at the cpp level with threads, thread-safe queues, mutexes, semaphores, etc.  All those gory details are hidden from the API user that programs filtergraphs at the python level only.  Valkka can also share frames between python processes (and from there, with OpenCV, TensorFlow, etc.)
 
@@ -46,14 +46,14 @@ Finally, here is a small sample from the tutorial.  You'll get the idea.
 ::
 
   main branch, streaming
-  (LiveThread:livethread) --> {FifoFrameFilter:live_out_filter} --> [FrameFifo: av_fifo] 
-                                                                            |
-                                                                            |   
-  {ForkFrameFilter: fork_filter} <----(AVThread:avthread) << ---------------+  main branch, decoding
+  (LiveThread:livethread) --> ----------------------------------+ 
+                                                                |
+                                                                |   
+  {ForkFrameFilter: fork_filter} <----(AVThread:avthread) << ---+  main branch, decoding
                  |
-        branch 1 +--> {FifoFrameFilter:gl_in_gilter} --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread) --> To X-Window System
+        branch 1 +-->> (OpenGLThread:glthread) --> To X-Window System
                  |
-        branch 2 +--> {IntervalFrameFilter: interval_filter} --> {SwScaleFrameFilter: sws_filter} --> {SharedMemFrameFilter: shmem_filter}
+        branch 2 +---> {IntervalFrameFilter: interval_filter} --> {SwScaleFrameFilter: sws_filter} --> {RGBSharedMemFrameFilter: shmem_filter}
                                                                                                                     |
                                                                                                 To OpenCV  <--------+
 

@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    demo_base.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.3.6 
+@version 0.4.0 
 @brief   
 """
 
@@ -91,10 +91,10 @@ class ConfigDialog(QtWidgets.QDialog):
     
     self.pardic={
       "cams"    : [],
-      "n720p"   : 10,  # reserve stacks of YUV video frames for various resolutions
-      "n1080p"  : 10,
-      "n1440p"  : 10,
-      "n4K"     : 10,
+      "n_720p"   : 10,  # reserve stacks of YUV video frames for various resolutions
+      "n_1080p"  : 10,
+      "n_1440p"  : 10,
+      "n_4K"     : 10,
       "naudio"  : 10,
       "verbose" : 0,
       "msbuftime" :100,
@@ -105,8 +105,8 @@ class ConfigDialog(QtWidgets.QDialog):
       "ok"                 : True
     }
     
-    # ["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
-    self.plis=["n720p", "n1080p", "n1440p", "n4K", "naudio", "verbose", "msbuftime", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
+    # ["n_720p", "n_1080p", "n_1440p", "n_4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
+    self.plis=["n_720p", "n_1080p", "n_1440p", "n_4K", "naudio", "verbose", "msbuftime", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
     
     self.setConfigPars() # custom pars
     

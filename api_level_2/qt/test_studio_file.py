@@ -13,7 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_file.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.3.6 
+@version 0.4.0 
 @brief   An example GUI for reading matroska (mkv) files, playing and sending them to an analyzer
 """
 
@@ -23,9 +23,9 @@ import sys
 import json
 import time
 import os
-from valkka.api2.threads import LiveThread, FileThread, OpenGLThread, ValkkaProcess, ShmemClient
-from valkka.api2.chains import ShmemFilterchain1
-from valkka.api2.tools import parameterInitCheck
+from valkka.api2 import LiveThread, FileThread, OpenGLThread, ValkkaProcess, ShmemClient
+from valkka.api2 import ShmemFilterchain1
+from valkka.api2 import parameterInitCheck
 from valkkathread import QValkkaThread, QValkkaOpenCVProcess
 from analyzer import MovementDetector
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair

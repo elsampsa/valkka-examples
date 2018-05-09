@@ -6,7 +6,7 @@ Installing
 
 1. You need to install two pre-built packages, available by clicking `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_
   
-- Download the valkka-core debian (.deb) package and use:
+- `Download <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_ the valkka-core debian (.deb) package and use:
 
   ::
 
@@ -14,14 +14,14 @@ Installing
       sudo apt-get -f install
   
   
-- Download the python3 binary package (.whl) and use:
+- `Download <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_ the python3 binary package (.whl) and use:
 
   ::
 
       pip3 install --upgrade Valkka*.whl
 
       
-- OpenCV and its python bindings (as debian packages) are provided as well (with working high-gui).  Download them and use:
+- OpenCV and its python bindings (two debian packages) are provided as well (with working high-gui).  `Download them <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_ and use:
 
   :: 
     
@@ -29,12 +29,12 @@ Installing
       sudo apt-get -f install
   
       
-2. Install PyQt (needed for the Qt test/demo suite) with:
+2. Install PyQt and imutils (needed for the Qt test/demo suite):
 
 
   ::
   
-      pip3 install --upgrade PyQt5
+      pip3 install --upgrade PyQt5 imutils
 
 
       

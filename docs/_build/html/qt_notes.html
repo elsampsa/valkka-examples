@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="valkka_examples  documentation" href="index.html" />
     <link rel="next" title="Project timetable" href="timetable.html" />
-    <link rel="prev" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit" href="lesson_7.html" /> 
+    <link rel="prev" title="Lesson 8: API level 2" href="lesson_8.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -38,7 +38,7 @@
           <a href="timetable.html" title="Project timetable"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
+          <a href="lesson_8.html" title="Lesson 8: API level 2"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
       </ul>
@@ -67,7 +67,7 @@
 </div>
 <div class="section" id="python-multiprocessing">
 <h2>Python multiprocessing<a class="headerlink" href="#python-multiprocessing" title="Permalink to this headline">¶</a></h2>
-<p>In <a class="reference internal" href="lesson_4.html#opencv-client"><span>lesson 4</span></a> of the tutorial, we launched a separate python interpreter running a client program that was using shared frames from the camera.</p>
+<p>In <a class="reference internal" href="lesson_4.html#opencv-client"><span>lesson 4</span></a> of the tutorial, we launched a separate python interpreter running a client program that was using decoded and shared frames.</p>
 <p>That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with python3&#8217;s <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a> library.</p>
 <p>Using python multiprocesses in a Qt program complicates things a bit, but not that much.  We simply need a way to map from events taking place at the multiprocess into signals at the main Qt program.  This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.</p>
 <p>Let&#8217;s state that graphically:</p>
@@ -79,7 +79,7 @@
                                                        |    |    |
                                                        python multiprocesses doing their thing
                                                        and writing/reading their communication pipes
-                                                       ==&gt; subclass from api2.threads.ValkkaProcess
+                                                       ==&gt; subclass from valkka.api2.multiprocess.ValkkaProcess
 </pre></div>
 </div>
 <p>For interprocess communication with the Qt signal/slot system, you can use the following strategy:</p>
@@ -100,7 +100,7 @@
  |                          |       |          :
  | def pong(): # qt slot    |       |          :
  |   sendSignal(&quot;pong&quot;) ---------+  |          :
- |                          |    |  |          :    api2.threads.ValkkaProcess
+ |                          |    |  |          :    valkka.api2.multiprocess.ValkkaProcess
  +--------------------------+    |  |          :
  | Backend methods          |    |  |          :    Backend is running in the &quot;background&quot; at its own memory space
  |                          |    |  |          :
@@ -114,7 +114,7 @@
  +--------------------------+                ..:
 </pre></div>
 </div>
-<p>The class <strong>api2.threads.ValkkaProcess</strong> provides a model class that has been derived from python&#8217;s <strong>multiprocessing.Process</strong> class.  In ValkkaProcess, the class has both &#8220;frontend&#8221; and &#8220;backend&#8221; methods.</p>
+<p>The class <strong>valkka.api2.multiprocess.ValkkaProcess</strong> provides a model class that has been derived from python&#8217;s <strong>multiprocessing.Process</strong> class.  In ValkkaProcess, the class has both &#8220;frontend&#8221; and &#8220;backend&#8221; methods.</p>
 <p>Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), while backend methods are called only from within the processes &#8220;run&#8221; method - i.e. at the &#8220;other side&#8221; of the fork, where the forked process lives in its own virtual memory space.</p>
 <p>A signalling scheme between back- and frontend is provided in the ValkkaProcess class.  Don&#8217;t be afraid - the ValkkaProcess class is just a few lines of python code!</p>
 <p>Also, two stripped-down sample programs are provided in</p>
@@ -161,10 +161,10 @@
 <p>For decoding, visualizing and analyzing a large number of cameras, filterchains should be encapsulated in classes, like we did in tutorial, <a class="reference internal" href="lesson_3.html#multiple-streams"><span>lesson 3</span></a>.</p>
 <p>API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.</p>
 </div>
-<div class="section" id="use-c-instead-of-python">
-<h2>Use C++ instead of Python?<a class="headerlink" href="#use-c-instead-of-python" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="just-use-c-instead-of-python">
+<h2>Just use C++ instead of Python?<a class="headerlink" href="#just-use-c-instead-of-python" title="Permalink to this headline">¶</a></h2>
 <p>There is no obligation to use Valkka from python - the API is usable from cpp as well.</p>
-<p>If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing stuff considered here.  You can use Valkka&#8217;s FrameFifo and Thread infrastructure to create a QThread that&#8217;s reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).</p>
+<p>If programming in Qt with C++ is your thing, then you can just forget all that multiprocessing stuff considered here.  You can use Valkka&#8217;s FrameFifo and Thread infrastructure to create a QThread that&#8217;s reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).</p>
 <p>Examples of using the API from cpp will be added to this documentation in the near future.</p>
 </div>
 </div>
@@ -182,14 +182,14 @@
 <li><a class="reference internal" href="#python-multiprocessing">Python multiprocessing</a></li>
 <li><a class="reference internal" href="#drawing-video-into-a-widget">Drawing video into a widget</a></li>
 <li><a class="reference internal" href="#streaming-from-several-cameras">Streaming from several cameras</a></li>
-<li><a class="reference internal" href="#use-c-instead-of-python">Use C++ instead of Python?</a></li>
+<li><a class="reference internal" href="#just-use-c-instead-of-python">Just use C++ instead of Python?</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="lesson_7.html"
-                        title="previous chapter">Lesson 7 : Decode, save, visualize, analyze and re-transmit</a></p>
+  <p class="topless"><a href="lesson_8.html"
+                        title="previous chapter">Lesson 8: API level 2</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="timetable.html"
                         title="next chapter">Project timetable</a></p>
@@ -227,7 +227,7 @@
           <a href="timetable.html" title="Project timetable"
              >next</a> |</li>
         <li class="right" >
-          <a href="lesson_7.html" title="Lesson 7 : Decode, save, visualize, analyze and re-transmit"
+          <a href="lesson_8.html" title="Lesson 8: API level 2"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
       </ul>

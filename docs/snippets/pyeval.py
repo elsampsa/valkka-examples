@@ -39,6 +39,7 @@ elif (sys.argv[1]=="-o"):
             c=c+1
 else:
     rst_mode=False
+    hide_mode=False
     f=open(sys.argv[2])
     lines=[]
     c=0
@@ -48,22 +49,26 @@ else:
     #print
     for line in f.readlines():
         st=line[:-1]
-        if (c==0 and st.strip()!='"""<rtf>'):
-          print
+        if (st.strip()=='#<hide>'):
+          hide_mode=True
+        elif (st.strip()=='#</hide>'):
+          hide_mode=False
+        elif (c==0 and st.strip()!='"""<rtf>'):
+          print("")
           print(":: ")
           print("")
           print(inst+st)
         elif (st.strip()=='"""<rtf>'):
           rst_mode=True
-          print
+          print("")
         elif (st.strip()=='<rtf>"""'):
           rst_mode=False
           print("")
           print(":: ")
           print("")
-        elif (rst_mode==False):
+        elif (hide_mode==False and rst_mode==False):
           print(inst+st)
-        else:
+        elif (hide_mode==False):
           print(st)
         c=c+1
     print

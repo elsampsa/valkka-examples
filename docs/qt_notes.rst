@@ -23,7 +23,7 @@ Some typical filterclasses are readily accessible at the API 2 level and are sui
 Python multiprocessing
 ----------------------
 
-In :ref:`lesson 4<opencv_client>` of the tutorial, we launched a separate python interpreter running a client program that was using shared frames from the camera.  
+In :ref:`lesson 4<opencv_client>` of the tutorial, we launched a separate python interpreter running a client program that was using decoded and shared frames.  
 
 That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with python3's `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ library.
 
@@ -41,7 +41,7 @@ Let's state that graphically:
                                                          |    |    |
                                                          python multiprocesses doing their thing
                                                          and writing/reading their communication pipes
-                                                         ==> subclass from api2.threads.ValkkaProcess
+                                                         ==> subclass from valkka.api2.multiprocess.ValkkaProcess
 
                                                          
 For interprocess communication with the Qt signal/slot system, you can use the following strategy:
@@ -65,7 +65,7 @@ For interprocess communication with the Qt signal/slot system, you can use the f
     |                          |       |          : 
     | def pong(): # qt slot    |       |          :
     |   sendSignal("pong") ---------+  |          :
-    |                          |    |  |          :    api2.threads.ValkkaProcess    
+    |                          |    |  |          :    valkka.api2.multiprocess.ValkkaProcess    
     +--------------------------+    |  |          :
     | Backend methods          |    |  |          :    Backend is running in the "background" at its own memory space
     |                          |    |  |          :
@@ -79,7 +79,7 @@ For interprocess communication with the Qt signal/slot system, you can use the f
     +--------------------------+                ..:
           
           
-The class **api2.threads.ValkkaProcess** provides a model class that has been derived from python's **multiprocessing.Process** class.  In ValkkaProcess, the class has both "frontend" and "backend" methods.  
+The class **valkka.api2.multiprocess.ValkkaProcess** provides a model class that has been derived from python's **multiprocessing.Process** class.  In ValkkaProcess, the class has both "frontend" and "backend" methods.  
 
 Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), while backend methods are called only from within the processes "run" method - i.e. at the "other side" of the fork, where the forked process lives in its own virtual memory space.
 
@@ -151,13 +151,12 @@ For decoding, visualizing and analyzing a large number of cameras, filterchains 
 API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.
 
  
-Use C++ instead of Python?
---------------------------
+Just use C++ instead of Python?
+-------------------------------
 
 There is no obligation to use Valkka from python - the API is usable from cpp as well.
 
-If programming in Qt with C++ is your cup of tea, then you can just forget all that multiprocessing stuff considered here.  You can use Valkka's FrameFifo and Thread infrastructure to create a QThread that's reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).
+If programming in Qt with C++ is your thing, then you can just forget all that multiprocessing stuff considered here.  You can use Valkka's FrameFifo and Thread infrastructure to create a QThread that's reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).
 
 Examples of using the API from cpp will be added to this documentation in the near future.
-
 

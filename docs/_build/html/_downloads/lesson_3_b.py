@@ -1,36 +1,34 @@
-import time
-from valkka.valkka_core import *
+#<hide>
 """
+filtergraph:
 
 Streaming part                                                                           
-(LiveThread:livethread) --> {FifoFrameFilter:live_out_filter} --> [FrameFifo: av_fifo] 
-                                                                           |
-Decoding part                                                              |
-    (AVThread:avthread) << ------------------------------------------------+    
-              |
-              |                                                                         Presentation part
-              +---> {FifoFrameFilter:gl_in_filter} --> [OpenGLFrameFifo:gl_fifo] -->> (OpenGLThread:glthread)
+(LiveThread:livethread)---+
+                          |
+Decoding part             |
+(AVThread:avthread) <<----+    
+ |
+ |       Presentation part
+ +--->> (OpenGLThread:glthread)
 """
+#</hide>
+#<hide>
+import time
+from valkka.valkka_core import *
 
-# parameters are as follows: thread name, n720p, n1080p, n1440p, n4K
-glthread        =OpenGLThread ("glthread", 10, 10, 0, 0)
-                                        
-# used by both streaming and decoding parts
-av_fifo         =FrameFifo("av_fifo",10) 
+# presentation part
+glthread        =OpenGLThread ("glthread")
+gl_in_filter    =glthread.getFrameFilter()
 
-# used by decoding and presentation parts
-gl_fifo         =glthread.getFifo()
-gl_in_filter    =FifoFrameFilter("gl_in_filter",gl_fifo)
+# decoding part
+avthread        =AVThread("avthread",gl_in_filter)
+av_in_filter    =avthread.getFrameFilter()
 
 # streaming part
 livethread      =LiveThread("livethread")
-live_out_filter =FifoFrameFilter("live_out_filter",av_fifo)
-
-# decoding part
-avthread        =AVThread("avthread",av_fifo,gl_in_filter)
 
 # define connection to camera
-ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, live_out_filter)
+ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
 
 # start threads
 glthread.startCall()
@@ -42,7 +40,11 @@ avthread.decodingOnCall()
 
 livethread.registerStreamCall(ctx)
 livethread.playStreamCall(ctx)
+#</hide>
 
+"""<rtf>
+Streaming the same camera to several X windows is trivial; we just need to add more render groups (aka x windows) and render contexes (mappings):
+<rtf>"""
 id_list=[]
 
 for i in range(10):
@@ -57,6 +59,7 @@ for ids in id_list:
   glthread.delRenderContextCall(ids[0])
   glthread.delRenderGroupCall(ids[1])
 
+#<hide>
 # stop decoding
 avthread.decodingOffCall()
 
@@ -65,9 +68,8 @@ livethread.stopCall()
 avthread.stopCall()
 glthread.stopCall()
 
-# invokes the garbage collection => cpp level destructors
-livethread=None
-avthread  =None
-glthread  =None
-
 print("bye")
+#</hide>
+
+
+

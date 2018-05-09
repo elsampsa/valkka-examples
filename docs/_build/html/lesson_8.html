@@ -60,36 +60,32 @@
 python3 lesson_8_a.py
 </pre></div>
 </div>
-<p>So, by now you have learned how to construct complex framefilters to divert streams to filters, fifo queues and threads</p>
-<p>Complex graphs of filters, queues and threads were encapsulated into a single, compact class in <a class="reference internal" href="lesson_3.html#multiple-streams"><span>lesson 3</span></a>.</p>
+<p>So, by now you have learned how to construct complex filtergraphs with framefilters and threads, and how to encapsulate parts of the filtergraphs into separate classes in <a class="reference internal" href="lesson_3.html#multiple-streams"><span>lesson 3</span></a>.</p>
 <p>API level 2 does just that.  It encapsulates some common cases into compact classes, starts the decoding threads for you, and provides easily accessible end-points (for the posix shared memory interface, etc.) for the API user.</p>
-<p>The API level 2 filterchains can be accessed like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>from valkka.api2.chains import ..
+<p>The API level 2 filterchains, threads and shared memory processes can be imported with</p>
+<div class="highlight-python"><div class="highlight"><pre>from valkka.api2 import ..
 </pre></div>
 </div>
-<p>API level 2 provides extra wrapping for the threads (LiveThread, OpenGLThread, etc.) as well.  The wrapped threads can be imported like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka.api2.threads</span> <span class="kn">import</span> <span class="o">...</span>
-</pre></div>
-</div>
-<p>the underlying API level 1 instances can be accessed like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka.api2.threads</span> <span class="kn">import</span> <span class="n">LiveThread</span>
+<p>API level 2 provides also extra wrapping for the thread classes (LiveThread, OpenGLThread, etc.).  The underlying API level 1 instances can be accessed like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">LiveThread</span>
 
 <span class="n">livethread</span><span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;live_thread&quot;</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">core</span> <span class="c1"># this is the API level 1 instance, i.e. valkka.valkka_core.LiveThread</span>
 </pre></div>
 </div>
-<p>You should never import simultaneously from API levels 1 and two, i.e. from <strong>valkka.valkka_core</strong> and <strong>valkka.api2.threads</strong> as the threads have identical names; use either API level 1 or 2, but not both.</p>
+<p>You should never import simultaneously from API levels 1 and two, i.e. from <strong>valkka.valkka_core</strong> and <strong>valkka.api2.</strong> as the threads have identical names; use either API level 1 or 2, but not both.</p>
+<p>The <a class="reference internal" href="testsuite.html#testsuite"><span>PyQT testsuite</span></a> serves also as API level 2 reference.</p>
 </div>
 <div class="section" id="a-simple-example">
 <h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_8_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
 <p>First, import API level 2:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">valkka.api2.threads</span> <span class="kn">import</span> <span class="n">LiveThread</span><span class="p">,</span> <span class="n">OpenGLThread</span>
-<span class="kn">from</span> <span class="nn">valkka.api2.chains</span> <span class="kn">import</span> <span class="n">BasicFilterchain</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">LiveThread</span><span class="p">,</span> <span class="n">OpenGLThread</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">BasicFilterchain</span>
 </pre></div>
 </div>
-<p>Instantiating a LiveThread starts running the thread.  Most of the parameters are optional:</p>
+<p>Instantiating the API level 2 LiveThread starts running the underlying cpp thread:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span> <span class="c1"># starts live stream services (using live555)</span>
   <span class="n">name</span>   <span class="o">=</span><span class="s2">&quot;live_thread&quot;</span><span class="p">,</span>
   <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
@@ -100,10 +96,10 @@ python3 lesson_8_a.py
 <p>Same goes for OpenGLThread:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">openglthread</span><span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span>
   <span class="n">name</span>    <span class="o">=</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span>
-  <span class="n">n720p</span>   <span class="o">=</span><span class="mi">20</span><span class="p">,</span>   <span class="c1"># reserve stacks of YUV video frames for various resolutions</span>
-  <span class="n">n1080p</span>  <span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-  <span class="n">n1440p</span>  <span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-  <span class="n">n4K</span>     <span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+  <span class="n">n_720p</span>   <span class="o">=</span><span class="mi">20</span><span class="p">,</span>   <span class="c1"># reserve stacks of YUV video frames for various resolutions</span>
+  <span class="n">n_1080p</span>  <span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+  <span class="n">n_1440p</span>  <span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+  <span class="n">n_4K</span>     <span class="o">=</span><span class="mi">0</span><span class="p">,</span>
   <span class="n">verbose</span> <span class="o">=</span><span class="bp">False</span><span class="p">,</span>
   <span class="n">msbuftime</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
   <span class="n">affinity</span><span class="o">=-</span><span class="mi">1</span>
@@ -122,7 +118,7 @@ python3 lesson_8_a.py
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>BasicFilterchain takes as an argument the LiveThread and OpenGLThread instances.  It creates the relevant connections between the threads (fifo queues, etc.) under-the-hood.</p>
+<p>BasicFilterchain takes as an argument the LiveThread and OpenGLThread instances.  It creates the relevant connections between the threads.</p>
 <p>Next, create an x-window, map stream to the screen, and start decoding:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># create a window</span>
 <span class="n">win_id</span> <span class="o">=</span><span class="n">openglthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>

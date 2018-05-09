@@ -56,7 +56,7 @@
 <div class="section" id="a-single-framefilter">
 <h2>A single FrameFilter<a class="headerlink" href="#a-single-framefilter" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>Import valkka level 1 API:</p>
+<p>Import the valkka level 1 API:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
@@ -67,8 +67,8 @@
 </div>
 <p>This is the &#8220;entry point&#8221; where we receive all the frames.</p>
 <p>InfoFrameFilter does nothing fancy - it just prints out the frames it receives.</p>
-<p>However, as you will learn during this tutorials, FrameFilters can do a lot of stuff.  You can chain them into chains of arbitrary length.  They can be used to fork and copy the stream into complex graphs,  etc.</p>
-<p>Next thing we need, is a thread that feeds the frames into our FrameFilter, so we instantiate a LiveThread:</p>
+<p>However, as you will learn during this tutorial, FrameFilters can do a lot of stuff.  You can chain them together.  They can be used to fork and copy the stream into complex graphs,  etc.</p>
+<p>Next we need a thread that feeds the frames into our FrameFilter, so we instantiate a LiveThread:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span> <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -76,13 +76,14 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The first parameter defines the device type, which in this case is an rtsp IP camera.  Note that we include the &#8220;entry point&#8221; live_out_filter.  The integer parameter &#8220;1&#8221; is the slot number - it will be discussed in detail later on in this tutorial.</p>
+<p>The first parameter defines the device type, which in this case is an IP camera using the rtsp protocol.  Note that we include the &#8220;entry point&#8221; live_out_filter.  The integer parameter &#8220;1&#8221; is the slot number - it will be discussed in detail later on in this tutorial.</p>
 <p>Finally, we can start streaming frames from the IP camera:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The output looks like this:</p>
@@ -106,8 +107,8 @@ InfoFrameFilter:&lt;&gt;
 ...
 </pre></div>
 </div>
-<p>InfoFrameFilter prints the frame type and first few bytes of it&#8217;s payload (if there is any).</p>
-<p>The first frame we get is a setup frame (&#8220;Setup: frametype=5&#8221;).  This is a key feature of Valkka: the stream of frames that flows from source to the final sink, consists, not only of payload (say, H264 or PCMU), but of frames that are used to inform the library about the stream type and codec.</p>
+<p>InfoFrameFilter simply prints the frame type and first few bytes of it&#8217;s payload (if there is any).</p>
+<p>The first frame we get is a setup frame (&#8220;Setup: frametype=5&#8221;).  This is a key feature of Valkka: the stream of frames that flows from source to the final sink, consists, not only of payload (say, H264 or PCMU), but of frames that are used to inform the system about the stream type, codec, etc.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The code itself (LiveThread, InfoFrameFilter) runs in c++, while the connections are programmed here, at the python level</p>
@@ -116,12 +117,12 @@ InfoFrameFilter:&lt;&gt;
 <div class="section" id="chaining-framefilters">
 <h2>Chaining FrameFilters<a class="headerlink" href="#chaining-framefilters" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_b.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>In the previous example, we had a thread (LiveThread), feeding a single FrameFilter (InfoFrameFilter).  This trivial filtergraph can be illustrated like this:</p>
+<p>In the previous example, we had a thread (LiveThread), feeding a single FrameFilter (InfoFrameFilter).  The &#8220;filtergraph&#8221; for this case looks like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:live_out_filter}
 </pre></div>
 </div>
-<p>In this notation, threads are marked with normal parenthesis (), and FrameFilters with curly brackets {}.  Class and instance names are included as well.  This is a good practice from the documentation point of view.</p>
-<p>Let&#8217;s chain some FrameFilters like this:</p>
+<p>In this notation, threads are marked with normal parenthesis (), and FrameFilters with curly brackets {}.  Both class and instance names are included.</p>
+<p>Next, let&#8217;s chain some FrameFilters like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:live_out_filter} -&gt; {InfoFrameFilter:filter_2} -&gt; {InfoFrameFilter:filter_3}
 </pre></div>
 </div>
@@ -131,6 +132,7 @@ InfoFrameFilter:&lt;&gt;
 <span class="n">live_out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">,</span><span class="n">filter_2</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Note that creating the filtergraph programmatically is started from the last framefilter (&#8220;filter_3&#8221;): we need to create &#8220;filter_3&#8221; first and pass it as a parameter (output target) to &#8220;filter_2&#8221;, etc.  If you get confused with this, when dealing with more complex filtergraphs, just follow this rule of thumb: when instantiating framefilters, follow the filtergraph from end-to-beginning.</p>
 <p>The output when running the python code looks like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>InfoFrameFilter: live_out_filter start dump&gt;&gt;
 ...
@@ -146,7 +148,7 @@ InfoFrameFilter: filter_3 &lt;&lt;end dump
 <p>So, live_out_filter gets frame from livethread.  It prints out info about the frame.  Then it passes it to filter_2 that again prints information about the frame.  filter_2 passes the frame onto filter_3, etc.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">LiveThread has an internal FrameFilter chain that is used to correct the timestamps of your IP camera</p>
+<p class="last">LiveThread has an internal FrameFilter chain that is used to correct the timestamps given by your IP camera</p>
 </div>
 </div>
 <div class="section" id="forking-framefilters">
@@ -166,7 +168,7 @@ main branch                                                        |            
 <p>Frames are fed to a ForkFrameFilter that copies the stream into two branches.</p>
 <p>At branch 1, there is an on/off gate.  When the gate is on, the frames are passed further on to the verbose InfoFrameFilter.</p>
 <p>At branch 2, frames are written to a file</p>
-<p>This filtergraph can be implemented in python like this:</p>
+<p>The filtergraph can be implemented in python like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># branch 1</span>
 <span class="n">info_filter</span>     <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;info_filter&quot;</span><span class="p">)</span>
 <span class="n">gate_filter</span>     <span class="o">=</span><span class="n">GateFrameFilter</span><span class="p">(</span><span class="s2">&quot;gate_filter&quot;</span><span class="p">,</span><span class="n">info_filter</span><span class="p">)</span>
@@ -179,10 +181,7 @@ main branch                                                        |            
 <span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">When defining FrameFilter graphs (or &#8220;trees&#8221;), creating the tree structure is always started from the outer leafs of the tree (in this case, from &#8220;info_filter&#8221;, etc.) and moving from the outer edge towards the main branch.  This is simply because the inner parts of the tree are referring to the outer parts of the tree.</p>
-</div>
+<p>Like in the previous example, when constructing programmatically the framefilter chain, we start from the outer leafs of the tree (in this case, from &#8220;info_filter&#8221;, etc.) and move from the outer edge towards the main branch.</p>
 <p>Let&#8217;s run it like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># close the gate before streaming</span>
 <span class="n">gate_filter</span><span class="o">.</span><span class="n">unSet</span><span class="p">()</span>
@@ -190,6 +189,7 @@ main branch                                                        |            
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;start writing to disk&quot;</span><span class="p">)</span>
 <span class="n">file_filter</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="s2">&quot;stream.mkv&quot;</span><span class="p">)</span>
@@ -207,11 +207,11 @@ main branch                                                        |            
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Here we first close the gate, so we get no information about the files to the terminal.  We write the stream to the disk by calling &#8220;activate&#8221; method of the FileFrameFilter.  After 5 secs. we turn on the gate and start getting information about the frames into the screen.  Finally we close the file by calling &#8220;deActivate&#8221;.</p>
+<p>Here we first close the gate, so no information about the frames is printed to the terminal.  We write the stream to the disk by calling &#8220;activate&#8221; method of the FileFrameFilter.  After 5 secs. we turn on the gate and start getting information about the frames into the screen.  Finally we close the file by calling &#8220;deActivate&#8221;.</p>
 <p>You can play the resulting &#8220;stream.mkv&#8221; with your favorite media player.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Valkka is <em>not</em> a mediaplayer that understands thousands of codecs and container formats.  Emphasis is on an internally consistent (for that a single or a few codec/container formats are enough, i.e. what we write we can also read) library that is capable of massive video streaming.  At the moment only H264 video is accepted.  Container format is matroska (mkv).</p>
+<p class="last">Valkka is <em>not</em> a mediaplayer that understands thousands of codecs and container formats.  Emphasis is on an internally consistent (for that a single or a few codec/container formats are enough, i.e. what we write we can also read) video management library.  At the moment only H264 video is accepted.  Container format is matroska (mkv).</p>
 </div>
 </div>
 <div class="section" id="framefilter-reference">
