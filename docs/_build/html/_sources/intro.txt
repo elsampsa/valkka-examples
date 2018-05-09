@@ -63,5 +63,6 @@ The project
 
 Valkka is in early beta stage.  Even so, you can do lot of stuff with it - all the things we have promised here in the intro, at least.  Check out the tentative project timetable :ref:`here<timetable>`
 
-Valkka is open source software, licensed under the GNU Affero General Public License.  We also offer other licenses (mostly LGPL).
+Valkka examples, i.e. the python3 code is MIT licensed.
 
+The underlying cpp library is open source software, licensed under the GNU Affero General Public License.  We also offer other licenses (mostly LGPL).  Check out also the Valkka library cpp project site `here. <https://github.com/elsampsa/valkka-core>`_
