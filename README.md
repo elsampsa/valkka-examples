@@ -1,6 +1,6 @@
 # Valkka Python3 Examples
 
-Massive video streaming for Linux - Python3 API and Qt examples.
+OpenSource video management for Linux - Python3 API and Qt examples.
 
 Everything you need is [here](https://elsampsa.github.io/valkka-examples/)
 
