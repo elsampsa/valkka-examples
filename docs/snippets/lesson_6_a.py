@@ -26,6 +26,8 @@ Let's start by importing Valkka:
 import time
 from valkka.valkka_core import *
 
+debug_log_all()
+
 """<rtf>
 Writing is done by piping the stream into a FileFrameFilter:
 <rtf>"""
@@ -37,7 +39,7 @@ For reading, decoding and presenting, we construct the filtergraph as usual, fro
 <rtf>"""
 # presentation part
 glthread      =OpenGLThread ("glthread")
-gl_in_filter  =glthread.getFilter()
+gl_in_filter  =glthread.getFrameFilter()
 
 """<rtf>
 For file streams, the execution should block for frame bursts, so we request a blocking input FrameFilter from the AVThread:
@@ -62,7 +64,7 @@ livethread .playStreamCall(ctx)
 """<rtf>
 In order to start writing to disk, FileFrameFilter's "activate" method must be called with the filename.  Only matroska (.mkv) files are supported:
 <rtf>"""
-print("writing to file")
+print("writing to file during 30 secs")
 file_filter.activate("kokkelis.mkv")
 
 # stream for 30 secs
@@ -130,8 +132,8 @@ glthread.delRenderContextCall(context_id)
 glthread.delRenderGroupCall(window_id)
 
 # exit
-filethread.stopCall()
 avthread  .stopCall()
+filethread.stopCall()
 glthread  .stopCall()
 
 print("bye")

@@ -6,7 +6,7 @@
 LibValkka Examples
 ==================
 
-With Valkka API, you can create modern video streaming solutions:
+With Valkka API, you can create modern video streaming and management solutions:
 
 - Programmable with Python3 
 - Build graphical user interfaces with PyQt

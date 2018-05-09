@@ -39,6 +39,7 @@ class LiveStream:
   
   def __init__(self, gl_in_filter, address, slot):
     self.gl_in_filter =gl_in_filter
+    
     self.address      =address
     self.slot         =slot
     
@@ -50,7 +51,7 @@ class LiveStream:
     self.ctx =LiveConnectionContext(LiveConnectionType_rtsp, self.address, self.slot, self.av_in_filter)
 
     self.avthread.startCall()
-    self.avthread.decodingOnCall
+    self.avthread.decodingOnCall()
 
 
   def __del__(self):
@@ -72,10 +73,10 @@ glthread.startCall()
 livethread.startCall()
 
 """<rtf>
-Instantiate LiveStreams.  This will also start the AVThreads.  Frames from 192.168.0.134 are tagged with slot number 1, while frames from 192.168.0.135 are tagged with slot number 2:
+Instantiate LiveStreams.  This will also start the AVThreads.  Frames from the first camera are tagged with slot number 1, while frames from the second camera are tagged with slot number 2:
 <rtf>"""
-stream1 = LiveStream(gl_in_filter, "rtsp://admin:123456@192.168.0.134", 1) # slot 1  
-stream2 = LiveStream(gl_in_filter, "rtsp://admin:123456@192.168.0.135", 2) # slot 2
+stream1 = LiveStream(gl_in_filter, "rtsp://admin:nordic12345@192.168.1.41", 1) # slot 1  
+stream2 = LiveStream(gl_in_filter, "rtsp://admin:nordic12345@192.168.1.42", 2) # slot 2
 
 """<rtf>
 Register streams to LiveThread and start playing them:
@@ -102,7 +103,7 @@ context_id2 =glthread.newRenderContextCall(2, window_id2, 0)
 """<rtf>
 Render video for a while, stop threads and exit:
 <rtf>"""
-time.sleep(3)
+time.sleep(10)
 
 glthread.delRenderContextCall(context_id1)
 glthread.delRenderGroupCall(window_id1)

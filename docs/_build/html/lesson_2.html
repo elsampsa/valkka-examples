@@ -104,9 +104,10 @@
 </div>
 <p>Finally, proceed as before: pass <em>av_in_filter</em> as a parameter to the connection context, start threads, etc.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
-
-<span class="c1"># start threads</span>
-<span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Start threads</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 
 <span class="c1"># start decoding</span>
@@ -118,27 +119,25 @@
 
 <span class="c1"># stop decoding</span>
 <span class="c1"># avthread.decodingOffCall()</span>
-
-<span class="c1"># stop threads</span>
-<span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Stop threads</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You will see output like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>...
-...
+<div class="highlight-python"><div class="highlight"><pre>InfoFrameFilter: info_filter start dump&gt;&gt;
+InfoFrameFilter: FRAME   : &lt;AVBitmapFrame: timestamp=1525870759898 subsession_index=0 slot=1 / h=1080; w=1920; l=(1920,960,960); f=12&gt;
+InfoFrameFilter: PAYLOAD : [47 47 47 47 47 47 47 47 47 47 ]
+InfoFrameFilter: timediff: -22
+InfoFrameFilter: info_filter &lt;&lt;end dump
 InfoFrameFilter: info_filter start dump&gt;&gt;
-InfoFrameFilter: FRAME   : &lt;Frame: size=0/0 timestamp=1519997727455 subsession_index=0 slot=1 / AVFRAME&gt;
-InfoFrameFilter: PAYLOAD : []
-InfoFrameFilter:&lt;AVFrame height         : 1080
-AVFrame width          : 1920
-AVFrame linesizes      : 1920 960 960
-AVFrame format         : 12
-AVCodecContext pix_fmt : 12
-&gt;
-InfoFrameFilter: timediff: -48
+InfoFrameFilter: FRAME   : &lt;AVBitmapFrame: timestamp=1525870759938 subsession_index=0 slot=1 / h=1080; w=1920; l=(1920,960,960); f=12&gt;
+InfoFrameFilter: PAYLOAD : [47 47 47 47 47 47 47 47 47 47 ]
+InfoFrameFilter: timediff: -11
 InfoFrameFilter: info_filter &lt;&lt;end dump
 ...
 ...

@@ -53,7 +53,9 @@ Finally, proceed as before: pass *av_in_filter* as a parameter to the connection
 <rtf>"""                                              
 ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
 
-# start threads
+"""<rtf>
+Start threads
+<rtf>"""
 avthread.startCall()
 livethread.startCall()
 
@@ -67,7 +69,9 @@ time.sleep(5)
 # stop decoding
 # avthread.decodingOffCall()
 
-# stop threads
+"""<rtf>
+Stop threads
+<rtf>"""
 livethread.stopCall()
 avthread.stopCall()
 
@@ -79,21 +83,19 @@ You will see output like this:
 
 ::
 
-    ...
-    ...
     InfoFrameFilter: info_filter start dump>> 
-    InfoFrameFilter: FRAME   : <Frame: size=0/0 timestamp=1519997727455 subsession_index=0 slot=1 / AVFRAME>
-    InfoFrameFilter: PAYLOAD : []
-    InfoFrameFilter:<AVFrame height         : 1080
-    AVFrame width          : 1920
-    AVFrame linesizes      : 1920 960 960
-    AVFrame format         : 12
-    AVCodecContext pix_fmt : 12
-    >
-    InfoFrameFilter: timediff: -48
-    InfoFrameFilter: info_filter <<end dump  
+    InfoFrameFilter: FRAME   : <AVBitmapFrame: timestamp=1525870759898 subsession_index=0 slot=1 / h=1080; w=1920; l=(1920,960,960); f=12>
+    InfoFrameFilter: PAYLOAD : [47 47 47 47 47 47 47 47 47 47 ]
+    InfoFrameFilter: timediff: -22
+    InfoFrameFilter: info_filter <<end dump   
+    InfoFrameFilter: info_filter start dump>> 
+    InfoFrameFilter: FRAME   : <AVBitmapFrame: timestamp=1525870759938 subsession_index=0 slot=1 / h=1080; w=1920; l=(1920,960,960); f=12>
+    InfoFrameFilter: PAYLOAD : [47 47 47 47 47 47 47 47 47 47 ]
+    InfoFrameFilter: timediff: -11
+    InfoFrameFilter: info_filter <<end dump   
     ...
     ...
+    
 
 So, instead of H264 packets, we have decoded bitmap frames here.
 

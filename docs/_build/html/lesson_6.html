@@ -76,6 +76,8 @@ Decoding part                |
 <p>Let&#8217;s start by importing Valkka:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">debug_log_all</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Writing is done by piping the stream into a FileFrameFilter:</p>
@@ -86,7 +88,7 @@ Decoding part                |
 <p>For reading, decoding and presenting, we construct the filtergraph as usual, from end-to-beginning:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c1"># presentation part</span>
 <span class="n">glthread</span>      <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
-<span class="n">gl_in_filter</span>  <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFilter</span><span class="p">()</span>
+<span class="n">gl_in_filter</span>  <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>For file streams, the execution should block for frame bursts, so we request a blocking input FrameFilter from the AVThread:</p>
@@ -108,7 +110,7 @@ Decoding part                |
 </pre></div>
 </div>
 <p>In order to start writing to disk, FileFrameFilter&#8217;s &#8220;activate&#8221; method must be called with the filename.  Only matroska (.mkv) files are supported:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s2">&quot;writing to file&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span><span class="p">(</span><span class="s2">&quot;writing to file during 30 secs&quot;</span><span class="p">)</span>
 <span class="n">file_filter</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="s2">&quot;kokkelis.mkv&quot;</span><span class="p">)</span>
 
 <span class="c1"># stream for 30 secs</span>
@@ -172,8 +174,8 @@ Decoding part                |
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
 
 <span class="c1"># exit</span>
-<span class="n">filethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">avthread</span>  <span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">filethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">glthread</span>  <span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>

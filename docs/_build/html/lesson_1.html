@@ -88,27 +88,26 @@
 </div>
 <p>The output looks like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>InfoFrameFilter: live_out_filter start dump&gt;&gt;
-InfoFrameFilter: FRAME   : &lt;Frame: size=0/0 timestamp=1519987750663 subsession_index=0 slot=1 / Setup: frametype=5&gt;
+InfoFrameFilter: FRAME   : &lt;SetupFrame: timestamp=1525870891068 subsession_index=0 slot=1 / media_type=0 codec_id=27&gt;
 InfoFrameFilter: PAYLOAD : []
-InfoFrameFilter:&lt;&gt;
 InfoFrameFilter: timediff: 0
 InfoFrameFilter: live_out_filter &lt;&lt;end dump
 InfoFrameFilter: live_out_filter start dump&gt;&gt;
-InfoFrameFilter: FRAME   : &lt;Frame: size=45/307204 timestamp=1519987750663 subsession_index=0 slot=1 / H264: slice_type=7&gt;
+InfoFrameFilter: FRAME   : &lt;BasicFrame: timestamp=1525870891068 subsession_index=0 slot=1 / payload size=45 / H264: slice_type=7&gt;
 InfoFrameFilter: PAYLOAD : [0 0 0 1 103 100 0 42 173 132 1 12 32 8 97 0 67 8 2 24 ]
-InfoFrameFilter:&lt;&gt;
 InfoFrameFilter: timediff: 0
 InfoFrameFilter: live_out_filter &lt;&lt;end dump
 InfoFrameFilter: live_out_filter start dump&gt;&gt;
-InfoFrameFilter: FRAME   : &lt;Frame: size=9/307204 timestamp=1519987750663 subsession_index=0 slot=1 / H264: slice_type=8&gt;
+InfoFrameFilter: FRAME   : &lt;BasicFrame: timestamp=1525870891068 subsession_index=0 slot=1 / payload size=9 / H264: slice_type=8&gt;
 InfoFrameFilter: PAYLOAD : [0 0 0 1 104 238 49 178 27 ]
-InfoFrameFilter:&lt;&gt;
+InfoFrameFilter: timediff: -1
+InfoFrameFilter: live_out_filter &lt;&lt;end dump
 ...
 ...
 </pre></div>
 </div>
 <p>InfoFrameFilter simply prints the frame type and first few bytes of it&#8217;s payload (if there is any).</p>
-<p>The first frame we get is a setup frame (&#8220;Setup: frametype=5&#8221;).  This is a key feature of Valkka: the stream of frames that flows from source to the final sink, consists, not only of payload (say, H264 or PCMU), but of frames that are used to inform the system about the stream type, codec, etc.</p>
+<p>The first frame we get is a setup frame.  This is a key feature of Valkka: the stream of frames that flows from source to the final sink, consists, not only of payload (say, H264 or PCMU), but of frames that are used to inform the system about the stream type, codec, etc.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The code itself (LiveThread, InfoFrameFilter) runs in c++, while the connections are programmed here, at the python level</p>

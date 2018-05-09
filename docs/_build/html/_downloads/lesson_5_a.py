@@ -8,8 +8,6 @@ filtergraph:
 #</hide>
 """<rtf>
 
-**TODO** can't listen to rtsp server port in both threads!
-
 In this lesson, we are receiving frames from an IP camera using LiveThread and recast those frames to a multicast address using another LiveThread. The filterchain looks like this:
 
 :: 
@@ -30,10 +28,10 @@ info_filter    =InfoFrameFilter("info_filter",live_in_filter)
 livethread     =LiveThread("livethread")
 
 """<rtf>
-Start threads:
+Start threads
 <rtf>"""
-livethread. startCall()
 livethread2.startCall()
+livethread. startCall()
 
 """<rtf>
 Define stream source: incoming frames from IP camera 192.168.1.41 are tagged with slot number "2" and they are written to "info_filter":

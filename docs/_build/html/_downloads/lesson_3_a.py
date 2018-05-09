@@ -60,7 +60,7 @@ Define the connection to the IP camera as usual, with **slot number** "1":
 ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
 
 """<rtf>
-Start all threads and register the live stream:
+Start all threads, start decoding, and register the live stream:
 <rtf>"""
 glthread.startCall()
 avthread.startCall()
@@ -104,7 +104,9 @@ glthread.delRenderGroupCall(window_id)
 # stop decoding
 avthread.decodingOffCall()
 
-# stop threads
+"""<rtf>
+Close threads
+<rtf>"""
 livethread.stopCall()
 avthread.stopCall()
 glthread.stopCall()

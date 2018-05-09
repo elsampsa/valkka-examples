@@ -54,7 +54,6 @@
   <div class="section" id="lesson-5-sending-frames-to-a-multicast-address">
 <h1>Lesson 5 : Sending frames to a multicast address<a class="headerlink" href="#lesson-5-sending-frames-to-a-multicast-address" title="Permalink to this headline">¶</a></h1>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_5_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p><strong>TODO</strong> can&#8217;t listen to rtsp server port in both threads!</p>
 <p>In this lesson, we are receiving frames from an IP camera using LiveThread and recast those frames to a multicast address using another LiveThread. The filterchain looks like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:info_filter) --&gt;&gt; (LiveThread:livethread2)
 </pre></div>
@@ -71,9 +70,9 @@
 <span class="n">livethread</span>     <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Start threads:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span> <span class="n">startCall</span><span class="p">()</span>
-<span class="n">livethread2</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<p>Start threads</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread2</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">livethread</span><span class="o">.</span> <span class="n">startCall</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Define stream source: incoming frames from IP camera 192.168.1.41 are tagged with slot number &#8220;2&#8221; and they are written to &#8220;info_filter&#8221;:</p>

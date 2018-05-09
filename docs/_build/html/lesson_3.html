@@ -91,7 +91,7 @@ Decoding part             |
 <div class="highlight-python" id="connection"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Start all threads and register the live stream:</p>
+<p>Start all threads, start decoding, and register the live stream:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
@@ -126,9 +126,10 @@ Decoding part             |
 
 <span class="c1"># stop decoding</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">decodingOffCall</span><span class="p">()</span>
-
-<span class="c1"># stop threads</span>
-<span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Close threads</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
@@ -201,6 +202,7 @@ Decoding part             |   [This part of the filtergraph should be replicated
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gl_in_filter</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">slot</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">gl_in_filter</span> <span class="o">=</span><span class="n">gl_in_filter</span>
+
     <span class="bp">self</span><span class="o">.</span><span class="n">address</span>      <span class="o">=</span><span class="n">address</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">slot</span>         <span class="o">=</span><span class="n">slot</span>
 
@@ -212,7 +214,7 @@ Decoding part             |   [This part of the filtergraph should be replicated
     <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">slot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">av_in_filter</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">avthread</span><span class="o">.</span><span class="n">decodingOnCall</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">avthread</span><span class="o">.</span><span class="n">decodingOnCall</span><span class="p">()</span>
 
 
   <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -233,9 +235,9 @@ Decoding part             |   [This part of the filtergraph should be replicated
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Instantiate LiveStreams.  This will also start the AVThreads.  Frames from 192.168.0.134 are tagged with slot number 1, while frames from 192.168.0.135 are tagged with slot number 2:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">stream1</span> <span class="o">=</span> <span class="n">LiveStream</span><span class="p">(</span><span class="n">gl_in_filter</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.134&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># slot 1</span>
-<span class="n">stream2</span> <span class="o">=</span> <span class="n">LiveStream</span><span class="p">(</span><span class="n">gl_in_filter</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.135&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># slot 2</span>
+<p>Instantiate LiveStreams.  This will also start the AVThreads.  Frames from the first camera are tagged with slot number 1, while frames from the second camera are tagged with slot number 2:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">stream1</span> <span class="o">=</span> <span class="n">LiveStream</span><span class="p">(</span><span class="n">gl_in_filter</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># slot 1</span>
+<span class="n">stream2</span> <span class="o">=</span> <span class="n">LiveStream</span><span class="p">(</span><span class="n">gl_in_filter</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.42&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># slot 2</span>
 </pre></div>
 </div>
 <p>Register streams to LiveThread and start playing them:</p>
@@ -259,7 +261,7 @@ Decoding part             |   [This part of the filtergraph should be replicated
 </pre></div>
 </div>
 <p>Render video for a while, stop threads and exit:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id1</span><span class="p">)</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id1</span><span class="p">)</span>
