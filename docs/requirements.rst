@@ -9,7 +9,7 @@ Installing
 
   ::
   
-    pip3 install valkka
+    pip3 install --upgrade valkka
     
   
   If pip gives you problems with the installation directory, use:
@@ -17,7 +17,7 @@ Installing
   
   ::
   
-    pip3 install --target=$HOME/.local/lib/python3.5/site-packages/ valkka
+    pip3 install --upgrade --target=$HOME/.local/lib/python3.5/site-packages/ valkka
     
     
   If you need to build libValkka and it's python bindings yourself, please refer to `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
@@ -38,7 +38,7 @@ Installing
       git clone https://github.com/elsampsa/valkka-examples
 
 
-  Use the current stable version (that is compatible with the prebuild .deb and .whl packages):
+  Use the current stable version (that is compatible with the prebuilt python package):
     
   ::
   

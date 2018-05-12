@@ -55,11 +55,11 @@
 <li>The pre-built library and its python-bindings for Ubuntu 16.04 LTS are available at the python package index (PyPI) and can be installed with:</li>
 </ol>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre>pip3 install valkka
+<div><div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade valkka
 </pre></div>
 </div>
 <p>If pip gives you problems with the installation directory, use:</p>
-<div class="highlight-python"><div class="highlight"><pre>pip3 install --target=$HOME/.local/lib/python3.5/site-packages/ valkka
+<div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade --target=$HOME/.local/lib/python3.5/site-packages/ valkka
 </pre></div>
 </div>
 <p>If you need to build libValkka and it&#8217;s python bindings yourself, please refer to <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github page</a>.</p>
@@ -80,7 +80,7 @@ sudo apt-get -f install
 <div><div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/elsampsa/valkka-examples
 </pre></div>
 </div>
-<p>Use the current stable version (that is compatible with the prebuild .deb and .whl packages):</p>
+<p>Use the current stable version (that is compatible with the prebuilt python package):</p>
 <div class="highlight-python"><div class="highlight"><pre>cd valkka-examples
 git checkout 0.4.0
 </pre></div>
