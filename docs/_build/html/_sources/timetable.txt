@@ -12,7 +12,7 @@ All current features are demonstrated in the tutorial.  As new features appear, 
 Coming features
 ---------------
 
-We'd like to see the following features in the first alpha release 1.0.0, coming online probably before end of 2018.
+We'd like to see the following features in the first beta release, coming online probably before end of 2018.
 
 - Interserver communication - mirroring and sharing live and file streams using RTSP.
 - ValkkaFS filesystem, designed for recording large amounts of video.
@@ -22,5 +22,3 @@ We'd like to see the following features in the first alpha release 1.0.0, coming
 - Support for sound
 - An ultralight onvif/soap client library written in python (for PTZ controls, etc.)
 - etc.
-
-

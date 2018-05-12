@@ -61,7 +61,7 @@ Finally, here is a small sample from the tutorial.  You'll get the idea.
 The project
 -----------
 
-Valkka is in early beta stage.  Even so, you can do lot of stuff with it - all the things we have promised here in the intro, at least.  Check out the tentative project timetable :ref:`here<timetable>`
+Valkka is in alpha stage.  Even so, you can do lot of stuff with it - all the things we have promised here in the intro, at least.  Check out the tentative project timetable :ref:`here<timetable>`
 
 Valkka examples, i.e. the python3 code is MIT licensed.
 

@@ -4,40 +4,33 @@
 Installing
 ==========
 
-1. You need to install two pre-built packages, available by clicking `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_
-  
-- `Download <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_ the valkka-core debian (.deb) package and use:
+
+1. The pre-built library and its python-bindings for Ubuntu 16.04 LTS are available at the python package index (PyPI) and can be installed with:
 
   ::
-
-      sudo dpkg -i Valkka*.deb
-      sudo apt-get -f install
+  
+    pip3 install valkka
+    
+  
+  If pip gives you problems with the installation directory, use:
   
   
-- `Download <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_ the python3 binary package (.whl) and use:
-
   ::
-
-      pip3 install --upgrade Valkka*.whl
-
+  
+    pip3 install --target=$HOME/.local/lib/python3.5/site-packages/ valkka
+    
+    
+  If you need to build libValkka and it's python bindings yourself, please refer to `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
+  
       
-- OpenCV and its python bindings (two debian packages) are provided as well (with working high-gui).  `Download them <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_ and use:
+2. OpenCV and its python bindings (with a working high-gui) are provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download them and use:
 
   :: 
     
       sudo dpkg -i OpenCV*.deb
       sudo apt-get -f install
   
-      
-2. Install PyQt and imutils (needed for the Qt test/demo suite):
-
-
-  ::
   
-      pip3 install --upgrade PyQt5 imutils
-
-
-      
 3. Download this very package (valkka-examples) with
 
   ::
@@ -66,4 +59,3 @@ Installing
 
 Next, try out the :ref:`PyQt test/demo <testsuite>` suite or learn to program with the :ref:`tutorial <tutorial>`.
   
-

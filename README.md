@@ -1,6 +1,6 @@
 # Valkka Python3 Examples
 
-OpenSource video management for Linux - Python3 API and Qt examples.
+OpenSource Video Surveillance and Management for Linux - Python3 API and Qt examples.
 
 Everything you need is [here](https://elsampsa.github.io/valkka-examples/)
 

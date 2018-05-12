@@ -52,32 +52,24 @@
   <div class="section" id="installing">
 <span id="requirements"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
-<li>You need to install two pre-built packages, available by clicking <a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">here</a></li>
-</ol>
-<ul>
-<li><p class="first"><a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">Download</a> the valkka-core debian (.deb) package and use:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo dpkg -i Valkka*.deb
-sudo apt-get -f install
-</pre></div>
-</div>
-</li>
-<li><p class="first"><a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">Download</a> the python3 binary package (.whl) and use:</p>
-<div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade Valkka*.whl
-</pre></div>
-</div>
-</li>
-<li><p class="first">OpenCV and its python bindings (two debian packages) are provided as well (with working high-gui).  <a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">Download them</a> and use:</p>
-<div class="highlight-python"><div class="highlight"><pre>sudo dpkg -i OpenCV*.deb
-sudo apt-get -f install
-</pre></div>
-</div>
-</li>
-</ul>
-<ol class="arabic simple" start="2">
-<li>Install PyQt and imutils (needed for the Qt test/demo suite):</li>
+<li>The pre-built library and its python-bindings for Ubuntu 16.04 LTS are available at the python package index (PyPI) and can be installed with:</li>
 </ol>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade PyQt5 imutils
+<div><div class="highlight-python"><div class="highlight"><pre>pip3 install valkka
+</pre></div>
+</div>
+<p>If pip gives you problems with the installation directory, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip3 install --target=$HOME/.local/lib/python3.5/site-packages/ valkka
+</pre></div>
+</div>
+<p>If you need to build libValkka and it&#8217;s python bindings yourself, please refer to <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github page</a>.</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>OpenCV and its python bindings (with a working high-gui) are provided <a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">here</a>.  Download them and use:</li>
+</ol>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre>sudo dpkg -i OpenCV*.deb
+sudo apt-get -f install
 </pre></div>
 </div>
 </div></blockquote>

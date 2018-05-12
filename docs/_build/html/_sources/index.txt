@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-LibValkka Examples
-==================
+Valkka Examples
+===============
 
-With Valkka API, you can create modern video streaming and management solutions:
+With Valkka API, you can create modern video surveillance and management solutions:
 
 - Programmable with Python3 
 - Build graphical user interfaces with PyQt
@@ -15,9 +15,9 @@ With Valkka API, you can create modern video streaming and management solutions:
 - View and analyze simultaneously a large number of IP cameras
 - Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice via shared memory
 
-Valkka is in early beta stage.  
+Valkka is in alpha stage.  
 
-In the near future, with the alpha version, you will be able to build networks of interconnected servers and clients that can do video surveillance, machine vision and easily programmable alerts and actions, based on machine vision.
+In the near future, and with the beta version, you will be able to build networks of interconnected servers and clients that can do video surveillance, machine vision and easily programmable alerts and actions, based on machine vision.
 
 .. toctree::
    :maxdepth: 2
