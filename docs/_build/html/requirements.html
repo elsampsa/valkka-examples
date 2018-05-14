@@ -52,13 +52,18 @@
   <div class="section" id="installing">
 <span id="requirements"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
 <ol class="arabic simple">
-<li>The pre-built library and its python-bindings for <strong>Ubuntu 16.04 LTS</strong>, <strong>x86_64</strong> and <strong>python 3.5</strong> are available at the python package index (PyPI) and can be installed with:</li>
+<li>A Python3 package that includes pre-built binary libraries is available at the python package index (PyPI) and can be installed with:</li>
 </ol>
 <blockquote>
 <div><div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade valkka
 </pre></div>
 </div>
+<p>The libraries have been built on <strong>Ubuntu 16.04 LTS</strong>, <strong>x86_64</strong> (there is no guarantee that they work on another setup).</p>
 <p>If pip gives you problems with the installation directory, use:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade --user valkka
+</pre></div>
+</div>
+<p>or even:</p>
 <div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade --target=$HOME/.local/lib/python3.5/site-packages/ valkka
 </pre></div>
 </div>

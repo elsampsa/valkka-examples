@@ -5,15 +5,23 @@ Installing
 ==========
 
 
-1. The pre-built library and its python-bindings for **Ubuntu 16.04 LTS**, **x86_64** and **python 3.5** are available at the python package index (PyPI) and can be installed with:
+1. A Python3 package that includes pre-built binary libraries is available at the python package index (PyPI) and can be installed with:
 
   ::
   
     pip3 install --upgrade valkka
     
+
+  The libraries have been built on **Ubuntu 16.04 LTS**, **x86_64** (there is no guarantee that they work on another setup).
+    
   
   If pip gives you problems with the installation directory, use:
+    
+  ::
   
+    pip3 install --upgrade --user valkka
+  
+  or even:
   
   ::
   
