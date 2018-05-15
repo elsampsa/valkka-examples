@@ -19,8 +19,8 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
 import time
-from valkka.api2.threads import ValkkaProcess
-from valkka.api2.tools import dictionaryCheck
+from valkka.api2 import ValkkaProcess
+from valkka.api2 import dictionaryCheck
 
 
 class TestProcess(ValkkaProcess):

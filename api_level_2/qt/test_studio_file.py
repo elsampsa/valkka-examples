@@ -26,80 +26,14 @@ import os
 from valkka.api2 import LiveThread, FileThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2 import ShmemFilterchain1
 from valkka.api2 import parameterInitCheck
-from valkkathread import QValkkaThread, QValkkaOpenCVProcess
+
+# Local imports from this directory
+from demo_multiprocess import QValkkaThread
+from demo_analyzer_process import QValkkaMovementDetectorProcess
 from analyzer import MovementDetector
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
-
-
 pre="test_studio_file : "
  
- 
-class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
-  
-  
-  incoming_signal_defs={ # each key corresponds to a front- and backend methods
-    "test_"    : {"test_int": int, "test_str": str},
-    "stop_"    : [],
-    "ping_"    : {"message":str}
-    }
-  
-  outgoing_signal_defs={
-    "pong_o"    : {"message":str},
-    "start_move": {},
-    "stop_move" : {}
-    }
-  
-  # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
-  class Signals(QtCore.QObject):  
-    pong_o     =QtCore.pyqtSignal(object)
-    start_move =QtCore.pyqtSignal()
-    stop_move  =QtCore.pyqtSignal()
-  
-  
-  parameter_defs={
-    "n_buffer"   : (int,10),
-    "n_bytes"    : int,
-    "shmem_name" : str
-    }
-  
-  
-  def __init__(self,name,**kwargs):
-    super().__init__(name,**kwargs)
-    self.signals =self.Signals()
-    parameterInitCheck(QValkkaMovementDetectorProcess.parameter_defs, kwargs, self)
-    # self.analyzer=MovementDetector(verbose=True)
-    self.analyzer=MovementDetector(treshold=0.0001)
-  
-  
-  def cycle_(self):
-    index, isize = self.client.pull()
-    if (index==None):
-      # print(self.pre,"Client timed out..")
-      pass
-    else:
-      # print(self.pre,"Client index, size =",index, isize)
-      data=self.client.shmem_list[index]
-      img=data.reshape((1080//4,1920//4,3))
-      result =self.analyzer(img)
-      # print(self.pre,">>>",data[0:10])
-      if   (result==MovementDetector.state_same):
-        pass
-      elif (result==MovementDetector.state_start):
-        self.sendSignal_(name="start_move")
-      elif (result==MovementDetector.state_stop):
-        self.sendSignal_(name="stop_move")
-      
-      
-  # ** frontend methods handling received outgoing signals ***
-  def start_move(self):
-    print(self.pre,"At frontend: got movement")
-    self.signals.start_move.emit()
-  
-  
-  def stop_move(self):
-    print(self.pre,"At frontend: movement stopped")
-    self.signals.stop_move.emit()
-  
 
 
 class MyGui(QtWidgets.QMainWindow):
@@ -189,14 +123,15 @@ class MyGui(QtWidgets.QMainWindow):
 
     self.openglthread=OpenGLThread(     # starts frame presenting services
       name    ="mythread",
-      n720p   =10,   # reserve stacks of YUV video frames for various resolutions
-      n1080p  =10,
-      n1440p  =10,
-      n4K     =10,
+      n_720p   =10,
+      n_1080p  =10,
+      n_1440p  =10,
+      n_4K     =10,
       verbose =False,
-      msbuftime=100
+      msbuftime=100,
+      affinity=-1
       )
-
+    
     if (self.openglthread.hadVsync()):
       w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
     
@@ -212,10 +147,10 @@ class MyGui(QtWidgets.QMainWindow):
       shmem_ringbuffer_size  =10                  # Size of the shmem ringbuffer
       )
     
-    shmem_name, n_buffer, n_bytes =self.chain.getShmemPars()
+    shmem_name, n_buffer, shmem_image_dimensions =self.chain.getShmemPars()    
     # print(pre,"shmem_name, n_buffer, n_bytes",shmem_name,n_buffer,n_bytes)
     
-    self.process=QValkkaMovementDetectorProcess("process_"+str(cc),shmem_name=shmem_name, n_buffer=n_buffer, n_bytes=n_bytes)
+    self.process=QValkkaMovementDetectorProcess("process_"+str(cc),shmem_name=shmem_name, n_buffer=n_buffer, image_dimensions=shmem_image_dimensions)
     
     self.process.signals.start_move.connect(self.set_moving_slot)
     self.process.signals.stop_move. connect(self.set_still_slot)

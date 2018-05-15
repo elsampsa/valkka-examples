@@ -22,7 +22,10 @@ test_studio_1.py           | Live stream from several rtsp cameras
 test_studio_detector.py    | Like *test_studio_1.py*, but with a simple
                            | OpenCV analyzer per stream: a movement detector
                            | The *gold standard test* (see below)
-test_studio_file.py        Read and play stream from a matroska file
+test_studio_file.py        | Read and play stream from a matroska file
+                           | You need to convert your video to h264 contained in matroska like this:
+                    
+                           | *ffmpeg -i your_video_file -c:v h264 -an outfile.mkv*
 ========================== ==================================================
 
 .. note:: When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh ("vsync") should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with "export vblank_mode=0".  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the "glxgears" command (in package "mesa-utils").  Glxgears should report 1000+ frames per second with vsync disabled.

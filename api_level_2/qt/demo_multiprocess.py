@@ -17,6 +17,8 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 
 
 When using python multiprocesses with Qt, we need a frontend thread that reads the process communication pipes and turns the messages sent by the process into Qt signals.
+
+This file has QValkkaProcess, QValkkaOpenCVProcess and QValkkaThread - everything you need to get started with multiprocessing image analysis in Qt.  We suggest that you make a copy of this into your own module.
 """
 
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5

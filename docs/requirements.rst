@@ -44,14 +44,12 @@ Installing
   ::
   
       git clone https://github.com/elsampsa/valkka-examples
+      cd valkka_examples
+      
 
-
-  Use the current stable version (that is compatible with the prebuilt python package):
-    
-  ::
-  
-      cd valkka-examples
-      git checkout 0.4.0
+.. Use the current stable version (that is compatible with the prebuilt python package):
+.. cd valkka-examples      
+.. git checkout 0.4.0
       
       
 4. Test the installation with:

@@ -56,6 +56,8 @@ import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import BasicFilterchain
+
+# Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
 pre="test_studio : " # aux string for debugging 

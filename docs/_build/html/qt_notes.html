@@ -102,7 +102,7 @@
  |   sendSignal(&quot;pong&quot;) ---------+  |          :
  |                          |    |  |          :    valkka.api2.multiprocess.ValkkaProcess
  +--------------------------+    |  |          :
- | Backend methods          |    |  |          :    Backend is running in the &quot;background&quot; at its own memory space
+ | Backend methods          |    |  |          :    Backend is running in the &quot;background&quot; in its own memory space
  |                          |    |  |          :
  | sendSignal_(&quot;ping&quot;)  -------&gt;----+          :
  |                          |    |             :
@@ -125,6 +125,13 @@
 </pre></div>
 </div>
 <p>Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system.</p>
+<p>Finally, for creating your own Qt application having a frontend QThread, that controls OpenCV process(es), copy the following file into your own module:</p>
+<div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
+
+  demo_multiprocess.py
+</pre></div>
+</div>
+<p>It has <em>QValkkaProcess</em> (a general multiprocess class with Qt signals), <em>QValkkaOpenCVProcess</em> (multiprocess with Qt signals and OpenCV) and <em>QValkkaThread</em> (the frontend QThread) that you can use in your own applications.  Consult the <em>test_studio_</em>.py* programs how to use these classes.</p>
 </div>
 <div class="section" id="drawing-video-into-a-widget">
 <h2>Drawing video into a widget<a class="headerlink" href="#drawing-video-into-a-widget" title="Permalink to this headline">¶</a></h2>

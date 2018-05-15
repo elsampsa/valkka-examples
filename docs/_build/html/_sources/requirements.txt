@@ -28,7 +28,7 @@ Installing
     pip3 install --upgrade --target=$HOME/.local/lib/python3.5/site-packages/ valkka
     
     
-  If you need to build libValkka and it's python bindings yourself, please refer to `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
+  If you need to build libValkka and it's python bindings yourself, please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
   
       
 2. OpenCV and its python bindings (with a working high-gui) for **python 3.5** are provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download them and use:
@@ -44,14 +44,12 @@ Installing
   ::
   
       git clone https://github.com/elsampsa/valkka-examples
+      cd valkka_examples
+      
 
-
-  Use the current stable version (that is compatible with the prebuilt python package):
-    
-  ::
-  
-      cd valkka-examples
-      git checkout 0.4.0
+.. Use the current stable version (that is compatible with the prebuilt python package):
+.. cd valkka-examples      
+.. git checkout 0.4.0
       
       
 4. Test the installation with:

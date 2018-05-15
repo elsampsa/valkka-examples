@@ -55,78 +55,16 @@ import os
 from valkka.api2 import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2 import ShmemFilterchain
 from valkka.api2 import parameterInitCheck
-from demo_multiprocess import QValkkaThread, QValkkaOpenCVProcess
-from analyzer import MovementDetector
+
+# Local imports from this directory
+from demo_multiprocess import QValkkaThread
+from demo_analyzer_process import QValkkaMovementDetectorProcess
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
 
 pre="test_studio_detector : "
  
  
-class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
-  
-  
-  incoming_signal_defs={ # each key corresponds to a front- and backend methods
-    "test_"    : {"test_int": int, "test_str": str},
-    "stop_"    : [],
-    "ping_"    : {"message":str}
-    }
-  
-  outgoing_signal_defs={
-    "pong_o"    : {"message":str},
-    "start_move": {},
-    "stop_move" : {}
-    }
-  
-  # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
-  class Signals(QtCore.QObject):  
-    pong_o     =QtCore.pyqtSignal(object)
-    start_move =QtCore.pyqtSignal()
-    stop_move  =QtCore.pyqtSignal()
-  
-  
-  def __init__(self,name,**kwargs):
-    super().__init__(name,**kwargs) # does parameterInitCheck
-    self.signals =self.Signals()
-    # # parameterInitCheck(QValkkaMovementDetectorProcess.parameter_defs, kwargs, self)
-    # self.analyzer=MovementDetector(verbose=True)
-    self.analyzer=MovementDetector(treshold=0.0001)
-  
-  
-  def cycle_(self):
-    index, isize = self.client.pull()
-    if (index==None):
-      # print(self.pre,"Client timed out..")
-      pass
-    else:
-      # print(self.pre,"Client index, size =",index, isize)
-      data=self.client.shmem_list[index]
-      try:
-        img=data.reshape((self.image_dimensions[1],self.image_dimensions[0],3))
-      except:
-        print("QValkkaMovementDetectorProcess: WARNING: could not reshape image")
-        pass
-      else:
-        result =self.analyzer(img)
-        # print(self.pre,">>>",data[0:10])
-        if   (result==MovementDetector.state_same):
-          pass
-        elif (result==MovementDetector.state_start):
-          self.sendSignal_(name="start_move")
-        elif (result==MovementDetector.state_stop):
-          self.sendSignal_(name="stop_move")
-        
-      
-  # ** frontend methods handling received outgoing signals ***
-  def start_move(self):
-    print(self.pre,"At frontend: got movement")
-    self.signals.start_move.emit()
-  
-  
-  def stop_move(self):
-    print(self.pre,"At frontend: movement stopped")
-    self.signals.stop_move.emit()
-  
 
   
 class MyConfigDialog(ConfigDialog):

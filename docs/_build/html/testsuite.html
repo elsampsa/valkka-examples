@@ -59,8 +59,8 @@
 <p>The testsuite is intended for demonstration, benchmarking and ultimate debugging.  Currently the testsuite consists of the following programs:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="34%" />
-<col width="66%" />
+<col width="26%" />
+<col width="74%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">File</th>
@@ -84,7 +84,14 @@
 </td>
 </tr>
 <tr class="row-even"><td>test_studio_file.py</td>
-<td>Read and play stream from a matroska file</td>
+<td><div class="first line-block">
+<div class="line">Read and play stream from a matroska file</div>
+<div class="line">You need to convert your video to h264 contained in matroska like this:</div>
+</div>
+<div class="last line-block">
+<div class="line"><em>ffmpeg -i your_video_file -c:v h264 -an outfile.mkv</em></div>
+</div>
+</td>
 </tr>
 </tbody>
 </table>
