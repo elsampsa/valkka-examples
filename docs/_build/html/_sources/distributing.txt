@@ -50,3 +50,4 @@ Compile from source
 -------------------
 
 For this, refer to `the valkka-core project page <https://github.com/elsampsa/valkka-core>`_
+
