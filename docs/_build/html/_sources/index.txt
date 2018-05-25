@@ -30,6 +30,7 @@ In the near future, and with the beta version, you will be able to build network
    qt_notes
    timetable
    license
+   distributing
    authors
    
 .. Indices and tables

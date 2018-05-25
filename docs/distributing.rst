@@ -1,0 +1,53 @@
+Distributing
+============
+
+(if you just use Valkka with the Python API, no need to be here)
+
+Self-contained package
+----------------------
+
+In the :ref:`Installing section <requirements>` we installed Valkka directly from PyPi with "pip3 install ..".  That gives you a "self-contained" python package with both of the binary files:
+
+| **libValkka.so.0** 
+| **_valkka_core.so** (libValkka python bindings.  Uses libValkka.so.0)
+  
+Now both **libValkka.so.0** and **_valkka_core.so** are installed under either of the two locations (depending on your setup):
+  
+::
+
+  ~/.local/lib/python3.5/site-packages/
+  /usr/local/lib/python3.5/dist-packages/
+
+This is sufficient if you do not plan to do any Valkka development at the cpp level.
+  
+This way however, **libValkka.so.0** is inaccessible to other cpp libraries that might need it (for example, if you're creating your own cpp-based module with a python interface)
+
+Globally installed libValkka
+----------------------------
+  
+If you need direct access to libValkka at cpp level, you should install **libValkka.so.0** from a debian package and the python bindings separately using pip.  This way you'll get:
+
+| **libValkka.so.0** goes to */usr/lib/*
+| **_valkka_core.so** goes to *~/.local/lib/python3.5/site-packages/*
+
+Necessary packages are available `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0>`_
+
+Download the Valkka debian package and do:
+  
+:: 
+
+  sudo dpkg -i Valkka*.deb
+  sudo apt-get -f install
+  
+Download also the Valkka python bindings and do:
+  
+::
+  
+  pip3 install --upgrade valkka*.tar.gz
+
+  
+Compile from source
+-------------------
+
+For this, refer to `the valkka-core project page <https://github.com/elsampsa/valkka-core>`_
+
