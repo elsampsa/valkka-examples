@@ -71,11 +71,11 @@ livethread  =LiveThread("livethread_1")
 fork_filter =ForkFrameFilter3("fork_filter",live2_in_filter,file_filter_2,av3_in_filter)
 
 #<hide>
-# start threads
+# start threads (end-to-beginning order)
 glthread_3_1   .startCall()
 avthread_3     .startCall()
-livethread     .startCall()
 livethread2_1  .startCall()
+livethread     .startCall()
 
 # start decoding
 avthread_3 .decodingOnCall()
@@ -125,11 +125,10 @@ glthread_3_1.delRenderGroupCall(window_id2)
 # stop decoding
 avthread_3 .decodingOffCall()
 
-# stop threads
-# a comment: threads use the same resources.  Common frames are freed by a thread, while another thread might be using it still.  May result in segfaults at program exit - this will be sorted out asap
-avthread_3     .stopCall()
-livethread2_1  .stopCall()
+# stop threads in beginning-to-end order
 livethread     .stopCall()
+livethread2_1  .stopCall()
+avthread_3     .stopCall()
 glthread_3_1   .stopCall()
 
 print("bye")

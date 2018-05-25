@@ -1,5 +1,8 @@
-Lesson 5 : Sending frames to a multicast address
-================================================
+Lesson 5 : Transmitting stream
+==============================
+
+Sending multicast
+-----------------
 
 **Download lesson** :download:`[here]<snippets/lesson_5_a.py>`
 
@@ -31,3 +34,11 @@ Then you can test that the stream is multicasted (while running the python scrip
 (feel free to launch this command several times simultaneously)
 
 .. note:: Receiving and recasting the stream can also be done using a single LiveThread only.  This is left as an excercise.
+
+
+Using the RTSP server
+---------------------
+
+**Download lesson** :download:`[here]<snippets/lesson_5_b.py>`
+
+.. include:: snippets/lesson_5_b.py_

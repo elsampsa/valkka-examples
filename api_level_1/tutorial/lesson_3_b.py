@@ -30,7 +30,7 @@ livethread      =LiveThread("livethread")
 # define connection to camera
 ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
 
-# start threads
+# start threads in end-to-beginning order
 glthread.startCall()
 avthread.startCall()
 livethread.startCall()
@@ -63,7 +63,7 @@ for ids in id_list:
 # stop decoding
 avthread.decodingOffCall()
 
-# stop threads
+# stop threads in beginning-to-end order
 livethread.stopCall()
 avthread.stopCall()
 glthread.stopCall()

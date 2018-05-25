@@ -20,6 +20,11 @@ import time
 from valkka.valkka_core import *
 
 """<rtf>
+Live555's default output packet buffer size might be too small, so let's make it bigger before instantiating any LiveThreads:
+<rtf>"""
+setLiveOutPacketBuffermaxSize(95000)
+
+"""<rtf>
 Construct the filtergraph from end-to-beginning:
 <rtf>"""
 livethread2    =LiveThread("livethread2")
@@ -60,7 +65,7 @@ livethread. deregisterStreamCall(ctx)
 livethread2.deregisterOutboundCall(out_ctx)
 
 """<rtf>
-Stop and exit
+Stop threads in beginning-to-end order
 <rtf>"""
 livethread. stopCall();
 livethread2.stopCall();

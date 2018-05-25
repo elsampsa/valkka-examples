@@ -56,11 +56,20 @@
 <div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
 </pre></div>
 </div>
-<p>The testsuite is intended for demonstration, benchmarking and ultimate debugging.  Currently the testsuite consists of the following programs:</p>
+<p>The testsuite is intended for:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Demonstration</li>
+<li>Benchmarking</li>
+<li>Ultimate debugging</li>
+<li>As &#8220;materia prima&#8221; for developers - take a copy of your own and use it as a basis for your own Valkka / Qt programs</li>
+</ul>
+</div></blockquote>
+<p>Currently the testsuite consists of the following programs:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="26%" />
-<col width="74%" />
+<col width="25%" />
+<col width="75%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">File</th>
@@ -72,6 +81,7 @@
 <td><div class="first last line-block">
 <div class="line">Live stream from several rtsp cameras</div>
 <div class="line">and/or from sources defined in an sdp file</div>
+<div class="line"><br /></div>
 </div>
 </td>
 </tr>
@@ -80,21 +90,51 @@
 <div class="line">Like <em>test_studio_1.py</em>, but with a simple</div>
 <div class="line">OpenCV analyzer per stream: a movement detector</div>
 <div class="line">The <em>gold standard test</em> (see below)</div>
+<div class="line"><br /></div>
 </div>
 </td>
 </tr>
 <tr class="row-even"><td>test_studio_file.py</td>
-<td><div class="first line-block">
+<td><div class="first last line-block">
 <div class="line">Read and play stream from a matroska file</div>
 <div class="line">You need to convert your video to h264 contained in matroska like this:</div>
-</div>
-<div class="last line-block">
+<div class="line"><br /></div>
 <div class="line"><em>ffmpeg -i your_video_file -c:v h264 -an outfile.mkv</em></div>
+<div class="line"><br /></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>test_studio_multicast.py</td>
+<td><div class="first last line-block">
+<div class="line">Recast multiple IP cams into multicast.</div>
+<div class="line">For reading all those recasted multicast streams</div>
+<div class="line">you can use scripts provided in directory <em>aux/</em></div>
+<div class="line"><br /></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>test_studio_rtsp.py</td>
+<td><div class="first last line-block">
+<div class="line">Recast IP cams to unicast.  They are accessible from an on-demand RTSP server</div>
+<div class="line">and can be read for example with:</div>
+<div class="line"><br /></div>
+<div class="line"><em>rtsp://127.0.0.1:8554/streamN</em></div>
+<div class="line"><br /></div>
+<div class="line">where <em>N</em> is the number of the camera (starting from &#8220;1&#8221;)</div>
 </div>
 </td>
 </tr>
 </tbody>
 </table>
+<p>If the testsuites don&#8217;t reproduce video on-screen as they should and before making up your mind (&#8220;<em>this sucks!</em>&#8221;), consider the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Is your PC powerful enough to decode simultaneously N&gt;4 full-hd videos?  You should test with a reference program, say, ffplay (see below)</li>
+<li>Frames being dropped?  Do you have enough pre-reserved bitmap frames on the GPU?  Is your buffering time too big? (see below)</li>
+<li>Did you disable vsync?</li>
+<li>Launch KSysGuard and observe the processor usage.</li>
+</ul>
+</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh (&#8220;vsync&#8221;) should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with &#8220;export vblank_mode=0&#8221;.  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the &#8220;glxgears&#8221; command (in package &#8220;mesa-utils&#8221;).  Glxgears should report 1000+ frames per second with vsync disabled.</p>

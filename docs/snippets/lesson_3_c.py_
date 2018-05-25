@@ -38,9 +38,10 @@ It's a good idea to encapsulate the decoding part into its own class.  This clas
         self.avthread.decodingOnCall()
     
     
-      def __del__(self):
+      def close(self):
         self.avthread.decodingOffCall()
         self.avthread.stopCall()
+        
         
 
 Construct the filtergraph from end-to-beginning:
@@ -105,8 +106,10 @@ Render video for a while, stop threads and exit:
     glthread.delRenderContextCall(context_id2)
     glthread.delRenderGroupCall(window_id2)
     
-    # stop threads
+    # Stop threads in beginning-to-end order
     livethread.stopCall()
+    stream1.close()
+    stream2.close()
     glthread.stopCall()
     
     print("bye")

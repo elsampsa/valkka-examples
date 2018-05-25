@@ -54,7 +54,7 @@ Finally, proceed as before: pass *av_in_filter* as a parameter to the connection
 ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
 
 """<rtf>
-Start threads
+Start threads.  Starting the threads should be done in end-to-beginning order (in the same order we constructed the filterchain).
 <rtf>"""
 avthread.startCall()
 livethread.startCall()
@@ -70,7 +70,7 @@ time.sleep(5)
 # avthread.decodingOffCall()
 
 """<rtf>
-Stop threads
+Stop threads.  Stop threads in beginning-to-end order (i.e., following the filtergraph from left to right).
 <rtf>"""
 livethread.stopCall()
 avthread.stopCall()

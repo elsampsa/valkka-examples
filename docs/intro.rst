@@ -16,7 +16,7 @@ About Valkka
 The problem
 -----------
 
-*So, yet another media player?  I need to stream video into my python/Qt program and I want something that can be developed fast and is easy to integrate into my code.  What's here for me?*
+*So, yet another media player?  I need to stream video from my IP camera into my python/Qt program and I want something that can be developed fast and is easy to integrate into my code.  What's here for me?*
 
 If you just need to stream video from your IP cameras, decode it and show it on the screen, we recommend a standard media player, say, VLC and its python bindings.
 
@@ -65,4 +65,4 @@ Valkka is in alpha stage.  Even so, you can do lot of stuff with it - all the th
 
 Valkka examples, i.e. the python3 code is MIT licensed.
 
-The underlying cpp library is open source software, licensed under the GNU Affero General Public License.  We also offer other licenses (mostly LGPL).  Check out also the Valkka library cpp project site `here. <https://github.com/elsampsa/valkka-core>`_
+The underlying cpp library is open source software, licensed under the GNU Affero General Public License.  On request, we can also offer other licenses (mostly LGPL).  Check out also the Valkka library cpp project site `here. <https://github.com/elsampsa/valkka-core>`_

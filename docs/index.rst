@@ -6,7 +6,7 @@
 Valkka Examples
 ===============
 
-With Valkka API, you can create modern video surveillance and management solutions:
+With Valkka API, you can create modern video surveillance and management solutions for linux desktop environments:
 
 - Programmable with Python3 
 - Build graphical user interfaces with PyQt
@@ -14,10 +14,11 @@ With Valkka API, you can create modern video surveillance and management solutio
 - Plug in your python OpenCV machine vision
 - View and analyze simultaneously a large number of IP cameras
 - Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice via shared memory
+- Valkka is *not* your browser-based-javacsript-node.js-cloud toy, but a tool for building large ip camera systems in LAN (or virtual-LAN / VPN) environments, capable of doing simultaneously massive live video streaming, recording, surveillance and machine vision.
 
 Valkka is in alpha stage.  
 
-In the near future, and with the beta version, you will be able to build networks of interconnected servers and clients that can do video surveillance, machine vision and easily programmable alerts and actions, based on machine vision.
+In the near future, and with the beta version, you will be able to build networks of interconnected servers and clients that can do video surveillance, machine vision and programmable alerts and actions, based on machine vision.
 
 .. toctree::
    :maxdepth: 2

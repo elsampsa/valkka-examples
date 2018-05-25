@@ -61,11 +61,10 @@ from demo_multiprocess import QValkkaThread
 from demo_analyzer_process import QValkkaMovementDetectorProcess
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
-
 pre="test_studio_detector : "
  
- 
-
+valkka_xwin =True # use x windows create by Valkka and embed them into Qt
+# valkka_xwin =False # use Qt provided x windows
   
 class MyConfigDialog(ConfigDialog):
   
@@ -86,7 +85,10 @@ class MyConfigDialog(ConfigDialog):
         
 class MyGui(QtWidgets.QMainWindow):
 
+
   class Frame:
+    """Create a frame with text (indicating movement) and a video frame.  The video frame is created from a "foreign" window (created by Valkka)
+    """
     
     def __init__(self,parent,win_id):
       self.widget=QtWidgets.QWidget(parent)
@@ -119,6 +121,43 @@ class MyGui(QtWidgets.QMainWindow):
       self.setText("MOVING")
       self.widget.setStyleSheet("QLabel {border: 2px; border-style:solid; border-color: red; margin:0 px; padding:0 px; border-radius:8px;}")
       
+
+  class NativeFrame:
+      """Create a frame with text (indicating movement) and a video frame.  The video frame is created by Qt.
+      """
+      
+      def __init__(self,parent):
+        self.widget=QtWidgets.QWidget(parent)
+        self.lay   =QtWidgets.QVBoxLayout(self.widget)
+        
+        self.text =QtWidgets.QLabel("",self.widget)
+        self.text_stylesheet=self.text.styleSheet()
+        
+        self.video =QtWidgets.QWidget(self.widget)
+        
+        self.lay.addWidget(self.text)
+        self.lay.addWidget(self.video)
+        self.text.setSizePolicy(QtWidgets.QSizePolicy.Minimum,QtWidgets.QSizePolicy.Minimum)
+        self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
+        self.set_still()
+        
+        
+      def getWindowId(self):
+        return int(self.video.winId())
+        
+        
+      def setText(self,txt):
+        self.text.setText(txt)
+        
+      
+      def set_still(self):
+        self.setText("still")
+        self.widget.setStyleSheet(self.text_stylesheet)
+        
+        
+      def set_moving(self):
+        self.setText("MOVING")
+        self.widget.setStyleSheet("QLabel {border: 2px; border-style:solid; border-color: red; margin:0 px; padding:0 px; border-radius:8px;}")
 
 
   debug=False
@@ -207,9 +246,13 @@ class MyGui(QtWidgets.QMainWindow):
       self.chains.append(chain)
       self.processes.append(process)
 
-      # create the nested QWidget
-      win_id =self.openglthread.createWindow(show=False)
-      frame  =self.Frame(self.w, win_id)
+      if (valkka_xwin):
+        win_id =self.openglthread.createWindow(show=False)
+        frame  =self.Frame(self.w, win_id)
+      else:
+        frame  =self.NativeFrame(self.w)
+        win_id =frame.getWindowId()
+        
       print(pre,"setupUi: layout index, address : ",cc//4,cc%4,address)
       self.lay.addWidget(frame.widget,cc//4,cc%4)
       # connect signals to the nested widget
@@ -233,7 +276,6 @@ class MyGui(QtWidgets.QMainWindow):
   def startProcesses(self):
     for p in self.processes:
       p.start()
-      # p.startAsThread() # debugging
     self.thread.start()
   
   
@@ -242,15 +284,25 @@ class MyGui(QtWidgets.QMainWindow):
       p.stop()
     print(pre,"stopping QThread")
     self.thread.stop()
-    # self.thread.quit() # nopes ..
     print(pre,"QThread stopped")
     
+
+  def closeValkka(self):
+    self.livethread.close()
+    
+    for chain in self.chains:
+      chain.close()
+    
+    self.chains       =[]
+    self.widget_pairs =[]
+    self.videoframes  =[]
+    self.openglthread.close()
+
     
   def closeEvent(self,e):
     print(pre,"closeEvent!")
     self.stopProcesses()
-    self.chains=[]
-    self.frames=[]
+    self.closeValkka()
     super().closeEvent(e)
 
 

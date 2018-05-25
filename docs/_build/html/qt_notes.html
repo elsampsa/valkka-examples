@@ -69,20 +69,23 @@
 <h2>Python multiprocessing<a class="headerlink" href="#python-multiprocessing" title="Permalink to this headline">¶</a></h2>
 <p>In <a class="reference internal" href="lesson_4.html#opencv-client"><span>lesson 4</span></a> of the tutorial, we launched a separate python interpreter running a client program that was using decoded and shared frames.</p>
 <p>That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with python3&#8217;s <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a> library.</p>
-<p>Using python multiprocesses in a Qt program complicates things a bit, but not that much.  We simply need a way to map from events taking place at the multiprocess into signals at the main Qt program.  This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.</p>
+<p>Using python multiprocesses in a Qt program complicates things a bit, but not that much.  We simply need a way to map from events taking place at the separate and isolated multiprocess into signals at the main Qt program.  This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.</p>
 <p>Let&#8217;s state that graphically:</p>
 <div class="highlight-python"><div class="highlight"><pre>Qt main loop running with signals and slots
     |
     +--- QThread receiving/sending signals --- writing/reading communication pipes
-         ==&gt; use an instance of QValkkaThread               |
-                                                       +----+----+
-                                                       |    |    |
+         ==&gt; use an instance of QValkkaThread                        |
+                                                       +-------------+------+----------------+
+                                                       |                    |                |
+                                                      multiprocess_1   multiprocess_2  multiprocess_3
+
                                                        python multiprocesses doing their thing
                                                        and writing/reading their communication pipes
                                                        ==&gt; subclass from valkka.api2.multiprocess.ValkkaProcess
 </pre></div>
 </div>
-<p>For interprocess communication with the Qt signal/slot system, you can use the following strategy:</p>
+<p>Note that we only need a single QValkkaThread to control several multiprocesses.</p>
+<p>Let&#8217;s dig deeper into our strategy for interprocess communication with the Qt signal/slot system:</p>
 <div class="highlight-python"><div class="highlight"><pre>+--------------------------------------+
 |                                      |
 | QValkkaThread (derived from QThread) |
@@ -102,7 +105,7 @@
  |   sendSignal(&quot;pong&quot;) ---------+  |          :
  |                          |    |  |          :    valkka.api2.multiprocess.ValkkaProcess
  +--------------------------+    |  |          :
- | Backend methods          |    |  |          :    Backend is running in the &quot;background&quot; in its own memory space
+ | Backend methods          |    |  |          :    Backend is running in the &quot;background&quot; in its own virtual memory space
  |                          |    |  |          :
  | sendSignal_(&quot;ping&quot;)  -------&gt;----+          :
  |                          |    |             :
@@ -117,14 +120,14 @@
 <p>The class <strong>valkka.api2.multiprocess.ValkkaProcess</strong> provides a model class that has been derived from python&#8217;s <strong>multiprocessing.Process</strong> class.  In ValkkaProcess, the class has both &#8220;frontend&#8221; and &#8220;backend&#8221; methods.</p>
 <p>Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), while backend methods are called only from within the processes &#8220;run&#8221; method - i.e. at the &#8220;other side&#8221; of the fork, where the forked process lives in its own virtual memory space.</p>
 <p>A signalling scheme between back- and frontend is provided in the ValkkaProcess class.  Don&#8217;t be afraid - the ValkkaProcess class is just a few lines of python code!</p>
-<p>Also, two stripped-down sample programs are provided in</p>
+<p>To make starting easier, two stripped-down sample programs are provided in:</p>
 <div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
 
   multiprocessing_demo.py
   multiprocessing_demo_signals.py
 </pre></div>
 </div>
-<p>Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system.</p>
+<p>Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system!</p>
 <p>Finally, for creating your own Qt application having a frontend QThread, that controls OpenCV process(es), copy the following file into your own module:</p>
 <div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
 

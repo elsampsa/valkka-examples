@@ -7,13 +7,15 @@ filtergraph:
 """
 #</hide>
 """<rtf>
+In this lesson, we establish an on-demand RTSP server at the localhost.
 
-In this lesson, we are receiving frames from an IP camera using LiveThread and recast those frames to a multicast address using another LiveThread. The filterchain looks like this:
+Stream is read from an IP camera and then re-streamed (shared) to a local RTSP server that serves at port 8554.  While this snippet is running, you can test the RTSP server with:
 
 :: 
 
-  (LiveThread:livethread) --> {InfoFrameFilter:info_filter) -->> (LiveThread:livethread2) 
-  
+  ffplay rtsp://127.0.0.1:8554/stream1
+
+
 Let's start by importing Valkka:
 <rtf>"""
 import time
@@ -33,6 +35,11 @@ info_filter    =InfoFrameFilter("info_filter",live_in_filter)
 livethread     =LiveThread("livethread")
 
 """<rtf>
+*Before* starting the threads, establish an RTSP server on livethread2 at port 8554:
+<rtf>"""
+livethread2.setRTSPServer(8554);
+
+"""<rtf>
 Start threads
 <rtf>"""
 livethread2.startCall()
@@ -44,9 +51,9 @@ Define stream source: incoming frames from IP camera 192.168.1.41 are tagged wit
 ctx     =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, info_filter)
 
 """<rtf>
-Define stream sink: all outgoing frames with slot number "2" are sent to port 50000:
+Define stream sink: all outgoing frames with slot number "2" are sent to the RTSP server, with substream id "stream1":
 <rtf>"""
-out_ctx =LiveOutboundContext(LiveConnectionType_sdp, "224.1.168.91", 2, 50000)
+out_ctx =LiveOutboundContext(LiveConnectionType_rtsp, "stream1", 2, 0)
 
 """<rtf>
 Start playing:
@@ -56,7 +63,7 @@ livethread. registerStreamCall(ctx)
 livethread. playStreamCall(ctx)
 
 """<rtf>
-Stream and recast to multicast for a while:
+Stream and recast to the RTSP server for a while:
 <rtf>"""
 time.sleep(120)
 
@@ -71,24 +78,3 @@ livethread. stopCall();
 livethread2.stopCall();
 
 print("bye")
-
-#<hide>
-"""
-create a file "multicast.sdp" with the following lines:
-
-v=0
-o=- 0 0 IN IP4 127.0.0.1
-s=No Name
-c=IN IP4 224.1.168.91
-t=0 0
-a=tool:libavformat 56.36.100
-m=video 50000 RTP/AVP 96
-a=rtpmap:96 H264/90000
-a=fmtp:96 packetization-mode=1
-a=control:streamid=0
-
-Then you can test that the stream is multicasted with:
-
-ffplay multicast.sdp
-"""
-#</hide>

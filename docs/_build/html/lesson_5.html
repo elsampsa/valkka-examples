@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Lesson 5 : Sending frames to a multicast address &mdash; valkka_examples  documentation</title>
+    <title>Lesson 5 : Transmitting stream &mdash; valkka_examples  documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -51,8 +51,10 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="lesson-5-sending-frames-to-a-multicast-address">
-<h1>Lesson 5 : Sending frames to a multicast address<a class="headerlink" href="#lesson-5-sending-frames-to-a-multicast-address" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="lesson-5-transmitting-stream">
+<h1>Lesson 5 : Transmitting stream<a class="headerlink" href="#lesson-5-transmitting-stream" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sending-multicast">
+<h2>Sending multicast<a class="headerlink" href="#sending-multicast" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_5_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
 <p>In this lesson, we are receiving frames from an IP camera using LiveThread and recast those frames to a multicast address using another LiveThread. The filterchain looks like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:info_filter) --&gt;&gt; (LiveThread:livethread2)
@@ -61,6 +63,10 @@
 <p>Let&#8217;s start by importing Valkka:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Live555&#8217;s default output packet buffer size might be too small, so let&#8217;s make it bigger before instantiating any LiveThreads:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">setLiveOutPacketBuffermaxSize</span><span class="p">(</span><span class="mi">95000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Construct the filtergraph from end-to-beginning:</p>
@@ -97,7 +103,7 @@
 <span class="n">livethread2</span><span class="o">.</span><span class="n">deregisterOutboundCall</span><span class="p">(</span><span class="n">out_ctx</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Stop and exit</p>
+<p>Stop threads in beginning-to-end order</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span> <span class="n">stopCall</span><span class="p">();</span>
 <span class="n">livethread2</span><span class="o">.</span><span class="n">stopCall</span><span class="p">();</span>
 
@@ -127,6 +133,70 @@ a=control:streamid=0
 <p class="last">Receiving and recasting the stream can also be done using a single LiveThread only.  This is left as an excercise.</p>
 </div>
 </div>
+<div class="section" id="using-the-rtsp-server">
+<h2>Using the RTSP server<a class="headerlink" href="#using-the-rtsp-server" title="Permalink to this headline">¶</a></h2>
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_5_b.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p>In this lesson, we establish an on-demand RTSP server at the localhost.</p>
+<p>Stream is read from an IP camera and then re-streamed (shared) to a local RTSP server that serves at port 8554.  While this snippet is running, you can test the RTSP server with:</p>
+<div class="highlight-python"><div class="highlight"><pre>ffplay rtsp://127.0.0.1:8554/stream1
+</pre></div>
+</div>
+<p>Let&#8217;s start by importing Valkka:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Live555&#8217;s default output packet buffer size might be too small, so let&#8217;s make it bigger before instantiating any LiveThreads:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">setLiveOutPacketBuffermaxSize</span><span class="p">(</span><span class="mi">95000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Construct the filtergraph from end-to-beginning:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread2</span>    <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread2&quot;</span><span class="p">)</span>
+<span class="n">live_in_filter</span> <span class="o">=</span><span class="n">livethread2</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+<span class="n">info_filter</span>    <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;info_filter&quot;</span><span class="p">,</span><span class="n">live_in_filter</span><span class="p">)</span>
+<span class="n">livethread</span>     <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>Before</em> starting the threads, establish an RTSP server on livethread2 at port 8554:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread2</span><span class="o">.</span><span class="n">setRTSPServer</span><span class="p">(</span><span class="mi">8554</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Start threads</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread2</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">livethread</span><span class="o">.</span> <span class="n">startCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Define stream source: incoming frames from IP camera 192.168.1.41 are tagged with slot number &#8220;2&#8221; and they are written to &#8220;info_filter&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span>     <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">info_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Define stream sink: all outgoing frames with slot number &#8220;2&#8221; are sent to the RTSP server, with substream id &#8220;stream1&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">out_ctx</span> <span class="o">=</span><span class="n">LiveOutboundContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;stream1&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Start playing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread2</span><span class="o">.</span><span class="n">registerOutboundCall</span><span class="p">(</span><span class="n">out_ctx</span><span class="p">)</span>
+<span class="n">livethread</span><span class="o">.</span> <span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">livethread</span><span class="o">.</span> <span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Stream and recast to the RTSP server for a while:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
+
+<span class="n">livethread</span><span class="o">.</span> <span class="n">stopStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">livethread</span><span class="o">.</span> <span class="n">deregisterStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">livethread2</span><span class="o">.</span><span class="n">deregisterOutboundCall</span><span class="p">(</span><span class="n">out_ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Stop threads in beginning-to-end order</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span> <span class="n">stopCall</span><span class="p">();</span>
+<span class="n">livethread2</span><span class="o">.</span><span class="n">stopCall</span><span class="p">();</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 
 
           </div>
@@ -134,6 +204,15 @@ a=control:streamid=0
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Lesson 5 : Transmitting stream</a><ul>
+<li><a class="reference internal" href="#sending-multicast">Sending multicast</a></li>
+<li><a class="reference internal" href="#using-the-rtsp-server">Using the RTSP server</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="lesson_4.html"
                         title="previous chapter">Lesson 4 : Sharing streams between python processes</a></p>

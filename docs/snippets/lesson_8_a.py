@@ -59,7 +59,9 @@ chain.decodingOn()
 time.sleep(20)
 
 """<rtf>
-Finally, stop decoding and exit.  Threads are automatically stopped at garbage collection.
+Close threads in beginning-to-end order
 <rtf>"""
-chain.decodingOff()
+livethread.close()
+chain.close()
+openglthread.close()
 print("bye")

@@ -19,7 +19,7 @@ The API level 2 filterchains, threads and shared memory processes can be importe
   
 ::
 
-  from valkka.api2 import ..
+  from valkka.api2 import ...
   
   
 API level 2 provides also extra wrapping for the thread classes (LiveThread, OpenGLThread, etc.).  The underlying API level 1 instances can be accessed like this:
@@ -31,7 +31,16 @@ API level 2 provides also extra wrapping for the thread classes (LiveThread, Ope
   livethread=LiveThread("live_thread")
   livethread.core # this is the API level 1 instance, i.e. valkka.valkka_core.LiveThread
 
-You should never import simultaneously from API levels 1 and two, i.e. from **valkka.valkka_core** and **valkka.api2.** as the threads have identical names; use either API level 1 or 2, but not both.
+
+Keep in mind never to do a full import simultaneously from API levels one and two, i.e.
+
+::
+
+  # NEVER DO THIS!
+  from valkka.valkka_core import *
+  from valkka.api2 import *
+
+as the threads (LiveThread, OpenGLThread, etc.) have indentical names.
 
 The :ref:`PyQT testsuite <testsuite>` serves also as API level 2 reference.
 

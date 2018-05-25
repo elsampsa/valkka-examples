@@ -27,7 +27,7 @@ In :ref:`lesson 4<opencv_client>` of the tutorial, we launched a separate python
 
 That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with python3's `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ library.
 
-Using python multiprocesses in a Qt program complicates things a bit, but not that much.  We simply need a way to map from events taking place at the multiprocess into signals at the main Qt program.  This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.  
+Using python multiprocesses in a Qt program complicates things a bit, but not that much.  We simply need a way to map from events taking place at the separate and isolated multiprocess into signals at the main Qt program.  This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.  
 
 Let's state that graphically:
 
@@ -36,15 +36,19 @@ Let's state that graphically:
   Qt main loop running with signals and slots                                           
       |                                                                                  
       +--- QThread receiving/sending signals --- writing/reading communication pipes
-           ==> use an instance of QValkkaThread               |
-                                                         +----+----+
-                                                         |    |    |
+           ==> use an instance of QValkkaThread                        |
+                                                         +-------------+------+----------------+
+                                                         |                    |                |
+                                                        multiprocess_1   multiprocess_2  multiprocess_3
+                                                         
                                                          python multiprocesses doing their thing
                                                          and writing/reading their communication pipes
                                                          ==> subclass from valkka.api2.multiprocess.ValkkaProcess
 
+  
+Note that we only need a single QValkkaThread to control several multiprocesses.
                                                          
-For interprocess communication with the Qt signal/slot system, you can use the following strategy:
+Let's dig deeper into our strategy for interprocess communication with the Qt signal/slot system:
 
 ::
 
@@ -67,7 +71,7 @@ For interprocess communication with the Qt signal/slot system, you can use the f
     |   sendSignal("pong") ---------+  |          :
     |                          |    |  |          :    valkka.api2.multiprocess.ValkkaProcess    
     +--------------------------+    |  |          :
-    | Backend methods          |    |  |          :    Backend is running in the "background" in its own memory space
+    | Backend methods          |    |  |          :    Backend is running in the "background" in its own virtual memory space
     |                          |    |  |          :
     | sendSignal_("ping")  ------->----+          :
     |                          |    |             :
@@ -85,7 +89,7 @@ Frontend methods can be called after the process has been started (e.g. after th
 
 A signalling scheme between back- and frontend is provided in the ValkkaProcess class.  Don't be afraid - the ValkkaProcess class is just a few lines of python code!
           
-Also, two stripped-down sample programs are provided in
+To make starting easier, two stripped-down sample programs are provided in:
 
 ::
 
@@ -94,7 +98,7 @@ Also, two stripped-down sample programs are provided in
     multiprocessing_demo.py
     multiprocessing_demo_signals.py
 
-Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system.
+Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system!
 
 Finally, for creating your own Qt application having a frontend QThread, that controls OpenCV process(es), copy the following file into your own module:
 

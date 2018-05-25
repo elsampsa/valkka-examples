@@ -12,21 +12,48 @@ The PyQt testsuite is available at
 
   valkka_examples/api_level_2/qt/
 
-The testsuite is intended for demonstration, benchmarking and ultimate debugging.  Currently the testsuite consists of the following programs:
+The testsuite is intended for:
 
-========================== ==================================================
+ - Demonstration
+ - Benchmarking 
+ - Ultimate debugging
+ - As "materia prima" for developers - take a copy of your own and use it as a basis for your own Valkka / Qt programs
+ 
+Currently the testsuite consists of the following programs:
+
+========================== ================================================================================
 File                       Explanation
-========================== ==================================================
+========================== ================================================================================
 test_studio_1.py           | Live stream from several rtsp cameras
                            | and/or from sources defined in an sdp file
+                           |
 test_studio_detector.py    | Like *test_studio_1.py*, but with a simple
                            | OpenCV analyzer per stream: a movement detector
                            | The *gold standard test* (see below)
+                           |
 test_studio_file.py        | Read and play stream from a matroska file
                            | You need to convert your video to h264 contained in matroska like this:
-                    
+                           |
                            | *ffmpeg -i your_video_file -c:v h264 -an outfile.mkv*
-========================== ==================================================
+                           |
+test_studio_multicast.py   | Recast multiple IP cams into multicast.
+                           | For reading all those recasted multicast streams
+                           | you can use scripts provided in directory *aux/*
+                           |
+test_studio_rtsp.py        | Recast IP cams to unicast.  They are accessible from an on-demand RTSP server
+                           | and can be read for example with:
+                           |
+                           | *rtsp://127.0.0.1:8554/streamN*
+                           |
+                           | where *N* is the number of the camera (starting from "1")
+========================== ================================================================================
+
+If the testsuites don't reproduce video on-screen as they should and before making up your mind ("*this sucks!*"), consider the following:
+
+  * Is your PC powerful enough to decode simultaneously N>4 full-hd videos?  You should test with a reference program, say, ffplay (see below)
+  * Frames being dropped?  Do you have enough pre-reserved bitmap frames on the GPU?  Is your buffering time too big? (see below)
+  * Did you disable vsync?
+  * Launch KSysGuard and observe the processor usage.
 
 .. note:: When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh ("vsync") should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with "export vblank_mode=0".  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the "glxgears" command (in package "mesa-utils").  Glxgears should report 1000+ frames per second with vsync disabled.
 

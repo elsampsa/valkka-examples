@@ -34,7 +34,8 @@ from analyzer import MovementDetector
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 pre="test_studio_file : "
  
-
+valkka_xwin =True # use x windows create by Valkka and embed them into Qt
+# valkka_xwin =False # use Qt provided x windows
 
 class MyGui(QtWidgets.QMainWindow):
 
@@ -155,16 +156,15 @@ class MyGui(QtWidgets.QMainWindow):
     self.process.signals.start_move.connect(self.set_moving_slot)
     self.process.signals.stop_move. connect(self.set_still_slot)
     
-    # (1) Let OpenGLThread create the window
-    self.win_id      =self.openglthread.createWindow(show=False)
-    self.widget_pair =WidgetPair(self.video_area,self.win_id,TestWidget0)
-    self.video       =self.widget_pair.getWidget()
-    
-    """
-    # (2) Let Qt create the window
-    self.video     =QtWidgets.QWidget(self.video_area)
-    self.win_id    =int(self.video.winId())
-    """
+    if (valkka_xwin):
+      # (1) Let OpenGLThread create the window
+      self.win_id      =self.openglthread.createWindow(show=False)
+      self.widget_pair =WidgetPair(self.video_area,self.win_id,TestWidget0)
+      self.video       =self.widget_pair.getWidget()
+    else:
+      # (2) Let Qt create the window
+      self.video     =QtWidgets.QWidget(self.video_area)
+      self.win_id    =int(self.video.winId())
     
     self.video_lay.addWidget(self.video,0,0)
     self.token =self.openglthread.connect(slot=cc,window_id=self.win_id)
@@ -186,9 +186,17 @@ class MyGui(QtWidgets.QMainWindow):
     print(pre,"QThread stopped")
     
     
+  def closeValkka(self):
+    self.livethread.close()
+    self.chain.close()
+    self.chain =None
+    self.openglthread.close()
+    
+    
   def closeEvent(self,e):
     print(pre,"closeEvent!")
     self.stopProcesses()
+    self.closeValkka()
     super().closeEvent(e)
     
     

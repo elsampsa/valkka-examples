@@ -69,9 +69,11 @@ Next, create an x-window, map stream to the screen, and start decoding:
     time.sleep(20)
     
 
-Finally, stop decoding and exit.  Threads are automatically stopped at garbage collection.
+Close threads in beginning-to-end order
 
 :: 
 
-    chain.decodingOff()
+    livethread.close()
+    chain.close()
+    openglthread.close()
     print("bye")

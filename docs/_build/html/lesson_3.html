@@ -91,7 +91,7 @@ Decoding part             |
 <div class="highlight-python" id="connection"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Start all threads, start decoding, and register the live stream:</p>
+<p>Start all threads, start decoding, and register the live stream.  Starting the threads should be done in end-to-beginning order (in the same order we constructed the filterchain).</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
@@ -128,7 +128,7 @@ Decoding part             |
 <span class="n">avthread</span><span class="o">.</span><span class="n">decodingOffCall</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Close threads</p>
+<p>Close threads.  Stop threads in beginning-to-end order (i.e., following the filtergraph from left to right).</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
@@ -217,7 +217,7 @@ Decoding part             |   [This part of the filtergraph should be replicated
     <span class="bp">self</span><span class="o">.</span><span class="n">avthread</span><span class="o">.</span><span class="n">decodingOnCall</span><span class="p">()</span>
 
 
-  <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">avthread</span><span class="o">.</span><span class="n">decodingOffCall</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 </pre></div>
@@ -269,8 +269,10 @@ Decoding part             |   [This part of the filtergraph should be replicated
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id2</span><span class="p">)</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id2</span><span class="p">)</span>
 
-<span class="c1"># stop threads</span>
+<span class="c1"># Stop threads in beginning-to-end order</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">stream1</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">stream2</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>

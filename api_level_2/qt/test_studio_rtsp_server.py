@@ -1,5 +1,5 @@
 """
-test_studio_1.py : Test live streaming with Qt
+test_studio_rtsp_server.py : Test live streaming with Qt.  Establish an rtsp server.
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -9,7 +9,7 @@ This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    test_studio_1.py
+@file    test_studio_multcast.py
 @author  Sampsa Riikonen
 @date    2018
 @version 0.4.0 
@@ -56,15 +56,19 @@ import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import BasicFilterchain
+from valkka.api2 import setValkkaLogLevel, loglevel_debug, loglevel_normal
+from valkka import valkka_core as core
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
+from demo_filterchains import RTSPFilterchain
 
-pre="test_studio : " # aux string for debugging 
-
+pre="test_studio_rtsp_server : " # aux string for debugging 
 
 valkka_xwin =True # use x windows create by Valkka and embed them into Qt
 # valkka_xwin =False # use Qt provided x windows
+
+rtsp_server_portnum=8554
 
 class MyConfigDialog(ConfigDialog):
   
@@ -72,13 +76,18 @@ class MyConfigDialog(ConfigDialog):
     self.tooltips={        # how about some tooltips?
       }
     self.pardic.update({
-      "replicate"          : 1
+      "live2 affinity"            : -1
       })
-    self.plis +=["replicate"]
-    self.config_fname="test_studio_1.config" # define the config file name
+    self.plis +=["live2 affinity"]
+    self.config_fname="test_studio_rtsp_server.config" # define the config file name
   
+  
+  def extra(self): # let's add some text to the config dialog..
+    self.notice=QtWidgets.QLabel("Read first stream with 'ffplay rtsp://127.0.0.1:"+str(rtsp_server_portnum)+"/stream1', second stream with 'ffplay rtsp://127.0.0.1:"+str(rtsp_server_portnum)+"/stream2', etc.")
+    self.lay.addWidget(self.notice)
+   
  
- 
+
 class MyGui(QtWidgets.QMainWindow):
 
   debug=False
@@ -111,12 +120,26 @@ class MyGui(QtWidgets.QMainWindow):
     
   
   def openValkka(self):
+    # setValkkaLogLevel(loglevel_debug)
+    core.setLiveOutPacketBuffermaxSize(95000) # big ..
+    # check this out:
+    # http://lists.live555.com/pipermail/live-devel/2013-April/016803.html
+    
     self.livethread=LiveThread(         # starts live stream services (using live555)
       name   ="live_thread",
       # verbose=True,
       verbose=False,
       affinity=self.pardic["live affinity"]
     )
+
+    self.livethread2=LiveThread(         # second live thread for sending multicast streams
+      name   ="live_thread2",
+      # verbose=True,
+      verbose=False,
+      affinity=self.pardic["live2 affinity"],
+      rtsp_server=rtsp_server_portnum # rtsp server port number
+    )
+
 
     self.openglthread=OpenGLThread(     # starts frame presenting services
       name    ="mythread",
@@ -138,7 +161,8 @@ class MyGui(QtWidgets.QMainWindow):
     tokens     =[]
     self.chains=[]
     
-    a =self.pardic["dec affinity start"]
+    a=self.pardic["dec affinity start"]
+    
     cw=0 # widget / window index
     cs=1 # slot / stream count
     
@@ -147,23 +171,27 @@ class MyGui(QtWidgets.QMainWindow):
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       print(pre,"openValkka: setting decoder thread on processor",a)
 
-      chain=BasicFilterchain(       # decoding and branching the stream happens here
-        livethread  =self.livethread, 
-        openglthread=self.openglthread,
-        address     =address,
+      chain=RTSPFilterchain(       # decoding and branching the stream happens here
+        incoming_livethread =self.livethread, 
+        outgoing_livethread =self.livethread2,
+        openglthread        =self.openglthread,
+        address             =address,
+        
+        rtsp_substream_name ="stream"+str(cs),
+        
         slot        =cs,
         affinity    =a,
         # verbose     =True
         verbose     =False,
-        msreconnect =10000,
-        
-        # flush_when_full =True
-        flush_when_full =False
+        msreconnect =10000
         )
   
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
-      
-      for cc in range(0,self.pardic["replicate"]):
+  
+      # replicate=self.pardic["replicate"]
+      replicate=1
+  
+      for cc in range(0,replicate):
         if ("no_qt" in self.pardic):
           # create our own x-windowses
           win_id=self.openglthread.createWindow(show=True)
@@ -207,10 +235,11 @@ class MyGui(QtWidgets.QMainWindow):
     for chain in self.chains:
       chain.close()
     
-    self.chains       =[]
     self.widget_pairs =[]
     self.videoframes  =[]
     self.openglthread.close()
+    
+    self.livethread2.close()
     
     
   def start_streams(self):
@@ -219,6 +248,7 @@ class MyGui(QtWidgets.QMainWindow):
     
   def stop_streams(self):
     pass
+    
     
   def closeEvent(self,e):
     print(pre,"closeEvent!")

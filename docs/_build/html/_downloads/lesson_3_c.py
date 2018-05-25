@@ -54,9 +54,10 @@ class LiveStream:
     self.avthread.decodingOnCall()
 
 
-  def __del__(self):
+  def close(self):
     self.avthread.decodingOffCall()
     self.avthread.stopCall()
+    
     
 """<rtf>
 Construct the filtergraph from end-to-beginning:
@@ -111,8 +112,10 @@ glthread.delRenderGroupCall(window_id1)
 glthread.delRenderContextCall(context_id2)
 glthread.delRenderGroupCall(window_id2)
 
-# stop threads
+# Stop threads in beginning-to-end order
 livethread.stopCall()
+stream1.close()
+stream2.close()
 glthread.stopCall()
 
 print("bye")
