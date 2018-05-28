@@ -31,6 +31,7 @@ In the near future, and with the beta version, you will be able to build network
    timetable
    license
    distributing
+   benchmarking
    authors
    
 .. Indices and tables

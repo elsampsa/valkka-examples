@@ -53,6 +53,7 @@ If the testsuites don't reproduce video on-screen as they should and before maki
   * Is your PC powerful enough to decode simultaneously N>4 full-hd videos?  You should test with a reference program, say, ffplay (see below)
   * Frames being dropped?  Do you have enough pre-reserved bitmap frames on the GPU?  Is your buffering time too big? (see below)
   * Did you disable vsync?
+  * Did you disable OpenGL composition?  In a KDE based system, go to System Settings => Display and Monitor => Compositor => uncheck "Enable compositor on startup".  CTRL-ALT-F12 might also work.
   * Launch KSysGuard and observe the processor usage.
 
 .. note:: When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh ("vsync") should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with "export vblank_mode=0".  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the "glxgears" command (in package "mesa-utils").  Glxgears should report 1000+ frames per second with vsync disabled.
