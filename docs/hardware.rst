@@ -5,4 +5,4 @@ libValkka uses OpenGL and OpenGL texture streaming.   The library needs a robust
 
 - Intel: the stock **i915** driver works nicely
 - Nvidia: use **nvidia** proprietary driver (instead of **noveau**)
-- ATI: not tested
+- ATI: **not tested**
