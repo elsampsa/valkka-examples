@@ -30,7 +30,7 @@ Typical performance bottlenecks are:
 4. OpenGLThread that queues YUV frames and does the YUV => RGB interpolation on the GPU is stalling
 
   - There might still be some problems with the queueing/presenting algorithm (please do inform us!)
-  - Your GPU might not have enough muscles
+  - Your GPU might not have enough muscle
 
 If you compile libValkka from source, there are many available debug options that can be enabled in *run_cmake.bash*.   A particularly useful one is *profile_timing*.  Enabling this debug switch allows you to trace the culprit for frame dropping to slow network, slow decoding or the OpenGL part.
 

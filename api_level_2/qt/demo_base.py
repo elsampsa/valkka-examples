@@ -65,8 +65,6 @@ class WidgetPair:
     return self.foreign_widget
 
 
-
-
  
 class ConfigDialog(QtWidgets.QDialog):
   """A configuration dialog for test/demo programs
@@ -102,11 +100,12 @@ class ConfigDialog(QtWidgets.QDialog):
       "gl affinity"   : -1,
       "dec affinity start" : -1,
       "dec affinity stop"  : -1,
+      "videos per row"     : 4,
       "ok"                 : True
     }
     
     # ["n_720p", "n_1080p", "n_1440p", "n_4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
-    self.plis=["n_720p", "n_1080p", "n_1440p", "n_4K", "naudio", "verbose", "msbuftime", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
+    self.plis=["n_720p", "n_1080p", "n_1440p", "n_4K", "naudio", "verbose", "msbuftime", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop","videos per row"]
     
     self.setConfigPars() # custom pars
     

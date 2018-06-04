@@ -253,8 +253,15 @@ class MyGui(QtWidgets.QMainWindow):
         frame  =self.NativeFrame(self.w)
         win_id =frame.getWindowId()
         
-      print(pre,"setupUi: layout index, address : ",cc//4,cc%4,address)
-      self.lay.addWidget(frame.widget,cc//4,cc%4)
+      # print(pre,"setupUi: layout index, address : ",cc//4,cc%4,address)
+      # self.lay.addWidget(frame.widget,cc//4,cc%4)
+      
+      nrow=self.pardic["videos per row"]
+      print(pre,"setupUi: layout index, address : ",cc//nrow,cc%nrow,address)
+      self.lay.addWidget(frame.widget,cc//nrow,cc%nrow)
+      
+      
+      
       # connect signals to the nested widget
       process.signals.start_move.connect(frame.set_moving)
       process.signals.stop_move. connect(frame.set_still)

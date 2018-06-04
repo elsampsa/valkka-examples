@@ -217,9 +217,13 @@ class MyGui(QtWidgets.QMainWindow):
             self.widget_pairs.append(widget_pair)
             # """
             
+          nrow=self.pardic["videos per row"]
+          print(pre,"setupUi: layout index, address : ",cw//nrow,cw%nrow,address)
+          self.lay.addWidget(fr,cw//nrow,cw%nrow)
+      
+          # print(pre,"setupUi: layout index, address : ",cw//4,cw%4,address)
+          # self.lay.addWidget(fr,cw//4,cw%4)
           
-          print(pre,"setupUi: layout index, address : ",cw//4,cw%4,address)
-          self.lay.addWidget(fr,cw//4,cw%4)
           self.videoframes.append(fr)
           
         token  =self.openglthread.connect(slot=cs,window_id=win_id) # present frames with slot number cs at window win_id

@@ -4,6 +4,12 @@
 Installing
 ==========
 
+0. First, install some debian packages:
+
+  ::
+  
+    sudo apt-get install python3-pip git mesa-utils
+
 
 1. A Python3 package that includes pre-built binary libraries is available at the python package index (PyPI) and can be installed with:
 

@@ -171,7 +171,19 @@ Just use C++ instead of Python?
 
 There is no obligation to use Valkka from python - the API is usable from cpp as well.
 
-If programming in Qt with C++ is your thing, then you can just forget all that multiprocessing stuff considered here.  You can use Valkka's FrameFifo and Thread infrastructure to create a QThread that's reading the frames and feeding them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you should do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).
+If programming in Qt with C++ is your thing, then you can just forget all that multiprocessing considered here and use cpp threads instead.  
 
-Examples of using the API from cpp will be added to this documentation in the near future.
+Say, you can use Valkka's FrameFifo and Thread infrastructure to create threads that read frames and feed them to an OpenCV analyzer (written in cpp).  This way you can skip posix shared memory and semaphores alltogether.  This is what you want to do for high-throughput video analysis (when you need that 20+ fps per second per camera in your OpenCV analyzer).
+
+A python program using an example cpp thread (*TestThread*) which communicates with PyQt signals and slots can be found here:
+
+::
+
+  valkka_examples/api_level_2/qt/
+  
+    cpp_thread_demo.py
+
+See also the documentation for the cpp source code of *TestThread* (available at valkka-core documentation).
+    
+Examples using the API with cpp will be added to this documentation in the near future.
 

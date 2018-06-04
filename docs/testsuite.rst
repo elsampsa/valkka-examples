@@ -17,7 +17,7 @@ The testsuite is intended for:
  - Demonstration
  - Benchmarking 
  - Ultimate debugging
- - As "materia prima" for developers - take a copy of your own and use it as a basis for your own Valkka / Qt programs
+ - As *materia prima* for developers - take a copy of your own and use it as a basis for your own Valkka / Qt program
  
 Currently the testsuite consists of the following programs:
 

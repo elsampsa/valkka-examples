@@ -24,6 +24,7 @@ In the near future, and with the beta version, you will be able to build network
    :maxdepth: 2
    
    intro
+   hardware
    requirements
    testsuite
    tutorial
