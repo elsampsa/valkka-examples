@@ -71,7 +71,17 @@ Adding the following lines into */etc/syscntl.conf*
   vm.swappiness = 1
   net.core.wmem_max=2097152
   net.core.rmem_max=2097152
+  
+And running
 
+::
+
+  sudo sysctl -p
+  
+
+Turns off swap and sets maximum allowed read/write socket sizes to 2 MB.
+
+Receiving socket size can be adjusted for each live connection with the associated *LiveConnectionContext* (see the tutorial).  For an example how to do this, refer to **valkka.api2.basic.BasicFilterChain**
 
 
 Tests

@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    shmem_test_encoded.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.4.6 
+@version 0.4.7 
 @brief   Stream encoded H264 frames from a single rtsp camera (no decoding).  Share H264 stream to another python process.
 """
 

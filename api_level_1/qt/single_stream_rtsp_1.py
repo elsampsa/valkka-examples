@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    single_stream_rtsp_1.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.4.6 
+@version 0.4.7 
 @brief   A demo program: streaming from a single rtsp camera.  Using x window create by Valkka.
 """
 

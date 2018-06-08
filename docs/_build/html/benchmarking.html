@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Benchmarking &mdash; valkka_examples  documentation</title>
+    <title>Benchmarking &amp; Tuning &mdash; valkka_examples  documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -49,8 +49,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="benchmarking">
-<h1>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="benchmarking-tuning">
+<h1>Benchmarking &amp; Tuning<a class="headerlink" href="#benchmarking-tuning" title="Permalink to this headline">¶</a></h1>
 <p>Here we touch upon some common problems in video surveillance and management software.  Tabulated tests using the PyQt testsuite are provided.</p>
 <div class="section" id="bottlenecks">
 <h2>Bottlenecks<a class="headerlink" href="#bottlenecks" title="Permalink to this headline">¶</a></h2>
@@ -115,6 +115,21 @@
 </li>
 </ul>
 <p>Valkka provides (or will provide) API methods and FrameFilter(s) to implement each one of these strategies.</p>
+</div>
+<div class="section" id="system-tuning">
+<h2>System tuning<a class="headerlink" href="#system-tuning" title="Permalink to this headline">¶</a></h2>
+<p>Adding the following lines into <em>/etc/syscntl.conf</em></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">vm</span><span class="o">.</span><span class="n">swappiness</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">net</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">wmem_max</span><span class="o">=</span><span class="mi">2097152</span>
+<span class="n">net</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">rmem_max</span><span class="o">=</span><span class="mi">2097152</span>
+</pre></div>
+</div>
+<p>And running</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo sysctl -p
+</pre></div>
+</div>
+<p>Turns off swap and sets maximum allowed read/write socket sizes to 2 MB.</p>
+<p>Receiving socket size can be adjusted for each live connection with the associated <em>LiveConnectionContext</em> (see the tutorial).  For an example how to do this, refer to <strong>valkka.api2.basic.BasicFilterChain</strong></p>
 </div>
 <div class="section" id="tests">
 <h2>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
@@ -393,8 +408,9 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Benchmarking</a><ul>
+<li><a class="reference internal" href="#">Benchmarking &amp; Tuning</a><ul>
 <li><a class="reference internal" href="#bottlenecks">Bottlenecks</a></li>
+<li><a class="reference internal" href="#system-tuning">System tuning</a></li>
 <li><a class="reference internal" href="#tests">Tests</a></li>
 </ul>
 </li>
