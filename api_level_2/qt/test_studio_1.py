@@ -56,6 +56,7 @@ import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import BasicFilterchain
+from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
@@ -158,7 +159,12 @@ class MyGui(QtWidgets.QMainWindow):
         msreconnect =10000,
         
         # flush_when_full =True
-        flush_when_full =False
+        flush_when_full =False,
+        
+        # time_correction   =TimeCorrectionType_dummy,  # Timestamp correction type: TimeCorrectionType_none, TimeCorrectionType_dummy, or TimeCorrectionType_smart (default)
+        time_correction   =TimeCorrectionType_smart,
+        recv_buffer_size  =0,                        # Operating system socket ringbuffer size in bytes # 0 means default
+        reordering_mstime =0                         # Reordering buffer time for Live555 packets in MILLIseconds # 0 means default
         )
   
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..

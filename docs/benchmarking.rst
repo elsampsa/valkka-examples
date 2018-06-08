@@ -1,6 +1,6 @@
 
-Benchmarking
-============
+Benchmarking & Tuning
+=====================
 
 Here we touch upon some common problems in video surveillance and management software.  Tabulated tests using the PyQt testsuite are provided.
 
@@ -59,6 +59,19 @@ Some common fixes (that are frequently used in commercial video surveillance app
   - Decode and present the full-HD mainstream only when there are video windows that are large enough
 
 Valkka provides (or will provide) API methods and FrameFilter(s) to implement each one of these strategies.
+
+
+System tuning
+-------------
+
+Adding the following lines into */etc/syscntl.conf*
+
+::
+
+  vm.swappiness = 1
+  net.core.wmem_max=2097152
+  net.core.rmem_max=2097152
+
 
 
 Tests
