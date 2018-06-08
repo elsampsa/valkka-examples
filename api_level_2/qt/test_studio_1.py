@@ -56,6 +56,7 @@ import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import BasicFilterchain
+from valkka.api2.logging import *
 from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart
 
 # Local imports form this directory
@@ -66,6 +67,8 @@ pre="test_studio : " # aux string for debugging
 
 valkka_xwin =True # use x windows create by Valkka and embed them into Qt
 # valkka_xwin =False # use Qt provided x windows
+
+# setValkkaLogLevel(loglevel_silent)
 
 class MyConfigDialog(ConfigDialog):
   
@@ -163,8 +166,12 @@ class MyGui(QtWidgets.QMainWindow):
         
         # time_correction   =TimeCorrectionType_dummy,  # Timestamp correction type: TimeCorrectionType_none, TimeCorrectionType_dummy, or TimeCorrectionType_smart (default)
         time_correction   =TimeCorrectionType_smart,
+        
         recv_buffer_size  =0,                        # Operating system socket ringbuffer size in bytes # 0 means default
-        reordering_mstime =0                         # Reordering buffer time for Live555 packets in MILLIseconds # 0 means default
+        # recv_buffer_size  =1024*800,   # 800 KB
+        
+        reordering_mstime =0                           # Reordering buffer time for Live555 packets in MILLIseconds # 0 means default
+        # reordering_mstime =300                         
         )
   
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
