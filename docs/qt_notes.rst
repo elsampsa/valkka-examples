@@ -14,11 +14,11 @@ For any GUI framework, this is what you want to do:
 3. Start your GUI frameworks execution loop
 4. At main window close event, close all threads
 
-X-windows, i.e. "widgets" in the Qt slang, can be created at the Qt side and passed to Valkka.  Alternatively, x-windows can be created at the Valkka side and passed to Qt as "foreign widgets".  We recommend the latter approach.
+X-windows, i.e. "widgets" in the Qt slang, can be created at the Qt side and passed to Valkka.  Alternatively, x-windows can be created at the Valkka side and passed to Qt as "foreign widgets".
 
 Complex filterchains per camera should be encapsulated in classes, like we did in the :ref:`tutorial <multiple_streams>`.
 
-Some typical filterclasses are readily accessible at the API 2 level and are suitable for direct integration into your Qt program.
+Some typical filterchain classes are readily accessible at the API 2 level and are suitable for direct integration into your Qt program.
 
 Python multiprocessing
 ----------------------
@@ -108,7 +108,13 @@ Finally, for creating your own Qt application having a frontend QThread, that co
   
     demo_multiprocess.py
 
-It has *QValkkaProcess* (a general multiprocess class with Qt signals), *QValkkaOpenCVProcess* (multiprocess with Qt signals and OpenCV) and *QValkkaThread* (the frontend QThread) that you can use in your own applications.  Consult the *test_studio_*.py* programs how to use these classes.
+It contains:
+
+  - *QValkkaProcess* (a general multiprocess class with Qt signals)
+  - *QValkkaOpenCVProcess* (multiprocess with Qt signals and OpenCV)
+  - *QValkkaThread* (the frontend QThread) that you can use in your own applications.  
+
+Consult the *test_studio_*.py* programs how to use these classes.
     
     
 Drawing video into a widget
@@ -183,7 +189,7 @@ A python program using an example cpp thread (*TestThread*) which communicates w
   
     cpp_thread_demo.py
 
-See also the documentation for the cpp source code of *TestThread* (available at valkka-core documentation).
+See also the documentation for the cpp source code of `TestThread <https://elsampsa.github.io/valkka-core/html/classTestThread.html>`_
     
 Examples using the API with cpp will be added to this documentation in the near future.
 

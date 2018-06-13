@@ -1,50 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Lesson 4 : Sharing streams between python processes &mdash; valkka_examples  documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <title>Lesson 4 : Sharing streams between python processes &#8212; valkka_examples  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="valkka_examples  documentation" href="index.html" />
-    <link rel="up" title="Tutorial" href="tutorial.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 5 : Transmitting stream" href="lesson_5.html" />
-    <link rel="prev" title="Lesson 3 : Streaming to the X-window system" href="lesson_3.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="lesson_5.html" title="Lesson 5 : Transmitting stream"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-window system"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="tutorial.html" accesskey="U">Tutorial</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Lesson 3 : Streaming to the X-window system" href="lesson_3.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -55,25 +35,25 @@
 <h1>Lesson 4 : Sharing streams between python processes<a class="headerlink" href="#lesson-4-sharing-streams-between-python-processes" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="server-side">
 <h2>Server side<a class="headerlink" href="#server-side" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download server side</strong> <a class="reference download internal" href="_downloads/lesson_4_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download server side</strong> <a class="reference download internal" href="_downloads/lesson_4_a.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>By now, we have learned how to receive, decode and send streams to the x window system.  In this chapter, we do all that, but at the same time, also send copies of the decoded frames to another python process.</p>
 <p>The filtergraph looks like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) -------------------------------------+  main branch, streaming
-                                                             |
-{ForkFrameFilter: fork_filter} &lt;----(AVThread:avthread) &lt;&lt; --+  main branch, decoding
-               |
-      branch 1 +-&gt;&gt; (OpenGLThread:glthread)
-               |
-      branch 2 +--&gt; {IntervalFrameFilter: interval_filter} --&gt; {SwScaleFrameFilter: sws_filter} --&gt; {RGBSharedMemFrameFilter: shmem_filter}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">-------------------------------------+</span>  <span class="n">main</span> <span class="n">branch</span><span class="p">,</span> <span class="n">streaming</span>
+                                                             <span class="o">|</span>
+<span class="p">{</span><span class="n">ForkFrameFilter</span><span class="p">:</span> <span class="n">fork_filter</span><span class="p">}</span> <span class="o">&lt;----</span><span class="p">(</span><span class="n">AVThread</span><span class="p">:</span><span class="n">avthread</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="o">--+</span>  <span class="n">main</span> <span class="n">branch</span><span class="p">,</span> <span class="n">decoding</span>
+               <span class="o">|</span>
+      <span class="n">branch</span> <span class="mi">1</span> <span class="o">+-&gt;&gt;</span> <span class="p">(</span><span class="n">OpenGLThread</span><span class="p">:</span><span class="n">glthread</span><span class="p">)</span>
+               <span class="o">|</span>
+      <span class="n">branch</span> <span class="mi">2</span> <span class="o">+--&gt;</span> <span class="p">{</span><span class="n">IntervalFrameFilter</span><span class="p">:</span> <span class="n">interval_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">SwScaleFrameFilter</span><span class="p">:</span> <span class="n">sws_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">RGBSharedMemFrameFilter</span><span class="p">:</span> <span class="n">shmem_filter</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>We are using the ForkFrameFilter to branch the decoded stream into two branches.  Branch 1 goes to screen, while branch 2 does a lot of new stuff.</p>
-<p>In branch 2, IntervalFrameFilter passes a frame through on regular intervals.  In our case we are going to use an interval of 1 second, i.e. even if your camera is sending 25 fps, at the other side of IntervalFrameFilter we&#8217;ll be observing only 1 fps.</p>
+<p>In branch 2, IntervalFrameFilter passes a frame through on regular intervals.  In our case we are going to use an interval of 1 second, i.e. even if your camera is sending 25 fps, at the other side of IntervalFrameFilter we’ll be observing only 1 fps.</p>
 <p>SwScaleFrameFilter does YUV =&gt; RGB interpolation on the CPU.  The final, interpolated RGB frame is passed to the posix shared memory with the RGBSharedMemFrameFilter.  From there it can be read by another python process.</p>
 <p>(Remember that branch 1 does YUV =&gt; RGB interpolation as well, but on the GPU (and at 25 fps rate))</p>
 <p>To summarize, branch 1 interpolates once a second a frame to RGB and passes it to shared memory.  The size of the frame can be adjusted.</p>
-<p>Let&#8217;s start the construction of the filtergraph by defining some parameters.  Frames are passed to SwScaleFrameFilter at 1000 millisecond intervals.  The image dimensions of the frame passed into shared memory, will be one quarter of a full-hd frame:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
+<p>Let’s start the construction of the filtergraph by defining some parameters.  Frames are passed to SwScaleFrameFilter at 1000 millisecond intervals.  The image dimensions of the frame passed into shared memory, will be one quarter of a full-hd frame:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
 <span class="n">image_interval</span><span class="o">=</span><span class="mi">1000</span>  <span class="c1"># YUV =&gt; RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer</span>
 
 <span class="c1"># define rgb image dimensions</span>
@@ -82,13 +62,13 @@
 </pre></div>
 </div>
 <p>RGBSharedMemFrameFilter needs also a unique name and the size of the shared memory ring-buffer:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># posix shared memory</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># posix shared memory</span>
 <span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 </pre></div>
 </div>
 <p>Next, we construct the filterchain as usual, from end-to-beginning:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># branch 1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
 <span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
 <span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 
@@ -108,11 +88,11 @@
 </pre></div>
 </div>
 <p>Define connection to camera: frames from 192.168.1.41 are written to live_out_filter and tagged with slot number 1:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start processes, stream for 60 seconds and exit:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 
@@ -142,22 +122,22 @@
 <span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Next we need a separate python process, a client, that reads the frames.  Two versions are provided, the API level 2 being the most compact one.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">In the previous lessons, all streaming has taken place at the cpp level.  Here we are starting to use posix shared memory and semaphores in order to share frames between python processes.  However, don&#8217;t expect posix shared memory and semaphores to keep up with several full-hd cameras running at 25+ fps!  Such high-throughput should be implemented at the cpp level using multithreading (while defining only the connections at the python level)</p>
+<p class="last">In the previous lessons, all streaming has taken place at the cpp level.  Here we are starting to use posix shared memory and semaphores in order to share frames between python processes.  However, don’t expect posix shared memory and semaphores to keep up with several full-hd cameras running at 25+ fps!  Such high-throughput should be implemented at the cpp level using multithreading (while defining only the connections at the python level)</p>
 </div>
 </div>
 <div class="section" id="client-side-api-level-2">
 <h2>Client side: API level 2<a class="headerlink" href="#client-side-api-level-2" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download client side API level 2</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client_api2.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download client side API level 2</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client_api2.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>This is a <em>separate</em> python program for reading the frames that are written by Valkka to the shared memory.</p>
 <p>The parameters used both in the server side (above) and on the client side (below) <strong>must be exactly the same</strong> and the client program should be started <em>after</em> the server program (and while the server is running).  Otherwise undefined behaviour will occur.</p>
 <p>The used shmem_name(s) should be same in both server and client, but different for another server/client pair.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -171,28 +151,28 @@
   <span class="n">width</span>         <span class="o">=</span><span class="n">width</span><span class="p">,</span>
   <span class="n">height</span>        <span class="o">=</span><span class="n">height</span><span class="p">,</span>
   <span class="n">mstimeout</span>     <span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
-  <span class="n">verbose</span>       <span class="o">=</span><span class="bp">False</span>
+  <span class="n">verbose</span>       <span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>The <em>mstimeout</em> defines the semaphore timeout in milliseconds, i.e. the time when the client returns even if no frame was received:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
   <span class="n">index</span><span class="p">,</span> <span class="n">isize</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">==</span><span class="bp">None</span><span class="p">):</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
   <span class="k">else</span><span class="p">:</span>
     <span class="n">data</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;got data: &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">isize</span><span class="p">)])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got data: &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">isize</span><span class="p">)])</span>
 </pre></div>
 </div>
 <p>The <em>client.shmem_list</em> is a list of numpy arrays, while <em>isize</em> defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.</p>
 </div>
 <div class="section" id="client-side-opencv">
 <h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Permalink to this headline">¶</a></h2>
-<p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client_opencv.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client_opencv.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>OpenCV is a popular machine vision library.  We modify the previous example to make it work with openCV like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -206,13 +186,13 @@
   <span class="n">width</span>         <span class="o">=</span><span class="n">width</span><span class="p">,</span>
   <span class="n">height</span>        <span class="o">=</span><span class="n">height</span><span class="p">,</span>
   <span class="n">mstimeout</span>     <span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
-  <span class="n">verbose</span>       <span class="o">=</span><span class="bp">False</span>
+  <span class="n">verbose</span>       <span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
-<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
   <span class="n">index</span><span class="p">,</span> <span class="n">isize</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">==</span><span class="bp">None</span><span class="p">):</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
   <span class="k">else</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span>
     <span class="n">img</span> <span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">height</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
@@ -222,14 +202,14 @@
     <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Here the main difference to the previous example is, that the image data is reshaped.  After this, some gaussian blur is applied to the image.  Then it is visualized using openCV&#8217;s own &#8220;high-gui&#8221; infrastructure.  If everything went ok, you should see a blurred image of your video once in a second.</p>
+<p>Here the main difference to the previous example is, that the image data is reshaped.  After this, some gaussian blur is applied to the image.  Then it is visualized using openCV’s own “high-gui” infrastructure.  If everything went ok, you should see a blurred image of your video once in a second.</p>
 <p>Start this script <em>after</em> starting the server side script (server side must also be running).</p>
 </div>
 <div class="section" id="client-side-api-level-1">
 <h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download client side example</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>API level 2 provides extra wrapping.  Let&#8217;s see what goes on at the lowest level (plain, cpp wrapped python code).</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
+<p><strong>Download client side example</strong> <a class="reference download internal" href="_downloads/lesson_4_a_client.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>API level 2 provides extra wrapping.  Let’s see what goes on at the lowest level (plain, cpp wrapped python code).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -239,32 +219,32 @@
 </pre></div>
 </div>
 <p>The wrapped cpp class is <em>SharedMemRingBufferRGB</em> (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">shmem</span><span class="o">=</span><span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem</span><span class="o">=</span><span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
 </pre></div>
 </div>
 <p>We are using integer pointers from python:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">index_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># shmem index</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">index_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># shmem index</span>
 <span class="n">isize_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># size of data</span>
 </pre></div>
 </div>
 <p>Next, get handles to the shared memory as numpy arrays:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">shmem_list</span><span class="o">=</span><span class="p">[]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_list</span><span class="o">=</span><span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shmem_buffers</span><span class="p">):</span>
   <span class="n">shmem_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getNumpyShmem</span><span class="p">(</span><span class="n">shmem</span><span class="p">,</span><span class="n">i</span><span class="p">))</span> <span class="c1"># getNumpyShmem defined in the swig interface file</span>
-  <span class="k">print</span><span class="p">(</span><span class="s2">&quot;got element i=&quot;</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got element i=&quot;</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Finally, start reading frames:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
   <span class="n">got</span><span class="o">=</span><span class="n">shmem</span><span class="o">.</span><span class="n">clientPull</span><span class="p">(</span><span class="n">index_p</span><span class="p">,</span> <span class="n">isize_p</span><span class="p">)</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">got</span><span class="p">):</span>
     <span class="n">index</span><span class="o">=</span><span class="n">intp_value</span><span class="p">(</span><span class="n">index_p</span><span class="p">)</span>
     <span class="n">isize</span><span class="o">=</span><span class="n">intp_value</span><span class="p">(</span><span class="n">isize_p</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;got index, size =&quot;</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">isize</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got index, size =&quot;</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">isize</span><span class="p">)</span>
     <span class="n">ar</span><span class="o">=</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span> <span class="c1"># this is just a numpy array</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;payload         =&quot;</span><span class="p">,</span> <span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">isize</span><span class="p">)])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;payload         =&quot;</span><span class="p">,</span> <span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">isize</span><span class="p">)])</span>
   <span class="k">else</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Cpp documentation for Valkka shared memory classes be found <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html">here.</a></p>
@@ -277,66 +257,80 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Lesson 4 : Sharing streams between python processes</a><ul>
-<li><a class="reference internal" href="#server-side">Server side</a></li>
-<li><a class="reference internal" href="#client-side-api-level-2">Client side: API level 2</a></li>
-<li><a class="reference internal" href="#client-side-opencv">Client side: openCV</a></li>
-<li><a class="reference internal" href="#client-side-api-level-1">Client side: API level 1</a></li>
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core">valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples">valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues">Issue Tracker</a></li>
+  <li><a href="http://www.dasys.fi">Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-tutorial">Using the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distributing.html">Distributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="lesson_3.html"
-                        title="previous chapter">Lesson 3 : Streaming to the X-window system</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="lesson_5.html"
-                        title="next chapter">Lesson 5 : Transmitting stream</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/lesson_4.txt"
+      <li><a href="_sources/lesson_4.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="lesson_5.html" title="Lesson 5 : Transmitting stream"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="lesson_3.html" title="Lesson 3 : Streaming to the X-window system"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="tutorial.html" >Tutorial</a> &raquo;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/lesson_4.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &copy; Copyright 2017 Sampsa Riikonen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
-    </div>
+
+    
+
+    
   </body>
 </html>

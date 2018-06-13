@@ -1,50 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Lesson 1 : Receiving frames from an IP camera &mdash; valkka_examples  documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <title>Lesson 1 : Receiving frames from an IP camera &#8212; valkka_examples  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="valkka_examples  documentation" href="index.html" />
-    <link rel="up" title="Tutorial" href="tutorial.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 2 : Decoding" href="lesson_2.html" />
-    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="lesson_2.html" title="Lesson 2 : Decoding"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="tutorial.html" title="Tutorial"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="tutorial.html" accesskey="U">Tutorial</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Tutorial" href="tutorial.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -55,58 +35,58 @@
 <h1>Lesson 1 : Receiving frames from an IP camera<a class="headerlink" href="#lesson-1-receiving-frames-from-an-ip-camera" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="a-single-framefilter">
 <h2>A single FrameFilter<a class="headerlink" href="#a-single-framefilter" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_a.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Import the valkka level 1 API:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="k">import</span> <span class="o">*</span>
 </pre></div>
 </div>
 <p>Create a starting point for a FrameFilter chain:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">live_out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">live_out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This is the &#8220;entry point&#8221; where we receive all the frames.</p>
+<p>This is the “entry point” where we receive all the frames.</p>
 <p>InfoFrameFilter does nothing fancy - it just prints out the frames it receives.</p>
 <p>However, as you will learn during this tutorial, FrameFilters can do a lot of stuff.  You can chain them together.  They can be used to fork and copy the stream into complex graphs,  etc.</p>
 <p>Next we need a thread that feeds the frames into our FrameFilter, so we instantiate a LiveThread:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span> <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span> <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We also need a context describing the connection to an IP camera:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The first parameter defines the device type, which in this case is an IP camera using the rtsp protocol.  Note that we include the &#8220;entry point&#8221; live_out_filter.  The integer parameter &#8220;1&#8221; is the slot number - it will be discussed in detail later on in this tutorial.</p>
+<p>The first parameter defines the device type, which in this case is an IP camera using the rtsp protocol.  Note that we include the “entry point” live_out_filter.  The integer parameter “1” is the slot number - it will be discussed in detail later on in this tutorial.</p>
 <p>Finally, we can start streaming frames from the IP camera:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The output looks like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>InfoFrameFilter: live_out_filter start dump&gt;&gt;
-InfoFrameFilter: FRAME   : &lt;SetupFrame: timestamp=1525870891068 subsession_index=0 slot=1 / media_type=0 codec_id=27&gt;
-InfoFrameFilter: PAYLOAD : []
-InfoFrameFilter: timediff: 0
-InfoFrameFilter: live_out_filter &lt;&lt;end dump
-InfoFrameFilter: live_out_filter start dump&gt;&gt;
-InfoFrameFilter: FRAME   : &lt;BasicFrame: timestamp=1525870891068 subsession_index=0 slot=1 / payload size=45 / H264: slice_type=7&gt;
-InfoFrameFilter: PAYLOAD : [0 0 0 1 103 100 0 42 173 132 1 12 32 8 97 0 67 8 2 24 ]
-InfoFrameFilter: timediff: 0
-InfoFrameFilter: live_out_filter &lt;&lt;end dump
-InfoFrameFilter: live_out_filter start dump&gt;&gt;
-InfoFrameFilter: FRAME   : &lt;BasicFrame: timestamp=1525870891068 subsession_index=0 slot=1 / payload size=9 / H264: slice_type=8&gt;
-InfoFrameFilter: PAYLOAD : [0 0 0 1 104 238 49 178 27 ]
-InfoFrameFilter: timediff: -1
-InfoFrameFilter: live_out_filter &lt;&lt;end dump
-...
-...
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="n">start</span> <span class="n">dump</span><span class="o">&gt;&gt;</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">FRAME</span>   <span class="p">:</span> <span class="o">&lt;</span><span class="n">SetupFrame</span><span class="p">:</span> <span class="n">timestamp</span><span class="o">=</span><span class="mi">1525870891068</span> <span class="n">subsession_index</span><span class="o">=</span><span class="mi">0</span> <span class="n">slot</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">media_type</span><span class="o">=</span><span class="mi">0</span> <span class="n">codec_id</span><span class="o">=</span><span class="mi">27</span><span class="o">&gt;</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">PAYLOAD</span> <span class="p">:</span> <span class="p">[]</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">timediff</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="o">&lt;&lt;</span><span class="n">end</span> <span class="n">dump</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="n">start</span> <span class="n">dump</span><span class="o">&gt;&gt;</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">FRAME</span>   <span class="p">:</span> <span class="o">&lt;</span><span class="n">BasicFrame</span><span class="p">:</span> <span class="n">timestamp</span><span class="o">=</span><span class="mi">1525870891068</span> <span class="n">subsession_index</span><span class="o">=</span><span class="mi">0</span> <span class="n">slot</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">payload</span> <span class="n">size</span><span class="o">=</span><span class="mi">45</span> <span class="o">/</span> <span class="n">H264</span><span class="p">:</span> <span class="n">slice_type</span><span class="o">=</span><span class="mi">7</span><span class="o">&gt;</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">PAYLOAD</span> <span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">103</span> <span class="mi">100</span> <span class="mi">0</span> <span class="mi">42</span> <span class="mi">173</span> <span class="mi">132</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">32</span> <span class="mi">8</span> <span class="mi">97</span> <span class="mi">0</span> <span class="mi">67</span> <span class="mi">8</span> <span class="mi">2</span> <span class="mi">24</span> <span class="p">]</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">timediff</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="o">&lt;&lt;</span><span class="n">end</span> <span class="n">dump</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="n">start</span> <span class="n">dump</span><span class="o">&gt;&gt;</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">FRAME</span>   <span class="p">:</span> <span class="o">&lt;</span><span class="n">BasicFrame</span><span class="p">:</span> <span class="n">timestamp</span><span class="o">=</span><span class="mi">1525870891068</span> <span class="n">subsession_index</span><span class="o">=</span><span class="mi">0</span> <span class="n">slot</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="n">payload</span> <span class="n">size</span><span class="o">=</span><span class="mi">9</span> <span class="o">/</span> <span class="n">H264</span><span class="p">:</span> <span class="n">slice_type</span><span class="o">=</span><span class="mi">8</span><span class="o">&gt;</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">PAYLOAD</span> <span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">104</span> <span class="mi">238</span> <span class="mi">49</span> <span class="mi">178</span> <span class="mi">27</span> <span class="p">]</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">timediff</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="o">&lt;&lt;</span><span class="n">end</span> <span class="n">dump</span>
+<span class="o">...</span>
+<span class="o">...</span>
 </pre></div>
 </div>
-<p>InfoFrameFilter simply prints the frame type and first few bytes of it&#8217;s payload (if there is any).</p>
+<p>InfoFrameFilter simply prints the frame type and first few bytes of it’s payload (if there is any).</p>
 <p>The first frame we get is a setup frame.  This is a key feature of Valkka: the stream of frames that flows from source to the final sink, consists, not only of payload (say, H264 or PCMU), but of frames that are used to inform the system about the stream type, codec, etc.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -115,33 +95,33 @@ InfoFrameFilter: live_out_filter &lt;&lt;end dump
 </div>
 <div class="section" id="chaining-framefilters">
 <h2>Chaining FrameFilters<a class="headerlink" href="#chaining-framefilters" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_b.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>In the previous example, we had a thread (LiveThread), feeding a single FrameFilter (InfoFrameFilter).  The &#8220;filtergraph&#8221; for this case looks like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:live_out_filter}
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_b.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>In the previous example, we had a thread (LiveThread), feeding a single FrameFilter (InfoFrameFilter).  The “filtergraph” for this case looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">InfoFrameFilter</span><span class="p">:</span><span class="n">live_out_filter</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>In this notation, threads are marked with normal parenthesis (), and FrameFilters with curly brackets {}.  Both class and instance names are included.</p>
-<p>Next, let&#8217;s chain some FrameFilters like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>(LiveThread:livethread) --&gt; {InfoFrameFilter:live_out_filter} -&gt; {InfoFrameFilter:filter_2} -&gt; {InfoFrameFilter:filter_3}
+<p>Next, let’s chain some FrameFilters like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">InfoFrameFilter</span><span class="p">:</span><span class="n">live_out_filter</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">InfoFrameFilter</span><span class="p">:</span><span class="n">filter_2</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">InfoFrameFilter</span><span class="p">:</span><span class="n">filter_3</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>That chain can be created in python like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">filter_3</span>        <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;filter_3&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">filter_3</span>        <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;filter_3&quot;</span><span class="p">)</span>
 <span class="n">filter_2</span>        <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;filter_2&quot;</span><span class="p">,</span><span class="n">filter_3</span><span class="p">)</span>
 <span class="n">live_out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">,</span><span class="n">filter_2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that creating the filtergraph programmatically is started from the last framefilter (&#8220;filter_3&#8221;): we need to create &#8220;filter_3&#8221; first and pass it as a parameter (output target) to &#8220;filter_2&#8221;, etc.  If you get confused with this, when dealing with more complex filtergraphs, just follow this rule of thumb: when instantiating framefilters, follow the filtergraph from end-to-beginning.</p>
+<p>Note that creating the filtergraph programmatically is started from the last framefilter (“filter_3”): we need to create “filter_3” first and pass it as a parameter (output target) to “filter_2”, etc.  If you get confused with this, when dealing with more complex filtergraphs, just follow this rule of thumb: when instantiating framefilters, follow the filtergraph from end-to-beginning.</p>
 <p>The output when running the python code looks like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>InfoFrameFilter: live_out_filter start dump&gt;&gt;
-...
-InfoFrameFilter: live_out_filter &lt;&lt;end dump
-InfoFrameFilter: filter_2 start dump&gt;&gt;
-...
-InfoFrameFilter: filter_2 &lt;&lt;end dump
-InfoFrameFilter: filter_3 start dump&gt;&gt;
-...
-InfoFrameFilter: filter_3 &lt;&lt;end dump
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="n">start</span> <span class="n">dump</span><span class="o">&gt;&gt;</span>
+<span class="o">...</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">live_out_filter</span> <span class="o">&lt;&lt;</span><span class="n">end</span> <span class="n">dump</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">filter_2</span> <span class="n">start</span> <span class="n">dump</span><span class="o">&gt;&gt;</span>
+<span class="o">...</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">filter_2</span> <span class="o">&lt;&lt;</span><span class="n">end</span> <span class="n">dump</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">filter_3</span> <span class="n">start</span> <span class="n">dump</span><span class="o">&gt;&gt;</span>
+<span class="o">...</span>
+<span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">filter_3</span> <span class="o">&lt;&lt;</span><span class="n">end</span> <span class="n">dump</span>
 </pre></div>
 </div>
 <p>So, live_out_filter gets frame from livethread.  It prints out info about the frame.  Then it passes it to filter_2 that again prints information about the frame.  filter_2 passes the frame onto filter_3, etc.</p>
@@ -152,23 +132,23 @@ InfoFrameFilter: filter_3 &lt;&lt;end dump
 </div>
 <div class="section" id="forking-framefilters">
 <h2>Forking FrameFilters<a class="headerlink" href="#forking-framefilters" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_c.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_1_c.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>As a final trivial example for this lesson, we fork the FrameFilter chain into two:</p>
-<div class="highlight-python"><div class="highlight"><pre>filtergraph:
-                                                                   branch 1
-                                                                   +------------&gt; {GateFrameFilter: gate_filter}
-main branch                                                        |                 |
-(LiveThread:livethread) --&gt; {ForkFrameFilter:live_out_filter}  --&gt; |                 +--- {InfoFrameFilter: info_filter}
-                                                                   |
-                                                                   +-------------&gt; {FileFrameFilter: file_filter}
-                                                                   branch 2
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">filtergraph</span><span class="p">:</span>
+                                                                   <span class="n">branch</span> <span class="mi">1</span>
+                                                                   <span class="o">+------------&gt;</span> <span class="p">{</span><span class="n">GateFrameFilter</span><span class="p">:</span> <span class="n">gate_filter</span><span class="p">}</span>
+<span class="n">main</span> <span class="n">branch</span>                                                        <span class="o">|</span>                 <span class="o">|</span>
+<span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">ForkFrameFilter</span><span class="p">:</span><span class="n">live_out_filter</span><span class="p">}</span>  <span class="o">--&gt;</span> <span class="o">|</span>                 <span class="o">+---</span> <span class="p">{</span><span class="n">InfoFrameFilter</span><span class="p">:</span> <span class="n">info_filter</span><span class="p">}</span>
+                                                                   <span class="o">|</span>
+                                                                   <span class="o">+-------------&gt;</span> <span class="p">{</span><span class="n">FileFrameFilter</span><span class="p">:</span> <span class="n">file_filter</span><span class="p">}</span>
+                                                                   <span class="n">branch</span> <span class="mi">2</span>
 </pre></div>
 </div>
 <p>Frames are fed to a ForkFrameFilter that copies the stream into two branches.</p>
 <p>At branch 1, there is an on/off gate.  When the gate is on, the frames are passed further on to the verbose InfoFrameFilter.</p>
 <p>At branch 2, frames are written to a file</p>
 <p>The filtergraph can be implemented in python like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># branch 1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
 <span class="n">info_filter</span>     <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;info_filter&quot;</span><span class="p">)</span>
 <span class="n">gate_filter</span>     <span class="o">=</span><span class="n">GateFrameFilter</span><span class="p">(</span><span class="s2">&quot;gate_filter&quot;</span><span class="p">,</span><span class="n">info_filter</span><span class="p">)</span>
 
@@ -180,9 +160,9 @@ main branch                                                        |            
 <span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Like in the previous example, when constructing programmatically the framefilter chain, we start from the outer leafs of the tree (in this case, from &#8220;info_filter&#8221;, etc.) and move from the outer edge towards the main branch.</p>
-<p>Let&#8217;s run it like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># close the gate before streaming</span>
+<p>Like in the previous example, when constructing programmatically the framefilter chain, we start from the outer leafs of the tree (in this case, from “info_filter”, etc.) and move from the outer edge towards the main branch.</p>
+<p>Let’s run it like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># close the gate before streaming</span>
 <span class="n">gate_filter</span><span class="o">.</span><span class="n">unSet</span><span class="p">()</span>
 
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
@@ -190,24 +170,24 @@ main branch                                                        |            
 <span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;start writing to disk&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;start writing to disk&quot;</span><span class="p">)</span>
 <span class="n">file_filter</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="s2">&quot;stream.mkv&quot;</span><span class="p">)</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;let&#39;s get verbose&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;let&#39;s get verbose&quot;</span><span class="p">)</span>
 <span class="n">gate_filter</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;close file and exit&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;close file and exit&quot;</span><span class="p">)</span>
 <span class="n">file_filter</span><span class="o">.</span><span class="n">deActivate</span><span class="p">()</span>
 
 <span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Here we first close the gate, so no information about the frames is printed to the terminal.  We write the stream to the disk by calling &#8220;activate&#8221; method of the FileFrameFilter.  After 5 secs. we turn on the gate and start getting information about the frames into the screen.  Finally we close the file by calling &#8220;deActivate&#8221;.</p>
-<p>You can play the resulting &#8220;stream.mkv&#8221; with your favorite media player.</p>
+<p>Here we first close the gate, so no information about the frames is printed to the terminal.  We write the stream to the disk by calling “activate” method of the FileFrameFilter.  After 5 secs. we turn on the gate and start getting information about the frames into the screen.  Finally we close the file by calling “deActivate”.</p>
+<p>You can play the resulting “stream.mkv” with your favorite media player.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Valkka is <em>not</em> a mediaplayer that understands thousands of codecs and container formats.  Emphasis is on an internally consistent (for that a single or a few codec/container formats are enough, i.e. what we write we can also read) video management library.  At the moment only H264 video is accepted.  Container format is matroska (mkv).</p>
@@ -217,7 +197,7 @@ main branch                                                        |            
 <h2>FrameFilter reference<a class="headerlink" href="#framefilter-reference" title="Permalink to this headline">¶</a></h2>
 <p>API level 1 considered in this lesson, is nothing but cpp code wrapped to python.</p>
 <p>To see all available FrameFilters, refer to the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__filters__tag.html">cpp documentation</a>.</p>
-<p>In the cpp docs, only a small part of the member methods are wrapped and visible from python (these are marked with the &#8220;pyapi&#8221; tag)</p>
+<p>In the cpp docs, only a small part of the member methods are wrapped and visible from python (these are marked with the “pyapi” tag)</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">FrameFilter chains are nothing but callback cascades - they will block the execution of LiveThread when executing code.  At some moment, the callback chain should terminate and continue in another, independent thread.  This will be discussed in the next lesson.</p>
@@ -231,66 +211,80 @@ main branch                                                        |            
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Lesson 1 : Receiving frames from an IP camera</a><ul>
-<li><a class="reference internal" href="#a-single-framefilter">A single FrameFilter</a></li>
-<li><a class="reference internal" href="#chaining-framefilters">Chaining FrameFilters</a></li>
-<li><a class="reference internal" href="#forking-framefilters">Forking FrameFilters</a></li>
-<li><a class="reference internal" href="#framefilter-reference">FrameFilter reference</a></li>
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core">valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples">valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues">Issue Tracker</a></li>
+  <li><a href="http://www.dasys.fi">Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-tutorial">Using the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distributing.html">Distributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="tutorial.html"
-                        title="previous chapter">Tutorial</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="lesson_2.html"
-                        title="next chapter">Lesson 2 : Decoding</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/lesson_1.txt"
+      <li><a href="_sources/lesson_1.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="lesson_2.html" title="Lesson 2 : Decoding"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="tutorial.html" title="Tutorial"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="tutorial.html" >Tutorial</a> &raquo;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/lesson_1.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &copy; Copyright 2017 Sampsa Riikonen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
-    </div>
+
+    
+
+    
   </body>
 </html>

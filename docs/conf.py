@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Qt-Mongo-Forms documentation build configuration file, created by
+# valkka_examples documentation build configuration file, created by
 # sphinx-quickstart on Mon Mar 20 16:31:00 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -129,15 +129,53 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-# html_theme = 'alabaster'
-
 # """
+# html_theme_path = ["themes"]
+# html_theme = 'alabaster_'
+html_theme = 'alabaster'
+
+"""
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+        'donate.html',
+    ]
+}
+"""
+    
+html_sidebars = {
+    '**': [
+        'sidebar-intro.html', 'globaltoc.html', 'sourcelink.html',
+        'searchbox.html'
+    ]
+}
+    
+
+html_theme_options = {
+  'github_user'  : 'elsampsa',
+  'github_repo'  : 'valkka-core'
+}
+  
+# """
+
+"""
+html_theme = "classic"
+html_theme_options = {
+    "rightsidebar": "true",
+    "relbarbgcolor": "black"
+}
+"""
+
+"""
 html_theme = "classic"
 html_theme_options = {
   "rightsidebar": "true",
   "relbarbgcolor": "black"
 }
-# """
+"""
 
 # html_theme = 'haiku'
 
@@ -231,7 +269,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Qt-Mongo-Formsdoc'
+htmlhelp_basename = 'valkka_examples'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -253,7 +291,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Qt-Mongo-Forms.tex', 'Qt-Mongo-Forms Documentation',
+    (master_doc, 'valkka_examples.tex', 'valkka_examples Documentation',
      'Sampsa Riikonen', 'manual'),
 ]
 

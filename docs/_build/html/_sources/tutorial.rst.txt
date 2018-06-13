@@ -7,7 +7,7 @@ Tutorial
 Using the tutorial
 ------------------
 
-Once you have installed this package with git, the example codes of this tutorial can be run like this:
+Once you have installed **valkka-examples** with git as instructed in :ref:`here<requirements>`, the example codes of this tutorial can be run like this:
 
 ::
 
@@ -21,12 +21,12 @@ Before starting with the tutorial, you need at least:
 
 - A decent desktop/laptop linux box with Ubuntu 16 installed
 - At least 4 GB of total memory (as modern linux distros take around 2 GB out of that)
-- Valkka and its python bindings installed (instructions :ref:`here <requirements>`)
-- OpenCV installed (instructions :ref:`here <requirements>`)
+- Valkka and its python bindings installed (instructions :ref:`here<requirements>`)
+- OpenCV installed (instructions :ref:`here<requirements>`)
 - An RTSP camera connected to your router
 
   - Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market
-  - If your camera is onvif compliant, then it support RTSP and RTP
+  - If your camera is "OnVif compliant", then it support RTSP and RTP
 
 - Basic knowledge of media streaming in linux:
 

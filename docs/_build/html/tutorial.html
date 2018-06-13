@@ -1,48 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Tutorial &mdash; valkka_examples  documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <title>Tutorial &#8212; valkka_examples  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="valkka_examples  documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 1 : Receiving frames from an IP camera" href="lesson_1.html" />
-    <link rel="prev" title="The PyQt testsuite" href="testsuite.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="testsuite.html" title="The PyQt testsuite"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="The PyQt testsuite" href="testsuite.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -53,9 +35,9 @@
 <span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="using-the-tutorial">
 <h2>Using the tutorial<a class="headerlink" href="#using-the-tutorial" title="Permalink to this headline">¶</a></h2>
-<p>Once you have installed this package with git, the example codes of this tutorial can be run like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd valkka_examples/api_level_1/tutorial
-python3 lesson_1_a.py
+<p>Once you have installed <strong>valkka-examples</strong> with git as instructed in <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>, the example codes of this tutorial can be run like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">valkka_examples</span><span class="o">/</span><span class="n">api_level_1</span><span class="o">/</span><span class="n">tutorial</span>
+<span class="n">python3</span> <span class="n">lesson_1_a</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 </div>
@@ -65,15 +47,15 @@ python3 lesson_1_a.py
 <ul class="simple">
 <li>A decent desktop/laptop linux box with Ubuntu 16 installed</li>
 <li>At least 4 GB of total memory (as modern linux distros take around 2 GB out of that)</li>
-<li>Valkka and its python bindings installed (instructions <a class="reference internal" href="requirements.html#requirements"><span>here</span></a>)</li>
-<li>OpenCV installed (instructions <a class="reference internal" href="requirements.html#requirements"><span>here</span></a>)</li>
+<li>Valkka and its python bindings installed (instructions <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>)</li>
+<li>OpenCV installed (instructions <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>)</li>
 <li>An RTSP camera connected to your router<ul>
 <li>Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market</li>
-<li>If your camera is onvif compliant, then it support RTSP and RTP</li>
+<li>If your camera is “OnVif compliant”, then it support RTSP and RTP</li>
 </ul>
 </li>
 <li>Basic knowledge of media streaming in linux:<ul>
-<li>How to connect to an rtsp camera (e.g. &#8220;ffplay <a class="reference external" href="rtsp://username:passwd&#64;ip_address">rtsp://username:passwd&#64;ip_address</a>&#8221;)</li>
+<li>How to connect to an rtsp camera (e.g. “ffplay <a class="reference external" href="rtsp://username:passwd&#64;ip_address">rtsp://username:passwd&#64;ip_address</a>”)</li>
 <li>What are RTSP, SDP, etc., what is H264 and how video is streamed, etc.</li>
 </ul>
 </li>
@@ -128,64 +110,80 @@ python3 lesson_1_a.py
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Tutorial</a><ul>
-<li><a class="reference internal" href="#using-the-tutorial">Using the tutorial</a></li>
-<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li><a class="reference internal" href="#lessons">Lessons</a></li>
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core">valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples">valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues">Issue Tracker</a></li>
+  <li><a href="http://www.dasys.fi">Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-tutorial">Using the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lessons">Lessons</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distributing.html">Distributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="testsuite.html"
-                        title="previous chapter">The PyQt testsuite</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="lesson_1.html"
-                        title="next chapter">Lesson 1 : Receiving frames from an IP camera</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/tutorial.txt"
+      <li><a href="_sources/tutorial.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="lesson_1.html" title="Lesson 1 : Receiving frames from an IP camera"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="testsuite.html" title="The PyQt testsuite"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/tutorial.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &copy; Copyright 2017 Sampsa Riikonen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
-    </div>
+
+    
+
+    
   </body>
 </html>

@@ -1,0 +1,190 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Common problems &#8212; valkka_examples  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Licenses" href="license.html" />
+    <link rel="prev" title="Integrating with Qt" href="qt_notes.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="common-problems">
+<h1>Common problems<a class="headerlink" href="#common-problems" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="pitfalls">
+<span id="id1"></span><h2>Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h2>
+<p>Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, video freezes, etc.  You should consider the following issues:</p>
+<p>1. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?  Test against a reference program, say, ffplay.  Launch KSysGuard to monitor your processor usage.</p>
+<p>2. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?  The issue of pre-reserved frames and buffering time has been discussed in the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite section</span></a>.</p>
+<p>3. Disable OpenGL rendering synchronization to vertical refresh (“vsync”).</p>
+<p>On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the <em>nvidia-settings</em> program.</p>
+<p>Test if vsync is disabled with the “glxgears” command.  It should report 1000+ frames per second with vsync disabled.</p>
+<p>4. Disable OpenGL composition.</p>
+<p>In a KDE based system, go to <em>System Settings =&gt; Display and Monitor =&gt; Compositor</em> and uncheck “Enable compositor on startup”.  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.</p>
+<p>5. Is your IP camera’s time set correctly?  Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are “almost” right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..!</p>
+<p>So, either set your IP camera’s clock really off (say, 5+ mins off) or exactly to the correct time.  In the latter case, you might want to sync both your IP camera and PC to the same NTP server.</p>
+</div>
+<div class="section" id="bottlenecks">
+<h2>Bottlenecks<a class="headerlink" href="#bottlenecks" title="Permalink to this headline">¶</a></h2>
+<p>Once you ramp up the number of streams, you might start to experience some <em>real</em> performance issues.  Some typical problems include:</p>
+<p>6. Your LAN and/or the LiveThread process sending frames in bursts</p>
+<blockquote>
+<div><ul class="simple">
+<li>Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.</li>
+<li>This is very common problem when streaming over Wifi</li>
+<li>Using several LiveThread(s), instead of just one <em>might</em> help</li>
+</ul>
+</div></blockquote>
+<p>7. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long</p>
+<blockquote>
+<div><ul class="simple">
+<li>This is, of course, to be expected if all your CPU(s) are screaming 100%</li>
+<li>Assign AVThreads to certain CPU(s) to check this and monitor the CPU usage</li>
+</ul>
+</div></blockquote>
+<p>8. OpenGLThread that queues YUV frames and does the YUV =&gt; RGB interpolation on the GPU is stalling</p>
+<blockquote>
+<div><ul class="simple">
+<li>There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core’s GitHub page).</li>
+<li>Your GPU might not have enough muscle</li>
+</ul>
+</div></blockquote>
+<p>If you compile libValkka from source, there are many available debug options that can be enabled in <em>run_cmake.bash</em>.   A particularly useful one is <em>profile_timing</em>.  Enabling this debug switch allows you to trace the culprit for frame dropping to slow network, slow decoding or the OpenGL part.</p>
+<p>Some common fixes (that are frequently used in commercial video surveillance applications) for problems (6-8) include:</p>
+<ul class="simple">
+<li>Configure your cameras to a lower frame rate (say, 10 fps): this sucks.</li>
+<li>Reduce the YUV frame before sending it to GPU: we still use lots of resources for decoding.</li>
+<li>Tell AVThread to send only every n:th frame to the GPU: unnecessary decoding of all arriving frames.</li>
+<li>Tell AVThread to decode only keyframes: choppy video.</li>
+<li>The mainstream/substream scheme:<ul>
+<li>This is the best solution and it avoids problems (6-8) simultaneously</li>
+<li>If you have, say, 20 small-sized video streams in your grid, it is an exaggeration to decode full-HD video for each one of the streams.</li>
+<li>For small windows, you should switch to using a substream provided by your IP camera.  A resolution of, say, half of HD-ready might be enough.</li>
+<li>Decode and present the full-HD mainstream only when there are video windows that are large enough</li>
+</ul>
+</li>
+</ul>
+<p>Valkka provides (or will provide) API methods and FrameFilter(s) to implement each one of these strategies.</p>
+</div>
+<div class="section" id="system-tuning">
+<h2>System tuning<a class="headerlink" href="#system-tuning" title="Permalink to this headline">¶</a></h2>
+<p>Adding the following lines into <em>/etc/syscntl.conf</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vm</span><span class="o">.</span><span class="n">swappiness</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">net</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">wmem_max</span><span class="o">=</span><span class="mi">2097152</span>
+<span class="n">net</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">rmem_max</span><span class="o">=</span><span class="mi">2097152</span>
+</pre></div>
+</div>
+<p>And running</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">sysctl</span> <span class="o">-</span><span class="n">p</span>
+</pre></div>
+</div>
+<p>Turns off swap and sets maximum allowed read/write socket sizes to 2 MB.</p>
+<p>Receiving socket size can be adjusted for each live connection with the associated <em>LiveConnectionContext</em> (see the tutorial).  For an example how to do this, refer to <strong>valkka.api2.basic.BasicFilterChain</strong></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core">valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples">valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues">Issue Tracker</a></li>
+  <li><a href="http://www.dasys.fi">Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Common problems</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pitfalls">Pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bottlenecks">Bottlenecks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-tuning">System tuning</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distributing.html">Distributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pitfalls.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/pitfalls.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

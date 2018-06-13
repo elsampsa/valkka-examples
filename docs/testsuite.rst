@@ -24,39 +24,31 @@ Currently the testsuite consists of the following programs:
 ========================== ================================================================================
 File                       Explanation
 ========================== ================================================================================
-test_studio_1.py           | Live stream from several rtsp cameras
-                           | and/or from sources defined in an sdp file
+test_studio_1.py           | - Live stream from several rtsp cameras / sdp files
                            |
-test_studio_detector.py    | Like *test_studio_1.py*, but with a simple
-                           | OpenCV analyzer per stream: a movement detector
-                           | The *gold standard test* (see below)
+test_studio_detector.py    | - Like *test_studio_1.py*
+                           | - Shares video to OpenCV processes
+                           | - OpenCV processes connect to Qt signal/slot system 
                            |
-test_studio_file.py        | Read and play stream from a matroska file
-                           | You need to convert your video to h264 contained in matroska like this:
+test_studio_file.py        | - Read and play stream from a matroska file
+                           | - Only matroska contained h264 is accepted.  
+                           | - Convert your video with:
                            |
-                           | *ffmpeg -i your_video_file -c:v h264 -an outfile.mkv*
+                           |   *ffmpeg -i your_video_file -c:v h264 -an outfile.mkv*
                            |
-test_studio_multicast.py   | Recast multiple IP cams into multicast.
-                           | For reading all those recasted multicast streams
-                           | you can use scripts provided in directory *aux/*
+test_studio_multicast.py   | - Like *test_studio_1.py*
+                           | - Recast multiple IP cameras into multicast
                            |
-test_studio_rtsp.py        | Recast IP cams to unicast.  They are accessible from an on-demand RTSP server
-                           | and can be read for example with:
+test_studio_rtsp.py        | - Like *test_studio_1.py* 
+                           | - Recast IP cameras to unicast.  
+                           | - Streams are accessible from local server:
                            |
-                           | *rtsp://127.0.0.1:8554/streamN*
+                           |   *rtsp://127.0.0.1:8554/streamN*
                            |
-                           | where *N* is the number of the camera (starting from "1")
+                           |   (where *N* is the number of the camera)
 ========================== ================================================================================
 
-If the testsuites don't reproduce video on-screen as they should and before making up your mind ("*this sucks!*"), consider the following:
-
-  * Is your PC powerful enough to decode simultaneously N>4 full-hd videos?  You should test with a reference program, say, ffplay (see below)
-  * Frames being dropped?  Do you have enough pre-reserved bitmap frames on the GPU?  Is your buffering time too big? (see below)
-  * Did you disable vsync?  Launch "glxgears" from your command line.  You should get 1000+ frames per second (not 60).
-  * Did you disable OpenGL composition?  In a KDE based system, go to System Settings => Display and Monitor => Compositor => uncheck "Enable compositor on startup".  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.
-  * Launch KSysGuard and observe the processor usage.
-
-.. note:: When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh ("vsync") should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with "export vblank_mode=0".  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the "glxgears" command (in package "mesa-utils").  Glxgears should report 1000+ frames per second with vsync disabled.
+Before launching any of the testsuite programs you should be aware of the :ref:`common pitfalls<pitfalls>` of linux video streaming.
 
 test_studio_1.py
 ----------------
@@ -95,11 +87,11 @@ dec affinity stop           Bind decoding threads to cores (last core)
 replicate                   Dump each stream to screen this many times
 =========================== ==================================================
 
-As you learned from the tutorial, in Valkka, frames are pre-reserved on the GPU.  If you're planning to use 720p and 1080p cameras, reserve, say 200 frames for both.
+As you learned from the :ref:`tutorial<tutorial>`, in Valkka, frames are pre-reserved on the GPU.  If you're planning to use 720p and 1080p cameras, reserve, say 200 frames for both.
 
 Decoded frames are being queued for "msbuftime" milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you'll need and the more lag you get into your live streaming.  A nice value is 300.
 
-Replicate demonstrates how Valkka can dump the stream (that's decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode a stream more than once.
+Replicate demonstrates how Valkka can dump the stream (that's decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode streams more than once.
 
 In Valkka, all threads can be bound to a certain processor core.  Value "-1" indicates that the thread is unbound.  You can launch, say, KSysGuard in Kubuntu, to watch how the kernel bounces the threads from one processor to another.  To get rid of that, you can bind the threads for example like this:
 
@@ -163,9 +155,8 @@ Do this:
 
 This is similar to *test_studio_1.py*.  In addition to presenting the streams on-screen, the decoded frames are passed, once in a second, to OpenCV movement detectors.  When movement is detected, a signal is sent with the Qt signal/slot system to the screen.
 
-This test program is also used in the *gold stardard test*.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  One should be able to run this test with a large number of cameras for a long period of time without excessive memory consumption, or system instabilities.
+This test program is also used in the *gold standard test*.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  One should be able to run this test with a large number of cameras for a long period of time without excessive memory consumption or system instabilities.
 
-In our case, the test consists currently of running 10 full-hd (1080p) cameras for several days on a desktop with eight Intel i7-4770 cores, Xeon E3-1200 v3 integrated graphics and 16GB memory.
 
 
 

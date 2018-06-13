@@ -1,50 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Lesson 3 : Streaming to the X-window system &mdash; valkka_examples  documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <title>Lesson 3 : Streaming to the X-window system &#8212; valkka_examples  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="valkka_examples  documentation" href="index.html" />
-    <link rel="up" title="Tutorial" href="tutorial.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 4 : Sharing streams between python processes" href="lesson_4.html" />
-    <link rel="prev" title="Lesson 2 : Decoding" href="lesson_2.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="lesson_4.html" title="Lesson 4 : Sharing streams between python processes"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="lesson_2.html" title="Lesson 2 : Decoding"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="tutorial.html" accesskey="U">Tutorial</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Lesson 2 : Decoding" href="lesson_2.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -55,31 +35,31 @@
 <h1>Lesson 3 : Streaming to the X-window system<a class="headerlink" href="#lesson-3-streaming-to-the-x-window-system" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="one-camera-to-one-window">
 <h2>One camera to one window<a class="headerlink" href="#one-camera-to-one-window" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_3_a.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>Let&#8217;s consider the following filtergraph with streaming, decoding and presentation:</p>
-<div class="highlight-python"><div class="highlight"><pre>Streaming part
-(LiveThread:livethread)---+
-                          |
-Decoding part             |
-(AVThread:avthread) &lt;&lt;----+
-|
-|       Presentation part
-+---&gt;&gt; (OpenGLThread:glthread)
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_3_a.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>Let’s consider the following filtergraph with streaming, decoding and presentation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Streaming</span> <span class="n">part</span>
+<span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span><span class="o">---+</span>
+                          <span class="o">|</span>
+<span class="n">Decoding</span> <span class="n">part</span>             <span class="o">|</span>
+<span class="p">(</span><span class="n">AVThread</span><span class="p">:</span><span class="n">avthread</span><span class="p">)</span> <span class="o">&lt;&lt;----+</span>
+<span class="o">|</span>
+<span class="o">|</span>       <span class="n">Presentation</span> <span class="n">part</span>
+<span class="o">+---&gt;&gt;</span> <span class="p">(</span><span class="n">OpenGLThread</span><span class="p">:</span><span class="n">glthread</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Compared to the previous lesson, we&#8217;re continuying the filterchain from AVThread to OpenGLThread.  OpenGLThread is responsible for sending the frames to designated x windows.</p>
+<p>Compared to the previous lesson, we’re continuying the filterchain from AVThread to OpenGLThread.  OpenGLThread is responsible for sending the frames to designated x windows.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">OpenGLThread uses OpenGL texture streaming.  YUV interpolation to RGB is done on the GPU, using the shader language.</p>
 </div>
 <p>Start constructing the filterchain from end-to-beginning:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># presentation part</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># presentation part</span>
 <span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
 <span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>We requested a framefilter from the OpenGLThread.  It is passed to the AVThread:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># decoding part</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># decoding part</span>
 <span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">gl_in_filter</span><span class="p">)</span>
 <span class="n">av_in_filter</span>    <span class="o">=</span><span class="n">avthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 
@@ -87,12 +67,12 @@ Decoding part             |
 <span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Define the connection to the IP camera as usual, with <strong>slot number</strong> &#8220;1&#8221;:</p>
-<div class="highlight-python" id="connection"><div class="highlight"><pre><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
+<p>Define the connection to the IP camera as usual, with <strong>slot number</strong> “1”:</p>
+<div class="highlight-default notranslate" id="connection"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start all threads, start decoding, and register the live stream.  Starting the threads should be done in end-to-beginning order (in the same order we constructed the filterchain).</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 
@@ -104,22 +84,22 @@ Decoding part             |
 </pre></div>
 </div>
 <p>Now comes the new bit.  First, we create a new X window on the screen:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">window_id</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">window_id</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>We could also use the window id of an existing X window.</p>
-<p>Next, we create a new &#8220;render group&#8221; to the OpenGLThread.  Render group is a place where we can render bitmaps - in this case it&#8217;s just the X window.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+<p>Next, we create a new “render group” to the OpenGLThread.  Render group is a place where we can render bitmaps - in this case it’s just the X window.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We still need a &#8220;render context&#8221;.  Render context is a mapping from a frame source (in this case, the IP camera) to a certain render group (X window) on the screen:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">context_id</span><span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderContextCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">window_id</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># slot, render group, z</span>
+<p>We still need a “render context”.  Render context is a mapping from a frame source (in this case, the IP camera) to a certain render group (X window) on the screen:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">context_id</span><span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderContextCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">window_id</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># slot, render group, z</span>
 </pre></div>
 </div>
-<p>The first argument to newRenderContextCall is the <strong>slot number</strong>.  We defined the slot number for the IP camera when we used the <a class="reference internal" href="#connection"><span>LiveConnectionContext</span></a>.</p>
-<p>Now, each time a frame with slot number &#8220;1&#8221; arrives to OpenGLThread it will be rendered to render group &#8220;window_id&#8221;.</p>
+<p>The first argument to newRenderContextCall is the <strong>slot number</strong>.  We defined the slot number for the IP camera when we used the <a class="reference internal" href="#connection"><span class="std std-ref">LiveConnectionContext</span></a>.</p>
+<p>Now, each time a frame with slot number “1” arrives to OpenGLThread it will be rendered to render group “window_id”.</p>
 <p>Stream for a while, and finally, close all threads:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
@@ -129,18 +109,18 @@ Decoding part             |
 </pre></div>
 </div>
 <p>Close threads.  Stop threads in beginning-to-end order (i.e., following the filtergraph from left to right).</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>So, all nice simple from the API.</p>
-<p>However, here it is important to understand what&#8217;s going on &#8220;under-the-hood&#8221;.  Similar to AVThread, OpenGLThread manages a stack of YUV bitmap frames.  These are pre-reserved on the GPU (for details, see the <em>OpenGLFrameFifo</em> class in the cpp documentation).</p>
+<p>So, all nice and simple with the API.</p>
+<p>However, here it is important to understand what’s going on “under-the-hood”.  Similar to AVThread, OpenGLThread manages a stack of YUV bitmap frames.  These are pre-reserved on the GPU (for details, see the <em>OpenGLFrameFifo</em> class in the cpp documentation).</p>
 <p>The number of pre-reserved frames you need, depends on the buffering time used to queue the frames.</p>
 <p>You can adjust the number of pre-reserved frames for different resolutions and the buffering time like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">gl_ctx</span> <span class="o">=</span><span class="n">OpenGLFrameFifoContext</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gl_ctx</span> <span class="o">=</span><span class="n">OpenGLFrameFifoContext</span><span class="p">()</span>
 <span class="n">gl_ctx</span><span class="o">.</span><span class="n">n_720p</span>    <span class="o">=</span><span class="mi">20</span>
 <span class="n">gl_ctx</span><span class="o">.</span><span class="n">n_1080p</span>   <span class="o">=</span><span class="mi">20</span>
 <span class="n">gl_ctx</span><span class="o">.</span><span class="n">n_1440p</span>   <span class="o">=</span><span class="mi">20</span>
@@ -151,16 +131,16 @@ Decoding part             |
 </div>
 <p>Here we have reserved 20 frames for each available resolution.  A buffering time of 300 milliseconds is used.</p>
 <p>For example, if you are going to use two 720p cameras, each at 20 fps, with 300 millisecond buffering time, then you should reserve</p>
-<div class="highlight-python"><div class="highlight"><pre>2 * 20 fps * 0.3 sec = 12 frames
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">*</span> <span class="mi">20</span> <span class="n">fps</span> <span class="o">*</span> <span class="mf">0.3</span> <span class="n">sec</span> <span class="o">=</span> <span class="mi">12</span> <span class="n">frames</span>
 </pre></div>
 </div>
 <p>for 720p.  If this math is too hard for you, just reserve several hundred frames for each frame resolution (or until you run out of GPU memory).  :)</p>
 </div>
 <div class="section" id="one-camera-to-several-windows">
 <h2>One camera to several windows<a class="headerlink" href="#one-camera-to-several-windows" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_3_b.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_3_b.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Streaming the same camera to several X windows is trivial; we just need to add more render groups (aka x windows) and render contexes (mappings):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">id_list</span><span class="o">=</span><span class="p">[]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">id_list</span><span class="o">=</span><span class="p">[]</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
   <span class="n">window_id</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>
@@ -175,30 +155,30 @@ Decoding part             |
   <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">ids</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Presenting the same stream in several windows is a typical situation in video surveillance applications, where one would like to have the same stream be shown simultaneously in various &#8220;views&#8221;</p>
+<p>Presenting the same stream in several windows is a typical situation in video surveillance applications, where one would like to have the same stream be shown simultaneously in various “views”</p>
 <p>Keep in mind that here we have connected to the IP camera only once - and that the H264 stream has been decoded only once.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh (&#8220;vsync&#8221;) should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with &#8220;export vblank_mode=0&#8221;.  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the &#8220;glxgears&#8221; command (in package &#8220;mesa-utils&#8221;).  Glxgears should report 1000+ frames per second with vsync disabled.</p>
+<p class="last">When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh (“vsync”) should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the “glxgears” command (in package “mesa-utils”).  Glxgears should report 1000+ frames per second with vsync disabled.</p>
 </div>
 </div>
 <div class="section" id="decoding-multiple-streams">
 <h2>Decoding multiple streams<a class="headerlink" href="#decoding-multiple-streams" title="Permalink to this headline">¶</a></h2>
-<p id="multiple-streams"><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_3_c.py" download=""><code class="xref download docutils literal"><span class="pre">[here]</span></code></a></p>
-<p>Let&#8217;s consider decoding the H264 streams from multiple RTSP cameras.  For that, we&#8217;ll be needing several decoding AVThreads.  Let&#8217;s take another look at the filtergraph:</p>
-<div class="highlight-python"><div class="highlight"><pre>Streaming part
-(LiveThread:livethread)---+
-                          |
-Decoding part             |   [This part of the filtergraph should be replicated]
-(AVThread:avthread) &lt;&lt;----+
-|
-|       Presentation part
-+---&gt;&gt; (OpenGLThread:glthread)
+<p id="multiple-streams"><strong>Download lesson</strong> <a class="reference download internal" href="_downloads/lesson_3_c.py" download=""><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>Let’s consider decoding the H264 streams from multiple RTSP cameras.  For that, we’ll be needing several decoding AVThreads.  Let’s take another look at the filtergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Streaming</span> <span class="n">part</span>
+<span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span><span class="o">---+</span>
+                          <span class="o">|</span>
+<span class="n">Decoding</span> <span class="n">part</span>             <span class="o">|</span>   <span class="p">[</span><span class="n">This</span> <span class="n">part</span> <span class="n">of</span> <span class="n">the</span> <span class="n">filtergraph</span> <span class="n">should</span> <span class="n">be</span> <span class="n">replicated</span><span class="p">]</span>
+<span class="p">(</span><span class="n">AVThread</span><span class="p">:</span><span class="n">avthread</span><span class="p">)</span> <span class="o">&lt;&lt;----+</span>
+<span class="o">|</span>
+<span class="o">|</span>       <span class="n">Presentation</span> <span class="n">part</span>
+<span class="o">+---&gt;&gt;</span> <span class="p">(</span><span class="n">OpenGLThread</span><span class="p">:</span><span class="n">glthread</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>LiveThread and OpenGLThread can deal with several simultaneous media streams, while for decoding, we need one thread per decoder.  Take a look at the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/process_chart.html">library architecture page</a></p>
-<p>It&#8217;s a good idea to encapsulate the decoding part into its own class.  This class takes as an input, the framefilter where it writes the decoded frames and as an input, the stream rtsp address:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">LiveStream</span><span class="p">:</span>
+<p>It’s a good idea to encapsulate the decoding part into its own class.  This class takes as an input, the framefilter where it writes the decoded frames and as an input, the stream rtsp address:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LiveStream</span><span class="p">:</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gl_in_filter</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">slot</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">gl_in_filter</span> <span class="o">=</span><span class="n">gl_in_filter</span>
@@ -223,7 +203,7 @@ Decoding part             |   [This part of the filtergraph should be replicated
 </pre></div>
 </div>
 <p>Construct the filtergraph from end-to-beginning:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># presentation part</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># presentation part</span>
 <span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
 <span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 
@@ -236,12 +216,12 @@ Decoding part             |   [This part of the filtergraph should be replicated
 </pre></div>
 </div>
 <p>Instantiate LiveStreams.  This will also start the AVThreads.  Frames from the first camera are tagged with slot number 1, while frames from the second camera are tagged with slot number 2:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">stream1</span> <span class="o">=</span> <span class="n">LiveStream</span><span class="p">(</span><span class="n">gl_in_filter</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># slot 1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stream1</span> <span class="o">=</span> <span class="n">LiveStream</span><span class="p">(</span><span class="n">gl_in_filter</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># slot 1</span>
 <span class="n">stream2</span> <span class="o">=</span> <span class="n">LiveStream</span><span class="p">(</span><span class="n">gl_in_filter</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.42&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># slot 2</span>
 </pre></div>
 </div>
 <p>Register streams to LiveThread and start playing them:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">stream1</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">stream1</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">stream1</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
 
 <span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">stream2</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
@@ -249,7 +229,7 @@ Decoding part             |   [This part of the filtergraph should be replicated
 </pre></div>
 </div>
 <p>Create x windows, and map slot numbers to certain x windows:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># stream1 uses slot 1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># stream1 uses slot 1</span>
 <span class="n">window_id1</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">newRenderGroupCall</span><span class="p">(</span><span class="n">window_id1</span><span class="p">)</span>
 <span class="n">context_id1</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderContextCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">window_id1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -261,7 +241,7 @@ Decoding part             |   [This part of the filtergraph should be replicated
 </pre></div>
 </div>
 <p>Render video for a while, stop threads and exit:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id1</span><span class="p">)</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id1</span><span class="p">)</span>
@@ -275,10 +255,10 @@ Decoding part             |   [This part of the filtergraph should be replicated
 <span class="n">stream2</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>There are many ways to organize threads, render contexes (slot to x window mappings) and complex filtergraphs into classes.  It&#8217;s all quite flexible and left for the API user.</p>
+<p>There are many ways to organize threads, render contexes (slot to x window mappings) and complex filtergraphs into classes.  It’s all quite flexible and left for the API user.</p>
 <p>One could even opt for an architecture, where there is a LiveThread and OpenGLThread for each individual stream (however, this is not recommended).</p>
 <p>The level 2 API provides ready-made filtergraph classes for different purposes (similar to class LiveStream constructed here).</p>
 </div>
@@ -290,65 +270,80 @@ Decoding part             |   [This part of the filtergraph should be replicated
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Lesson 3 : Streaming to the X-window system</a><ul>
-<li><a class="reference internal" href="#one-camera-to-one-window">One camera to one window</a></li>
-<li><a class="reference internal" href="#one-camera-to-several-windows">One camera to several windows</a></li>
-<li><a class="reference internal" href="#decoding-multiple-streams">Decoding multiple streams</a></li>
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core">valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples">valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues">Issue Tracker</a></li>
+  <li><a href="http://www.dasys.fi">Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-tutorial">Using the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distributing.html">Distributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="lesson_2.html"
-                        title="previous chapter">Lesson 2 : Decoding</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="lesson_4.html"
-                        title="next chapter">Lesson 4 : Sharing streams between python processes</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/lesson_3.txt"
+      <li><a href="_sources/lesson_3.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="lesson_4.html" title="Lesson 4 : Sharing streams between python processes"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="lesson_2.html" title="Lesson 2 : Decoding"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="tutorial.html" >Tutorial</a> &raquo;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/lesson_3.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &copy; Copyright 2017 Sampsa Riikonen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
-    </div>
+
+    
+
+    
   </body>
 </html>

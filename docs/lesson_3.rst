@@ -8,7 +8,7 @@ One camera to one window
 
 .. include:: snippets/lesson_3_a.py_
 
-So, all nice simple from the API.  
+So, all nice and simple with the API.  
 
 However, here it is important to understand what's going on "under-the-hood".  Similar to AVThread, OpenGLThread manages a stack of YUV bitmap frames.  These are pre-reserved on the GPU (for details, see the *OpenGLFrameFifo* class in the cpp documentation).
 

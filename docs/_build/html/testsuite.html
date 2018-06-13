@@ -1,48 +1,30 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The PyQt testsuite &mdash; valkka_examples  documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <title>The PyQt testsuite &#8212; valkka_examples  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="valkka_examples  documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorial" href="tutorial.html" />
-    <link rel="prev" title="Installing" href="requirements.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="tutorial.html" title="Tutorial"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="requirements.html" title="Installing"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Installing" href="requirements.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -51,9 +33,9 @@
             
   <div class="section" id="the-pyqt-testsuite">
 <span id="testsuite"></span><h1>The PyQt testsuite<a class="headerlink" href="#the-pyqt-testsuite" title="Permalink to this headline">¶</a></h1>
-<p>So, you have installed valkka-core and valkka-examples as instructed <a class="reference internal" href="requirements.html#requirements"><span>here</span></a>.  The same hardware requirements apply here as in the <a class="reference internal" href="tutorial.html#tutorial"><span>tutorial</span></a>.</p>
+<p>So, you have installed valkka-core and valkka-examples as instructed <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>.  The same hardware requirements apply here as in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>.</p>
 <p>The PyQt testsuite is available at</p>
-<div class="highlight-python"><div class="highlight"><pre>valkka_examples/api_level_2/qt/
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka_examples</span><span class="o">/</span><span class="n">api_level_2</span><span class="o">/</span><span class="n">qt</span><span class="o">/</span>
 </pre></div>
 </div>
 <p>The testsuite is intended for:</p>
@@ -79,77 +61,68 @@
 <tbody valign="top">
 <tr class="row-even"><td>test_studio_1.py</td>
 <td><div class="first last line-block">
-<div class="line">Live stream from several rtsp cameras</div>
-<div class="line">and/or from sources defined in an sdp file</div>
+<div class="line">- Live stream from several rtsp cameras / sdp files</div>
 <div class="line"><br /></div>
 </div>
 </td>
 </tr>
 <tr class="row-odd"><td>test_studio_detector.py</td>
 <td><div class="first last line-block">
-<div class="line">Like <em>test_studio_1.py</em>, but with a simple</div>
-<div class="line">OpenCV analyzer per stream: a movement detector</div>
-<div class="line">The <em>gold standard test</em> (see below)</div>
+<div class="line">- Like <em>test_studio_1.py</em></div>
+<div class="line">- Shares video to OpenCV processes</div>
+<div class="line">- OpenCV processes connect to Qt signal/slot system</div>
 <div class="line"><br /></div>
 </div>
 </td>
 </tr>
 <tr class="row-even"><td>test_studio_file.py</td>
 <td><div class="first last line-block">
-<div class="line">Read and play stream from a matroska file</div>
-<div class="line">You need to convert your video to h264 contained in matroska like this:</div>
+<div class="line">- Read and play stream from a matroska file</div>
+<div class="line">- Only matroska contained h264 is accepted.</div>
+<div class="line">- Convert your video with:</div>
 <div class="line"><br /></div>
+<div class="line-block">
 <div class="line"><em>ffmpeg -i your_video_file -c:v h264 -an outfile.mkv</em></div>
 <div class="line"><br /></div>
+</div>
 </div>
 </td>
 </tr>
 <tr class="row-odd"><td>test_studio_multicast.py</td>
 <td><div class="first last line-block">
-<div class="line">Recast multiple IP cams into multicast.</div>
-<div class="line">For reading all those recasted multicast streams</div>
-<div class="line">you can use scripts provided in directory <em>aux/</em></div>
+<div class="line">- Like <em>test_studio_1.py</em></div>
+<div class="line">- Recast multiple IP cameras into multicast</div>
 <div class="line"><br /></div>
 </div>
 </td>
 </tr>
 <tr class="row-even"><td>test_studio_rtsp.py</td>
 <td><div class="first last line-block">
-<div class="line">Recast IP cams to unicast.  They are accessible from an on-demand RTSP server</div>
-<div class="line">and can be read for example with:</div>
+<div class="line">- Like <em>test_studio_1.py</em></div>
+<div class="line">- Recast IP cameras to unicast.</div>
+<div class="line">- Streams are accessible from local server:</div>
 <div class="line"><br /></div>
+<div class="line-block">
 <div class="line"><em>rtsp://127.0.0.1:8554/streamN</em></div>
 <div class="line"><br /></div>
-<div class="line">where <em>N</em> is the number of the camera (starting from &#8220;1&#8221;)</div>
+<div class="line">(where <em>N</em> is the number of the camera)</div>
+</div>
 </div>
 </td>
 </tr>
 </tbody>
 </table>
-<p>If the testsuites don&#8217;t reproduce video on-screen as they should and before making up your mind (&#8220;<em>this sucks!</em>&#8221;), consider the following:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Is your PC powerful enough to decode simultaneously N&gt;4 full-hd videos?  You should test with a reference program, say, ffplay (see below)</li>
-<li>Frames being dropped?  Do you have enough pre-reserved bitmap frames on the GPU?  Is your buffering time too big? (see below)</li>
-<li>Did you disable vsync?  Launch &#8220;glxgears&#8221; from your command line.  You should get 1000+ frames per second (not 60).</li>
-<li>Did you disable OpenGL composition?  In a KDE based system, go to System Settings =&gt; Display and Monitor =&gt; Compositor =&gt; uncheck &#8220;Enable compositor on startup&#8221;.  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.</li>
-<li>Launch KSysGuard and observe the processor usage.</li>
-</ul>
-</div></blockquote>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh (&#8220;vsync&#8221;) should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with &#8220;export vblank_mode=0&#8221;.  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the &#8220;glxgears&#8221; command (in package &#8220;mesa-utils&#8221;).  Glxgears should report 1000+ frames per second with vsync disabled.</p>
-</div>
+<p>Before launching any of the testsuite programs you should be aware of the <a class="reference internal" href="pitfalls.html#pitfalls"><span class="std std-ref">common pitfalls</span></a> of linux video streaming.</p>
 <div class="section" id="test-studio-1-py">
 <h2>test_studio_1.py<a class="headerlink" href="#test-studio-1-py" title="Permalink to this headline">¶</a></h2>
 <p>Do this:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd valkka_examples/api_level_2/qt/
-python3 test_studio_1.py
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">valkka_examples</span><span class="o">/</span><span class="n">api_level_2</span><span class="o">/</span><span class="n">qt</span><span class="o">/</span>
+<span class="n">python3</span> <span class="n">test_studio_1</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 <p>The program launches with the following menu:</p>
 <a class="reference internal image-reference" href="_images/test_config.png"><img alt="_images/test_config.png" src="_images/test_config.png" style="width: 40%;" /></a>
-<p>The field on the left is used to specify stream sources, one source per line.  For IP cameras, use &#8220;<a class="reference external" href="rtsp://">rtsp://</a>&#8221;, for sdp files, just give the filename.  In the above example, we are connecting to two rtsp IP cams.</p>
+<p>The field on the left is used to specify stream sources, one source per line.  For IP cameras, use “<a class="reference external" href="rtsp://">rtsp://</a>”, for sdp files, just give the filename.  In the above example, we are connecting to two rtsp IP cams.</p>
 <p>The fields on the right are:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -200,10 +173,10 @@ python3 test_studio_1.py
 </tr>
 </tbody>
 </table>
-<p>As you learned from the tutorial, in Valkka, frames are pre-reserved on the GPU.  If you&#8217;re planning to use 720p and 1080p cameras, reserve, say 200 frames for both.</p>
-<p>Decoded frames are being queued for &#8220;msbuftime&#8221; milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you&#8217;ll need and the more lag you get into your live streaming.  A nice value is 300.</p>
-<p>Replicate demonstrates how Valkka can dump the stream (that&#8217;s decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode a stream more than once.</p>
-<p>In Valkka, all threads can be bound to a certain processor core.  Value &#8220;-1&#8221; indicates that the thread is unbound.  You can launch, say, KSysGuard in Kubuntu, to watch how the kernel bounces the threads from one processor to another.  To get rid of that, you can bind the threads for example like this:</p>
+<p>As you learned from the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>, in Valkka, frames are pre-reserved on the GPU.  If you’re planning to use 720p and 1080p cameras, reserve, say 200 frames for both.</p>
+<p>Decoded frames are being queued for “msbuftime” milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you’ll need and the more lag you get into your live streaming.  A nice value is 300.</p>
+<p>Replicate demonstrates how Valkka can dump the stream (that’s decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode streams more than once.</p>
+<p>In Valkka, all threads can be bound to a certain processor core.  Value “-1” indicates that the thread is unbound.  You can launch, say, KSysGuard in Kubuntu, to watch how the kernel bounces the threads from one processor to another.  To get rid of that, you can bind the threads for example like this:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="79%" />
@@ -229,7 +202,7 @@ python3 test_studio_1.py
 </tr>
 </tbody>
 </table>
-<p>Now LiveThread (the thread that streams from cameras) stays at core 1, all OpenGL operations and frame presenting at core 2.  Let&#8217;s imagine you have ten decoders running, then they will placed like this:</p>
+<p>Now LiveThread (the thread that streams from cameras) stays at core 1, all OpenGL operations and frame presenting at core 2.  Let’s imagine you have ten decoders running, then they will placed like this:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="36%" />
@@ -253,14 +226,14 @@ python3 test_studio_1.py
 </tbody>
 </table>
 <p>Before starting the test suite, you can use the script</p>
-<div class="highlight-python"><div class="highlight"><pre>valkka_examples/aux/
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka_examples</span><span class="o">/</span><span class="n">aux</span><span class="o">/</span>
 
-  process_crowd.bash
+  <span class="n">process_crowd</span><span class="o">.</span><span class="n">bash</span>
 </pre></div>
 </div>
 <p>To throw all system processes into core 0.</p>
-<p>Is all this fiddling with thread affinities needed?  Not really - just use value &#8220;-1&#8221; on those fields if you think it doesn&#8217;t make any difference.</p>
-<p>It certainly doesn&#8217;t matter if you&#8217;re streaming and decoding just a few streams.  You can test how many streams your linux box is able to stream, decode and present by observing the core loads with, say, KSysGuard.  When all cores are screaming nearly 100% and smog is coming out of your pc, you&#8217;ll start to observe frame dropping.  You can test if thread affinities help.</p>
+<p>Is all this fiddling with thread affinities needed?  Not really - just use value “-1” on those fields if you think it doesn’t make any difference.</p>
+<p>It certainly doesn’t matter if you’re streaming and decoding just a few streams.  You can test how many streams your linux box is able to stream, decode and present by observing the core loads with, say, KSysGuard.  When all cores are screaming nearly 100% and smog is coming out of your pc, you’ll start to observe frame dropping.  You can test if thread affinities help.</p>
 <p>Finally, the buttons that launch the test, do the following:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -295,13 +268,12 @@ python3 test_studio_1.py
 <div class="section" id="test-studio-detector-py">
 <h2>test_studio_detector.py<a class="headerlink" href="#test-studio-detector-py" title="Permalink to this headline">¶</a></h2>
 <p>Do this:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd valkka_examples/api_level_2/qt/
-python3 test_studio_detector.py
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">valkka_examples</span><span class="o">/</span><span class="n">api_level_2</span><span class="o">/</span><span class="n">qt</span><span class="o">/</span>
+<span class="n">python3</span> <span class="n">test_studio_detector</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 <p>This is similar to <em>test_studio_1.py</em>.  In addition to presenting the streams on-screen, the decoded frames are passed, once in a second, to OpenCV movement detectors.  When movement is detected, a signal is sent with the Qt signal/slot system to the screen.</p>
-<p>This test program is also used in the <em>gold stardard test</em>.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  One should be able to run this test with a large number of cameras for a long period of time without excessive memory consumption, or system instabilities.</p>
-<p>In our case, the test consists currently of running 10 full-hd (1080p) cameras for several days on a desktop with eight Intel i7-4770 cores, Xeon E3-1200 v3 integrated graphics and 16GB memory.</p>
+<p>This test program is also used in the <em>gold standard test</em>.  Everything is here: streaming, decoding, OpenGL streaming, interface to python and even the posix shared memory and semaphores.  One should be able to run this test with a large number of cameras for a long period of time without excessive memory consumption or system instabilities.</p>
 </div>
 </div>
 
@@ -311,63 +283,79 @@ python3 test_studio_detector.py
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">The PyQt testsuite</a><ul>
-<li><a class="reference internal" href="#test-studio-1-py">test_studio_1.py</a></li>
-<li><a class="reference internal" href="#test-studio-detector-py">test_studio_detector.py</a></li>
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core">valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples">valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues">Issue Tracker</a></li>
+  <li><a href="http://www.dasys.fi">Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The PyQt testsuite</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#test-studio-1-py">test_studio_1.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-studio-detector-py">test_studio_detector.py</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distributing.html">Distributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="requirements.html"
-                        title="previous chapter">Installing</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="tutorial.html"
-                        title="next chapter">Tutorial</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/testsuite.txt"
+      <li><a href="_sources/testsuite.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="tutorial.html" title="Tutorial"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="requirements.html" title="Installing"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/testsuite.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &copy; Copyright 2017 Sampsa Riikonen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
-    </div>
+
+    
+
+    
   </body>
 </html>

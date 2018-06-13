@@ -1,40 +1,28 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Tutorial - start here &mdash; valkka_examples  documentation</title>
-    
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <title>Tutorial - start here &#8212; valkka_examples  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="valkka_examples  documentation" href="index.html" /> 
-  </head>
-  <body role="document">
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
@@ -44,7 +32,7 @@
   <span class="target" id="about"></span><div class="section" id="tutorial-start-here">
 <h1>Tutorial - start here<a class="headerlink" href="#tutorial-start-here" title="Permalink to this headline">¶</a></h1>
 <p>Well, this module does actually nothing.</p>
-<p>It&#8217;s a valkka_examples module that servers as a template for python(3) projects:</p>
+<p>It’s a valkka_examples module that servers as a template for python(3) projects:</p>
 <a class="reference internal image-reference" href="_images/skull.png"><img alt="_images/skull.png" src="_images/skull.png" style="width: 10%;" /></a>
 <p>Some features:</p>
 <blockquote>
@@ -57,8 +45,8 @@
 <div class="section" id="for-the-impatient">
 <span id="impatient"></span><h2>For the impatient<a class="headerlink" href="#for-the-impatient" title="Permalink to this headline">¶</a></h2>
 <p>To start developing your own project ASAP, do the following:</p>
-<p>Let&#8217;s assume your development python packages are in <strong>~/python3_packages</strong>.  Your pythonpath is <strong>$PYTHONPATH</strong>.  Your name is <em>Janne Jantunen</em> and you have decided to create a new package named <em>valkka_examples</em>.  Proceed like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd ~/python3_packages
+<p>Let’s assume your development python packages are in <strong>~/python3_packages</strong>.  Your pythonpath is <strong>$PYTHONPATH</strong>.  Your name is <em>Janne Jantunen</em> and you have decided to create a new package named <em>valkka_examples</em>.  Proceed like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd ~/python3_packages
 git clone https://github.com/elsampsa/valkka_examples
 mv valkka_examples valkka_examples
 cd valkka_examples
@@ -68,29 +56,29 @@ cd valkka_examples
 ln -s $PWD/valkka_examples $PYTHONPATH/
 </pre></div>
 </div>
-<p>Mod the documentation by editing .rst files in the &#8220;docs/&#8221; directory.  The idea is that you hide/delete this page (&#8220;tutorial.rst&#8221;) from your own module.</p>
+<p>Mod the documentation by editing .rst files in the “docs/” directory.  The idea is that you hide/delete this page (“tutorial.rst”) from your own module.</p>
 <p>After this you can re-compile and check the documentation with</p>
-<div class="highlight-python"><div class="highlight"><pre>cd docs
-./compile.bash
-firefox index.html
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span>
+<span class="o">./</span><span class="nb">compile</span><span class="o">.</span><span class="n">bash</span>
+<span class="n">firefox</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span>
 </pre></div>
 </div>
 <p>If you want to push your newly minted python project into a git repo, do:</p>
-<div class="highlight-python"><div class="highlight"><pre>git init
-git remote add origin https://[your-personal-git-repository]/valkka_examples.git
-git add *
-git commit -m &quot;initial commit&quot;
-git push -u origin master
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">init</span>
+<span class="n">git</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">origin</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="p">[</span><span class="n">your</span><span class="o">-</span><span class="n">personal</span><span class="o">-</span><span class="n">git</span><span class="o">-</span><span class="n">repository</span><span class="p">]</span><span class="o">/</span><span class="n">valkka_examples</span><span class="o">.</span><span class="n">git</span>
+<span class="n">git</span> <span class="n">add</span> <span class="o">*</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;initial commit&quot;</span>
+<span class="n">git</span> <span class="n">push</span> <span class="o">-</span><span class="n">u</span> <span class="n">origin</span> <span class="n">master</span>
 </pre></div>
 </div>
 <p>Things to keep in mind:</p>
 <blockquote>
 <div><ul class="simple">
-<li>The name of your package (that is also the name of your python module) should not contain &#8220;weird characters&#8221;, i.e. &#8221;.,-&#8221; etc.</li>
-<li>Remember to add git tags with (here we create tag &#8220;v1.2&#8221;)</li>
+<li>The name of your package (that is also the name of your python module) should not contain “weird characters”, i.e. “.,-” etc.</li>
+<li>Remember to add git tags with (here we create tag “v1.2”)</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>git tag v1.2 -m &quot;cool version v1.2&quot;
-git push origin --tags
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">tag</span> <span class="n">v1</span><span class="o">.</span><span class="mi">2</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;cool version v1.2&quot;</span>
+<span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="o">--</span><span class="n">tags</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -101,13 +89,13 @@ git push origin --tags
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>Keep up with your dependencies!</p>
-<p>Edit the setup.py and there, the &#8220;install_requires&#8221; field.  This way, when installing your package with pip3, depencencies are automagically resolved.  Keep them up to date also in the file <em>docs/snippets/requirements.txt</em>.</p>
+<p>Edit the setup.py and there, the “install_requires” field.  This way, when installing your package with pip3, depencencies are automagically resolved.  Keep them up to date also in the file <em>docs/snippets/requirements.txt</em>.</p>
 </div>
 <div class="section" id="files">
 <h2>Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h2>
-<p>This page has been produced with the file &#8220;docs/tutorial.rst&#8221;.  Go ahead and open it in your editor.  Open also &#8220;index.rst&#8221;.  Edit them accordingly.  Said that, let&#8217;s take a closer look at the directory structure:</p>
+<p>This page has been produced with the file “docs/tutorial.rst”.  Go ahead and open it in your editor.  Open also “index.rst”.  Edit them accordingly.  Said that, let’s take a closer look at the directory structure:</p>
 <ul>
-<li><p class="first">valkka_examples/ : This is a &#8220;scaffold&#8221; directory, a necessary evil for packaging</p>
+<li><p class="first">valkka_examples/ : This is a “scaffold” directory, a necessary evil for packaging</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="11%" />
@@ -142,7 +130,7 @@ git push origin --tags
 <td>Reinitializes the package name</td>
 </tr>
 <tr class="row-even"><td>cleanpy.bash</td>
-<td>Removes __pycache__ directories and .pyc files; Do maybe before &#8220;git add .&#8221;</td>
+<td>Removes __pycache__ directories and .pyc files; Do maybe before “git add .”</td>
 </tr>
 </tbody>
 </table>
@@ -160,7 +148,7 @@ git push origin --tags
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td>index.html</td>
-<td>Redirects to the autogenerated html [don&#8217;t touch]</td>
+<td>Redirects to the autogenerated html [don’t touch]</td>
 </tr>
 <tr class="row-even"><td>index.rst</td>
 <td>The main index start from here</td>
@@ -178,7 +166,7 @@ git push origin --tags
 <td>Copy-pastable examples for the api user</td>
 </tr>
 <tr class="row-odd"><td>submodules.rst</td>
-<td>Documentation generated automatically from source code.  Just add a new entry here for each submodule, don&#8217;t touch otherwise</td>
+<td>Documentation generated automatically from source code.  Just add a new entry here for each submodule, don’t touch otherwise</td>
 </tr>
 <tr class="row-even"><td>license.rst</td>
 <td>Copyright and License</td>
@@ -187,22 +175,22 @@ git push origin --tags
 <td>Who is the maintainer &amp; author</td>
 </tr>
 <tr class="row-even"><td>compile.bash</td>
-<td>Run this always after modifying your documents / source code [don&#8217;t edit]</td>
+<td>Run this always after modifying your documents / source code [don’t edit]</td>
 </tr>
 <tr class="row-odd"><td>clean.bash</td>
-<td>Clean autogenerated documentation [don&#8217;t edit]</td>
+<td>Clean autogenerated documentation [don’t edit]</td>
 </tr>
 <tr class="row-even"><td>conf.py</td>
-<td>Sphinx configuration file [maybe don&#8217;t edit]</td>
+<td>Sphinx configuration file [maybe don’t edit]</td>
 </tr>
 <tr class="row-odd"><td>.nojekyll</td>
-<td>Dummy file.  This is needed for the on-line documentation to work with GitHub [don&#8217;t touch]</td>
+<td>Dummy file.  This is needed for the on-line documentation to work with GitHub [don’t touch]</td>
 </tr>
 <tr class="row-even"><td>snippets/</td>
 <td>Example snippet source files and scripts for generating pages from them.  Edit also the file requirements.txt here.</td>
 </tr>
 <tr class="row-odd"><td>generated/</td>
-<td>Auto-generated documents [don&#8217;t touch]</td>
+<td>Auto-generated documents [don’t touch]</td>
 </tr>
 </tbody>
 </table>
@@ -232,45 +220,45 @@ git push origin --tags
 </table>
 </li>
 </ul>
-<p>The scaffolding &#8220;double-directory&#8221; valkka_examples/valkka_examples structure might seem inconvenient, but it is necessary for packaging.  Here is what we just did in the <a class="reference internal" href="#impatient"><span>For the impatient</span></a> section:</p>
+<p>The scaffolding “double-directory” valkka_examples/valkka_examples structure might seem inconvenient, but it is necessary for packaging.  Here is what we just did in the <a class="reference internal" href="#impatient"><span class="std std-ref">For the impatient</span></a> section:</p>
 <ul class="simple">
-<li>Keep &#8220;scaffolded&#8221; python modules in, say &#8220;~/python3_packages&#8221;</li>
+<li>Keep “scaffolded” python modules in, say “~/python3_packages”</li>
 <li>Link the python module directories to your $PYTHONPATH</li>
 </ul>
-<p>It&#8217;s time to start documenting!  Edit the files &#8220;docs/<a href="#id1"><span class="problematic" id="id2">*</span></a>.rst&#8221;.  Here are <a class="reference external" href="http://www.sphinx-doc.org/en/stable/rest.html">some nice tips</a> for using Sphinx and here <a class="reference external" href="http://www.sphinx-doc.org/en/stable/markup/inline.html">are some more</a></p>
-<p>To create and to recreate the docs (after changing the code, etc.), do (in the &#8220;docs/&#8221; directory):</p>
-<div class="highlight-python"><div class="highlight"><pre>./compile.bash
+<p>It’s time to start documenting!  Edit the files “docs/<a href="#id1"><span class="problematic" id="id2">*</span></a>.rst”.  Here are <a class="reference external" href="http://www.sphinx-doc.org/en/stable/rest.html">some nice tips</a> for using Sphinx and here <a class="reference external" href="http://www.sphinx-doc.org/en/stable/markup/inline.html">are some more</a></p>
+<p>To create and to recreate the docs (after changing the code, etc.), do (in the “docs/” directory):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="nb">compile</span><span class="o">.</span><span class="n">bash</span>
 </pre></div>
 </div>
 <p>To see your documentation, launch</p>
-<div class="highlight-python"><div class="highlight"><pre>firefox index.html
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">firefox</span> <span class="n">index</span><span class="o">.</span><span class="n">html</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="online-autodocumentation">
 <h2>Online autodocumentation<a class="headerlink" href="#online-autodocumentation" title="Permalink to this headline">¶</a></h2>
 <p><strong>Github users</strong></p>
-<p>After creating the git repo, create also a site for your project like this:  Settings =&gt; GitHub pages =&gt; Source : master branch / docs folder =&gt; press Save.  Now your documentation is online in github! (don&#8217;t forget to include the &#8220;docs/&#8221; folder into git).</p>
+<p>After creating the git repo, create also a site for your project like this:  Settings =&gt; GitHub pages =&gt; Source : master branch / docs folder =&gt; press Save.  Now your documentation is online in github! (don’t forget to include the “docs/” folder into git).</p>
 <p><strong>Gitlab users</strong></p>
 <p>Using a generic service that uses a gitlab server?  No problem.  There is a simple hack to put the autodocs online.</p>
 <blockquote>
 <div><ul class="simple">
-<li>In gitlab, create a wiki page for your project.  Write there the words &#8220;Hello world&#8221;.  Next, clone the wiki repository (not <em>the</em> repository, just the <em>wiki repository</em>) with that button on the right that says &#8220;clone repository&#8221;.</li>
-<li>Edit your projects &#8220;docs/compile.bash&#8221;.  Uncomment the options for Gitlab and set the directory of your wiki repository correctly.  Run &#8221;./compile.bash&#8221;.  Now the whole documentation tree has been copied to your wiki repo directory.</li>
-<li>In the wiki repo directory, open &#8220;home.md&#8221; in an editor.  Modify it to look like this:</li>
+<li>In gitlab, create a wiki page for your project.  Write there the words “Hello world”.  Next, clone the wiki repository (not <em>the</em> repository, just the <em>wiki repository</em>) with that button on the right that says “clone repository”.</li>
+<li>Edit your projects “docs/compile.bash”.  Uncomment the options for Gitlab and set the directory of your wiki repository correctly.  Run “./compile.bash”.  Now the whole documentation tree has been copied to your wiki repo directory.</li>
+<li>In the wiki repo directory, open “home.md” in an editor.  Modify it to look like this:</li>
 </ul>
-<div class="highlight-python"><div class="highlight"><pre>For documentation
-[click here](_build/html/index.html)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">For</span> <span class="n">documentation</span>
+<span class="p">[</span><span class="n">click</span> <span class="n">here</span><span class="p">](</span><span class="n">_build</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li>You still need to use git to add and push all the files to the wiki repository online (there are instructions in &#8220;compile.bash&#8221;)</li>
+<li>You still need to use git to add and push all the files to the wiki repository online (there are instructions in “compile.bash”)</li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="organizing-large-python-projects">
 <h2>Organizing large python projects<a class="headerlink" href="#organizing-large-python-projects" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s say we have a python project that consists of &#8220;entities&#8221; and those consist of submodules.  Imagine a web-service of some sort with frontend, backend and some machine_learning behind them:</p>
+<p>Let’s say we have a python project that consists of “entities” and those consist of submodules.  Imagine a web-service of some sort with frontend, backend and some machine_learning behind them:</p>
 <dl class="docutils">
 <dt><strong>macro_project</strong></dt>
 <dd><dl class="first last docutils">
@@ -302,7 +290,7 @@ git push origin --tags
 <blockquote>
 <div><ul class="simple">
 <li>Keep everything in the same repository.  Avoid defining API interfaces.  Everybody can access all code.</li>
-<li>We have all done this and it&#8217;s not a good idea..</li>
+<li>We have all done this and it’s not a good idea..</li>
 </ul>
 </div></blockquote>
 <ol class="arabic simple" start="2">
@@ -317,7 +305,7 @@ git push origin --tags
 </li>
 <li>Production<ul>
 <li>You can use pip(3) to install and update the packages directly from the git repository - convenient if the development/production cycle is fast</li>
-<li>When installed with pip(3) there is no fiddling with paths and symlinks, it just works (if you&#8217;re interested in details, pip(3) installs it under &#8220;~/.local/lib&#8221;)</li>
+<li>When installed with pip(3) there is no fiddling with paths and symlinks, it just works (if you’re interested in details, pip(3) installs it under “~/.local/lib”)</li>
 </ul>
 </li>
 <li>See how this is managed in the <span class="xref std std-ref">Getting started</span> section</li>
@@ -326,7 +314,7 @@ git push origin --tags
 </div>
 <div class="section" id="code-organization">
 <h2>Code Organization<a class="headerlink" href="#code-organization" title="Permalink to this headline">¶</a></h2>
-<p>So, let&#8217;s get back to this tutorial.  This is a module that has a single submodule called &#8220;greeters&#8221; that is organized as follows:</p>
+<p>So, let’s get back to this tutorial.  This is a module that has a single submodule called “greeters” that is organized as follows:</p>
 <dl class="docutils">
 <dt>greeters</dt>
 <dd><div class="first last line-block">
@@ -336,84 +324,84 @@ git push origin --tags
 </div>
 </dd>
 </dl>
-<p>The idea is that &#8220;base.py&#8221; has some base class definitions that are used bu &#8220;fancy.py&#8221; to create derived classes.  __init__.py has been tweaked so that user can import with</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka_examples.greeters</span> <span class="kn">import</span> <span class="n">UberFancyHelloWorld</span>
+<p>The idea is that “base.py” has some base class definitions that are used bu “fancy.py” to create derived classes.  __init__.py has been tweaked so that user can import with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka_examples.greeters</span> <span class="k">import</span> <span class="n">UberFancyHelloWorld</span>
 </pre></div>
 </div>
 <p>instead of the cumbersome</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">valkka_examples.fancy.greeters</span> <span class="kn">import</span> <span class="n">UberFancyHelloWorld</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka_examples.fancy.greeters</span> <span class="k">import</span> <span class="n">UberFancyHelloWorld</span>
 </pre></div>
 </div>
 <p>(also, the api user should not be bothered with the internal inheritance, etc.)</p>
-<p>So, I suggest you open in your editor all files of the &#8220;greeters&#8221; submodule and study them a bit.</p>
+<p>So, I suggest you open in your editor all files of the “greeters” submodule and study them a bit.</p>
 </div>
 <div class="section" id="quick-testing">
 <h2>Quick testing<a class="headerlink" href="#quick-testing" title="Permalink to this headline">¶</a></h2>
-<p>Each module file under &#8220;greeters&#8221; works also as a stand-alone test.  Go to the &#8220;greeters&#8221; directory and try (either ipython or ipython3):</p>
-<div class="highlight-python"><div class="highlight"><pre>ipython3
-%run fancy.py
+<p>Each module file under “greeters” works also as a stand-alone test.  Go to the “greeters” directory and try (either ipython or ipython3):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ipython3</span>
+<span class="o">%</span><span class="n">run</span> <span class="n">fancy</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 <p>Or just (either python or python3):</p>
-<div class="highlight-python"><div class="highlight"><pre>python3 fancy.py
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">fancy</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-<p>This is not proper testing, though.  It&#8217;s quick&#8217;n&#8217;dirty testing during development.  Separate testing programs for systematic testing are a good idea to include in your module package.</p>
+<p>This is not proper testing, though.  It’s quick’n’dirty testing during development.  Separate testing programs for systematic testing are a good idea to include in your module package.</p>
 </div>
 <div class="section" id="packaging">
 <h2>Packaging<a class="headerlink" href="#packaging" title="Permalink to this headline">¶</a></h2>
 <p>If you have done everything as instructed here, creating a distributable python package can be done as follows:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd ~/python3_packages/valkka_examples
-python3 setup.py sdist
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">python3_packages</span><span class="o">/</span><span class="n">valkka_examples</span>
+<span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">sdist</span>
 </pre></div>
 </div>
-<p>Your distributable python package is now in directory &#8220;dist/&#8221;.  You can install it with:</p>
-<div class="highlight-python"><div class="highlight"><pre>pip3 install --upgrade dist/valkka_examples-version.tar.gz
+<p>Your distributable python package is now in directory “dist/”.  You can install it with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">dist</span><span class="o">/</span><span class="n">valkka_examples</span><span class="o">-</span><span class="n">version</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 </pre></div>
 </div>
-<p>The setup.py script automatically finds and includes python packages to the distribution package.  In &#8220;MANIFEST.in&#8221; we also tell it to include the complete &#8220;docs/&#8221; directory and an auxiliary file from the &#8220;greeters&#8221; submodule.  See &#8220;setup.py&#8221; for more instructions.</p>
+<p>The setup.py script automatically finds and includes python packages to the distribution package.  In “MANIFEST.in” we also tell it to include the complete “docs/” directory and an auxiliary file from the “greeters” submodule.  See “setup.py” for more instructions.</p>
 <p>Polish your setup script with the following cycle:</p>
-<div class="highlight-python"><div class="highlight"><pre>rm dist/*
-python3 setup.py sdist
-pip3 install --upgrade --verbose dist/valkka_examples-version.tar.gz
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rm</span> <span class="n">dist</span><span class="o">/*</span>
+<span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">sdist</span>
+<span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="o">--</span><span class="n">verbose</span> <span class="n">dist</span><span class="o">/</span><span class="n">valkka_examples</span><span class="o">-</span><span class="n">version</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 </pre></div>
 </div>
 <p>The verbose option is nice to see any problems, with say, your post-installing script defined in setup.py.  Once you have got rid of all the errors, you can be sure that it works also when people install your python package directly from git using pip(3).</p>
 <p>When testing the pip(3) installation directly from git, use virtualenv to see that you got the dependencies right.  First, create a virtualenv:</p>
-<div class="highlight-python"><div class="highlight"><pre>virtualenv --no-site-packages -p python3 test
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">virtualenv</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span> <span class="o">-</span><span class="n">p</span> <span class="n">python3</span> <span class="n">test</span>
 </pre></div>
 </div>
-<p>Then let&#8217;s use that virtualenv (we clean up PYTHONPATH so that this is truly an isolated installation) to test your production system:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd test
-source bin/activate
-export PYTHONPATH=
-pip3 install --upgrade git+git://[your-personal-git-repository]/valkka_examples
+<p>Then let’s use that virtualenv (we clean up PYTHONPATH so that this is truly an isolated installation) to test your production system:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">test</span>
+<span class="n">source</span> <span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">export</span> <span class="n">PYTHONPATH</span><span class="o">=</span>
+<span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">git</span><span class="o">+</span><span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="p">[</span><span class="n">your</span><span class="o">-</span><span class="n">personal</span><span class="o">-</span><span class="n">git</span><span class="o">-</span><span class="n">repository</span><span class="p">]</span><span class="o">/</span><span class="n">valkka_examples</span>
 </pre></div>
 </div>
 <p>See <span class="xref std std-ref">here</span> how the end-user would be using your python module directly from git.</p>
 <p>To exit from virtualenv, use:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">deactivate</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">deactivate</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<p>If you are creating big-time examples of how to use your module, the best idea is to create a separate repository for them, in this case it would be called &#8220;valkka_examples_examples&#8221;.</p>
-<p>For a bit smaller example project you might opt for an examples submodule, i.e. for &#8220;valkka_examples.examples&#8221;</p>
+<p>If you are creating big-time examples of how to use your module, the best idea is to create a separate repository for them, in this case it would be called “valkka_examples_examples”.</p>
+<p>For a bit smaller example project you might opt for an examples submodule, i.e. for “valkka_examples.examples”</p>
 <p>Here we are considering example <em>snippets</em>, i.e. small and compact example programs to get the api user exited.  Here is an example:</p>
-<p>The following python code can be downloaded from <code class="xref download docutils literal"><span class="pre">[here]</span></code></p>
-<p>Check out directory &#8220;docs/snippets/&#8221;.  It serves as a collection for small example programs.  Open and edit &#8220;form_snippets.bash&#8221; there.  You can then run it.  Remember to recompile the documentation once you&#8217;ve run that script.</p>
+<p>The following python code can be downloaded from <code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></p>
+<p>Check out directory “docs/snippets/”.  It serves as a collection for small example programs.  Open and edit “form_snippets.bash” there.  You can then run it.  Remember to recompile the documentation once you’ve run that script.</p>
 </div>
 <div class="section" id="miscellaneous">
 <h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Check out in the source code, how I init and check a large number of parameters in the constructor</li>
-<li>It is also a good idea to add &#8220;exceptions.py&#8221; under &#8220;greeters&#8221;.  This way you can quickly see what custom exceptions must be handled.</li>
+<li>It is also a good idea to add “exceptions.py” under “greeters”.  This way you can quickly see what custom exceptions must be handled.</li>
 </ul>
 </div>
 <div class="section" id="internal-links">
 <h2>Internal links<a class="headerlink" href="#internal-links" title="Permalink to this headline">¶</a></h2>
-<p>Remember that reference we did up there?  Here is a <a class="reference internal" href="intro.html#intro"><span>link</span></a> to it.</p>
+<p>Remember that reference we did up there?  Here is a <a class="reference internal" href="intro.html#intro"><span class="std std-ref">link</span></a> to it.</p>
 </div>
 </div>
 
@@ -423,60 +411,75 @@ pip3 install --upgrade git+git://[your-personal-git-repository]/valkka_examples
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Tutorial - start here</a><ul>
-<li><a class="reference internal" href="#for-the-impatient">For the impatient</a></li>
-<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
-<li><a class="reference internal" href="#files">Files</a></li>
-<li><a class="reference internal" href="#online-autodocumentation">Online autodocumentation</a></li>
-<li><a class="reference internal" href="#organizing-large-python-projects">Organizing large python projects</a></li>
-<li><a class="reference internal" href="#code-organization">Code Organization</a></li>
-<li><a class="reference internal" href="#quick-testing">Quick testing</a></li>
-<li><a class="reference internal" href="#packaging">Packaging</a></li>
-<li><a class="reference internal" href="#examples">Examples</a></li>
-<li><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
-<li><a class="reference internal" href="#internal-links">Internal links</a></li>
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large"
+    allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core">valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples">valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues">Issue Tracker</a></li>
+  <li><a href="http://www.dasys.fi">Dasys Ltd.</a></li>
 </ul>
-</li>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distributing.html">Distributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/tutorial_temp.txt"
+      <li><a href="_sources/tutorial_temp.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">valkka_examples  documentation</a> &raquo;</li> 
-      </ul>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/tutorial_temp.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
-    <div class="footer" role="contentinfo">
-        &copy; Copyright 2017 Sampsa Riikonen.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.6.
-    </div>
+
+    
+
+    
   </body>
 </html>
