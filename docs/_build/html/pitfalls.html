@@ -36,35 +36,39 @@
 <div class="section" id="pitfalls">
 <span id="id1"></span><h2>Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h2>
 <p>Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, video freezes, etc.  You should consider the following issues:</p>
-<p>1. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?  Test against a reference program, say, ffplay.  Launch KSysGuard to monitor your processor usage.</p>
-<p>2. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?  The issue of pre-reserved frames and buffering time has been discussed in the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite section</span></a>.</p>
-<p>3. Disable OpenGL rendering synchronization to vertical refresh (“vsync”).</p>
+<p><strong>1. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?</strong></p>
+<p>Test against a reference program, say, ffplay.  Launch KSysGuard to monitor your processor usage.</p>
+<p><strong>2. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?</strong></p>
+<p>The issue of pre-reserved frames and buffering time has been discussed in the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite section</span></a>.</p>
+<p><strong>3. Disable OpenGL rendering synchronization to vertical refresh (“vsync”).</strong></p>
 <p>On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the <em>nvidia-settings</em> program.</p>
 <p>Test if vsync is disabled with the “glxgears” command.  It should report 1000+ frames per second with vsync disabled.</p>
-<p>4. Disable OpenGL composition.</p>
+<p><strong>4. Disable OpenGL composition.</strong></p>
 <p>In a KDE based system, go to <em>System Settings =&gt; Display and Monitor =&gt; Compositor</em> and uncheck “Enable compositor on startup”.  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.</p>
-<p>5. Is your IP camera’s time set correctly?  Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are “almost” right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..!</p>
+<p><strong>5. Is your IP camera’s time set correctly?</strong></p>
+<p>Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are “almost” right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..!</p>
 <p>So, either set your IP camera’s clock really off (say, 5+ mins off) or exactly to the correct time.  In the latter case, you might want to sync both your IP camera and PC to the same NTP server.</p>
 </div>
 <div class="section" id="bottlenecks">
 <h2>Bottlenecks<a class="headerlink" href="#bottlenecks" title="Permalink to this headline">¶</a></h2>
 <p>Once you ramp up the number of streams, you might start to experience some <em>real</em> performance issues.  Some typical problems include:</p>
-<p>6. Your LAN and/or the LiveThread process sending frames in bursts</p>
+<p><strong>6. Your LAN and/or the LiveThread process sending frames in bursts</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li>Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.</li>
 <li>This is very common problem when streaming over Wifi</li>
 <li>Using several LiveThread(s), instead of just one <em>might</em> help</li>
+<li>If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and NIC ? (see “System tuning” below)</li>
 </ul>
 </div></blockquote>
-<p>7. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long</p>
+<p><strong>7. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li>This is, of course, to be expected if all your CPU(s) are screaming 100%</li>
 <li>Assign AVThreads to certain CPU(s) to check this and monitor the CPU usage</li>
 </ul>
 </div></blockquote>
-<p>8. OpenGLThread that queues YUV frames and does the YUV =&gt; RGB interpolation on the GPU is stalling</p>
+<p><strong>8. OpenGLThread that queues YUV frames and does the YUV =&gt; RGB interpolation on the GPU is stalling</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li>There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core’s GitHub page).</li>
@@ -152,13 +156,6 @@
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/pitfalls.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

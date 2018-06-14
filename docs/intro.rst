@@ -10,9 +10,11 @@
 .. So, lets start writing the documentation
 .. Title fonts are written like this:
 
+
 About Valkka
 ============
 
+  
 Why this library?
 -----------------
 
@@ -81,4 +83,16 @@ We'd like to see the following features in the first beta release, coming online
 - Support for sound
 - An ultralight OnVif client library, based on `Zeep <http://docs.python-zeep.org/en/master/>`_
 
+
+Valkka is based on the following opensource libraries and technologies:
+
+.. https://stackoverflow.com/questions/13497561/put-spacing-between-divs-in-a-horizontal-row
+
+.. raw:: html
+
+    <div style="overflow: hidden; position: relative;">
+    <div style="float: left; margin: 5%"><a href="http://www.live555.com/"> <img class="logo" height=100 src="_static/svg/live.svg.png"> </a> </div>
+    <div style="float: left; margin: 5%"><a href="https://ffmpeg.org"> <img class="logo" height=100 src="_static/svg/ffmpeg.svg.png"> </a> </div>
+    <div style="float: left; margin: 5%"><a href="https://www.opengl.org/"> <img class="logo" height=100 src="_static/svg/opengl.svg.png"> </a> </div>
+    </div>
 

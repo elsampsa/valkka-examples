@@ -9,21 +9,27 @@ Pitfalls
 
 Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, video freezes, etc.  You should consider the following issues:
 
-1\. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?  Test against a reference program, say, ffplay.  Launch KSysGuard to monitor your processor usage.
+**1\. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?**  
 
-2\. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?  The issue of pre-reserved frames and buffering time has been discussed in the :ref:`PyQt testsuite section <testsuite>`.
+Test against a reference program, say, ffplay.  Launch KSysGuard to monitor your processor usage.
 
-3\. Disable OpenGL rendering synchronization to vertical refresh ("vsync").  
+**2\. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?**  
+
+The issue of pre-reserved frames and buffering time has been discussed in the :ref:`PyQt testsuite section <testsuite>`.
+
+**3\. Disable OpenGL rendering synchronization to vertical refresh ("vsync").**
 
 On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with "export vblank_mode=0".  With nvidia proprietary drivers, use the *nvidia-settings* program.  
   
 Test if vsync is disabled with the "glxgears" command.  It should report 1000+ frames per second with vsync disabled.
 
-4\. Disable OpenGL composition.  
+**4\. Disable OpenGL composition.**
 
 In a KDE based system, go to *System Settings => Display and Monitor => Compositor* and uncheck "Enable compositor on startup".  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.
 
-5\. Is your IP camera's time set correctly?  Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are "almost" right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..! 
+**5\. Is your IP camera's time set correctly?**  
+
+Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are "almost" right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..! 
 
 So, either set your IP camera's clock really off (say, 5+ mins off) or exactly to the correct time.  In the latter case, you might want to sync both your IP camera and PC to the same NTP server.
 
@@ -34,18 +40,19 @@ Bottlenecks
 Once you ramp up the number of streams, you might start to experience some *real* performance issues.  Some typical problems include:
 
 
-6\. Your LAN and/or the LiveThread process sending frames in bursts
+**6\. Your LAN and/or the LiveThread process sending frames in bursts**
   
   - Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.
   - This is very common problem when streaming over Wifi
   - Using several LiveThread(s), instead of just one *might* help
+  - If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and NIC ? (see "System tuning" below)
   
-7\. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long
+**7\. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long**
 
   - This is, of course, to be expected if all your CPU(s) are screaming 100%
   - Assign AVThreads to certain CPU(s) to check this and monitor the CPU usage
 
-8\. OpenGLThread that queues YUV frames and does the YUV => RGB interpolation on the GPU is stalling
+**8\. OpenGLThread that queues YUV frames and does the YUV => RGB interpolation on the GPU is stalling**
 
   - There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core's GitHub page).
   - Your GPU might not have enough muscle

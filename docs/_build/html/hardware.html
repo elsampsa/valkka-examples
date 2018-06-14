@@ -33,12 +33,22 @@
             
   <div class="section" id="supported-hardware">
 <h1>Supported hardware<a class="headerlink" href="#supported-hardware" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="cameras">
+<h2>Cameras<a class="headerlink" href="#cameras" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>You need an OnVif compliant cameras (supporting the RTSP protocol)</li>
+<li>For the moment, the only codec supported is H264</li>
+</ul>
+</div>
+<div class="section" id="linux-clients">
+<h2>Linux clients<a class="headerlink" href="#linux-clients" title="Permalink to this headline">¶</a></h2>
 <p>libValkka uses OpenGL and OpenGL texture streaming.   The library needs a robust OpenGL implementation.  As of <strong>Ubuntu 16.04 LTS</strong>, the working graphics drivers are:</p>
 <ul class="simple">
 <li>Intel: the stock <strong>i915</strong> driver works nicely</li>
 <li>Nvidia: use <strong>nvidia</strong> proprietary driver (instead of <strong>noveau</strong>)</li>
 <li>ATI: <strong>not tested</strong></li>
 </ul>
+</div>
 </div>
 
 
@@ -71,7 +81,11 @@
 <h3><a href="index.html">Table Of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Supported hardware</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Supported hardware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cameras">Cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linux-clients">Linux clients</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
@@ -83,13 +97,6 @@
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/hardware.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <div class="searchformwrapper">

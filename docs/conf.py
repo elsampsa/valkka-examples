@@ -148,8 +148,9 @@ html_sidebars = {
     
 html_sidebars = {
     '**': [
-        'sidebar-intro.html', 'globaltoc.html', 'sourcelink.html',
+        'sidebar-intro.html', 'globaltoc.html', # 'sourcelink.html',
         'searchbox.html'
+        # 'sidebar-bottom.html',
     ]
 }
     
