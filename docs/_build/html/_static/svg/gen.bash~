@@ -1,0 +1,6 @@
+#!/bin/bash
+files="*.svg"
+for f in $files
+do
+    convert $f -resize 500x250^ $f.png
+done
