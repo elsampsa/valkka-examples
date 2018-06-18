@@ -35,40 +35,43 @@
 <h1>Common problems<a class="headerlink" href="#common-problems" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="pitfalls">
 <span id="id1"></span><h2>Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h2>
-<p>Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, video freezes, etc.  You should consider the following issues:</p>
-<p><strong>1. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?</strong></p>
-<p>Test against a reference program, say, ffplay.  Launch KSysGuard to monitor your processor usage.</p>
-<p><strong>2. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?</strong></p>
+<p>Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, stuttering, video freezes, etc.  You should consider the following issues:</p>
+<p><strong>1. Are you using sub-standard cameras?</strong></p>
+<p>All IP cameras are nowadays manufactured in China.  While the hardware is good and the image quality impressive, the rtsp server and/or timestamping of the cameras is often buggy.  It’s like HTC and Samsung mobile phones: they’re good, but thwarted by the software.</p>
+<p>Expect problems when maintaining several connections to the same camera, or when re-connecting several times to the same camera.</p>
+<p>Before blaming us, <em>generate the same situation with a reference program</em>, say with ffplay, and see if it works or not.  The <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a> offers nice tools for benchmarking agains ffplay and vlc.</p>
+<p><strong>2. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?</strong></p>
+<p><em>Test against a reference program</em> (ffplay).  Launch KSysGuard to monitor your processor usage.</p>
+<p><strong>3. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?</strong></p>
 <p>The issue of pre-reserved frames and buffering time has been discussed in the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite section</span></a>.</p>
-<p><strong>3. Disable OpenGL rendering synchronization to vertical refresh (“vsync”).</strong></p>
+<p><strong>4. Disable OpenGL rendering synchronization to vertical refresh (“vsync”).</strong></p>
 <p>On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the <em>nvidia-settings</em> program.</p>
 <p>Test if vsync is disabled with the “glxgears” command.  It should report 1000+ frames per second with vsync disabled.</p>
-<p><strong>4. Disable OpenGL composition.</strong></p>
+<p><strong>5. Disable OpenGL composition.</strong></p>
 <p>In a KDE based system, go to <em>System Settings =&gt; Display and Monitor =&gt; Compositor</em> and uncheck “Enable compositor on startup”.  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.</p>
-<p><strong>5. Is your IP camera’s time set correctly?</strong></p>
+<p><strong>6. Is your IP camera’s time set correctly?</strong></p>
 <p>Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are “almost” right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..!</p>
 <p>So, either set your IP camera’s clock really off (say, 5+ mins off) or exactly to the correct time.  In the latter case, you might want to sync both your IP camera and PC to the same NTP server.</p>
 </div>
 <div class="section" id="bottlenecks">
 <h2>Bottlenecks<a class="headerlink" href="#bottlenecks" title="Permalink to this headline">¶</a></h2>
 <p>Once you ramp up the number of streams, you might start to experience some <em>real</em> performance issues.  Some typical problems include:</p>
-<p><strong>6. Your LAN and/or the LiveThread process sending frames in bursts</strong></p>
+<p><strong>7. Your LAN and/or the LiveThread process sending frames in bursts</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li>Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.</li>
 <li>This is very common problem when streaming over Wifi</li>
-<li>Using several LiveThread(s), instead of just one <em>might</em> help</li>
 <li>If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and NIC ? (see “System tuning” below)</li>
 </ul>
 </div></blockquote>
-<p><strong>7. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long</strong></p>
+<p><strong>8. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li>This is, of course, to be expected if all your CPU(s) are screaming 100%</li>
 <li>Assign AVThreads to certain CPU(s) to check this and monitor the CPU usage</li>
 </ul>
 </div></blockquote>
-<p><strong>8. OpenGLThread that queues YUV frames and does the YUV =&gt; RGB interpolation on the GPU is stalling</strong></p>
+<p><strong>9. OpenGLThread that queues YUV frames and does the YUV =&gt; RGB interpolation on the GPU is stalling</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li>There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core’s GitHub page).</li>
@@ -76,14 +79,14 @@
 </ul>
 </div></blockquote>
 <p>If you compile libValkka from source, there are many available debug options that can be enabled in <em>run_cmake.bash</em>.   A particularly useful one is <em>profile_timing</em>.  Enabling this debug switch allows you to trace the culprit for frame dropping to slow network, slow decoding or the OpenGL part.</p>
-<p>Some common fixes (that are frequently used in commercial video surveillance applications) for problems (6-8) include:</p>
+<p>Some common fixes (that are frequently used in commercial video surveillance applications) for problems (7-9) include:</p>
 <ul class="simple">
 <li>Configure your cameras to a lower frame rate (say, 10 fps): this sucks.</li>
 <li>Reduce the YUV frame before sending it to GPU: we still use lots of resources for decoding.</li>
 <li>Tell AVThread to send only every n:th frame to the GPU: unnecessary decoding of all arriving frames.</li>
 <li>Tell AVThread to decode only keyframes: choppy video.</li>
 <li>The mainstream/substream scheme:<ul>
-<li>This is the best solution and it avoids problems (6-8) simultaneously</li>
+<li>This is the best solution and it avoids problems (7-9) simultaneously</li>
 <li>If you have, say, 20 small-sized video streams in your grid, it is an exaggeration to decode full-HD video for each one of the streams.</li>
 <li>For small windows, you should switch to using a substream provided by your IP camera.  A resolution of, say, half of HD-ready might be enough.</li>
 <li>Decode and present the full-HD mainstream only when there are video windows that are large enough</li>

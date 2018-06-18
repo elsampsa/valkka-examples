@@ -61,6 +61,14 @@ Finally, here is a small sample from the tutorial.  You'll get the idea.
 The Project
 -----------
 
+In Valkka, the "streaming pipeline" from IP cameras to decoders and to the GPU has been completely re-thinked and written from scratch:
+
+- No dependencies on external libraries or x window extensions (we use only glx)
+- Everything is pre-reserved in the system memory and in the GPU.  During streaming, frames are pulled from pre-reserved stacks
+- OpenGL pixel buffer objects are used for texture video streaming (in the future, we will implement fish-eye projections)
+- Customized queueing and presentation algorithms
+- etc., etc.
+
 Valkka is in alpha stage.  Even so, you can do lot of stuff with it - at least all the things we have promised here in the intro.
 
 Repositories are organized as follows:
@@ -91,8 +99,17 @@ Valkka is based on the following opensource libraries and technologies:
 .. raw:: html
 
     <div style="overflow: hidden; position: relative;">
-    <div style="float: left; margin: 5%"><a href="http://www.live555.com/"> <img class="logo" height=100 src="_static/svg/live.svg.png"> </a> </div>
-    <div style="float: left; margin: 5%"><a href="https://ffmpeg.org"> <img class="logo" height=100 src="_static/svg/ffmpeg.svg.png"> </a> </div>
-    <div style="float: left; margin: 5%"><a href="https://www.opengl.org/"> <img class="logo" height=100 src="_static/svg/opengl.svg.png"> </a> </div>
+      <div style="float: left; margin: 5%; "><a href="http://www.live555.com/"> 
+        <img class="logo" height=100 src="_static/svg/live.svg.png"></a>
+        </br> Live555
+      </div>
+      <div style="float: left; margin: 5% "><a href="https://ffmpeg.org"> 
+        <img class="logo" height=100 src="_static/svg/ffmpeg.svg.png"></a> 
+        </br> FFmpeg Libav
+      </div>
+      <div style="float: left; margin: 5% "><a href="https://www.opengl.org/"> 
+        <img class="logo" height=100 src="_static/svg/opengl.svg.png"></a> 
+        </br> OpenGL
+      </div>
     </div>
 

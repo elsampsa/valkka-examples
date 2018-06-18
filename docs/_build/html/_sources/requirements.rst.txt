@@ -8,8 +8,9 @@ First, install some debian packages:
 
 ::
 
-  sudo apt-get install python3-pip git mesa-utils ffmpeg
+  sudo apt-get install python3-pip git mesa-utils ffmpeg vlc x-tile 
 
+(some of these will be used for benchmarking Valkka agains other programs).
 
 A Python3 package that includes pre-built binary libraries is available at the python package index (PyPI) and can be installed with:
 

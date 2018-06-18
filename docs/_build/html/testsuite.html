@@ -62,11 +62,20 @@
 <tr class="row-even"><td>test_studio_1.py</td>
 <td><div class="first last line-block">
 <div class="line">- Live stream from several rtsp cameras / sdp files</div>
+<div class="line">- Widgets are grouped together</div>
 <div class="line"><br /></div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>test_studio_detector.py</td>
+<tr class="row-odd"><td>test_studio_2.py</td>
+<td><div class="first last line-block">
+<div class="line">- Like <em>test_studio_1.py</em></div>
+<div class="line">- Floating widgets</div>
+<div class="line"><br /></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>test_studio_detector.py</td>
 <td><div class="first last line-block">
 <div class="line">- Like <em>test_studio_1.py</em></div>
 <div class="line">- Shares video to OpenCV processes</div>
@@ -75,7 +84,7 @@
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>test_studio_file.py</td>
+<tr class="row-odd"><td>test_studio_file.py</td>
 <td><div class="first last line-block">
 <div class="line">- Read and play stream from a matroska file</div>
 <div class="line">- Only matroska contained h264 is accepted.</div>
@@ -88,7 +97,7 @@
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>test_studio_multicast.py</td>
+<tr class="row-even"><td>test_studio_multicast.py</td>
 <td><div class="first last line-block">
 <div class="line">- Like <em>test_studio_1.py</em></div>
 <div class="line">- Recast multiple IP cameras into multicast</div>
@@ -96,7 +105,7 @@
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>test_studio_rtsp.py</td>
+<tr class="row-odd"><td>test_studio_rtsp.py</td>
 <td><div class="first last line-block">
 <div class="line">- Like <em>test_studio_1.py</em></div>
 <div class="line">- Recast IP cameras to unicast.</div>
@@ -112,7 +121,7 @@
 </tr>
 </tbody>
 </table>
-<p>Before launching any of the testsuite programs you should be aware of the <a class="reference internal" href="pitfalls.html#pitfalls"><span class="std std-ref">common pitfalls</span></a> of linux video streaming.</p>
+<p>Before launching any of the testsuite programs you should be aware of the <a class="reference internal" href="pitfalls.html#pitfalls"><span class="std std-ref">common problems</span></a> of linux video streaming.</p>
 <div class="section" id="test-studio-1-py">
 <h2>test_studio_1.py<a class="headerlink" href="#test-studio-1-py" title="Permalink to this headline">¶</a></h2>
 <p>Do this:</p>
@@ -121,7 +130,7 @@
 </pre></div>
 </div>
 <p>The program launches with the following menu:</p>
-<a class="reference internal image-reference" href="_images/test_config.png"><img alt="_images/test_config.png" src="_images/test_config.png" style="width: 40%;" /></a>
+<a class="reference internal image-reference" href="_images/test_config.png"><img alt="_images/test_config.png" src="_images/test_config.png" style="width: 70%;" /></a>
 <p>The field on the left is used to specify stream sources, one source per line.  For IP cameras, use “<a class="reference external" href="rtsp://">rtsp://</a>”, for sdp files, just give the filename.  In the above example, we are connecting to two rtsp IP cams.</p>
 <p>The fields on the right are:</p>
 <table border="1" class="docutils">
@@ -263,7 +272,8 @@
 </tr>
 </tbody>
 </table>
-<p>RUN(QT) is the thing you want to do.</p>
+<p><em>RUN(QT)</em> is the thing you want to do.</p>
+<p><em>FFPLAY</em> and <em>VLC</em> launch the same rtsp streams by using either ffplay or vlc.  This is a nice test to see how Valkka performs against some popular video players.  A tip: you can use “x-tile” to tile the windows created by these external programs.</p>
 </div>
 <div class="section" id="test-studio-detector-py">
 <h2>test_studio_detector.py<a class="headerlink" href="#test-studio-detector-py" title="Permalink to this headline">¶</a></h2>

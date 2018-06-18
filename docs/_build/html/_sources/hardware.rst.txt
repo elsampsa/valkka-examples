@@ -4,7 +4,7 @@ Supported hardware
 Cameras
 -------
 
-- You need an OnVif compliant cameras (supporting the RTSP protocol)
+- You need OnVif compliant camera(s) (supporting the RTSP protocol)
 - For the moment, the only codec supported is H264
 
 

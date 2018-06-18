@@ -65,6 +65,14 @@
 </div>
 <div class="section" id="the-project">
 <h2>The Project<a class="headerlink" href="#the-project" title="Permalink to this headline">¶</a></h2>
+<p>In Valkka, the “streaming pipeline” from IP cameras to decoders and to the GPU has been completely re-thinked and written from scratch:</p>
+<ul class="simple">
+<li>No dependencies on external libraries or x window extensions (we use only glx)</li>
+<li>Everything is pre-reserved in the system memory and in the GPU.  During streaming, frames are pulled from pre-reserved stacks</li>
+<li>OpenGL pixel buffer objects are used for texture video streaming (in the future, we will implement fish-eye projections)</li>
+<li>Customized queueing and presentation algorithms</li>
+<li>etc., etc.</li>
+</ul>
 <p>Valkka is in alpha stage.  Even so, you can do lot of stuff with it - at least all the things we have promised here in the intro.</p>
 <p>Repositories are organized as follows:</p>
 <p><strong>valkka-core</strong> : the cpp codebase and its python bindings are available at the <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github repository</a>.  The cpp core library is licensed under the GNU Affero General Public License.  If you need another licensing arrangement (say, LGPL), please contact us.</p>
@@ -83,9 +91,18 @@
 </ul>
 <p>Valkka is based on the following opensource libraries and technologies:</p>
 <div style="overflow: hidden; position: relative;">
-<div style="float: left; margin: 5%"><a href="http://www.live555.com/"> <img class="logo" height=100 src="_static/svg/live.svg.png"> </a> </div>
-<div style="float: left; margin: 5%"><a href="https://ffmpeg.org"> <img class="logo" height=100 src="_static/svg/ffmpeg.svg.png"> </a> </div>
-<div style="float: left; margin: 5%"><a href="https://www.opengl.org/"> <img class="logo" height=100 src="_static/svg/opengl.svg.png"> </a> </div>
+  <div style="float: left; margin: 5%; "><a href="http://www.live555.com/">
+    <img class="logo" height=100 src="_static/svg/live.svg.png"></a>
+    </br> Live555
+  </div>
+  <div style="float: left; margin: 5% "><a href="https://ffmpeg.org">
+    <img class="logo" height=100 src="_static/svg/ffmpeg.svg.png"></a>
+    </br> FFmpeg Libav
+  </div>
+  <div style="float: left; margin: 5% "><a href="https://www.opengl.org/">
+    <img class="logo" height=100 src="_static/svg/opengl.svg.png"></a>
+    </br> OpenGL
+  </div>
 </div></div>
 </div>
 

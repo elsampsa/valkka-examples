@@ -1,5 +1,5 @@
 """
-test_studio_1.py : Test live streaming with Qt
+test_studio_2.py : Test live streaming with Qt
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -9,7 +9,7 @@ This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    test_studio_1.py
+@file    test_studio_2.py
 @author  Sampsa Riikonen
 @date    2018
 @version 0.4.7 
@@ -49,6 +49,12 @@ For benchmarking purposes, you can launch the video streams with:
 This Qt test program produces a config file.  You might want to remove that config file after updating the program.
 """
 
+# TODO:
+# - video on different windows
+# - a button that sends the window to another xscreen
+# - edit that desktophandler in demo_base.py
+# https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
+
 from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 import json
@@ -57,20 +63,17 @@ import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import BasicFilterchain
 from valkka.api2.logging import *
-from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
+from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart
 
 # Local imports form this directory
-from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
+from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair, DesktopHandler
 
 pre="test_studio : " # aux string for debugging 
-
 
 valkka_xwin =True # use x windows create by Valkka and embed them into Qt
 # valkka_xwin =False # use Qt provided x windows
 
-# setValkkaLogLevel(loglevel_silent) # set all loggers to silent
-# setLogLevel_livelogger(loglevel_crazy) # set an individual loggers
-
+# setValkkaLogLevel(loglevel_silent)
 
 class MyConfigDialog(ConfigDialog):
   
@@ -81,7 +84,79 @@ class MyConfigDialog(ConfigDialog):
       "replicate"          : 1
       })
     self.plis +=["replicate"]
-    self.config_fname="test_studio_1.config" # define the config file name
+    self.config_fname="test_studio_2.config" # define the config file name
+  
+
+  
+class VideoContainer:
+  """A widget container: video window and a button that sends it to another X-Screen
+  
+  :param parent:    Parent widget (if any)
+  :param video:     The video widget
+  :param n:         Number of screens
+  """
+    
+  def __init__(self,parent,video,n=0):
+    self.n =n
+    self.main_widget=QtWidgets.QWidget(parent)
+    self.lay        =QtWidgets.QVBoxLayout(self.main_widget)
+    # self.video      =QtWidgets.QWidget(self.main_widget)
+    self.video      =video; self.video.setParent(self.main_widget)
+    self.button     =QtWidgets.QPushButton("Change Screen",self.main_widget)
+    self.lay.addWidget(self.video)
+    self.lay.addWidget(self.button)
+    
+    self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum,QtWidgets.QSizePolicy.Minimum)
+    self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
+    
+    qapp    =QtCore.QCoreApplication.instance()
+    desktop =qapp.desktop()
+    self.n  =desktop.primaryScreen()
+    
+    self.button.clicked.connect(self.cycle_slot)
+    
+    
+  def cycle_slot(self):
+    """Cycle from one X-Screen / virtual screen to another
+    """
+    
+    # this does not seem to work..
+    # https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
+    """
+    self.main_widget.show();
+    # self.main_widget.windowHandle().setScreen(qApp.screens()[1]);
+    qapp=QtCore.QCoreApplication.instance()
+    print("VideoContainer: qapp screens=",qapp.screens())
+    self.main_widget.windowHandle().setScreen(qapp.screens()[0])
+    self.main_widget.show();
+    # self.main_widget.showFullScreen();
+    """
+    
+    qapp    =QtCore.QCoreApplication.instance()
+    desktop =qapp.desktop()
+    n_max   =desktop.screenCount()
+    
+    self.n +=1
+    if (self.n>=n_max):
+      self.n=0
+    
+    geom    =desktop.screenGeometry(self.n)    
+    self.main_widget.move(QtCore.QPoint(geom.x(), geom.y()));
+    # self.main_widget.resize(geom.width(), geom.height());
+    # self.main_widget.showFullScreen();
+    
+    
+    
+  def mouseDoubleClickEvent(self,e):
+    print("double click!")
+        
+  
+  def getVideoWidget(self):
+    return self.video
+
+  
+  def getWidget(self):
+    return self.main_widget
   
  
  
@@ -92,6 +167,7 @@ class MyGui(QtWidgets.QMainWindow):
 
   def __init__(self,pardic,parent=None):
     super(MyGui, self).__init__()
+    # print(pre,"Qapp=",QtCore.QCoreApplication.instance())
     self.pardic=pardic
     self.initVars()
     self.setupUi()
@@ -106,6 +182,9 @@ class MyGui(QtWidgets.QMainWindow):
 
 
   def setupUi(self):
+    self.desktop_handler =DesktopHandler()
+    print(self.desktop_handler)
+    
     self.setGeometry(QtCore.QRect(100,100,800,800))
     self.w=QtWidgets.QWidget(self)
     self.setCentralWidget(self.w)
@@ -147,6 +226,11 @@ class MyGui(QtWidgets.QMainWindow):
     a =self.pardic["dec affinity start"]
     cw=0 # widget / window index
     cs=1 # slot / stream count
+    
+    
+    ntotal=len(self.addresses)*self.pardic["replicate"]
+    nrow  =self.pardic["videos per row"]
+    ncol  =max( (ntotal//self.pardic["videos per row"])+1, 2)
     
     for address in self.addresses:
       # now livethread and openglthread are running
@@ -192,20 +276,24 @@ class MyGui(QtWidgets.QMainWindow):
           
           if (valkka_xwin==False):
             # (2) Let Qt create the widget
-            fr =TestWidget0(self.w); win_id =int(fr.winId()) 
+            fr =TestWidget0(None); win_id =int(fr.winId()) 
           else:
             # """
             # (3) Again, let Valkka create the window, but put on top a translucent widget (that catches mouse gestures)
             win_id      =self.openglthread.createWindow(show=False)
-            widget_pair =WidgetPair(self.w,win_id,TestWidget0)
+            widget_pair =WidgetPair(None,win_id,TestWidget0)
             fr          =widget_pair.getWidget()
             self.widget_pairs.append(widget_pair)
             # """
             
-          nrow=self.pardic["videos per row"]
           print(pre,"setupUi: layout index, address : ",cw//nrow,cw%nrow,address)
-          self.lay.addWidget(fr,cw//nrow,cw%nrow)
-          self.videoframes.append(fr)
+          # self.lay.addWidget(fr,cw//nrow,cw%nrow) # floating windows instead
+          
+          container =VideoContainer(None,fr,n=0)
+          container.getWidget().setGeometry(self.desktop_handler.getGeometry(nrow,ncol,cw%nrow,cw//nrow))
+          container.getWidget().show()
+          
+          self.videoframes.append(container)
           
         token  =self.openglthread.connect(slot=cs,window_id=win_id) # present frames with slot number cs at window win_id
         tokens.append(token)
@@ -235,7 +323,6 @@ class MyGui(QtWidgets.QMainWindow):
     
   def stop_streams(self):
     pass
-
     
   def closeEvent(self,e):
     print(pre,"closeEvent!")

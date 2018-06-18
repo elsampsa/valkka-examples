@@ -24,13 +24,43 @@ import os
 pre="demo_base : "
 
 
-class TestWidget0(QtWidgets.QWidget):
+class DesktopHandler:
+  """Handle XScreens and screen dimensions
+  """
   
-  
-  def mouseDoubleClickEvent(self,e):
-        print("double click!")
+  def __init__(self):
+    self.desktop =QtWidgets.QDesktopWidget()
+    self.i       =self.desktop.primaryScreen()
+    self.rect    =self.desktop.availableGeometry(self.i)
+    self.n       =self.desktop.screenCount()
+    
+    # primary screen parameters
+    self.x       =self.rect.x()
+    self.y       =self.rect.y()
+    self.w       =self.rect.width()
+    self.h       =self.rect.height()
+    
+    
+  def getGeometry(self,i_dim,j_dim,i,j):
+    dx =self.w/i_dim
+    dy =self.h/j_dim
+    print(pre,"DesktopHandler: setGeometry:",i*dx,j*dy,dx,dy)
+    return QtCore.QRect(i*dx,j*dy,dx,dy)
+    
+    
+  def __str__(self):
+    st = "DesktopHandler: x=%i, y=%i, w=%i, h=%i, N=%i" % (self.x, self.y, self.w, self.h, self.n)
+    return st
+    
 
-  
+
+class TestWidget0(QtWidgets.QWidget):
+    
+  def mouseDoubleClickEvent(self,e):
+    print("double click!")
+
+
+
 def getForeignWidget(parent, win_id): 
     """Valkka creates a window.  The window is used to generate the widget.. however.. here we loose the interaction with the window .. clicks on it, etc. (were detached from the qt system)
     """
@@ -252,6 +282,7 @@ class ConfigDialog(QtWidgets.QDialog):
   
   def closeEvent(self,e):
     self.pardic["ok"]=False
+    os.system("killall ffplay vlc")
     super().closeEvent(e)
     # e.accept()
     

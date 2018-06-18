@@ -25,7 +25,11 @@ Currently the testsuite consists of the following programs:
 File                       Explanation
 ========================== ================================================================================
 test_studio_1.py           | - Live stream from several rtsp cameras / sdp files
+                           | - Widgets are grouped together
                            |
+test_studio_2.py           | - Like *test_studio_1.py*
+                           | - Floating widgets
+                           |                           
 test_studio_detector.py    | - Like *test_studio_1.py*
                            | - Shares video to OpenCV processes
                            | - OpenCV processes connect to Qt signal/slot system 
@@ -48,7 +52,7 @@ test_studio_rtsp.py        | - Like *test_studio_1.py*
                            |   (where *N* is the number of the camera)
 ========================== ================================================================================
 
-Before launching any of the testsuite programs you should be aware of the :ref:`common pitfalls<pitfalls>` of linux video streaming.
+Before launching any of the testsuite programs you should be aware of the :ref:`common problems<pitfalls>` of linux video streaming.
 
 test_studio_1.py
 ----------------
@@ -63,7 +67,7 @@ Do this:
 The program launches with the following menu:
 
 .. image:: images/test_config.png
-   :width: 40 %
+   :width: 70 %
    
    
 The field on the left is used to specify stream sources, one source per line.  For IP cameras, use "rtsp://", for sdp files, just give the filename.  In the above example, we are connecting to two rtsp IP cams.
@@ -141,7 +145,9 @@ FFPLAY        Runs the streams in ffplay instead (if installed)
 VLC           Runs the streams in vlc instead (if installed)
 ============= ====================================================
 
-RUN(QT) is the thing you want to do.
+*RUN(QT)* is the thing you want to do.
+
+*FFPLAY* and *VLC* launch the same rtsp streams by using either ffplay or vlc.  This is a nice test to see how Valkka performs against some popular video players.  A tip: you can use "x-tile" to tile the windows created by these external programs.
 
 test_studio_detector.py
 -----------------------
