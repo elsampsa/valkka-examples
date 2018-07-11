@@ -31,9 +31,7 @@ This documentation is a quickstart for installing and developing with Valkka usi
    tutorial
    qt_notes
    pitfalls
-   timetable
    license
-   distributing
    benchmarking
    authors
    
@@ -41,4 +39,5 @@ This documentation is a quickstart for installing and developing with Valkka usi
 .. ==================
 .. * :ref:`genindex`
 .. * :ref:`modindex`
+
 * :ref:`search`

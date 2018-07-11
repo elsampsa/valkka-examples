@@ -4,65 +4,47 @@
 Installing
 ==========
 
+Install valkka-core
+-------------------
+
+For recent ubuntu distributions, the core library binary packages and python bindings are provided by a PPA repository.  Subscribe to the PPA repo (do this only once) with:
+
+::
+
+  sudo apt-add-repository ppa:sampsa-riikonen/valkka
+  
+Install with:
+
+::
+
+    sudo apt-get update
+    sudo apt-get install valkka
+  
+
+If you're not using a recent Ubuntu distro and need to build libValkka and it's python bindings yourself, please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
+
+.. note:: The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
+
+Install the testsuite
+---------------------
+
 First, install some debian packages:
 
 ::
 
   sudo apt-get install python3-pip git mesa-utils ffmpeg vlc x-tile 
 
-(some of these will be used for benchmarking Valkka agains other programs).
-
-A Python3 package that includes pre-built binary libraries is available at the python package index (PyPI) and can be installed with:
-
-::
-
-  pip3 install --upgrade valkka
-    
-
-The libraries have been built on **Ubuntu 16.04 LTS**, **x86_64** (there is no guarantee that they work on another setup).
-    
-  
-If pip gives you problems with the installation directory, use:
-    
-::
-
-  pip3 install --upgrade --user valkka
-  
-or even:
-  
-::
-
-  pip3 install --upgrade --target=$HOME/.local/lib/python3.5/site-packages/ valkka
-    
-    
-If you need to build libValkka and it's python bindings yourself, please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
-  
-      
-OpenCV and its python bindings (with a working high-gui) for **python 3.5** are provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download them and use:
-
-:: 
-  
-    sudo dpkg -i OpenCV*.deb
-    sudo apt-get -f install
-  
-  
-For tutorial code and the PyQt test suite, download **valkka-examples** with:
+some of these will be used for benchmarking Valkka agains other programs.  For tutorial code and the PyQt test suite, download **valkka-examples** with:
 
 ::
 
     git clone https://github.com/elsampsa/valkka-examples
-    cd valkka_examples
-      
-
-.. Use the current stable version (that is compatible with the prebuilt python package):
-.. cd valkka-examples      
-.. git checkout 0.4.0
-      
-      
+    
 Test the installation with:
 
 ::
   
+  cd valkka_examples
   python3 quicktest.py
   
   
@@ -70,4 +52,16 @@ and you're all set.
   
 
 Next, try out the :ref:`PyQt test/demo <testsuite>` suite or learn to program with the :ref:`tutorial <tutorial>`.
+
+
+OpenCV
+------
+
+There are many options available to install OpenCV and its python bindings.  A binary package with a working high-gui for **python 3.5** is provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download the files and use:
+
+:: 
+  
+    sudo dpkg -i OpenCV*.deb
+    sudo apt-get -fy install
+  
   
