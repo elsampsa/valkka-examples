@@ -23,7 +23,7 @@ Install with:
 
 If you're not using a recent Ubuntu distro and need to build libValkka and it's python bindings yourself, please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
 
-.. note:: The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
+The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
 
 Install the testsuite
 ---------------------
@@ -50,9 +50,9 @@ Test the installation with:
   
 and you're all set.
   
-
+In the case of a numerical python version mismatch error, you are not using the default numpy provided by your Ubuntu distribution (from the debian package *python3-numpy*).  Remove the conflicting numpy installation with *pip3 uninstall* or setting up a virtualenv.
+  
 Next, try out the :ref:`PyQt test/demo <testsuite>` suite or learn to program with the :ref:`tutorial <tutorial>`.
-
 
 OpenCV
 ------

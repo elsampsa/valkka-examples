@@ -45,10 +45,7 @@
 </pre></div>
 </div>
 <p>If you’re not using a recent Ubuntu distro and need to build libValkka and it’s python bindings yourself, please refer to the <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github page</a>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed “globally” into <em>/usr/lib/python3/dist-packages/</em></p>
-</div>
+<p>The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed “globally” into <em>/usr/lib/python3/dist-packages/</em></p>
 </div>
 <div class="section" id="install-the-testsuite">
 <h2>Install the testsuite<a class="headerlink" href="#install-the-testsuite" title="Permalink to this headline">¶</a></h2>
@@ -66,6 +63,7 @@
 </pre></div>
 </div>
 <p>and you’re all set.</p>
+<p>In the case of a numerical python version mismatch error, you are not using the default numpy provided by your Ubuntu distribution (from the debian package <em>python3-numpy</em>).  Remove the conflicting numpy installation with <em>pip3 uninstall</em> or setting up a virtualenv.</p>
 <p>Next, try out the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt test/demo</span></a> suite or learn to program with the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>.</p>
 </div>
 <div class="section" id="opencv">

@@ -1,8 +1,15 @@
 print()
+print("Loading numerical python")
+import numpy
+print("Numpy loaded ok")
+print("   Numpy loaded from",numpy.__file__)
+print("   Numpy version    ",numpy.__version__)
+
+print()
 print("Loading Valkka")
 import valkka
 from valkka.valkka_core import *
-  
+
 print("Valkka loaded ok")
 print("   Version      ",valkka.__version__)
 print("   Loaded from  ",valkka.__file__)
