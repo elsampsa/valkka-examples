@@ -34,7 +34,15 @@ First, install some debian packages:
 
   sudo apt-get install python3-pip git mesa-utils ffmpeg vlc x-tile 
 
-some of these will be used for benchmarking Valkka agains other programs.  For tutorial code and the PyQt test suite, download **valkka-examples** with:
+some of these will be used for benchmarking Valkka agains other programs.
+
+The testsuite and tutorials use also imutils and PyQt5, so install a fresh version of them locally with pip:
+
+::
+
+  pip3 install imutils PyQt5
+
+Finally, for tutorial code and the PyQt test suite, download **valkka-examples** with:
 
 ::
 
@@ -57,7 +65,7 @@ Next, try out the :ref:`PyQt test/demo <testsuite>` suite or learn to program wi
 OpenCV
 ------
 
-There are many options available to install OpenCV and its python bindings.  A binary package with a working high-gui for **python 3.5** is provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download the files and use:
+There are many options available to install OpenCV and its python bindings.  A binary package with a working high-gui for **python 3.5** (used by Ubuntu 16 LTS) is provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download the files and use:
 
 :: 
   
