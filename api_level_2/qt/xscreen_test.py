@@ -16,8 +16,18 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   
 """
 
+
+# Objective: either move a window to another xscreen or create it there
+#
+# None of these works:
+#
+# https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
+# http://blog.qt.io/blog/2016/09/19/qt-graphics-with-multiple-displays-on-embedded-linux/
+# https://stackoverflow.com/questions/30113311/in-qt-5-whats-the-right-way-to-show-multi-monitor-full-screen-qwidget-windows
+
 from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
 import sys
+import os
 
  
 class MyGui(QtWidgets.QMainWindow):
@@ -37,6 +47,7 @@ class MyGui(QtWidgets.QMainWindow):
     
   def initVars(self):
     self.n=0
+    self.subwidgets=[]
 
 
   def setupUi(self):
@@ -48,22 +59,110 @@ class MyGui(QtWidgets.QMainWindow):
     self.button=QtWidgets.QPushButton("Jump",self.w)
     self.button.clicked.connect(self.jump_slot)
     
+    # self.button2=QtWidgets.QPushButton("Create",self.w)
+    # self.button2.clicked.connect(self.create_slot)
+    
+    # self.button2=QtWidgets.QPushButton("Create",self.w)
+    # self.button2.clicked.connect(self.create_slot2)
+    
+    
     
   def jump_slot(self):
     print("jump_slot:")
     qapp    =QtCore.QCoreApplication.instance()
+    print("jump_slot: qapp.screens:",qapp.screens())
     desktop =qapp.desktop()
     n_max   =desktop.screenCount()
     print("jump_slot: number of desktops:",n_max)
     self.n +=1
     if (self.n>=n_max):
       self.n=0
+    
+    # self.n=0
+    
     print("jump_slot: going to desktop:",self.n)
     
-    geom    =desktop.screenGeometry(self.n)    
-    self.move(QtCore.QPoint(geom.x(), geom.y()));
-    # self.main_widget.resize(geom.width(), geom.height());
+    self.windowHandle().setScreen(qapp.screens()[self.n])
+    # self.showFullScreen()
+    self.show() # WORKS WITH LATEST PYQT5!
+    # self.setGeometry(100,100,100,100)
+    
+    # geom    =desktop.screenGeometry(self.n)    
+    # self.move(QtCore.QPoint(geom.x(), geom.y()));
+    
+    #print("back to 0")
+    #self.windowHandle().setScreen(qapp.screens()[0])
+    #self.show()
+    
+    #self.resize(100,100)
     # self.main_widget.showFullScreen();
+    
+  
+  def create_slot(self):
+    print("create_slot:")
+    qapp    =QtCore.QCoreApplication.instance()
+    print("create_slot: qapp.screens:",qapp.screens())
+    desktop =qapp.desktop()
+    
+    print("create_slot: avail geom 0:",desktop.screenGeometry(0))
+    print("create_slot: avail geom 1:",desktop.screenGeometry(1))
+    
+    n_max   =desktop.screenCount()
+    print("jump_slot: number of desktops:",n_max)
+    
+    if (n_max>1):
+        print("jump_slot: creating window on second xscreen")
+        # w=QtWidgets.QWidget(qapp.screens()[1]) # could we create the window directly on another x screen?
+        w=QtWidgets.QWidget()
+        w.show()
+        w.windowHandle().setScreen(qapp.screens()[1])
+        w.showFullScreen()
+        w.setGeometry(100,100,100,100)
+        self.subwidgets.append(w)
+        
+    # geom    =desktop.screenGeometry(self.n)    
+    # self.move(QtCore.QPoint(geom.x(), geom.y()));
+    
+    #print("back to 0")
+    #self.windowHandle().setScreen(qapp.screens()[0])
+    #self.show()
+    
+    #self.resize(100,100)
+    # self.main_widget.showFullScreen();
+  
+  
+  def create_slot2(self):
+    print("create_slot:")
+    qapp    =QtCore.QCoreApplication.instance()
+    print("create_slot: qapp.screens:",qapp.screens())
+    desktop =qapp.desktop()
+    
+    print("create_slot: avail geom 0:",desktop.screenGeometry(0))
+    print("create_slot: avail geom 1:",desktop.screenGeometry(1))
+    
+    n_max   =desktop.screenCount()
+    print("jump_slot: number of desktops:",n_max)
+    
+    if (n_max>1):
+        print("jump_slot: creating window on second xscreen")
+        os.environ["DISPLAY"]=":0.1" # nopes .. does not work
+        w=QtWidgets.QWidget()
+        w.show()
+        # w.windowHandle().setScreen(qapp.screens()[1])
+        #w.showFullScreen()
+        w.setGeometry(100,100,100,100)
+        self.subwidgets.append(w)
+        
+    # geom    =desktop.screenGeometry(self.n)    
+    # self.move(QtCore.QPoint(geom.x(), geom.y()));
+    
+    #print("back to 0")
+    #self.windowHandle().setScreen(qapp.screens()[0])
+    #self.show()
+    
+    #self.resize(100,100)
+    # self.main_widget.showFullScreen();
+  
     
     
     
@@ -87,6 +186,8 @@ class MyGui(QtWidgets.QMainWindow):
     print("closeEvent!")
     self.stop_streams()
     self.closeValkka()
+    for w in self.subwidgets:
+        w.close()
     e.accept()
 
 

@@ -133,17 +133,23 @@ class VideoContainer:
     """
     
     qapp    =QtCore.QCoreApplication.instance()
-    desktop =qapp.desktop()
-    n_max   =desktop.screenCount()
+    
+    # desktop =qapp.desktop()
+    # n_max   =desktop.screenCount()
+    
+    n_max =len(qapp.screens())
     
     self.n +=1
     if (self.n>=n_max):
       self.n=0
     
-    geom    =desktop.screenGeometry(self.n)    
-    self.main_widget.move(QtCore.QPoint(geom.x(), geom.y()));
-    # self.main_widget.resize(geom.width(), geom.height());
-    # self.main_widget.showFullScreen();
+    # geom    =desktop.screenGeometry(self.n)    
+    # self.main_widget.move(QtCore.QPoint(geom.x(), geom.y()));
+    # # self.main_widget.resize(geom.width(), geom.height());
+    # # self.main_widget.showFullScreen();
+    
+    self.main_widget.windowHandle().setScreen(qapp.screens()[self.n])
+    self.main_widget.show()
     
     
     
