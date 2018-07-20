@@ -25,7 +25,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 # http://blog.qt.io/blog/2016/09/19/qt-graphics-with-multiple-displays-on-embedded-linux/
 # https://stackoverflow.com/questions/30113311/in-qt-5-whats-the-right-way-to-show-multi-monitor-full-screen-qwidget-windows
 
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+from PyQt5 import QtWidgets, QtCore, QtGui, QtX11Extras # Qt5
 import sys
 import os
 
@@ -50,6 +50,21 @@ class MyGui(QtWidgets.QMainWindow):
     self.subwidgets=[]
 
 
+  def dumpScreenInfo(self):
+    info=QtX11Extras.QX11Info()
+    print("info.appScreen",info.appScreen())
+    print("info.appScreen",info.appScreen())
+    qapp    =QtCore.QCoreApplication.instance()
+    screens =qapp.screens()
+    print("qapp.screens:",screens,"\n")
+    for screen in screens:
+      print(screen.name())
+      print(screen.availableSize())
+      print(screen.availableVirtualSize())
+      print()
+    
+
+
   def setupUi(self):
     self.setGeometry(QtCore.QRect(100,100,500,500))
     
@@ -65,6 +80,8 @@ class MyGui(QtWidgets.QMainWindow):
     # self.button2=QtWidgets.QPushButton("Create",self.w)
     # self.button2.clicked.connect(self.create_slot2)
     
+    self.dumpScreenInfo()
+    
     
     
   def jump_slot(self):
@@ -72,15 +89,16 @@ class MyGui(QtWidgets.QMainWindow):
     qapp    =QtCore.QCoreApplication.instance()
     print("jump_slot: qapp.screens:",qapp.screens())
     desktop =qapp.desktop()
-    n_max   =desktop.screenCount()
-    print("jump_slot: number of desktops:",n_max)
+    # n_max   =desktop.screenCount()
+    n_max   =len(qapp.screens())
+    print("jump_slot: number qapp.screens:",n_max)
     self.n +=1
     if (self.n>=n_max):
       self.n=0
     
     # self.n=0
     
-    print("jump_slot: going to desktop:",self.n)
+    print("jump_slot: going to screen:",self.n)
     
     self.windowHandle().setScreen(qapp.screens()[self.n])
     # self.showFullScreen()
@@ -164,9 +182,6 @@ class MyGui(QtWidgets.QMainWindow):
     # self.main_widget.showFullScreen();
   
     
-    
-    
-  
   def openValkka(self):
     pass
     
