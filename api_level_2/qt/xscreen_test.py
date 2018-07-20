@@ -48,6 +48,7 @@ class MyGui(QtWidgets.QMainWindow):
   def initVars(self):
     self.n=0
     self.subwidgets=[]
+    self.true_screens=[]
 
 
   def dumpScreenInfo(self):
@@ -62,12 +63,44 @@ class MyGui(QtWidgets.QMainWindow):
       print(screen.name())
       print(screen.availableSize())
       print(screen.availableVirtualSize())
+      # Bingo!  Using the "siblings" screen structure, we can differentiate between separate x-screens vs. virtual screens
+      # A parent is included in its own siblings
       print("siblings:")
       for sibling in screen.virtualSiblings():
         print("         ",sibling)
     
-
-
+    """
+    let's find out which screens are virtual
+    
+    screen, siblings:
+      
+    One big virtual desktop:
+      
+    A [A, B, C]
+    B [A, B, C]
+    C [A, B, C]
+    
+    A & B in one xscreen, C in another:
+    
+    A [A, B]
+    B [A, B]
+    C [C]
+    
+    """
+    
+    virtual_screens=set()
+    for screen in screens:
+      if (screen not in virtual_screens): # if screen has been deemed as "virtual", don't check its siblings
+        siblings=screen.virtualSiblings()
+        # remove the current screen under scrutiny from the siblings list
+        virtual_screens.update(set(siblings).difference(set([screen])))
+        # .. the ones left over are virtual
+      
+    print("virtual screens",virtual_screens)
+    self.true_screens=list(set(screens)-virtual_screens)
+    print("true screens:",self.true_screens)
+    
+  
   def setupUi(self):
     self.setGeometry(QtCore.QRect(100,100,500,500))
     
@@ -105,7 +138,7 @@ class MyGui(QtWidgets.QMainWindow):
     
     self.windowHandle().setScreen(qapp.screens()[self.n])
     # self.showFullScreen()
-    self.show() # WORKS WITH LATEST PYQT5!
+    self.show() # WORKS WITH LATEST PYQT5 5.11.2
     # self.setGeometry(100,100,100,100)
     
     # geom    =desktop.screenGeometry(self.n)    
