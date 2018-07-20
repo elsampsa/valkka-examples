@@ -51,17 +51,20 @@ class MyGui(QtWidgets.QMainWindow):
 
 
   def dumpScreenInfo(self):
-    info=QtX11Extras.QX11Info()
+    info=QtX11Extras.QX11Info
     print("info.appScreen",info.appScreen())
     print("info.appScreen",info.appScreen())
     qapp    =QtCore.QCoreApplication.instance()
     screens =qapp.screens()
     print("qapp.screens:",screens,"\n")
     for screen in screens:
+      print("\n",screen)
       print(screen.name())
       print(screen.availableSize())
       print(screen.availableVirtualSize())
-      print()
+      print("siblings:")
+      for sibling in screen.virtualSiblings():
+        print("         ",sibling)
     
 
 
