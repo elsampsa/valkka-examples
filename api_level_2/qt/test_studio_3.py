@@ -87,21 +87,113 @@ class MyConfigDialog(ConfigDialog):
     self.config_fname="test_studio_2.config" # define the config file name
   
 
+class GPUHandler:
+  """Handles an OpenGLThread for each separate GPU
+  """
   
+  def __init__(self, pardic):
+    self.pardic=pardic
+    self.true_screens =[]
+    self.openglthreads=[]
+    self.findXScreens()
+    
+    for n_gpu, screen in enumerate(self.true_screens):
+    
+      x_connection=":0."+str(n_gpu)
+    
+      openglthread=OpenGLThread(     # starts frame presenting services
+        name    ="gpu_"+str(n_gpu),
+        n_720p   =self.pardic["n_720p"],   # reserve stacks of YUV video frames for various resolutions
+        n_1080p  =self.pardic["n_1080p"],
+        n_1440p  =self.pardic["n_1440p"],
+        n_4K     =self.pardic["n_4K"],
+        verbose =False,
+        msbuftime=self.pardic["msbuftime"],
+        affinity=self.pardic["gl affinity"],
+        x_connection =x_connection
+        )
+
+      self.openglthreads.append(openglthread)
+
+    
+    if (self.openglthreads[0].hadVsync()):
+      w=QtWidgets.QMessageBox.warning(None,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
+
+    
+  def findXScreens(self):
+    qapp    =QtCore.QCoreApplication.instance()
+    screens =qapp.screens()
+    """
+    let's find out which screens are virtual
+    
+    screen, siblings:
+      
+    One big virtual desktop:
+      
+    A [A, B, C]
+    B [A, B, C]
+    C [A, B, C]
+    
+    A & B in one xscreen, C in another:
+    
+    A [A, B]
+    B [A, B]
+    C [C]
+    
+    """
+    virtual_screens=set()
+    for screen in screens:
+      if (screen not in virtual_screens): # if screen has been deemed as "virtual", don't check its siblings
+        siblings=screen.virtualSiblings()
+        # remove the current screen under scrutiny from the siblings list
+        virtual_screens.update(set(siblings).difference(set([screen])))
+        # .. the ones left over are virtual
+      
+    # print("GPUHandler: findXScreens: virtual screens",virtual_screens)
+    true_screens=list(set(screens)-virtual_screens)
+    
+    # sort'em
+    for screen in true_screens:
+      self.true_screens.insert(screens.index(screen),screen)
+    
+    print("GPUHandler: findXScreens: true screens:",self.true_screens)
+    
+    
+
 class VideoContainer:
   """A widget container: video window and a button that sends it to another X-Screen
   
-  :param parent:    Parent widget (if any)
-  :param video:     The video widget
-  :param n:         Number of screens
+  :param parent:      Parent widget (if any)
+  :param video:       The video widget
+  :param slot:        The slot number identifying the video source
+  :param gpu_handler: Instance of GPUHandler (i.e., the GPU & OpenGLThread handler)
   """
     
-  def __init__(self,parent,video,n=0):
-    self.n =n
+    
+  """
+  What we need here ..
+                                                                     +------------->> (OpenGLThread:glthread1)
+                                                                     |
+  (LiveThread:livethread) -->> (AVThread:avthread) ----> {N-Fork & gates?} -------->> (OpenGLThread:glthread2)
+                                                                     |
+                                                                     +------------->> (OpenGLThread:glthread3)
+                                                                     
+      
+  - Btw .. when a video is not required on the monitor, it should not be sent to OpenGLThread at all..!
+  - At the moment, just send all videos to all OpenGLThreads
+  - When jump occurs, just reconnect the token
+  => implement a BasicChain with an open end .. we then take that end and connect it with N OpenGLThreads
+  (just use the 3fork filter)
+                                                                     
+  """
+    
+    
+  def __init__(self,parent,video,slot,gpu_handler):
+    self.gpu_handler=gpu_handler
     self.main_widget=QtWidgets.QWidget(parent)
     self.lay        =QtWidgets.QVBoxLayout(self.main_widget)
-    # self.video      =QtWidgets.QWidget(self.main_widget)
     self.video      =video; self.video.setParent(self.main_widget)
+    self.slot       =slot
     self.button     =QtWidgets.QPushButton("Change Screen",self.main_widget)
     self.lay.addWidget(self.video)
     self.lay.addWidget(self.button)
@@ -111,46 +203,36 @@ class VideoContainer:
     
     qapp    =QtCore.QCoreApplication.instance()
     desktop =qapp.desktop()
-    self.n  =desktop.primaryScreen()
+    
+    self.n            =0
+    self.openglthread =self.gpu_handler.openglthreads[self.n]
+    self.win_id =int(self.video.winId())
     
     self.button.clicked.connect(self.cycle_slot)
     
+    self.token  =self.openglthread.connect(slot=self.slot,window_id=self.win_id) # present frames with slot number cs at window win_id
+    
+    
     
   def cycle_slot(self):
-    """Cycle from one X-Screen / virtual screen to another
+    """Cycle from one X-Screen to another
     """
-    
-    # this does not seem to work..
-    # https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
-    """
-    self.main_widget.show();
-    # self.main_widget.windowHandle().setScreen(qApp.screens()[1]);
-    qapp=QtCore.QCoreApplication.instance()
-    print("VideoContainer: qapp screens=",qapp.screens())
-    self.main_widget.windowHandle().setScreen(qapp.screens()[0])
-    self.main_widget.show();
-    # self.main_widget.showFullScreen();
-    """
-    
-    qapp    =QtCore.QCoreApplication.instance()
-    
-    # desktop =qapp.desktop()
-    # n_max   =desktop.screenCount()
-    
-    n_max =len(qapp.screens())
+    self.opengthread.disconnect(self.token)
     
     self.n +=1
-    if (self.n>=n_max):
+    if (self.n>=len(self.gpu_handler.screens)):
       self.n=0
+    print("cycle_slot: going to screen:",self.n)
     
-    # geom    =desktop.screenGeometry(self.n)    
-    # self.main_widget.move(QtCore.QPoint(geom.x(), geom.y()));
-    # # self.main_widget.resize(geom.width(), geom.height());
-    # # self.main_widget.showFullScreen();
+    self.openglthread =self.gpu_handler.openglthreads[self.n] # switch to OpenGLThread running on the other GPU
     
-    self.main_widget.windowHandle().setScreen(qapp.screens()[self.n])
-    self.main_widget.show()
+    # WORKS WITH LATEST PYQT5 5.11.2
+    self.windowHandle().setScreen(self.gpu_handler.screens[self.n])
+    self.show()
     
+    self.win_id =int(self.video.winId()) # find the x-window id again
+    
+    self.token =self.openglthread.connect(slot=self.slot,window_id=self.win_id) # present frames with slot number cs at window win_id
     
     
   def mouseDoubleClickEvent(self,e):
@@ -209,24 +291,8 @@ class MyGui(QtWidgets.QMainWindow):
       affinity=self.pardic["live affinity"]
     )
 
-    self.openglthread=OpenGLThread(     # starts frame presenting services
-      name    ="mythread",
-      n_720p   =self.pardic["n_720p"],   # reserve stacks of YUV video frames for various resolutions
-      n_1080p  =self.pardic["n_1080p"],
-      n_1440p  =self.pardic["n_1440p"],
-      n_4K     =self.pardic["n_4K"],
-      # naudio  =self.pardic["naudio"], # obsolete
-      # verbose =True,
-      verbose =False,
-      msbuftime=self.pardic["msbuftime"],
-      affinity=self.pardic["gl affinity"]
-      )
+    self.gpu_handler=GPUHandler(self.pardic)
 
-    
-    if (self.openglthread.hadVsync()):
-      w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
-
-    tokens     =[]
     self.chains=[]
     
     a =self.pardic["dec affinity start"]
@@ -269,40 +335,18 @@ class MyGui(QtWidgets.QMainWindow):
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
       
       for cc in range(0,self.pardic["replicate"]):
-        if ("no_qt" in self.pardic):
-          # create our own x-windowses
-          win_id=self.openglthread.createWindow(show=True)
-        else:
-          
-          # *** Choose one of the following sections ***
-          
-          # (1) Let Valkka create the windows/widget # use this: we get a window with correct parametrization
-          # win_id =self.openglthread.createWindow(show=False)
-          # fr     =getForeignWidget(self.w, win_id)
-          
-          if (valkka_xwin==False):
-            # (2) Let Qt create the widget
-            fr =TestWidget0(None); win_id =int(fr.winId()) 
-          else:
-            # """
-            # (3) Again, let Valkka create the window, but put on top a translucent widget (that catches mouse gestures)
-            win_id      =self.openglthread.createWindow(show=False)
-            widget_pair =WidgetPair(None,win_id,TestWidget0)
-            fr          =widget_pair.getWidget()
-            self.widget_pairs.append(widget_pair)
-            # """
+        # (2) Let Qt create the widget
+        fr =TestWidget0(None); win_id =int(fr.winId()) 
             
-          print(pre,"setupUi: layout index, address : ",cw//nrow,cw%nrow,address)
-          # self.lay.addWidget(fr,cw//nrow,cw%nrow) # floating windows instead
-          
-          container =VideoContainer(None,fr,n=0)
-          container.getWidget().setGeometry(self.desktop_handler.getGeometry(nrow,ncol,cw%nrow,cw//nrow))
-          container.getWidget().show()
-          
-          self.videoframes.append(container)
-          
-        token  =self.openglthread.connect(slot=cs,window_id=win_id) # present frames with slot number cs at window win_id
-        tokens.append(token)
+        print(pre,"setupUi: layout index, address : ",cw//nrow,cw%nrow,address)
+        # self.lay.addWidget(fr,cw//nrow,cw%nrow) # floating windows instead
+        
+        container =VideoContainer(None,fr,cs,self.gpu_handler)
+        container.getWidget().setGeometry(self.desktop_handler.getGeometry(nrow,ncol,cw%nrow,cw//nrow))
+        container.getWidget().show()
+        
+        self.videoframes.append(container)
+        
         cw+=1
       
       cs+=1 # TODO: crash when repeating the same slot number ..?

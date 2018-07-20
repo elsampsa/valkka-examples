@@ -106,10 +106,6 @@ class MyGui(QtWidgets.QMainWindow):
     print("true screens:",self.true_screens)
     
     
-    
-    
-    
-  
   def setupUi(self):
     self.setGeometry(QtCore.QRect(100,100,500,500))
     

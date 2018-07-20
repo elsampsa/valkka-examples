@@ -11,8 +11,9 @@ import valkka
 from valkka.valkka_core import *
 
 print("Valkka loaded ok")
-print("   Version      ",valkka.__version__)
-print("   Loaded from  ",valkka.__file__)
+print("   Version          ",valkka.__version__)
+print("   Loaded from      ",valkka.__file__)
+print("   Core loaded from ",valkka.valkka_core.__file__)
 """Test instantiation of some objects
 """
 print("   Testing Valkka classes")
