@@ -97,8 +97,17 @@ class MyGui(QtWidgets.QMainWindow):
         # .. the ones left over are virtual
       
     print("virtual screens",virtual_screens)
-    self.true_screens=list(set(screens)-virtual_screens)
+    true_screens=list(set(screens)-virtual_screens)
+    
+    # sort'em
+    for screen in true_screens:
+      self.true_screens.insert(screens.index(screen),screen)
+    
     print("true screens:",self.true_screens)
+    
+    
+    
+    
     
   
   def setupUi(self):
