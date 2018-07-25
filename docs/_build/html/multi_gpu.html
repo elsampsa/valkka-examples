@@ -66,7 +66,7 @@
 </div>
 <p>The advantage of this setup is, that the different GPUs don’t have to communicate or cross-over data between them.  In OpenGL, they do not have to share contexes.  The disadvantage is that one can’t move a program window from GPU1 to GPU2, just the mouse pointer.</p>
 <p>On the contrary, if you form a “macro” desktop (with a single X-Screen), spanning all 8 monitors, prepare yourself for performance bottlenecks.  A nice demo is to run “glxgears” and observe what happens to the framerate when you move the glxgears window from one GPU to another.  For a deeper discussion on the subject, see for example <a class="reference external" href="https://nouveau.freedesktop.org/wiki/MultiMonitorDesktop/">this page.</a></p>
-<p>Unfortunately, many Linux desktop environments (KDE, for example) have deprecated their ability to handle several X-Screens.</p>
+<p>Unfortunately, many Linux desktop environments (KDE for example) have deprecated their ability to handle several X-Screens: do check out <a class="reference external" href="https://bugs.kde.org/show_bug.cgi?id=256242#c60">this</a> rather frustrating discussion thread / bug report on the subject.</p>
 </div>
 <div class="section" id="our-approach">
 <h2>Our approach<a class="headerlink" href="#our-approach" title="Permalink to this headline">¶</a></h2>

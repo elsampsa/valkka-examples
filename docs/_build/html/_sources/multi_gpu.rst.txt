@@ -46,9 +46,7 @@ The advantage of this setup is, that the different GPUs don't have to communicat
 
 On the contrary, if you form a "macro" desktop (with a single X-Screen), spanning all 8 monitors, prepare yourself for performance bottlenecks.  A nice demo is to run "glxgears" and observe what happens to the framerate when you move the glxgears window from one GPU to another.  For a deeper discussion on the subject, see for example `this page. <https://nouveau.freedesktop.org/wiki/MultiMonitorDesktop/>`_
 
-Unfortunately, many Linux desktop environments (KDE, for example) have deprecated their ability to handle several X-Screens.
-
-.. Do check out this rather frustrating discussion thread on the subject. .. can't find the fucker anymore
+Unfortunately, many Linux desktop environments (KDE for example) have deprecated their ability to handle several X-Screens: do check out `this <https://bugs.kde.org/show_bug.cgi?id=256242#c60>`_ rather frustrating discussion thread / bug report on the subject.
 
 Our approach
 ------------
