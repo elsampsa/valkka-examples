@@ -1,5 +1,5 @@
 """
-test_studio_2.py : Test live streaming with Qt
+test_studio_3.py : Test live streaming with Qt.  Jump video from one x-screen (and gpu) to another
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -49,29 +49,20 @@ For benchmarking purposes, you can launch the video streams with:
 This Qt test program produces a config file.  You might want to remove that config file after updating the program.
 """
 
-# TODO:
-# - video on different windows
-# - a button that sends the window to another xscreen
-# - edit that desktophandler in demo_base.py
-# https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
-
 from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 import json
 import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
-from valkka.api2 import BasicFilterchain
+from valkka.api2.chains import OpenFilterchain
 from valkka.api2.logging import *
-from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart
+from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, ForkFrameFilterN
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair, DesktopHandler
 
-pre="test_studio : " # aux string for debugging 
-
-valkka_xwin =True # use x windows create by Valkka and embed them into Qt
-# valkka_xwin =False # use Qt provided x windows
+pre="test_studio_3 : " # aux string for debugging 
 
 # setValkkaLogLevel(loglevel_silent)
 
@@ -84,7 +75,7 @@ class MyConfigDialog(ConfigDialog):
       "replicate"          : 1
       })
     self.plis +=["replicate"]
-    self.config_fname="test_studio_2.config" # define the config file name
+    self.config_fname="test_studio_3.config" # define the config file name
   
 
 class GPUHandler:
@@ -114,8 +105,7 @@ class GPUHandler:
         )
 
       self.openglthreads.append(openglthread)
-
-    
+      
     if (self.openglthreads[0].hadVsync()):
       w=QtWidgets.QMessageBox.warning(None,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
 
@@ -159,6 +149,11 @@ class GPUHandler:
     print("GPUHandler: findXScreens: true screens:",self.true_screens)
     
     
+  def close(self):
+    for openglthread in self.openglthreads:
+      openglthread.close()
+    
+    
 
 class VideoContainer:
   """A widget container: video window and a button that sends it to another X-Screen
@@ -172,19 +167,17 @@ class VideoContainer:
     
   """
   What we need here ..
-                                                                     +------------->> (OpenGLThread:glthread1)
-                                                                     |
-  (LiveThread:livethread) -->> (AVThread:avthread) ----> {N-Fork & gates?} -------->> (OpenGLThread:glthread2)
-                                                                     |
-                                                                     +------------->> (OpenGLThread:glthread3)
+                                                                            +------------->> (OpenGLThread:glthread1)
+                                                                            |
+  (LiveThread:livethread) -->> (AVThread:avthread) ----> {ForkFrameFilterN} +------------->> (OpenGLThread:glthread2)
+                                                                            |
+                                                                            +------------->> (OpenGLThread:glthread3)
+                                >>  encapsulated into a class             <<
                                                                      
-      
+                                                                     
   - Btw .. when a video is not required on the monitor, it should not be sent to OpenGLThread at all..!
   - At the moment, just send all videos to all OpenGLThreads
-  - When jump occurs, just reconnect the token
-  => implement a BasicChain with an open end .. we then take that end and connect it with N OpenGLThreads
-  (just use the 3fork filter)
-                                                                     
+  - When jump occurs, just reconnect the token                                                                     
   """
     
     
@@ -206,7 +199,7 @@ class VideoContainer:
     
     self.n            =0
     self.openglthread =self.gpu_handler.openglthreads[self.n]
-    self.win_id =int(self.video.winId())
+    self.win_id       =int(self.video.winId())
     
     self.button.clicked.connect(self.cycle_slot)
     
@@ -217,18 +210,18 @@ class VideoContainer:
   def cycle_slot(self):
     """Cycle from one X-Screen to another
     """
-    self.opengthread.disconnect(self.token)
+    self.openglthread.disconnect(self.token)
     
     self.n +=1
-    if (self.n>=len(self.gpu_handler.screens)):
+    if (self.n>=len(self.gpu_handler.true_screens)):
       self.n=0
     print("cycle_slot: going to screen:",self.n)
     
     self.openglthread =self.gpu_handler.openglthreads[self.n] # switch to OpenGLThread running on the other GPU
     
     # WORKS WITH LATEST PYQT5 5.11.2
-    self.windowHandle().setScreen(self.gpu_handler.screens[self.n])
-    self.show()
+    self.main_widget.windowHandle().setScreen(self.gpu_handler.true_screens[self.n])
+    self.main_widget.show()
     
     self.win_id =int(self.video.winId()) # find the x-window id again
     
@@ -309,9 +302,8 @@ class MyGui(QtWidgets.QMainWindow):
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       print(pre,"openValkka: setting decoder thread on processor",a)
 
-      chain=BasicFilterchain(       # decoding and branching the stream happens here
+      chain=OpenFilterchain(       # decoding and branching the stream happens here
         livethread  =self.livethread, 
-        openglthread=self.openglthread,
         address     =address,
         slot        =cs,
         affinity    =a,
@@ -332,6 +324,10 @@ class MyGui(QtWidgets.QMainWindow):
         # reordering_mstime =300                         
         )
   
+      # send stream from all OpenFilterchain to all GPUs
+      for glthread in self.gpu_handler.openglthreads:
+        chain.connect(glthread.name,glthread.getInput()) # OpenGLThread.getInput() returns the input FrameFilter
+        
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
       
       for cc in range(0,self.pardic["replicate"]):
@@ -364,7 +360,7 @@ class MyGui(QtWidgets.QMainWindow):
     self.chains       =[]
     self.widget_pairs =[]
     self.videoframes  =[]
-    self.openglthread.close()
+    self.gpu_handler.close()
     
     
   def start_streams(self):

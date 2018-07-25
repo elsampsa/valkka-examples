@@ -30,6 +30,7 @@ This documentation is a quickstart for installing and developing with Valkka usi
    testsuite
    tutorial
    qt_notes
+   multi_gpu
    pitfalls
    license
    benchmarking

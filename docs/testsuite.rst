@@ -29,6 +29,9 @@ test_studio_1.py           | - Live stream from several rtsp cameras / sdp files
                            |
 test_studio_2.py           | - Like *test_studio_1.py*
                            | - Floating widgets
+                           |
+test_studio_3.py           | - Like *test_studio_2.py*
+                           | - On a multi-gpu system, video can be sent to another gpu/x-screen pair
                            |                           
 test_studio_detector.py    | - Like *test_studio_1.py*
                            | - Shares video to OpenCV processes
