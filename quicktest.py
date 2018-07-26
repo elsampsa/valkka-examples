@@ -8,32 +8,46 @@ print("   Numpy version    ",numpy.__version__)
 print()
 print("Loading Valkka")
 import valkka
-from valkka.valkka_core import *
+from valkka import valkka_core as core
 
 print("Valkka loaded ok")
 print("   Version          ",valkka.__version__)
 print("   Loaded from      ",valkka.__file__)
-print("   Core loaded from ",valkka.valkka_core.__file__)
+print("   Core loaded from ",core.__file__)
 """Test instantiation of some objects
 """
+print()
 print("   Testing Valkka classes")
-live =LiveThread("live")
-inp  =FrameFifo("fifo")
-ff   =FifoFrameFilter("fifo",inp)
-out  =DummyFrameFilter("dummy")
-av   =AVThread("av",out)
-gl   =OpenGLThread("gl")
+live =core.LiveThread("live")
+inp  =core.FrameFifo("fifo")
+ff   =core.FifoFrameFilter("fifo",inp)
+out  =core.DummyFrameFilter("dummy")
+av   =core.AVThread("av",out)
+gl   =core.OpenGLThread("gl")
 
 av_in =av.getFrameFilter();
 gl_in =gl.getFrameFilter();
 
-ctx=LiveConnectionContext()
+ctx=core.LiveConnectionContext()
 ctx.slot=1
-ctx.connection_type=LiveConnectionType_rtsp
+ctx.connection_type=core.LiveConnectionType_rtsp
 ctx.address="rtsp://admin:12345@192.168.0.157"
-ctx2=LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:12345@192.168.0.157", 1, out)
-
+ctx2=core.LiveConnectionContext(core.LiveConnectionType_rtsp, "rtsp://admin:12345@192.168.0.157", 1, out)
 print("   Valkka classes ok")
+print()
+
+# this is modified automatically by setver.bash - don't touch!
+VERSION_MAJOR=0
+VERSION_MINOR=5
+VERSION_PATCH=1
+
+print("Checking Valkka python examples")
+print("   version:",str(VERSION_MAJOR)+"."+str(VERSION_MINOR)+"."+str(VERSION_PATCH))
+
+if (VERSION_MAJOR!=core.VERSION_MAJOR or VERSION_MINOR!=core.VERSION_MINOR or VERSION_PATCH!=core.VERSION_PATCH):
+  print("   ** WARNING **")
+  print("   INCONSISTENT VALKKA-CORE AND VALKKA_EXAMPLES VERSIONS")
+  print("   You probably need to update your valkka-core module (say, 'sudo apt-get update' and 'sudo apt-get upgrade valkka')")
 print()
 
 print("Loading OpenCV")
