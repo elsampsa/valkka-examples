@@ -64,8 +64,8 @@ from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair, D
 
 pre="test_studio_3 : " # aux string for debugging 
 
-setValkkaLogLevel(loglevel_debug)
-ValkkaXInitThreads()
+# setValkkaLogLevel(loglevel_debug)
+# ValkkaXInitThreads()
 
 class MyConfigDialog(ConfigDialog):
   
@@ -192,10 +192,11 @@ class VideoContainer:
     
   def __init__(self,parent,video,slot,gpu_handler):
     self.gpu_handler=gpu_handler
-    self.main_widget=QtWidgets.QWidget(parent)
+    # self.main_widget=QtWidgets.QWidget(parent)
+    self.main_widget=QtWidgets.QWidget()
+    # self.main_widget=QtWidgets.QMainWindow()
     self.lay        =QtWidgets.QVBoxLayout(self.main_widget)
     self.video      =video; self.video.setParent(self.main_widget)
-    self.slot       =slot
     self.button     =QtWidgets.QPushButton("Change Screen",self.main_widget)
     self.lay.addWidget(self.video)
     self.lay.addWidget(self.button)
@@ -206,14 +207,16 @@ class VideoContainer:
     qapp    =QtCore.QCoreApplication.instance()
     desktop =qapp.desktop()
     
+    self.slot       =slot
+    
     self.n            =0
     self.openglthread =self.gpu_handler.openglthreads[self.n]
     self.win_id       =int(self.video.winId())
+    print("VideoContainer: win_id=",self.win_id)
     
     self.button.clicked.connect(self.cycle_slot)
     
     self.token  =self.openglthread.connect(slot=self.slot,window_id=self.win_id) # present frames with slot number cs at window win_id
-    
     
     
   def cycle_slot(self):
@@ -228,11 +231,14 @@ class VideoContainer:
     
     self.openglthread =self.gpu_handler.openglthreads[self.n] # switch to OpenGLThread running on the other GPU
     
+    print("cycle_slot: using OpenGLThread",self.openglthread.name)
+    
     # WORKS WITH LATEST PYQT5 5.11.2
     self.main_widget.windowHandle().setScreen(self.gpu_handler.true_screens[self.n])
     self.main_widget.show()
     
     self.win_id =int(self.video.winId()) # find the x-window id again
+    print("VideoContainer: cycle_slot: win_id=",self.win_id)
     
     self.token =self.openglthread.connect(slot=self.slot,window_id=self.win_id) # present frames with slot number cs at window win_id
     
