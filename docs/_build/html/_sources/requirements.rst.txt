@@ -57,7 +57,16 @@ Test the installation with:
   
   
 and you're all set.
+
+When updating the python examples, do the following:
+
+::
   
+  git pull
+  python3 quicktest.py
+
+This checks that **valkka-core** and **valkka-examples** have consistent versions.
+
 In the case of a numerical python version mismatch error, you are not using the default numpy provided by your Ubuntu distribution (from the debian package *python3-numpy*).  Remove the conflicting numpy installation with *pip3 uninstall* or setting up a virtualenv.
   
 Next, try out the :ref:`PyQt test/demo <testsuite>` suite or learn to program with the :ref:`tutorial <tutorial>`.
