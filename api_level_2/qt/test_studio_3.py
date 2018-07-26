@@ -57,14 +57,15 @@ import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2.chains import OpenFilterchain
 from valkka.api2.logging import *
-from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, ForkFrameFilterN
+from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, ForkFrameFilterN, ValkkaXInitThreads
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair, DesktopHandler
 
 pre="test_studio_3 : " # aux string for debugging 
 
-# setValkkaLogLevel(loglevel_silent)
+setValkkaLogLevel(loglevel_debug)
+ValkkaXInitThreads()
 
 class MyConfigDialog(ConfigDialog):
   
@@ -88,9 +89,15 @@ class GPUHandler:
     self.openglthreads=[]
     self.findXScreens()
     
+    # self.true_screens=[self.true_screens[0]]
+    
     for n_gpu, screen in enumerate(self.true_screens):
     
       x_connection=":0."+str(n_gpu)
+      # x_connection=":0.1"
+      # x_connection=":1.0" # nopes
+    
+      print(pre,"GPUHandler: starting OpenGLThread with",x_connection)
     
       openglthread=OpenGLThread(     # starts frame presenting services
         name    ="gpu_"+str(n_gpu),
@@ -103,6 +110,8 @@ class GPUHandler:
         affinity=self.pardic["gl affinity"],
         x_connection =x_connection
         )
+      
+      print(pre,"GPUHandler: OpenGLThread started")
 
       self.openglthreads.append(openglthread)
       
@@ -277,6 +286,7 @@ class MyGui(QtWidgets.QMainWindow):
     
   
   def openValkka(self):
+      
     self.livethread=LiveThread(         # starts live stream services (using live555)
       name   ="live_thread",
       # verbose=True,

@@ -219,9 +219,29 @@ class MyGui(QtWidgets.QMainWindow):
       # verbose =True,
       verbose =False,
       msbuftime=self.pardic["msbuftime"],
-      affinity=self.pardic["gl affinity"]
+      affinity=self.pardic["gl affinity"],
+      x_connection =":0.0"
+      # x_connection =":0.1" # works .. video appears on the other xscreen
       )
 
+    """ # this results in a segfault
+    print("> starting second OpenGLThread")
+    # testing: start another OpenGLThread
+    self.openglthread2=OpenGLThread(     # starts frame presenting services
+      name    ="mythread2",
+      n_720p   =self.pardic["n_720p"],   # reserve stacks of YUV video frames for various resolutions
+      n_1080p  =self.pardic["n_1080p"],
+      n_1440p  =self.pardic["n_1440p"],
+      n_4K     =self.pardic["n_4K"],
+      # naudio  =self.pardic["naudio"], # obsolete
+      # verbose =True,
+      verbose =False,
+      msbuftime=self.pardic["msbuftime"],
+      affinity=self.pardic["gl affinity"],
+      x_connection =":0.1" # works .. video appears on the other xscreen
+      )
+    print("> second OpenGLThread started")
+    """
     
     if (self.openglthread.hadVsync()):
       w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
