@@ -2,8 +2,6 @@
 Multi-GPU systems
 =================
 
-**not functional at the moment - coming online soon**
-
 (If you just have monitors connected to a single graphics card, no need to be here)
 
 Introduction
