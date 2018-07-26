@@ -167,8 +167,6 @@ class GPUHandler:
 class VideoContainer:
   """A widget container: video window and a button that sends it to another X-Screen
   
-  :param parent:      Parent widget (if any)
-  :param video:       The video widget
   :param slot:        The slot number identifying the video source
   :param gpu_handler: Instance of GPUHandler (i.e., the GPU & OpenGLThread handler)
   """
@@ -190,13 +188,35 @@ class VideoContainer:
   """
     
     
-  def __init__(self,parent,video,slot,gpu_handler):
+  def __init__(self,slot,gpu_handler):
     self.gpu_handler=gpu_handler
-    # self.main_widget=QtWidgets.QWidget(parent)
+    
+    self.n            =0
+    self.openglthread =self.gpu_handler.openglthreads[self.n]
+    
+    qapp    =QtCore.QCoreApplication.instance()
+    desktop =qapp.desktop()
+    
+    self.makeWidget(self.gpu_handler.true_screens[self.n]) # create widget into a certain xscreen
+    self.win_id       =int(self.video.winId())
+    print("VideoContainer: win_id=",self.win_id)
+    
+    self.slot    =slot
+    self.token  =self.openglthread.connect(slot=self.slot,window_id=self.win_id) # present frames with slot number cs at window win_id
+    
+    
+    
+  def makeWidget(self,qscreen):
+    """ Widget needs to be re-created when jumping from one x-screen to another
+    
+    :param qscreen:   QScreen
+    """
     self.main_widget=QtWidgets.QWidget()
-    # self.main_widget=QtWidgets.QMainWindow()
+    self.main_widget.show()
+    
+    self.main_widget.windowHandle().setScreen(qscreen)
     self.lay        =QtWidgets.QVBoxLayout(self.main_widget)
-    self.video      =video; self.video.setParent(self.main_widget)
+    self.video      =TestWidget0(self.main_widget)
     self.button     =QtWidgets.QPushButton("Change Screen",self.main_widget)
     self.lay.addWidget(self.video)
     self.lay.addWidget(self.button)
@@ -204,19 +224,8 @@ class VideoContainer:
     self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum,QtWidgets.QSizePolicy.Minimum)
     self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
     
-    qapp    =QtCore.QCoreApplication.instance()
-    desktop =qapp.desktop()
-    
-    self.slot       =slot
-    
-    self.n            =0
-    self.openglthread =self.gpu_handler.openglthreads[self.n]
-    self.win_id       =int(self.video.winId())
-    print("VideoContainer: win_id=",self.win_id)
-    
     self.button.clicked.connect(self.cycle_slot)
-    
-    self.token  =self.openglthread.connect(slot=self.slot,window_id=self.win_id) # present frames with slot number cs at window win_id
+    self.main_widget.show()
     
     
   def cycle_slot(self):
@@ -234,8 +243,7 @@ class VideoContainer:
     print("cycle_slot: using OpenGLThread",self.openglthread.name)
     
     # WORKS WITH LATEST PYQT5 5.11.2
-    self.main_widget.windowHandle().setScreen(self.gpu_handler.true_screens[self.n])
-    self.main_widget.show()
+    self.makeWidget(self.gpu_handler.true_screens[self.n])
     
     self.win_id =int(self.video.winId()) # find the x-window id again
     print("VideoContainer: cycle_slot: win_id=",self.win_id)
@@ -347,13 +355,10 @@ class MyGui(QtWidgets.QMainWindow):
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..
       
       for cc in range(0,self.pardic["replicate"]):
-        # (2) Let Qt create the widget
-        fr =TestWidget0(None); win_id =int(fr.winId()) 
-            
         print(pre,"setupUi: layout index, address : ",cw//nrow,cw%nrow,address)
         # self.lay.addWidget(fr,cw//nrow,cw%nrow) # floating windows instead
         
-        container =VideoContainer(None,fr,cs,self.gpu_handler)
+        container =VideoContainer(cs,self.gpu_handler)
         container.getWidget().setGeometry(self.desktop_handler.getGeometry(nrow,ncol,cw%nrow,cw//nrow))
         container.getWidget().show()
         
