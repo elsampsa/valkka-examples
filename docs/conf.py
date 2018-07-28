@@ -157,7 +157,8 @@ html_sidebars = {
 
 html_theme_options = {
   'github_user'  : 'elsampsa',
-  'github_repo'  : 'valkka-core'
+  'github_repo'  : 'valkka-core',
+  'analytics_id' : 'UA-123031237-1'
 }
   
 # """

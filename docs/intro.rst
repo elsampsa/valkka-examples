@@ -81,7 +81,7 @@ Repositories are organized as follows:
 
 All functional features are demonstrated in the :ref:`tutorial<tutorial>` which is updated as new features appear.  Same goes for the :ref:`PyQt testsuite<testsuite>`.
 
-We'd like to see the following features in the first beta release, coming online before end of 2018 (tentative; depending on available time and funding):
+We'd like to see the following features in the first beta release:
 
 - Interserver communications between Valkka-based server and clients
 - ValkkaFS filesystem, designed for recording large amounts of video
