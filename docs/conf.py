@@ -66,7 +66,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'valkka_examples'
+project = 'OpenSource Video Management for Linux' # this will populate the "title" html tag
 copyright = '2017 Sampsa Riikonen'
 author = 'Sampsa Riikonen'
 
