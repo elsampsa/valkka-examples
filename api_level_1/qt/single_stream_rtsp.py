@@ -16,7 +16,8 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   A demo program: streaming from a single rtsp camera
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 from valkka.valkka_core import *
 

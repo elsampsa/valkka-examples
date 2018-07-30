@@ -19,8 +19,8 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 When using python multiprocesses with Qt, we need a frontend thread that reads the process communication pipes and turns the messages sent by the process into Qt signals.
 """
 
-
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
 
 # Local imports from this directory
 from demo_multiprocess import QValkkaOpenCVProcess
@@ -44,10 +44,18 @@ class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
     }
   
   # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
-  class Signals(QtCore.QObject):  
+  class Signals(QtCore.QObject):
+    # PyQt5 version:
+    """ 
     pong_o     =QtCore.pyqtSignal(object)
     start_move =QtCore.pyqtSignal()
     stop_move  =QtCore.pyqtSignal()
+    """
+    
+    # PySide2 version:
+    pong_o     =QtCore.Signal(object)
+    start_move =QtCore.Signal()
+    stop_move  =QtCore.Signal()
   
   
   def __init__(self,name,**kwargs):
@@ -93,7 +101,6 @@ class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
     self.signals.stop_move.emit()
   
   
- 
 def test1():
   pass
   

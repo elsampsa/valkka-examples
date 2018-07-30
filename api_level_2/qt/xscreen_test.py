@@ -25,7 +25,9 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 # http://blog.qt.io/blog/2016/09/19/qt-graphics-with-multiple-displays-on-embedded-linux/
 # https://stackoverflow.com/questions/30113311/in-qt-5-whats-the-right-way-to-show-multi-monitor-full-screen-qwidget-windows
 
-from PyQt5 import QtWidgets, QtCore, QtGui, QtX11Extras # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui, QtX11Extras # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui, QtX11Extras
+
 import sys
 import os
 

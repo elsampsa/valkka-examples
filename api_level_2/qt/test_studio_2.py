@@ -55,7 +55,8 @@ This Qt test program produces a config file.  You might want to remove that conf
 # - edit that desktophandler in demo_base.py
 # https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 import json
 import os

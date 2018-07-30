@@ -16,7 +16,9 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   Launch a cpp thread in python.  That thread uses a callback to send a signal to PyQt's signal/slot system
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+
 import sys
 from valkka.valkka_core import TestThread
 
@@ -25,7 +27,8 @@ from valkka.valkka_core import TestThread
 class MyGui(QtWidgets.QMainWindow):
 
   class Signals(QtCore.QObject):  
-    counter =QtCore.pyqtSignal(object) # use always object
+    # counter =QtCore.pyqtSignal(object) # use always object # PyQt5
+    counter =QtCore.Signal(object) # use always object # PySide2
 
 
   def __init__(self,parent=None):

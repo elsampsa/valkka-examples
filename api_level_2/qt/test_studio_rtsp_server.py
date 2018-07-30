@@ -49,7 +49,8 @@ For benchmarking purposes, you can launch the video streams with:
 This Qt test program produces a config file.  You might want to remove that config file after updating the program.
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 import json
 import os

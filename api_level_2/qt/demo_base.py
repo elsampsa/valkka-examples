@@ -16,7 +16,8 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+# from PyQt5 import QtWidgets, QtCore, QtGui
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 import json
 import os

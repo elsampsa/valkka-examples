@@ -17,7 +17,8 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   An example GUI for reading matroska (mkv) files, playing and sending them to an analyzer
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import cv2
 import sys
 import json

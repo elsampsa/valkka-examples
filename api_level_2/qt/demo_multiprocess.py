@@ -21,7 +21,8 @@ When using python multiprocesses with Qt, we need a frontend thread that reads t
 This file has QValkkaProcess, QValkkaOpenCVProcess and QValkkaThread - everything you need to get started with multiprocessing image analysis in Qt.  We suggest that you make a copy of this into your own module.
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 import time
 from valkka.api2 import ValkkaProcess, Namespace, safe_select, ShmemClient, ShmemRGBClient
@@ -44,7 +45,9 @@ class QValkkaProcess(ValkkaProcess):
   
   # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
   class Signals(QtCore.QObject):  
-    pong_o  =QtCore.pyqtSignal(object)
+    
+    # pong_o  =QtCore.pyqtSignal(object) # PyQt5
+    pong_o  =QtCore.Signal(object) # PySide2
   
   
   def __init__(self,name,**kwargs):
@@ -114,7 +117,8 @@ class QValkkaOpenCVProcess(ValkkaProcess):
   
   # For each outgoing signal, create a Qt signal with the same name.  The frontend Qt thread will read processes communication pipe and emit these signals.
   class Signals(QtCore.QObject):  
-    pong_o  =QtCore.pyqtSignal(object)
+    # pong_o  =QtCore.pyqtSignal(object) # PyQt5
+    pong_o  =QtCore.Signal(object) # PySide2
   
   
   parameter_defs={

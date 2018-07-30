@@ -13,13 +13,16 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @author  Sampsa Riikonen
 @date    2018
 @version 0.5.1 
-@brief   A demo program: streaming from a single rtsp camera.  Using x window create by Valkka.
+@brief   A demo program: streaming from a single rtsp camera.  You can use an x window create by Valkka.
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
-from valkka.valkka_core import *
+from valkka.valkka_core import * # API level 1 import 
 
+# valkka_xwin =True # use x windows create by Valkka and embed them into Qt
+valkka_xwin =False # use Qt provided x windows
 
 class TestWidget0(QtWidgets.QWidget):
   
@@ -36,7 +39,7 @@ class WidgetPair:
   """
   
   def __init__(self,parent,win_id,widget_class):
-    self.win_id =win_id
+    self.win_id         =win_id
     self.foreign_window =QtGui.QWindow.fromWinId(win_id)
     self.foreign_widget =QtWidgets.QWidget.createWindowContainer(self.foreign_window,parent=parent)
     
@@ -115,7 +118,8 @@ class MyGui(QtWidgets.QMainWindow):
     
     self.avthread        =AVThread("avthread",self.gl_in_filter)
     self.av_in_filter    =self.avthread.getFrameFilter();
-    self.live_out_filter =InfoFrameFilter("live_out_filter",self.av_in_filter)
+    # self.live_out_filter =InfoFrameFilter("live_out_filter",self.av_in_filter)
+    self.live_out_filter =self.av_in_filter # skip verbosity
     
     self.livethread      =LiveThread("livethread")
     
@@ -124,12 +128,19 @@ class MyGui(QtWidgets.QMainWindow):
     self.livethread.startCall()
     self.avthread  .startCall()
   
-    # Get an x-window from OpenGLThread once it's been started:
-    self.window_id =self.glthread.createWindow(show=False)
-    self.pair      =WidgetPair(self.w,self.window_id,TestWidget0)
-    self.pair.getWidget().setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
-    self.lay.addWidget(self.pair.getWidget())
-    
+    if (valkka_xwin):
+      # Get an x-window from OpenGLThread once it's been started:
+      self.window_id =self.glthread.createWindow(show=False)
+      self.pair      =WidgetPair(self.w,self.window_id,TestWidget0)
+      self.pair.getWidget().setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
+      self.lay.addWidget(self.pair.getWidget())
+    else:
+      # Use Qt provided window
+      self.video     =QtWidgets.QWidget(self.w)
+      self.window_id =int(self.video.winId()) 
+      self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
+      self.lay.addWidget(self.video)
+      
   
   def closeValkka(self):
     """Stop all valkka threads
@@ -150,6 +161,8 @@ class MyGui(QtWidgets.QMainWindow):
     self.ctx.address=self.stream_address             # stream address, i.e. "rtsp://.."
     self.ctx.framefilter=self.live_out_filter        # where the received frames are written to.  See filterchain (**)
     self.ctx.msreconnect=0                           # do not attempt to reconnect if stream dies
+    # Timestamp correction type: TimeCorrectionType_none, TimeCorrectionType_dummy, or TimeCorrectionType_smart (default)
+    # self.ctx.time_correction=TimeCorrectionType_smart # no need to declare this .. it's the default
         
     # send the information about the stream to LiveThread
     print("registering stream")

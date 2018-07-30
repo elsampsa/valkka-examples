@@ -40,7 +40,9 @@ The testsuite and tutorials use also imutils and PyQt5, so install a fresh versi
 
 ::
 
-  pip3 install imutils PyQt5
+  pip3 install --user imutils PyQt5 PySide2
+  
+Here we have installed two flavors of the Qt python bindings, namely, `PyQt5 <https://www.riverbankcomputing.com>`_ and `PySide2 <https://doc.qt.io/qtforpython/contents.html>`_.  They can be used in an identical manner.  If you use PyQt5, be aware of its licensing terms.
 
 Finally, for tutorial code and the PyQt test suite, download **valkka-examples** with:
 
@@ -71,6 +73,27 @@ In the case of a numerical python version mismatch error, you are not using the 
   
 Next, try out the :ref:`PyQt test/demo <testsuite>` suite or learn to program with the :ref:`tutorial <tutorial>`.
 
+
+GTK
+---
+
+If you wan't to use `GTK <https://www.gtk.org/>`_ as your graphical user interface, you must install the PyGObject python bindings, as instructed `here <https://pygobject.readthedocs.io/en/latest/getting_started.html>`_, namely:
+
+::
+
+    sudo apt-get install python-gi python-gi-cairo python3-gi python3-gi-cairo gir1.2-gtk-3.0
+
+.. Wx
+.. --
+..
+.. In order to use the `wx graphical user interface <https://wxpython.org>`_, install it like this:
+..
+.. ::
+..  
+..    pip3 install --user wxpython
+..
+.. .. that does not compile
+    
 OpenCV
 ------
 

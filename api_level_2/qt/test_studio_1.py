@@ -49,7 +49,8 @@ For benchmarking purposes, you can launch the video streams with:
 This Qt test program produces a config file.  You might want to remove that config file after updating the program.
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 import json
 import os
@@ -192,7 +193,8 @@ class MyGui(QtWidgets.QMainWindow):
           
           if (valkka_xwin==False):
             # (2) Let Qt create the widget
-            fr =TestWidget0(self.w); win_id =int(fr.winId()) 
+            fr =TestWidget0(self.w)
+            win_id =int(fr.winId()) 
           else:
             # """
             # (3) Again, let Valkka create the window, but put on top a translucent widget (that catches mouse gestures)

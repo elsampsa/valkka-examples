@@ -16,7 +16,8 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   Use Qt with python multiprocesses.  Couple to Qt signal/slot system
 """
 
-from PyQt5 import QtWidgets, QtCore, QtGui # Qt5
+# from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 import time
 from valkka.api2 import ValkkaProcess, safe_select
@@ -41,8 +42,14 @@ class TestProcess(ValkkaProcess):
   
   # For each outgoing signal, create a Qt signal with the same name.  The frontend QThread will read processes communication pipe and emit the signals.
   class Signals(QtCore.QObject):  
+    # PyQt5:
+    """
     pong_o  =QtCore.pyqtSignal(object)
     counter =QtCore.pyqtSignal(str)
+    """
+    # PySide2:
+    pong_o  =QtCore.Signal(object)
+    counter =QtCore.Signal(str)
   
   
   def __init__(self,name):
