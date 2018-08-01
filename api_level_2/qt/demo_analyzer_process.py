@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    demo_analyzer_process.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.5.1 
+@version 0.5.2 
 @brief   Use analyzers from the local file "analyzer.py" in a QValkkaOpenCVProcess multiprocess
 
 
