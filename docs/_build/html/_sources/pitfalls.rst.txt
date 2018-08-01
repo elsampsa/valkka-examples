@@ -33,7 +33,7 @@ Test if vsync is disabled with the "glxgears" command.  It should report 1000+ f
 
 **5\. Disable OpenGL composition.**
 
-In a KDE based system, go to *System Settings => Display and Monitor => Compositor* and uncheck "Enable compositor on startup".  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.
+In a KDE based system, go to *System Settings => Display and Monitor => Compositor* and uncheck "Enable compositor on startup".  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.  In Xcfe based desktop, do *Settings Manager -> Window Manager Tweaks -> Compositor -> uncheck Enable Display Compositor*. 
 
 **6\. Is your IP camera's time set correctly?**  
 
