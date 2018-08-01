@@ -94,6 +94,8 @@ If you wan't to use `GTK <https://www.gtk.org/>`_ as your graphical user interfa
 ..
 .. .. that does not compile
     
+.. _install_opencv:
+    
 OpenCV
 ------
 

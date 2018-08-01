@@ -6,3 +6,4 @@ git_tag.bash
 setver.bash
 add_untracked.bash
 cleanpy.bash
+tmp/

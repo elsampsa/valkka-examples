@@ -155,7 +155,9 @@ VLC           Runs the streams in vlc instead (if installed)
 test_studio_detector.py
 -----------------------
 
-Do this:
+The detector test program uses OpenCV, so you need to have it :ref:`installed <install_opencv>`
+
+Launch the program like this:
 
 ::
 

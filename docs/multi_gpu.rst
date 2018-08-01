@@ -76,6 +76,10 @@ We've been succesful in setting up multi-gpu systems with the following setup:
   - Use "relative" not "absolute" positioning of the screens and monitors
 
 - Use the Xcfe desktop/window manager instead of Kwin/KDE
+
+  - Can be installed with *sudo apt-get install xubuntu-desktop*
+  - Turn off window-manager composition: *Settings Manager -> Window Manager Tweaks -> Compositor -> uncheck Enable Display Compositor* 
+
 - Use PyQt5 version 5.11.2 or greater (you probably have to install with *pip3 install*)
 
 Finally, test the configuration with the PyQt testsuite's "test_studio_3.py"
