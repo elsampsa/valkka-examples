@@ -66,8 +66,8 @@ from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 pre="test_studio : " # aux string for debugging 
 
 
-valkka_xwin =True # use x windows create by Valkka and embed them into Qt
-# valkka_xwin =False # use Qt provided x windows
+# valkka_xwin =True # use x windows create by Valkka and embed them into Qt
+valkka_xwin =False # use Qt provided x windows
 
 # setValkkaLogLevel(loglevel_silent) # set all loggers to silent
 # setLogLevel_livelogger(loglevel_crazy) # set an individual loggers
@@ -168,7 +168,8 @@ class MyGui(QtWidgets.QMainWindow):
         flush_when_full =False,
         
         # time_correction   =TimeCorrectionType_dummy,  # Timestamp correction type: TimeCorrectionType_none, TimeCorrectionType_dummy, or TimeCorrectionType_smart (default)
-        time_correction   =TimeCorrectionType_smart,
+        # time_correction   =TimeCorrectionType_smart,
+        # # by default, no need to specify
         
         recv_buffer_size  =0,                        # Operating system socket ringbuffer size in bytes # 0 means default
         # recv_buffer_size  =1024*800,   # 800 KB

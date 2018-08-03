@@ -56,6 +56,7 @@ import os
 from valkka.api2 import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2 import ShmemFilterchain
 from valkka.api2 import parameterInitCheck
+from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
 
 # Local imports from this directory
 from demo_multiprocess import QValkkaThread
@@ -64,8 +65,8 @@ from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
 pre="test_studio_detector : "
  
-valkka_xwin =True # use x windows create by Valkka and embed them into Qt
-# valkka_xwin =False # use Qt provided x windows
+# valkka_xwin =True # use x windows create by Valkka and embed them into Qt
+valkka_xwin =False # use Qt provided x windows
   
 class MyConfigDialog(ConfigDialog):
   
@@ -237,6 +238,9 @@ class MyGui(QtWidgets.QMainWindow):
         shmem_image_interval   =1000,               # YUV => RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer
         shmem_ringbuffer_size  =10,                 # Size of the shmem ringbuffer
         msreconnect =10000
+        
+        # time_correction   =TimeCorrectionType_smart # this is the default, no need to specify
+        
         )
     
       shmem_name, n_buffer, shmem_image_dimensions =chain.getShmemPars()
