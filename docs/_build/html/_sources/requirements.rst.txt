@@ -20,7 +20,13 @@ Install with:
     sudo apt-get update
     sudo apt-get install valkka
   
+When you need to update valkka, do:
+  
+::
 
+    sudo apt-get update
+    sudo apt-get upgrade valkka
+    
 If you're not using a recent Ubuntu distro and need to build libValkka and it's python bindings yourself, please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
 
 The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
@@ -99,11 +105,26 @@ If you wan't to use `GTK <https://www.gtk.org/>`_ as your graphical user interfa
 OpenCV
 ------
 
+**Ubuntu 16**
+
 There are many options available to install OpenCV and its python bindings.  A binary package with a working high-gui for **python 3.5** (used by Ubuntu 16 LTS) is provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download the files and use:
 
 :: 
   
     sudo dpkg -i OpenCV*.deb
     sudo apt-get -fy install
+  
+**Ubuntu 18**
+
+Simply:
+
+::
+
+    sudo apt-get install python3-opencv
+    
+
+
+
+
   
   
