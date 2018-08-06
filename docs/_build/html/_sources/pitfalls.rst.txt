@@ -9,6 +9,10 @@ Pitfalls
 
 Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, stuttering, video freezes, etc.  You should consider the following issues:
 
+**0\. Are you using correct Valkka version?**
+
+Use the latest version.  When running the PyQt testsuite, remember to run *quicktest.py* to see if your installation is consistent.
+
 **1\. Are you using sub-standard cameras?**
 
 All IP cameras are nowadays manufactured in China.  While the hardware is good and the image quality impressive, the rtsp server and/or timestamping of the cameras is often buggy.  It's like HTC and Samsung mobile phones: they're good, but thwarted by the software.

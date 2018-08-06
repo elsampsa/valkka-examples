@@ -11,8 +11,11 @@ Cameras
 Linux clients
 -------------
 
-libValkka uses OpenGL and OpenGL texture streaming.   The library needs a robust OpenGL implementation.  As of **Ubuntu 16 and 18 LTS**, the working graphics drivers are:
+libValkka uses OpenGL and OpenGL texture streaming, so it needs a robust OpenGL implementation.  The current situation is:
 
-- Intel: the stock **i915** driver
+- Intel: the stock **i915** driver is OK
 - Nvidia: use **nvidia** proprietary driver (instead of **noveau**)
 - ATI: **not tested**
+
+OpenGL version 3 or greater is required.  You can check your OpenGL version with the command *glxinfo*.
+

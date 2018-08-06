@@ -44,12 +44,13 @@
 </div>
 <div class="section" id="linux-clients">
 <h2>Linux clients<a class="headerlink" href="#linux-clients" title="Permalink to this headline">¶</a></h2>
-<p>libValkka uses OpenGL and OpenGL texture streaming.   The library needs a robust OpenGL implementation.  As of <strong>Ubuntu 16 and 18 LTS</strong>, the working graphics drivers are:</p>
+<p>libValkka uses OpenGL and OpenGL texture streaming, so it needs a robust OpenGL implementation.  The current situation is:</p>
 <ul class="simple">
-<li>Intel: the stock <strong>i915</strong> driver</li>
+<li>Intel: the stock <strong>i915</strong> driver is OK</li>
 <li>Nvidia: use <strong>nvidia</strong> proprietary driver (instead of <strong>noveau</strong>)</li>
 <li>ATI: <strong>not tested</strong></li>
 </ul>
+<p>OpenGL version 3 or greater is required.  You can check your OpenGL version with the command <em>glxinfo</em>.</p>
 </div>
 </div>
 

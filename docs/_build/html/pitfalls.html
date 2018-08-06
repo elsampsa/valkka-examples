@@ -38,6 +38,8 @@
 <div class="section" id="pitfalls">
 <span id="id1"></span><h2>Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h2>
 <p>Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, stuttering, video freezes, etc.  You should consider the following issues:</p>
+<p><strong>0. Are you using correct Valkka version?</strong></p>
+<p>Use the latest version.  When running the PyQt testsuite, remember to run <em>quicktest.py</em> to see if your installation is consistent.</p>
 <p><strong>1. Are you using sub-standard cameras?</strong></p>
 <p>All IP cameras are nowadays manufactured in China.  While the hardware is good and the image quality impressive, the rtsp server and/or timestamping of the cameras is often buggy.  It’s like HTC and Samsung mobile phones: they’re good, but thwarted by the software.</p>
 <p>Expect problems when maintaining several connections to the same camera, or when re-connecting several times to the same camera.</p>
