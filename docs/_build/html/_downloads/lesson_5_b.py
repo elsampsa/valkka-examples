@@ -65,7 +65,7 @@ livethread. playStreamCall(ctx)
 """<rtf>
 Stream and recast to the RTSP server for a while:
 <rtf>"""
-time.sleep(120)
+time.sleep(60)
 
 livethread. stopStreamCall(ctx)
 livethread. deregisterStreamCall(ctx)

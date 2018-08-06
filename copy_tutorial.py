@@ -4,10 +4,15 @@
 import os
 import glob
 
+subs={}
+
+# if you need to change the camera ip adresses of the tutorial, enable this:
+"""
 subs={
   "rtsp://admin:nordic12345@192.168.1.41" : "rtsp://admin:12345@192.168.0.157", # first camera used in the tutorial and its substitution
   "rtsp://admin:nordic12345@192.168.1.42" : "rtsp://admin:12345@192.168.0.157"  # second camera used in the tutorial and its substitution
   }
+"""
 
 os.system("mkdir tmp")
 os.system("cp -f api_level_1/tutorial/* tmp/")
