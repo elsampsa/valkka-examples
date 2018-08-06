@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    demo_multiprocess.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.5.2 
+@version 0.5.3 
 @brief   Multiprocesses / Qt intercommunication through pipes and signals
 
 
