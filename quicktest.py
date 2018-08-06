@@ -48,6 +48,7 @@ if (VERSION_MAJOR!=core.VERSION_MAJOR or VERSION_MINOR!=core.VERSION_MINOR or VE
   print("   ** WARNING **")
   print("   INCONSISTENT VALKKA-CORE AND VALKKA_EXAMPLES VERSIONS")
   print("   You probably need to update your valkka-core module (say, 'sudo apt-get update' and 'sudo apt-get upgrade valkka')")
+  print("   .. or update valkka-examples by running 'git pull' in this directory")
 print()
 
 print("Loading OpenCV")
