@@ -271,7 +271,7 @@ class VideoContainer:
 
     # create drop-down menu for all cameras?
     self.dropdown =QtWidgets.QComboBox(self.main_widget)
-    self.dropdown.addItem("<Choose A Camera>", None)
+    self.dropdown.addItem("<Choose A Camera>", -1)
     for index, fc in enumerate(self.filterchains):
       assert(fc.__class__==ManagedFilterchain) # filterchains should have a copy of the parameter set (=rtsp address, date when added, etc.) that invoked them
       self.dropdown.addItem(fc.address,index) # QComboBox.addItem(str,qvariant) .. now qvariant is just a python object! :)
@@ -287,8 +287,10 @@ class VideoContainer:
     self.main_widget.show()
 
     # this will call dropdown_changed_slot and activate the video if needed
-    if self.index>=-1:
-      self.dropdown.setCurrentIndex(self.index)
+    # index = filterchain index
+    # argument of self.dropdown.setCurrentIndex = index of the QComboBox dropdown item
+    if self.index>=0:
+      self.dropdown.setCurrentIndex(self.index+1) # TODO: here self.index maps from parameters => filterchain .. parameters => menu item index mapping required as well
 
     
     
@@ -319,7 +321,8 @@ class VideoContainer:
   def dropdown_changed_slot(self,i):
     print(self.pre,"dropdown_changed_slot: combobox selection now",i)
     index=self.dropdown.itemData(i)
-    if (index==None):
+    if (index<0):
+      # TODO: remove stream
       return
     self.setStream({"index":index})
 
