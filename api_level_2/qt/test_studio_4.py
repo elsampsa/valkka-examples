@@ -252,6 +252,23 @@ class VideoContainer:
     fc.addViewPort(self.viewport)
 
 
+  def remStream(self):
+    index=self.index
+    print(self.pre,"remStream: index",index)
+    if (index<0):
+      return
+
+    try:
+      fc = self.filterchains[index]
+    except IndexError:
+      print(self.pre, "setStream: no such filterchain", index)
+      return
+
+    assert (issubclass(fc.__class__, ManagedFilterchain))
+
+    fc.delViewPort(self.viewport)
+
+
   def makeWidget(self,qscreen):
     """ Widget needs to be re-created when jumping from one x-screen to another
     
@@ -262,10 +279,16 @@ class VideoContainer:
     
     self.main_widget.windowHandle().setScreen(qscreen)
     self.lay        =QtWidgets.QVBoxLayout(self.main_widget)
+
     self.video      =TestWidget0(self.main_widget)
-    self.button     =QtWidgets.QPushButton("Change Screen",self.main_widget)
     self.lay.addWidget(self.video)
-    self.lay.addWidget(self.button)
+    self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+
+    if (len(self.gpu_handler.true_screens)>1):
+      self.button     =QtWidgets.QPushButton("Change Screen",self.main_widget)
+      self.lay.addWidget(self.button)
+      self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+      self.button.clicked.connect(self.cycle_slot)
 
     self.win_id = int(self.video.winId())
 
@@ -278,10 +301,6 @@ class VideoContainer:
 
     self.lay.addWidget(self.dropdown)
 
-    self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum,QtWidgets.QSizePolicy.Minimum)
-    self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
-    
-    self.button.clicked.connect(self.cycle_slot)
     self.dropdown.currentIndexChanged.connect(self.dropdown_changed_slot)
 
     self.main_widget.show()
@@ -292,7 +311,6 @@ class VideoContainer:
     if self.index>=0:
       self.dropdown.setCurrentIndex(self.index+1) # TODO: here self.index maps from parameters => filterchain .. parameters => menu item index mapping required as well
 
-    
     
   def cycle_slot(self):
     """Cycle from one X-Screen to another
@@ -321,10 +339,11 @@ class VideoContainer:
   def dropdown_changed_slot(self,i):
     print(self.pre,"dropdown_changed_slot: combobox selection now",i)
     index=self.dropdown.itemData(i)
+    print(self.pre,"dropdown_changed_slot: index",index)
     if (index<0):
-      # TODO: remove stream
-      return
-    self.setStream({"index":index})
+      self.remStream()
+    else:
+      self.setStream({"index":index})
 
 
   def mouseDoubleClickEvent(self,e):
@@ -340,9 +359,14 @@ class VideoContainer:
 
 
   def close(self):
+    self.remStream()
+    self.openglthread =None
+    self.gpu_handler  =None
+    self.filterchains =None
     self.main_widget.close()
- 
- 
+    self.main_widget.deleteLater()
+
+
 class MyGui(QtWidgets.QMainWindow):
 
   debug=False
@@ -459,10 +483,10 @@ class MyGui(QtWidgets.QMainWindow):
     
   def closeEvent(self,e):
     print(pre,"closeEvent!")
-    self.stop_streams()
-    self.closeValkka()
     for vc in self.videocontainers:
       vc.close()
+    self.stop_streams()
+    self.closeValkka()
     e.accept()
 
 

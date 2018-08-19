@@ -123,8 +123,24 @@ Simply:
     sudo apt-get install python3-opencv
     
 
+Development version
+-------------------
 
+**No need to do this, really**
 
+Experimental, new and very unstable features can be tested with the development version.  In order to use it, both the core library (*valkka-core*) and the testsuite (*valkka-examples*) must be at the development branch.
 
-  
+For the testsuite, simply do:
+
+::
+
+    git checkout dev
+
+After cloning `valkka-core <https://github.com/elsampsa/valkka-core>`_, change it to development branch with
+
+::
+
+    git checkout dev
+
+After that, follow the instructions at the **valkka-core** github page.
   
