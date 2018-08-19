@@ -288,6 +288,97 @@ class ConfigDialog(QtWidgets.QDialog):
     # e.accept()
     
 
+"""Some tools for making GUI menus
+
+class FileMenu(QuickMenu):
+  name="File"
+  tooltip="The File Menu"
+  
+  elements=[
+    QuickMenuElement(name="Open File",tooltip="Open New File")
+    QuickMenuElement(name="Exit",tooltip="Exit the Program")
+    FileSubMenu # (subclass of QuickMenu as well => this is a submenu)
+  ]
+
+At instantiation, the class creates a member self.menu (QMenu) 
+
+Instantiation also auto-creates callback methods, i.e.:
+
+filemenu =FileMenu(parent=mainwindow)
+filemenu.open_file.triggered.connect(callback)
+filemenu.exit.triggered.connect(callback)
+
+
+"""
+
+
+
+class QuickMenuElement(object):
+  """Generic menu element object.  Can add lots of things here, say, tooltips, translations, etc.
+  """
+
+
+  def __init__(self,title="none"):
+    self.title=title
+
+
+  def getTitle(self):
+    return self.title
+
+
+
+class QuickMenu(object):
+  title ="none"
+
+  elements = [] # a list of QuickMenuElement(s)
+
+  def __init__(self, parent):
+    """
+    :param parent:  Where this menu will be placed
+    """
+    if (isinstance(parent, QtWidgets.QMainWindow)): # i.e. the current menu will be placed in the main menu bar
+      self.menu = parent.menuBar().addMenu(self.title)
+    elif (parent == None):  # this is a popup menu
+      self.menu = QtWidgets.QMenu()
+    else: # a submenu
+      print("submenu!")
+      assert(issubclass(parent.__class__,QtWidgets.QMenu))
+      self.menu = parent.addMenu(self.title)
+
+    for element in self.elements:
+      print(element)
+      if (isinstance(element,QuickMenuElement)):
+        # create menu entry / action, and find the callback / slot if defined
+        # If name in EasyMenuElement was "Open File", create a method_name that is "open_file"
+        method_name = element.getTitle().lower().replace(" ", "_").strip()
+        # self.open_file =QMenu.addAction("Open File")
+        setattr(self, method_name, self.menu.addAction(element.getTitle()))
+        # now we have "self.method_name" .. lets refer to it as "method"
+        method = getattr(self, method_name)
+        """ # connect automatically to instances methods .. not really useful
+        # callback functions name: self.open_file_called
+        cbname = method_name + "_called"
+        if (hasattr(self, cbname)):
+          # if self.open_file_called exists, make connection: self.open_file.triggered.connect(self.open_file_called)
+          method.triggered.connect(getattr(self, cbname))
+        """
+      elif (issubclass(element,QuickMenu)): # recursion: this is a subclass of MyMenu.  We instantiate it here
+        submenu = element(parent=self.menu) # this constructor called for another subclass of QuickMenu
+        submenu_title = element.title.lower()
+        setattr(self, submenu_title, submenu) # now we can access menus hierarchically: menu.submenu.subsubmenu.etc
+      else: # must be an EasyMenuElement instance
+        raise(AssertionError("Use QuickMenu subclasses or QuickMenuElement instances"))
+
+
+  def connect(self, name, cb):
+    method = getattr(self, name)
+    method.triggered.connect(cb)
+
+
+  def popup(self, qp):
+    self.menu.popup(qp)
+
+
  
  
 class MyGui(QtWidgets.QMainWindow):
@@ -313,8 +404,34 @@ class MyGui(QtWidgets.QMainWindow):
     
     self.w=QtWidgets.QWidget(self)
     self.setCentralWidget(self.w)
-    
-  
+
+    class FileSubMenu(QuickMenu):
+      title="Submenu"
+      elements=[
+        QuickMenuElement(title="Submenu1"),
+        QuickMenuElement(title="Submenu2")
+      ]
+
+    class FileMenu(QuickMenu):
+      title="File"
+      elements=[
+        QuickMenuElement(title="New"),
+        FileSubMenu,
+        QuickMenuElement(title="Save as"),
+        QuickMenuElement(title="Exit")
+      ]
+
+    self.filemenu=FileMenu(parent=self)
+
+    self.filemenu.new.triggered.connect(self.new_slot)
+    self.filemenu.submenu.submenu1.triggered.connect(self.submenu1_slot)
+
+  def new_slot(self):
+    print("New")
+
+  def submenu1_slot(self):
+    print("submenu1")
+
   def openValkka(self):
     pass
     
