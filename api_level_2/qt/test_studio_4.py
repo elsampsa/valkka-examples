@@ -214,6 +214,7 @@ class VideoContainer:
     self.pre="VideoContainer: "
     self.gpu_handler  =gpu_handler
     self.filterchains =filterchains
+    self.closed       =False
     
     self.n            =0 # x-screen number
     self.openglthread =self.gpu_handler.openglthreads[self.n]
@@ -274,7 +275,26 @@ class VideoContainer:
     
     :param qscreen:   QScreen
     """
-    self.main_widget=QtWidgets.QWidget()
+    
+    class MyWidget(QtWidgets.QWidget):
+      
+      class MySignals(QtCore.QObject):
+        close =QtCore.Signal(object)
+        
+        
+      def __init__(self,parent=None):
+        super().__init__(parent)
+        self.signals =self.MySignals()
+      
+      
+      def closeEvent(self, e):
+        self.signals.close.emit(e)
+        e.accept()
+        
+    
+    self.main_widget=MyWidget()
+    self.main_widget.signals.close.connect(self.close_slot)
+    
     self.main_widget.show()
     
     self.main_widget.windowHandle().setScreen(qscreen)
@@ -346,6 +366,10 @@ class VideoContainer:
       self.setStream({"index":index})
 
 
+  def close_slot(self):
+    self.close()
+
+
   def mouseDoubleClickEvent(self,e):
     print("double click!")
         
@@ -359,12 +383,15 @@ class VideoContainer:
 
 
   def close(self):
+    if (self.closed):
+      return
     self.remStream()
     self.openglthread =None
     self.gpu_handler  =None
-    self.filterchains =None
+    self.filterchains =[]
     self.main_widget.close()
     self.main_widget.deleteLater()
+    self.closed=True
 
 
 class MyGui(QtWidgets.QMainWindow):
@@ -451,9 +478,9 @@ class MyGui(QtWidgets.QMainWindow):
         address     =address,
         slot        =cs,
         affinity    =a,
-        # verbose     =True
-        verbose     =False,
         msreconnect =10000,
+        
+        verbose=True
         )
 
       self.chains.append(chain) # important .. otherwise chain will go out of context and get garbage collected ..

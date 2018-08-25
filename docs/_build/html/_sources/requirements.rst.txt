@@ -66,7 +66,7 @@ Test the installation with:
   
 and you're all set.
 
-When updating the python examples, do the following:
+When updating the python examples (do this always after updating *valkka-core*), do the following:
 
 ::
   
@@ -123,8 +123,55 @@ Simply:
     sudo apt-get install python3-opencv
     
 
+Development version
+-------------------
 
+As described above, for the current stable version of *valkka-core*, just use the repository. 
 
+For the development version (with experimental and unstable features) you have to compile from source.  Both *valkka-core* and *valkka-examples* must be in the development version.  You should also remove (with apt-get remove) the current stable version.
 
-  
+Getting and preparing the *valkka-core* development build (do this only once):
+
+::
+
+    git clone https://github.com/elsampsa/valkka-core
+    git checkout dev
+    ./prepare_build.bash
+    
+Updating and compiling the development build:
+    
+::
+
+    git pull
+    ./easy_build.bash
+    
+Before using the development build, run (sets your LD_LIBRARY_PATH and PYTHONPATH):
+
+::
+
+    ./use_build.bash
+    
+    
+Now you have a terminal that has correct environmental variables.  Programs launched from the terminal will find the *valkka-core* development version.
+    
+For the testsuite, simply do:
+
+::
+
+    git checkout dev
+    
+Updating the testsuite development version:
+
+::
+
+    git pull
+    
+
+Reverting testsuite back to the stable branch (for which you have debian packages from the repository):
+
+::
+
+    git checkout master
+
+    
   

@@ -66,7 +66,7 @@ Test the installation with:
   
 and you're all set.
 
-When updating the python examples, do the following:
+When updating the python examples (do this always after updating *valkka-core*), do the following:
 
 ::
   
@@ -126,21 +126,58 @@ Simply:
 Development version
 -------------------
 
-**No need to do this, really**
+As described above, for the current stable version of *valkka-core*, just use the repository. 
 
-Experimental, new and very unstable features can be tested with the development version.  In order to use it, both the core library (*valkka-core*) and the testsuite (*valkka-examples*) must be at the development branch.
+For the development version (with experimental and unstable features) you have to compile from source.  Both *valkka-core* and *valkka-examples* must be in the development version.  You should also remove (with apt-get remove) the current stable version.
 
-For the testsuite, simply do:
+For building, some extra packages are needed:
+
+::
+
+  sudo apt-get install build-essential libc6-dev yasm cmake pkg-config swig libglew-dev mesa-common-dev libstdc++-5-dev python3-dev python3-numpy libasound2-dev
+
+Getting and preparing the *valkka-core* development build (do this only once):
+
+::
+
+    git clone https://github.com/elsampsa/valkka-core
+    git checkout dev
+    ./prepare_build.bash
+    
+Updating and compiling the development build:
+    
+::
+
+    git pull
+    ./easy_build.bash
+    
+Before using the development build, run (sets your LD_LIBRARY_PATH and PYTHONPATH):
+
+::
+
+    ./use_build.bash
+    
+    
+Now you have a terminal that has correct environmental variables.  Programs launched from the terminal will find the *valkka-core* development version.
+    
+For the *valkka-examples* testsuite, just do:
 
 ::
 
     git checkout dev
-
-After cloning `valkka-core <https://github.com/elsampsa/valkka-core>`_, change it to development branch with
+    
+Updating the testsuite development version:
 
 ::
 
-    git checkout dev
+    git pull
+    
 
-After that, follow the instructions at the **valkka-core** github page.
+Reverting testsuite back to the stable branch (for which you have debian packages from the repository):
+
+::
+
+    git checkout master
+
+    
   
