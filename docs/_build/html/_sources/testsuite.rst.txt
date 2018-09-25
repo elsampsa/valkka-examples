@@ -35,6 +35,7 @@ test_studio_3.py           | - Like *test_studio_2.py*
                            |
 test_studio_4.py           | - Like *test_studio_3.py*
                            | - A simple user menu where video widgets can be opened
+                           | - Open the *File* menu to add video on the screen
                            |                           
 test_studio_detector.py    | - Like *test_studio_1.py*
                            | - Shares video to OpenCV processes
