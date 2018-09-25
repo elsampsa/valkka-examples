@@ -130,6 +130,12 @@ As described above, for the current stable version of *valkka-core*, just use th
 
 For the development version (with experimental and unstable features) you have to compile from source.  Both *valkka-core* and *valkka-examples* must be in the development version.  You should also remove (with apt-get remove) the current stable version.
 
+For building, some extra packages are needed:
+
+::
+
+  sudo apt-get install build-essential libc6-dev yasm cmake pkg-config swig libglew-dev mesa-common-dev libstdc++-5-dev python3-dev python3-numpy libasound2-dev
+
 Getting and preparing the *valkka-core* development build (do this only once):
 
 ::
@@ -154,7 +160,7 @@ Before using the development build, run (sets your LD_LIBRARY_PATH and PYTHONPAT
     
 Now you have a terminal that has correct environmental variables.  Programs launched from the terminal will find the *valkka-core* development version.
     
-For the testsuite, simply do:
+For the *valkka-examples* testsuite, just do:
 
 ::
 

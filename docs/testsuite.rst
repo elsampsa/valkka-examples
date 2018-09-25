@@ -32,6 +32,9 @@ test_studio_2.py           | - Like *test_studio_1.py*
                            |
 test_studio_3.py           | - Like *test_studio_2.py*
                            | - On a multi-gpu system, video can be sent to another gpu/x-screen pair
+                           |
+test_studio_4.py           | - Like *test_studio_3.py*
+                           | - A simple user menu where video widgets can be opened
                            |                           
 test_studio_detector.py    | - Like *test_studio_1.py*
                            | - Shares video to OpenCV processes
