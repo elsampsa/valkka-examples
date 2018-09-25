@@ -1,5 +1,5 @@
 """
-test_studio_3.py : Test live streaming with Qt.  Jump video from one x-screen (and gpu) to another
+test_studio_4.py : Test live streaming with Qt.  Jump video from one x-screen (and gpu) to another
 
 Copyright 2017, 2018 Sampsa Riikonen
 
@@ -341,19 +341,19 @@ class VideoContainer:
       self.n=0
     print("cycle_slot: going to screen:",self.n)
 
-    """
+    # """
     if (self.index>-1): # video has been chosen..
       fc = self.filterchains[self.index]
       fc.delViewPort(self.viewport)
-    """
+    # """
 
     # WORKS WITH LATEST PYQT5 5.11.2
     self.makeWidget(self.gpu_handler.true_screens[self.n])
 
-    """
+    # """
     if (self.index>-1):
       fc.addViewPort(self.viewport)
-    """
+    # """
 
 
   def dropdown_changed_slot(self,i):
