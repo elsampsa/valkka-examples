@@ -12,5 +12,3 @@ Sampsa Riikonen
 
 ## License
 MIT License
-
-For production use, inform yourself about the PyQt5 license

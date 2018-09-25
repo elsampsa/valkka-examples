@@ -25,6 +25,8 @@ Some highlights of Valkka:
 
 This documentation is a quickstart for installing and developing with Valkka using the Python3 API.  A Tutorial, a PyQt testsuite and some benchmarking results are provided.
 
+For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_
+
 .. toctree::
    :maxdepth: 2
    
