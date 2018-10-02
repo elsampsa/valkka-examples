@@ -39,6 +39,12 @@ Test if vsync is disabled with the "glxgears" command.  It should report 1000+ f
 
 In a KDE based system, go to *System Settings => Display and Monitor => Compositor* and uncheck "Enable compositor on startup".  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.  In Xcfe based desktop, do *Settings Manager -> Window Manager Tweaks -> Compositor -> uncheck Enable Display Compositor*. 
 
+Alternatively, you can user this command:
+
+::
+
+    dbus org.kde.KWin /Compositor suspend
+
 **6\. Is your IP camera's time set correctly?**  
 
 Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are "almost" right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..! 

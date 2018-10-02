@@ -60,7 +60,7 @@ Test the installation with:
 
 ::
   
-  cd valkka_examples
+  cd valkka-examples
   python3 quicktest.py
   
   

@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    demo_multiprocess.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.5.4 
+@version 0.6.0 
 @brief   Multiprocesses / Qt intercommunication through pipes and signals
 
 
@@ -139,6 +139,7 @@ class QValkkaOpenCVProcess(ValkkaProcess):
   def preRun_(self):
     """Create the shared memory client after fork
     """
+    super().preRun_()
     self.client=ShmemRGBClient(
       name         =self.shmem_name, 
       n_ringbuffer =self.n_buffer,   # size of ring buffer

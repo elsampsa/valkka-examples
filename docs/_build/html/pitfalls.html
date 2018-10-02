@@ -53,6 +53,10 @@
 <p>Test if vsync is disabled with the “glxgears” command.  It should report 1000+ frames per second with vsync disabled.</p>
 <p><strong>5. Disable OpenGL composition.</strong></p>
 <p>In a KDE based system, go to <em>System Settings =&gt; Display and Monitor =&gt; Compositor</em> and uncheck “Enable compositor on startup”.  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.  In Xcfe based desktop, do <em>Settings Manager -&gt; Window Manager Tweaks -&gt; Compositor -&gt; uncheck Enable Display Compositor</em>.</p>
+<p>Alternatively, you can user this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dbus</span> <span class="n">org</span><span class="o">.</span><span class="n">kde</span><span class="o">.</span><span class="n">KWin</span> <span class="o">/</span><span class="n">Compositor</span> <span class="n">suspend</span>
+</pre></div>
+</div>
 <p><strong>6. Is your IP camera’s time set correctly?</strong></p>
 <p>Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are “almost” right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..!</p>
 <p>So, either set your IP camera’s clock really off (say, 5+ mins off) or exactly to the correct time.  In the latter case, you might want to sync both your IP camera and PC to the same NTP server.</p>

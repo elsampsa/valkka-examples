@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    multiprocessing_demo.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.5.4 
+@version 0.6.0 
 @brief   Use Qt with python multiprocesses.  Couple to Qt signal/slot system
 """
 
@@ -62,6 +62,7 @@ class TestProcess(ValkkaProcess):
   def preRun_(self):
     """ Run immediately after fork
     """
+    super().preRun_()
     print(self.pre,"hello!")
     self.counter=0
   
