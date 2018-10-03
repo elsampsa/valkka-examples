@@ -12,7 +12,7 @@ Valkka
 
 Valkka is a python programming library for creating video surveillance and management solutions for linux desktop in local area / virtual private networks.
 
-Some highlights of Valkka:
+*Some highlights of Valkka*
 
 - Python3 API, code itself runs at cpp level
 - Works with stock OnVif compliant IP cameras
