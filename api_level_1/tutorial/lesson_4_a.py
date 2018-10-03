@@ -13,7 +13,7 @@ filtergraph:
 #</hide>
 #<hide>
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 #</hide>
 """<rtf>
 By now, we have learned how to receive, decode and send streams to the x window system.  In this chapter, we do all that, but at the same time, also send copies of the decoded frames to another python process.  

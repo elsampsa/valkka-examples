@@ -19,7 +19,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 # from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
 from PySide2 import QtWidgets, QtCore, QtGui
 import sys
-from valkka.valkka_core import * # API level 1 import 
+from valkka.core import * # API level 1 import 
 
 # valkka_xwin =True # use x windows create by Valkka and embed them into Qt
 valkka_xwin =False # use Qt provided x windows

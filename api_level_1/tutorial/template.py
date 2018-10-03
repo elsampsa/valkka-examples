@@ -1,5 +1,5 @@
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 """
 (LiveThread:livethread) --> {InfoFrameFilter:live_out_filter}
 """

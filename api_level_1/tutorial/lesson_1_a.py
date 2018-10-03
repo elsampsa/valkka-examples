@@ -9,7 +9,7 @@ filtergraph:
 Import the valkka level 1 API:
 <rtf>"""
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 
 """<rtf>
 Create a starting point for a FrameFilter chain:

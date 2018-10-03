@@ -1,4 +1,4 @@
-from valkka.valkka_core import *
+from valkka.core import *
 
 width  =1920//4
 height =1080//4

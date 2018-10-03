@@ -18,7 +18,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 import sys
 import time
 import random
-from valkka import valkka_core as core # so, everything that has .core, refers to the api1 level (i.e. swig wrapped cpp code)
+from valkka import core # so, everything that has .core, refers to the api1 level (i.e. swig wrapped cpp code)
 from valkka.api2.threads import LiveThread, OpenGLThread # api2 versions of the thread classes
 from valkka.api2.tools import parameterInitCheck, typeCheck
 pre_mod="filterchains: "

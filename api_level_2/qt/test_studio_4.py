@@ -58,7 +58,7 @@ import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2.chains import ManagedFilterchain, ViewPort
 from valkka.api2.logging import *
-from valkka.valkka_core import ValkkaXInitThreads
+from valkka.core import ValkkaXInitThreads
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair, DesktopHandler, QuickMenu, QuickMenuElement

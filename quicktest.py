@@ -8,7 +8,7 @@ print("   Numpy version    ",numpy.__version__)
 print()
 print("Loading Valkka")
 import valkka
-from valkka import valkka_core as core
+from valkka import core
 
 print("Valkka loaded ok")
 print("   Version          ",valkka.__version__)

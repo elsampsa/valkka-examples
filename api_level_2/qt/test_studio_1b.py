@@ -58,7 +58,7 @@ import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import BasicFilterchain
 from valkka.api2.logging import *
-from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
+from valkka.core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair

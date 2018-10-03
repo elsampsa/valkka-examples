@@ -19,7 +19,7 @@ Stream is read from an IP camera and then re-streamed (shared) to a local RTSP s
 Let's start by importing Valkka:
 <rtf>"""
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 
 """<rtf>
 Live555's default output packet buffer size might be too small, so let's make it bigger before instantiating any LiveThreads:

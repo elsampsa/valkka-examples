@@ -7,7 +7,7 @@ filtergraph:
 #</hide>
 #<hide>
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 #</hide>
 """<rtf>
 In the previous example, we had a thread (LiveThread), feeding a single FrameFilter (InfoFrameFilter).  The "filtergraph" for this case looks like this:

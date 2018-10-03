@@ -19,7 +19,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 import sys
 import time
 import multiprocessing
-from valkka.valkka_core import *
+from valkka.core import *
 
 shmem_name_tag="shmem_bridge"
 

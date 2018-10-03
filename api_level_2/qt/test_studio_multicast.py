@@ -58,7 +58,7 @@ import time
 from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import BasicFilterchain
 from valkka.api2 import setValkkaLogLevel, loglevel_debug, loglevel_normal
-from valkka import valkka_core as core
+from valkka import core
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair

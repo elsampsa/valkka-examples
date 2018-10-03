@@ -56,7 +56,7 @@ import os
 from valkka.api2 import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2 import ShmemFilterchain
 from valkka.api2 import parameterInitCheck
-from valkka.valkka_core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
+from valkka.core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
 
 # Local imports from this directory
 from demo_multiprocess import QValkkaThread

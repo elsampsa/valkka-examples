@@ -17,7 +17,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 """
 
 import sys
-from valkka.valkka_core import *
+from valkka.core import *
 
 
 def main():
