@@ -14,7 +14,7 @@ Decoding part             |
 #</hide>
 #<hide>
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 #</hide>
 """<rtf>
 Let's consider decoding the H264 streams from multiple RTSP cameras.  For that, we'll be needing several decoding AVThreads.  Let's take another look at the filtergraph:

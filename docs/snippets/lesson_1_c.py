@@ -12,7 +12,7 @@ main branch                                                        |            
 #</hide>
 #<hide>
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 #</hide>
 """<rtf>
 As a final trivial example for this lesson, we fork the FrameFilter chain into two:

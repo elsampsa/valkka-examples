@@ -9,7 +9,7 @@ Streaming part               | Decoding part
 #</hide>
 #<hide>
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 #</hide>
 """<rtf>
 Let's consider the following filtergraph:

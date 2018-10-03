@@ -24,7 +24,7 @@ Note that live and file streams are treated on an equal basis and with a similar
 Let's start by importing Valkka:
 <rtf>"""
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 
 debug_log_all()
 

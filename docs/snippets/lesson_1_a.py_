@@ -4,7 +4,7 @@ Import the valkka level 1 API:
 :: 
 
     import time
-    from valkka.valkka_core import *
+    from valkka.core import *
     
 
 Create a starting point for a FrameFilter chain:

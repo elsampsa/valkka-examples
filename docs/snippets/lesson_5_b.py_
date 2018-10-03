@@ -13,7 +13,7 @@ Let's start by importing Valkka:
 :: 
 
     import time
-    from valkka.valkka_core import *
+    from valkka.core import *
     
 
 Live555's default output packet buffer size might be too small, so let's make it bigger before instantiating any LiveThreads:

@@ -14,7 +14,7 @@ Decoding part             |
 #</hide>
 #<hide>
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 
 # presentation part
 glthread        =OpenGLThread ("glthread")

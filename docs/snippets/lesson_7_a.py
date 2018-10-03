@@ -1,6 +1,6 @@
 #<hide>
 import time
-from valkka.valkka_core import *
+from valkka.core import *
 #</hide>
 """<rtf>
 In this example, we do simultaneously a lot of stuff, namely, save the stream to disk, decode it to bitmap, visualize it in two different x windows, pass the decoded frames to an OpenCV analyzer and re-transmit the stream to a multicast address.
