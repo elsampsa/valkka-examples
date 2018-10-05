@@ -11,8 +11,7 @@ import valkka
 from valkka import core
 
 print("Valkka loaded ok")
-print("   Version          ",valkka.__version__)
-print("   Loaded from      ",valkka.__file__)
+print("   Version          ",valkka.core.__version__)
 print("   Core loaded from ",core.__file__)
 """Test instantiation of some objects
 """
@@ -38,7 +37,7 @@ print()
 
 # this is modified automatically by setver.bash - don't touch!
 VERSION_MAJOR=0
-VERSION_MINOR=6
+VERSION_MINOR=7
 VERSION_PATCH=0
 
 print("Checking Valkka python examples")

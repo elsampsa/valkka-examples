@@ -19,13 +19,20 @@ The testsuite is intended for:
  - Ultimate debugging
  - As *materia prima* for developers - take a copy of your own and use it as a basis for your own Valkka / Qt program
  
+If you want a more serious demonstration, try out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_ instead.
+ 
 Currently the testsuite consists of the following programs:
 
 ========================== ================================================================================
 File                       Explanation
 ========================== ================================================================================
-test_studio_1.py           | - Live stream from several rtsp cameras / sdp files
+test_studio_1.py           | - Stream from several rtsp cameras or sdp sources
                            | - Widgets are grouped together
+                           | - This is just live streaming, so use:
+                           |
+                           |   *rtsp://username:password@your_ip*
+                           |
+                           | - If you define a filename, it is interpreted as an sdp file
                            |
 test_studio_2.py           | - Like *test_studio_1.py*
                            | - Floating widgets
