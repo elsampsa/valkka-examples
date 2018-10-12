@@ -25,6 +25,8 @@ Pure python modules
 
 These are just normal python modules, installed typically with *pip3 install --user*
 
+A scaffold for creating python-only modules, can be found `here <https://github.com/elsampsa/valkka-skeleton>`_
+
 
 Module list
 -----------

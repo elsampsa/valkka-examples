@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    demo_analyzer_process.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.7.0 
+@version 0.7.1 
 @brief   Use analyzers from the local file "analyzer.py" in a QValkkaOpenCVProcess multiprocess
 
 
@@ -69,10 +69,10 @@ class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
   def cycle_(self):
     index, isize = self.client.pull()
     if (index==None):
-      # print(self.pre,"Client timed out..")
+      print(self.pre,"Client timed out..")
       pass
     else:
-      # print(self.pre,"Client index, size =",index, isize)
+      print(self.pre,"Client index, size =",index, isize)
       data=self.client.shmem_list[index]
       try:
         img=data.reshape((self.image_dimensions[1],self.image_dimensions[0],3))
