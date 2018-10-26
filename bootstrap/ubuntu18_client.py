@@ -1,6 +1,33 @@
 #!/usr/bin/python
 """
-Start from Ubuntu 18 install, then run this
+
+- Install Ubuntu 18
+- DO NOT INSTALL NVIDIA PROPRIETARY DRIVERS (as they will be installed later on)
+- Fetch this script with:
+
+wget https://raw.githubusercontent.com/elsampsa/valkka-examples/master/bootstrap/ubuntu18_client.py
+
+- And the run it with:
+
+python3 ubuntu18_client.py
+
+It does the following:
+
+- Installs Kubuntu and Xubuntu desktops
+- Install build environment for valkka core
+- Installs Valkka Live program
+- Installs valkka core module from the launchpad repository
+- Fetches valkka examples (just in case you need them)
+- Fetches darknet with python bindings
+- Opens you a few firefox tabs with information :)
+
+After this script has finished, its time to install Nvidia graphic drivers and CUDA
+
+Just use the following command (it came with the darknet installation):
+
+darknet-python/bootstrap/darknet_py_ubuntu18_cuda_install
+
+
 """
 import os
 
