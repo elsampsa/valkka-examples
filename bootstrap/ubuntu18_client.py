@@ -50,7 +50,7 @@ pklis=[
   
   "vlc",
   "ffmpeg",
-  "x-tile",
+  # "x-tile",
   
   "imagemagick",
   "inkscape",
