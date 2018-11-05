@@ -1,9 +1,16 @@
 #!/usr/bin/python
 """
 
-- Install Ubuntu 18
-- DO NOT INSTALL NVIDIA PROPRIETARY DRIVERS (as they will be installed later on)
-- Fetch this script with:
+- Install Ubuntu 18, but DO NOT INSTALL NVIDIA PROPRIETARY DRIVERS
+- Install latest nvidia drivers and cuda with:
+
+wget https://raw.githubusercontent.com/elsampsa/darknet-python/master/bootstrap/darknet_py_ubuntu18_cuda_install
+
+chmod a+x darknet_py_ubuntu18_cuda_install
+
+./darknet_py_ubuntu18_cuda_install
+
+- Next, fetch this script with:
 
 wget https://raw.githubusercontent.com/elsampsa/valkka-examples/master/bootstrap/ubuntu18_client.py
 
@@ -20,12 +27,6 @@ It does the following:
 - Fetches valkka examples (just in case you need them)
 - Fetches darknet with python bindings
 - Opens you a few firefox tabs with information :)
-
-After this script has finished, its time to install Nvidia graphic drivers and CUDA
-
-Just use the following command (it came with the darknet installation):
-
-darknet-python/bootstrap/darknet_py_ubuntu18_cuda_install
 
 """
 import os
@@ -101,7 +102,14 @@ print("\nINSTALLING VALKKA LIVE\n")
 st="pip3 install --user --upgrade git+git://github.com/elsampsa/valkka-live.git"
 print(st); os.system(st)
 
-st="install-valkka-core"
+# st="install-valkka-core"
+# print(st); os.system(st)
+
+st="sudo apt-add-repository ppa:sampsa-riikonen/valkka"
+print(st); os.system(st)
+st="sudo apt-get update"
+print(st); os.system(st)
+st="sudo apt-get install -y valkka"
 print(st); os.system(st)
 
 st="valkka-tune"
@@ -128,13 +136,12 @@ Extra tips for some laptop models:
 
 Asus rog
 
-    - The trick is to install directly cuda and nvidia drivers directly (noveau seems to produce freeze at login)
-
+    - Don't install nvidia drivers yet ..
     - After initial ubuntu 18 install, press esc at startup => you get to the grub menu
     - Choose "advanced options for ubuntu" in the grub menu
     - Go to recovery mode and from there to root shell
     - give the command "service NetworkManger start"
     - Log in as the target user with "su username"
-    - Install and run this script in the command line as described in the preamble
+    - Proceed as instructed in the preamble of this file
     
 """
