@@ -27,7 +27,6 @@ Just use the following command (it came with the darknet installation):
 
 darknet-python/bootstrap/darknet_py_ubuntu18_cuda_install
 
-
 """
 import os
 
@@ -121,3 +120,21 @@ print(st); os.system(st)
 
 st="firefox https://elsampsa.github.io/valkka-live/_build/html/index.html &"
 print(st); os.system(st)
+
+
+
+"""
+Extra tips for some laptop models:
+
+Asus rog
+
+    - The trick is to install directly cuda and nvidia drivers directly (noveau seems to produce freeze at login)
+
+    - After initial ubuntu 18 install, press esc at startup => you get to the grub menu
+    - Choose "advanced options for ubuntu" in the grub menu
+    - Go to recovery mode and from there to root shell
+    - give the command "service NetworkManger start"
+    - Log in as the target user with "su username"
+    - Install and run this script in the command line as described in the preamble
+    
+"""

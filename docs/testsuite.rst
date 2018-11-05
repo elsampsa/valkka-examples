@@ -161,7 +161,7 @@ VLC           Runs the streams in vlc instead (if installed)
 
 *RUN(QT)* is the thing you want to do.
 
-*FFPLAY* and *VLC* launch the same rtsp streams by using either ffplay or vlc.  This is a nice test to see how Valkka performs against some popular video players.  A tip: you can use "x-tile" to tile the windows created by these external programs.
+*FFPLAY* and *VLC* launch the same rtsp streams by using either ffplay or vlc.  This is a nice test to see how Valkka performs against some popular video players.
 
 test_studio_detector.py
 -----------------------

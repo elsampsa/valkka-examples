@@ -38,7 +38,7 @@ First, install some debian packages:
 
 ::
 
-  sudo apt-get install python3-pip git mesa-utils ffmpeg vlc x-tile 
+  sudo apt-get install python3-pip git mesa-utils ffmpeg vlc
 
 some of these will be used for benchmarking Valkka agains other programs.
 
