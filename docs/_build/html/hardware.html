@@ -38,7 +38,8 @@
 <div class="section" id="cameras">
 <h2>Cameras<a class="headerlink" href="#cameras" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>You need OnVif compliant camera(s) (supporting the RTSP protocol)</li>
+<li>OnVif compliant IP cameras (supporting the RTSP protocol)</li>
+<li>USB Cameras capable of streaming H264.  We have tested against <em>Logitech HD Pro Webcam C920</em></li>
 <li>For the moment, the only codec supported is H264</li>
 </ul>
 </div>
@@ -47,7 +48,7 @@
 <p>libValkka uses OpenGL and OpenGL texture streaming, so it needs a robust OpenGL implementation.  The current situation is:</p>
 <ul class="simple">
 <li>Intel: the stock <strong>i915</strong> driver is OK</li>
-<li>Nvidia: use <strong>nvidia</strong> proprietary driver (As of Ubuntu 18, <strong>noveau</strong> does not work with Valkka)</li>
+<li>Nvidia: use <strong>nvidia</strong> proprietary driver</li>
 <li>ATI: <strong>not tested</strong></li>
 </ul>
 <p>OpenGL version 3 or greater is required.  You can check your OpenGL version with the command <em>glxinfo</em>.</p>

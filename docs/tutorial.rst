@@ -28,6 +28,7 @@ Before starting with the tutorial, you need at least:
   - Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market
   - If your camera is "OnVif compliant", then it support RTSP and RTP
 
+- For the USB camera example, a H264 streaming USB camera is required
 - Basic knowledge of media streaming in linux:
 
   - How to connect to an rtsp camera (e.g. "ffplay rtsp://username:passwd@ip_address")
@@ -50,3 +51,5 @@ Lessons
    lesson_7
    lesson_8
    lesson_9
+   lesson_10
+   
