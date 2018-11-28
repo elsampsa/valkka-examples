@@ -2,7 +2,11 @@
 
 OpenSource Video Surveillance and Management for Linux - Python3 API and Qt examples.
 
-Everything you need is [here](https://elsampsa.github.io/valkka-examples/)
+Looking for an OpenSource video surveillance program with object detection?
+
+Just go [here](https://elsampsa.github.io/valkka-live/).
+
+For more details about libValkka, please go [here](https://elsampsa.github.io/valkka-examples/)
 
 ## Authors
 Sampsa Riikonen

@@ -1,0 +1,63 @@
+    
+
+Same imports as before:
+
+:: 
+
+    import time
+    from valkka.core import *
+    from valkka.api2 import ValkkaFS
+    
+
+Load ValkkaFS metadata:
+
+:: 
+
+    valkkafs = ValkkaFS.loadFromDirectory(dirname="/home/sampsa/tmp/testvalkkafs")
+    
+
+Let's take a look at the blocktable:
+
+:: 
+
+    a = valkkafs.getBlockTable()
+    print(a[:,0:10])
+    
+
+Construct the filterchain: write from the reader thread into the verbose InfoFrameFilter
+
+:: 
+
+    out_filter =InfoFrameFilter("live_out_filter")
+    readerthread = ValkkaFSReaderThread("reader", valkkafs.core, out_filter)
+    
+
+Start the reader thread:
+
+:: 
+
+    readerthread.startCall()
+    
+
+Frames with id number 925412 are mapped into slot 1:
+
+:: 
+
+    readerthread.setSlotIdCall(1, 925412)
+    
+
+Request blocks 0, 1 from the reader thread.  Information of frames from these blocks are dumped on the terminal
+
+:: 
+
+    readerthread.pullBlocksPyCall([0,1])
+    time.sleep(1)
+    
+
+Exit the thread:
+
+:: 
+
+    readerthread.stopCall()
+    print("bye")
+    

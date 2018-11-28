@@ -15,7 +15,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Integrating with Qt" href="qt_notes.html" />
+    <link rel="next" title="Lesson 11 : ValkkaFS" href="lesson_11.html" />
     <link rel="prev" title="Lesson 9 : Drawing Bounding Boxes" href="lesson_9.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -59,7 +59,7 @@
 </pre></div>
 </div>
 <p>Define the usb camera (/dev/video2) and where it is going to be streamed (to av_in_filter with slot number 1):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span> <span class="n">USBCameraConnectionContext</span><span class="p">(</span><span class="s2">&quot;/dev/video2&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">);</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span> <span class="n">USBCameraConnectionContext</span><span class="p">(</span><span class="s2">&quot;/dev/video2&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 <span class="c1"># The default resolution is 720p</span>
 <span class="c1"># If you want to set the width and height yourself, uncomment the following line</span>
 <span class="c1"># ctx.width  = 1920; ctx.height = 1080;</span>
@@ -147,6 +147,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>

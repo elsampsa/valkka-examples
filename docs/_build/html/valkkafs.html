@@ -1,0 +1,203 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>ValkkaFS &#8212; OpenSource Video Management for Linux  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Common problems" href="pitfalls.html" />
+    <link rel="prev" title="Multi-GPU systems" href="multi_gpu.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="valkkafs">
+<span id="id1"></span><h1>ValkkaFS<a class="headerlink" href="#valkkafs" title="Permalink to this headline">¶</a></h1>
+<p>ValkkaFS is a custom filesystem for storing streaming media data.</p>
+<p>Video frames (typically H264) are dumped into a block device, which is a regular file or a disk partition.</p>
+<p>You can use a single ValkkaFS instance per camera, but typically you would be streaming live video from several cameras into the same ValkkaFS.</p>
+<p>How does this look like on the disk?  Let’s take cameras A, B, C and D.  Uppercase letters designate “seek-points” (i.e. sps, pps, intra-frame sequences), numbers designate timestamps</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">c1</span> <span class="n">c2</span> <span class="n">b4</span> <span class="n">C5</span> <span class="n">A8</span> <span class="n">a10</span> <span class="n">d11</span> <span class="n">D12</span> <span class="n">a15</span> <span class="n">B16</span> <span class="n">b17</span> <span class="n">c18</span> <span class="n">a20</span> <span class="o">..</span>
+</pre></div>
+</div>
+<p>Frames from different cameras alternate, so do seek points, while all frames are written in the order of their arrival.</p>
+<p>Once limit of the file (or the partition) is reached, frames are written from the beginning of the partition, effectively overwriting oldest frames.</p>
+<p>This scheme discards automatically oldest data, while minimizes wear and tear on hard-disk arms in the long run (in the case you are using an entire disk or a partition). When using regular files with ValkkaFS, the underlying filesystem (say, ext4) is not required to manage and grow continuously the space required for streaming data.</p>
+<p>The written frame sequences are organized in blocks.  ValkkaFS maintains metadata about the minimum seek-point timestamp and maximum frame timestamp of each block.  The minimum requirement is, that for actively streaming cameras, there is at least one key-frame in each block.</p>
+<p>Frames are requested from ValkkaFS on a per-block basis.</p>
+<p>For concrete examples of the python API, please refer to the <a class="reference internal" href="lesson_11.html#valkkafs-tutorial"><span class="std std-ref">Tutorial</span></a>.  For more info on ValkkaFS, refer to the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/valkkafs.html">cpp documentation</a>.  For calculating disk space requirements, keep on reading.</p>
+<div class="section" id="using-an-entire-partition">
+<h2>Using an entire partition<a class="headerlink" href="#using-an-entire-partition" title="Permalink to this headline">¶</a></h2>
+<p><em>(and an example how to calculate the required disk-space)</em></p>
+<p>An entire disk or partition can be dedicated to ValkkaFS.</p>
+<p>In Linux, disks and partitions appear as block devices under the directory <em>/dev/</em>.  For example, <em>/dev/sdb</em> is typically that external hard disk drive you plug into your USB port.</p>
+<p>To grant access to a linux user to read and write block devices directly, use the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">usermod</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">G</span> <span class="n">disk</span> <span class="n">username</span>
+</pre></div>
+</div>
+<p>After that you still need to logout and login again.</p>
+<p>Now you can verify that block devices can be read and written as regular files.  Try this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">head</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdb</span>
+</pre></div>
+</div>
+<p>to read the first ten bytes of that external hard-drive.</p>
+<p>ValkkaFS uses <strong>Linux swap partitions</strong> located <strong>on block devices</strong>.  So, the next thing we need, is to create a Linux swap partition on that external (or internal) hard disk.  Use the following command to create the partition <em>/dev/sdb1</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfdisk</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdb</span>
+</pre></div>
+</div>
+<p>Let’s see how it worked out, so type</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">fdisk</span> <span class="o">-</span><span class="n">l</span>
+</pre></div>
+</div>
+<p>You should get something like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Device</span>     <span class="n">Start</span>   <span class="n">End</span>        <span class="n">Sectors</span>   <span class="n">Size</span>    <span class="n">Type</span>
+<span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdb1</span>  <span class="mi">2048</span>    <span class="mi">976773134</span>  <span class="mi">976771087</span> <span class="mi">465</span><span class="p">,</span><span class="mi">8</span><span class="n">G</span>  <span class="n">Linux</span> <span class="n">swap</span>
+</pre></div>
+</div>
+<p>To get the exact size in bytes, type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">blockdev</span> <span class="o">--</span><span class="n">getsize64</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdb1</span>
+</pre></div>
+</div>
+<p>So, in this case we’d be dedicating an external USB drive of 465 GB for recording streaming video.</p>
+<p>To identify disks, Valkka uses uuid partition identification.  The uuid can be found with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">blkid</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdb1</span>
+</pre></div>
+</div>
+<p>Next, suppose that we have:</p>
+<ul class="simple">
+<li>16 cameras</li>
+<li>Each camera having a target bitrate of 2048Kbits per second</li>
+<li>Each camera writing a key-frame every second.</li>
+</ul>
+<p>We’ll be scoring around <strong>4 MBytes per second</strong>.</p>
+<p>Next, let’s have a few seconds worth of video in each block (say, 5 secs) and we’ll get a <strong>blocksize of 20 MBytes</strong> (remember to double-check that the blocksize is a multiple of 512 Bytes).</p>
+<p>Finally, let’s leave out 2% of the disk space and we get <strong>23370 blocks</strong> for our ValkkaFS.</p>
+<p>That was 5 secs per block, so this disk is capable of storing <strong>32 hours</strong> of video.</p>
+<p>And that is in the worst case scenario where all the cameras are writing to the disk continuously (typically you would want to start recording at movement only).  Nice!  :)</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
+<!--
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+-->
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ValkkaFS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-an-entire-partition">Using an entire partition</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/valkkafs.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-123031237-1']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>

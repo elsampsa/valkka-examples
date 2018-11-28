@@ -37,6 +37,7 @@ For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github
    tutorial
    qt_notes
    multi_gpu
+   valkkafs
    pitfalls
    modules
    license

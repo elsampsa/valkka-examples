@@ -14,7 +14,7 @@ usbthread       =USBDeviceThread("usbthread")
 """<rtf>
 Define the usb camera (/dev/video2) and where it is going to be streamed (to av_in_filter with slot number 1):
 <rtf>"""
-ctx = USBCameraConnectionContext("/dev/video2", 1, av_in_filter);
+ctx = USBCameraConnectionContext("/dev/video2", 1, av_in_filter)
 # The default resolution is 720p 
 # If you want to set the width and height yourself, uncomment the following line
 # ctx.width  = 1920; ctx.height = 1080;
