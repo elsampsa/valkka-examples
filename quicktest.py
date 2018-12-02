@@ -37,7 +37,7 @@ print()
 
 # this is modified automatically by setver.bash - don't touch!
 VERSION_MAJOR=0
-VERSION_MINOR=9
+VERSION_MINOR=10
 VERSION_PATCH=0
 
 print("Checking Valkka python examples")
