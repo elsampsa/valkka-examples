@@ -7,3 +7,4 @@ setver.bash
 add_untracked.bash
 cleanpy.bash
 tmp/
+api_level_2/qt/fs_directory/
