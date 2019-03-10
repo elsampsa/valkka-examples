@@ -183,7 +183,7 @@ class PlaybackController:
         timerange = self.valkkafs_manager.getTimeRange()
         
         if len(timerange) < 1: # empty tuple implies no frames
-            print("WARNING! no timerange from ValkkaFS")
+            print("PlaybackController: check_timelimit_slot__ : WARNING! no timerange from ValkkaFS")
             # fabricate a dummy time : this exact moment
             current_time = int(time.time() * 1000)
             timerange = (

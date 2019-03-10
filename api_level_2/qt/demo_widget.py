@@ -66,16 +66,21 @@ class ValkkaFSConfig:
         
         self.label1 = QLabel("Filesystem Specs", self.main_widget)
         self.blocksize_label = QLabel("Blocksize (MB)", self.main_widget)
-        self.blocksize_value = QLineEdit(self.main_widget)
+        # self.blocksize_value = QLineEdit(self.main_widget)
+        # self.blocksize_value.setValidator(QIntValidator(blocksize_limits[0], blocksize_limits[1]))
+        self.blocksize_value = QSpinBox(self.main_widget)
+        self.blocksize_value.setRange(blocksize_limits[0], blocksize_limits[1])
+        
         self.n_blocks_label = QLabel("Number of blocks", self.main_widget)
-        self.n_blocks_value = QLineEdit(self.main_widget)
+        # self.n_blocks_value = QLineEdit(self.main_widget)
+        # self.n_blocks_value.setValidator(QIntValidator(n_blocks_limits[0], n_blocks_limits[1]))
+        self.n_blocks_value = QSpinBox(self.main_widget)
+        self.n_blocks_value.setRange(n_blocks_limits[0], n_blocks_limits[1])
+        
         self.totalsize_label = QLabel("Total size (MB)", self.main_widget)
         self.totalsize_value = QLineEdit(self.main_widget)
         
         self.totalsize_value.setReadOnly(True)
-
-        self.blocksize_value.setValidator(QIntValidator(blocksize_limits[0], blocksize_limits[1]))
-        self.n_blocks_value.setValidator(QIntValidator(n_blocks_limits[0], n_blocks_limits[1]))
         
         self.label2 = QLabel("Record Type", self.main_widget)
         self.regular_file_rb = QRadioButton("Regular File")
@@ -122,8 +127,11 @@ class ValkkaFSConfig:
         self.main_lay.addWidget(self.cancel_button, 11, 0)
         self.main_lay.addWidget(self.cancel_label, 11, 1)
         
-        self.blocksize_value.textChanged.connect(self.blocksize_slot)
-        self.n_blocks_value.textChanged.connect(self.n_blocks_slot)
+        # self.blocksize_value.textChanged.connect(self.blocksize_slot)
+        # self.n_blocks_value.textChanged.connect(self.n_blocks_slot)
+        self.blocksize_value.valueChanged.connect(self.blocksize_slot)
+        self.n_blocks_value.valueChanged.connect(self.n_blocks_slot)
+        
         # self.regular_file_button.clicked.connect(self.regular_file_slot)
         self.block_fs_combo.currentIndexChanged.connect(self.block_device_slot)
         
@@ -156,8 +164,10 @@ class ValkkaFSConfig:
         self.blocksize = round(self.fs.blocksize / 1024 / 1024) # bytes to megabytes
         self.n_blocks = self.fs.n_blocks
         
-        self.n_blocks_value.setText(str(self.n_blocks))
-        self.blocksize_value.setText(str(self.blocksize))
+        # self.n_blocks_value.setText(str(self.n_blocks))
+        # self.blocksize_value.setText(str(self.blocksize))
+        self.n_blocks_value.setValue(self.n_blocks)
+        self.blocksize_value.setValue(self.blocksize)
         
         self.regular_file_rb.setChecked(True)
     
@@ -222,7 +232,7 @@ class ValkkaFSConfig:
             n_blocks        = self.n_blocks, 
             device_size     = None, # calculate from blocksize and n_blocks
             partition_uuid  = partition_uuid,
-            verbose         = False)
+            verbose         = True)
         
     # *** getters ***
     
