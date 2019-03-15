@@ -52,7 +52,7 @@ class ValkkaFSConfig:
     """
     
     
-    def __init__(self, dirname, parent = None, blocksize_limits = (1, 1024*100), n_blocks_limits = (4, 1024)): # 1 MB -> 100 GB, -> 100 TB
+    def __init__(self, dirname, parent = None, blocksize_limits = (1, 1024*100), n_blocks_limits = (4, 999999)): # 1 MB -> 100 GB, -> 100 TB
         self.dirname = dirname
         self.fs = ValkkaFS.loadFromDirectory(dirname = self.dirname)
         
