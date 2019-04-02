@@ -1138,11 +1138,13 @@ class TimeLineWidget(QtWidgets.QWidget):
     def set_fs_time_limits_slot(self, limits: tuple):
         assert(isinstance(limits, tuple))
         self.setFSTimeLimits(limits)
+        self.repaint()
         
     def set_block_time_limits_slot(self, limits: tuple):
         assert(isinstance(limits, tuple))
         self.logger.debug("set_block_time_limits_slot : %s -> %s", formatMstimestamp(limits[0]), formatMstimestamp(limits[1]))
         self.setBlockTimeLimits(limits)
+        self.repaint()
     
     def set_day_click_slot(self, day: datetime.date):
         self.logger.debug("set_day_click_slot %s", str(day))

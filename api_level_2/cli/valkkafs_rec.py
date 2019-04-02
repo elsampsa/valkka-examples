@@ -7,7 +7,7 @@ rtime = 30
 
 valkkafs = ValkkaFS.newFromDirectory(
     dirname = "/home/sampsa/tmp/testvalkkafs", 
-    blocksize = 512*512,
+    blocksize = 1024*1024, # mbps
     n_blocks = 25,
     verbose = True)
 

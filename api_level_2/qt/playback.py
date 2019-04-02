@@ -55,15 +55,17 @@ class PlaybackController:
     
     
     class Signals(QtCore.QObject):
-        set_time = QtCore.Signal(object) # current time
-        set_fs_time_limits = QtCore.Signal(object) # filesystem time limits.   Carries a tuple
-        set_block_time_limits = QtCore.Signal(object) # loaded frames time limits.  Carries a tuple
+        set_time = QtCore.Signal(object)                # current time
+        set_fs_time_limits = QtCore.Signal(object)      # filesystem time limits.   Carries a tuple
+        set_block_time_limits = QtCore.Signal(object)   # loaded frames time limits.  Carries a tuple
+        new_block = QtCore.Signal()                     # a new block has been created
         
     
     def __init__(self, **kwargs):
         parameterInitCheck(PlaybackController.parameter_defs, kwargs, self)
         self.signals = PlaybackController.Signals()
         
+        # this timer is currently disabled (see createConnections__)
         self.timelimit_check_timer = QtCore.QTimer() # timer for check timelimits
         self.timelimit_check_timer.setInterval(10000) # every ten seconds
         self.timelimit_check_timer.setSingleShot(False)
@@ -87,7 +89,7 @@ class PlaybackController:
         self.connectButtons__()
         self.connectCalendarWidget__()
     
-        self.timelimit_check_timer.start()
+        # self.timelimit_check_timer.start() # let's update only when there's a new block instead of regular intervals
         
         
     def connectFSManager__(self):
@@ -99,6 +101,7 @@ class PlaybackController:
         """
         self.valkkafs_manager.setTimeCallback(self.valkkafsmanager_set_time_cb)
         self.valkkafs_manager.setTimeLimitsCallback(self.valkkafsmanager_set_block_time_limits_cb)
+        self.valkkafs_manager.setBlockCallback(self.valkkafsmanager_block_cb)
         
     
     def connectTimeLineWidget__(self):
@@ -116,6 +119,8 @@ class PlaybackController:
         self.timeline_widget.signals.seek_click.connect(self.timeline_widget_seek_click_slot)  # (3)
         self.signals.set_time.connect(self.timeline_widget.set_time_slot)
         self.signals.set_block_time_limits.connect(self.timeline_widget.set_block_time_limits_slot)
+        self.signals.new_block.connect(self.check_timelimit_slot__)
+        
         
     
     def connectButtons__(self):
@@ -168,7 +173,10 @@ class PlaybackController:
     
     def valkkafsmanager_set_block_time_limits_cb(self, tup):
         self.signals.set_block_time_limits.emit(tup)
-    
+        
+        
+    def valkkafsmanager_block_cb(self):
+        self.signals.new_block.emit()
         
     
     # *** Internal slots ***

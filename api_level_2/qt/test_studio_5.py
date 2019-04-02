@@ -92,9 +92,10 @@ valkka_xwin = False  # use Qt provided x windows
 
 # setValkkaLogLevel(loglevel_silent) # set all loggers to silent
 # setValkkaLogLevel(loglevel_crazy)
+core.setLogLevel_threadlogger(loglevel_crazy)
 # core.setLogLevel_livelogger(loglevel_crazy) # set an individual loggers
 # core.setLogLevel_valkkafslogger(loglevel_crazy)
-core.setLogLevel_avthreadlogger(loglevel_debug)
+# core.setLogLevel_avthreadlogger(loglevel_debug)
 
 valkka_fs_dirname = "fs_directory"
 blocksize_default = 25*1024*1024 # blocksize in B # one block per two seconds, assuming 25 fps, 2Mbits/sec, 2 cameras, key frame each second for both
@@ -253,8 +254,8 @@ class MyGui(QtWidgets.QMainWindow):
             n_1440p=self.pardic["n_1440p"],
             n_4K=self.pardic["n_4K"],
             # naudio  =self.pardic["naudio"], # obsolete
-            # verbose =True,
-            verbose=False,
+            verbose =True,
+            # verbose=False,
             msbuftime=self.pardic["msbuftime"],
             affinity=self.pardic["gl affinity"]
         )
@@ -398,6 +399,8 @@ class MyGui(QtWidgets.QMainWindow):
                 
         self.openglthread.close()
         
+        # time.sleep(5)
+        
 
     def start_streams(self):
         pass
@@ -406,7 +409,7 @@ class MyGui(QtWidgets.QMainWindow):
         pass
 
     def closeEvent(self, e):
-        print(pre, "closeEvent!")
+        print("\n", pre, "closeEvent!\n")
         self.stop_streams()
         self.closeValkka()
         self.rec_window.forceClose()
