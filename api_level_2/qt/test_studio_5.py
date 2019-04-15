@@ -82,8 +82,9 @@ from demo_widget import ValkkaFSConfig
 from playback import PlaybackController
 from playwidget import TimeLineWidget, CalendarWidget
 
-# use_live = True
-use_live = False
+# # this is no controlled with the "no_rec" command line argument
+use_live = True
+# use_live = False
 
 pre = __name__  # aux string for debugging
 
@@ -92,11 +93,14 @@ valkka_xwin = False  # use Qt provided x windows
 
 # setValkkaLogLevel(loglevel_silent) # set all loggers to silent
 # setValkkaLogLevel(loglevel_crazy)
-core.setLogLevel_threadlogger(loglevel_crazy)
 # core.setLogLevel_livelogger(loglevel_crazy) # set an individual loggers
+
+""" # a nice debugging set:
+core.setLogLevel_threadlogger(loglevel_crazy)
 core.setLogLevel_valkkafslogger(loglevel_debug)
 core.setLogLevel_avthreadlogger(loglevel_debug)
 core.setLogLevel_valkkafslogger(loglevel_debug)
+"""
 
 
 valkka_fs_dirname = "fs_directory"
@@ -213,8 +217,10 @@ class MyGui(QtWidgets.QMainWindow):
         self.buttons_lay = QtWidgets.QHBoxLayout(self.buttons)
         self.play_button = QtWidgets.QPushButton("play", self.buttons)
         self.stop_button = QtWidgets.QPushButton("stop", self.buttons)
+        self.zoom_to_fs_button = QtWidgets.QPushButton("limits", self.buttons)
         self.buttons_lay.addWidget(self.play_button)
         self.buttons_lay.addWidget(self.stop_button)
+        self.buttons_lay.addWidget(self.zoom_to_fs_button)
         self.rec_video_lay.addWidget(self.buttons)
         
         # calendar
@@ -237,7 +243,8 @@ class MyGui(QtWidgets.QMainWindow):
             timeline_widget     = self.timelinewidget,
             valkkafs_manager    = self.valkkafsmanager,
             play_button         = self.play_button,
-            stop_button         = self.stop_button
+            stop_button         = self.stop_button,
+            zoom_to_fs_button   = self.zoom_to_fs_button
             )
 
     
@@ -420,6 +427,14 @@ class MyGui(QtWidgets.QMainWindow):
 
 
 def main():
+    global use_live
+    
+    if len(sys.argv) > 1:
+        print(sys.argv)
+        if sys.argv[1] == "no_rec":
+            print("\nWARNING: starting in playback-only mode")
+            use_live = False
+    
     app = QtWidgets.QApplication(["test_app"])
     conf = MyConfigDialog()
     pardic = conf.exec_()

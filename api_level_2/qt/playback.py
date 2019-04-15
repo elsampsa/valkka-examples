@@ -50,7 +50,8 @@ class PlaybackController:
         "valkkafs_manager"  : None,
         "play_button"       : None,
         "stop_button"       : None,
-        "calendar_widget"   : None
+        "calendar_widget"   : None,
+        "zoom_to_fs_button" : None
         }
     
     
@@ -132,6 +133,8 @@ class PlaybackController:
         """
         self.play_button.clicked.connect(self.play_slot__)  # (1)
         self.stop_button.clicked.connect(self.stop_slot__)  # (2)
+        if self.zoom_to_fs_button is not None:
+            self.zoom_to_fs_button.clicked.connect(self.zoom_to_fs_slot__)
         
         
     def connectCalendarWidget__(self):
@@ -214,6 +217,12 @@ class PlaybackController:
         """
         print("stop_slot__")
         self.valkkafs_manager.stop()
+        
+        
+    def zoom_to_fs_slot__(self):
+        """Zoom to filesystem limits
+        """
+        self.timeline_widget.zoomToFS()
     
 
 class MyGui(QtWidgets.QMainWindow):
