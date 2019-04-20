@@ -51,8 +51,7 @@
 <div class="section" id="using-an-entire-partition">
 <h2>Using an entire partition<a class="headerlink" href="#using-an-entire-partition" title="Permalink to this headline">¶</a></h2>
 <p><em>(and an example how to calculate the required disk-space)</em></p>
-<p>An entire disk or partition can be dedicated to ValkkaFS.</p>
-<p>In Linux, disks and partitions appear as block devices under the directory <em>/dev/</em>.  For example, <em>/dev/sdb</em> is typically that external hard disk drive you plug into your USB port.</p>
+<p>An entire hard-drive/partition can be dedicated to ValkkaFS.  In the following example, we assume that your external hard-disk appears under <em>/dev/sdb</em></p>
 <p>To grant access to a linux user to read and write block devices directly, use the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">usermod</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">G</span> <span class="n">disk</span> <span class="n">username</span>
 </pre></div>
@@ -63,10 +62,12 @@
 </pre></div>
 </div>
 <p>to read the first ten bytes of that external hard-drive.</p>
-<p>ValkkaFS uses <strong>Linux swap partitions</strong> located <strong>on block devices</strong>.  So, the next thing we need, is to create a Linux swap partition on that external (or internal) hard disk.  Use the following command to create the partition <em>/dev/sdb1</em></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cfdisk</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdb</span>
+<p>ValkkaFS uses devices with <strong>GPT partition tables</strong>, having <strong>Linux swap partitions</strong>, located <strong>on block devices</strong>.  So, the next thing we need, is to create a Linux swap partition on that external (or internal) hard disk.  The recommended tool for this is <em>gparted</em>.</p>
+<p>Start gparted with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">gparted</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdb</span>
 </pre></div>
 </div>
+<p>Once in gparted, choose <em>device</em> =&gt; <em>create partition table</em>.  Choose <em>gpt</em> partition table and press <em>apply</em>.  Next choose <em>partition</em>, and there, choose <em>linux swap</em>.</p>
 <p>Let’s see how it worked out, so type</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">fdisk</span> <span class="o">-</span><span class="n">l</span>
 </pre></div>
@@ -132,7 +133,7 @@
   <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
   <li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li>
 </ul>
-<h3><a href="index.html">Table Of Contents</a></h3>
+<h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
@@ -172,8 +173,8 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/valkkafs.rst.txt"

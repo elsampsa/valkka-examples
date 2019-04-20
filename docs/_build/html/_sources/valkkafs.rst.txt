@@ -33,9 +33,7 @@ Using an entire partition
 
 *(and an example how to calculate the required disk-space)*
 
-An entire disk or partition can be dedicated to ValkkaFS.
-
-In Linux, disks and partitions appear as block devices under the directory */dev/*.  For example, */dev/sdb* is typically that external hard disk drive you plug into your USB port.
+An entire hard-drive/partition can be dedicated to ValkkaFS.  In the following example, we assume that your external hard-disk appears under */dev/sdb*
 
 To grant access to a linux user to read and write block devices directly, use the following command:
 
@@ -53,11 +51,16 @@ Now you can verify that block devices can be read and written as regular files. 
     
 to read the first ten bytes of that external hard-drive.
 
-ValkkaFS uses **Linux swap partitions** located **on block devices**.  So, the next thing we need, is to create a Linux swap partition on that external (or internal) hard disk.  Use the following command to create the partition */dev/sdb1*
+ValkkaFS uses devices with **GPT partition tables**, having **Linux swap partitions**, located **on block devices**.  So, the next thing we need, is to create a Linux swap partition on that external (or internal) hard disk.  The recommended tool for this is *gparted*.
+
+Start gparted with:
 
 ::
 
-    cfdisk /dev/sdb
+    sudo gparted /dev/sdb
+
+
+Once in gparted, choose *device* => *create partition table*.  Choose *gpt* partition table and press *apply*.  Next choose *partition*, and there, choose *linux swap*.
 
 Let's see how it worked out, so type
 

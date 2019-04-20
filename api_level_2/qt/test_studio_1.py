@@ -79,11 +79,16 @@ class MyConfigDialog(ConfigDialog):
     self.tooltips={        # how about some tooltips?
       }
     self.pardic.update({
-      "replicate"          : 1
+      "replicate"          : 1,
+      "correct timestamp"  : 1,
+      "socket size bytes"  : 0,
+      "ordering time millisecs" : 0
       })
     self.plis +=["replicate"]
+    self.plis +=["correct timestamp"]
+    self.plis +=["socket size bytes"]
+    self.plis +=["ordering time millisecs"]
     self.config_fname="test_studio_1.config" # define the config file name
-  
  
  
 class MyGui(QtWidgets.QMainWindow):
@@ -154,6 +159,13 @@ class MyGui(QtWidgets.QMainWindow):
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       print(pre,"openValkka: setting decoder thread on processor",a)
 
+
+      # Timestamp correction type: TimeCorrectionType_none, TimeCorrectionType_dummy, or TimeCorrectionType_smart (default)
+      if self.pardic["correct timestamp"] == 1:
+          time_correction = TimeCorrectionType_smart
+      else:
+          time_correction = TimeCorrectionType_dummy
+          
       chain=BasicFilterchain(       # decoding and branching the stream happens here
         livethread  =self.livethread, 
         openglthread=self.openglthread,
@@ -167,14 +179,12 @@ class MyGui(QtWidgets.QMainWindow):
         # flush_when_full =True
         flush_when_full =False,
         
-        # time_correction   =TimeCorrectionType_dummy,  # Timestamp correction type: TimeCorrectionType_none, TimeCorrectionType_dummy, or TimeCorrectionType_smart (default)
-        # time_correction   =TimeCorrectionType_smart,
-        # # by default, no need to specify
+        time_correction = time_correction,
         
-        recv_buffer_size  =0,                        # Operating system socket ringbuffer size in bytes # 0 means default
+        recv_buffer_size = self.pardic["socket size bytes"],                        # Operating system socket ringbuffer size in bytes # 0 means default
         # recv_buffer_size  =1024*800,   # 800 KB
         
-        reordering_mstime =0                           # Reordering buffer time for Live555 packets in MILLIseconds # 0 means default
+        reordering_mstime = self.pardic["ordering time millisecs"]                    # Reordering buffer time for Live555 packets in MILLIseconds # 0 means default
         # reordering_mstime =300                         
         )
   
