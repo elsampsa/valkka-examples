@@ -40,7 +40,6 @@ For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github
    multi_gpu
    valkkafs
    pitfalls
-   modules
    repos
    license
    benchmarking
