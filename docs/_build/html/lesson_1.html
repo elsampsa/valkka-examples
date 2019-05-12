@@ -205,6 +205,17 @@
 <p class="last">FrameFilter chains are nothing but callback cascades - they will block the execution of LiveThread when executing code.  At some moment, the callback chain should terminate and continue in another, independent thread.  This will be discussed in the next lesson.</p>
 </div>
 </div>
+<div class="section" id="controlling-verbosity">
+<h2>Controlling verbosity<a class="headerlink" href="#controlling-verbosity" title="Permalink to this headline">¶</a></h2>
+<p>If libValkka dumps too much to your terminal, you can shut if off by using <code class="docutils literal notranslate"><span class="pre">loglevel_silent</span></code>.</p>
+<p>Verbosity can be controlled like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2.logging</span> <span class="k">import</span> <span class="n">setValkkaLogLevel</span><span class="p">,</span> <span class="n">setLogLevel_livelogger</span><span class="p">,</span> <span class="n">loglevel_silent</span><span class="p">,</span> <span class="n">loglevel_normal</span>
+
+<span class="n">setValkkaLogLevel</span><span class="p">(</span><span class="n">loglevel_silent</span><span class="p">)</span> <span class="c1"># set all loggers to silent</span>
+<span class="n">setLogLevel_livelogger</span><span class="p">(</span><span class="n">loglevel_normal</span><span class="p">)</span> <span class="c1"># set an individual loggers</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -252,12 +263,14 @@
 <li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>

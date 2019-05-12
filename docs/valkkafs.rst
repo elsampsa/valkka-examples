@@ -51,7 +51,11 @@ Now you can verify that block devices can be read and written as regular files. 
     
 to read the first ten bytes of that external hard-drive.
 
-ValkkaFS uses devices with **GPT partition tables**, having **Linux swap partitions**, located **on block devices**.  So, the next thing we need, is to create a Linux swap partition on that external (or internal) hard disk.  The recommended tool for this is *gparted*.
+ValkkaFS uses devices with **GPT partition tables**, having **Linux swap partitions**, located **on block devices**.  
+
+Why such a scheme?  We'll be writing over that partition, so we just wan't to be sure it's not a normal user filesystem.  :)
+
+The next thing we need, is to create a Linux swap partition on that external (or internal) hard disk.  The recommended tool for this is *gparted*.
 
 Start gparted with:
 

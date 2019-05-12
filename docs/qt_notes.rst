@@ -1,9 +1,9 @@
 
-Integrating with Qt
-===================
+Integrating with Qt and multiprocessing
+=======================================
 
-General aspects
----------------
+Qt integration
+--------------
 
 Valkka can be used with any GUI framework, say, with GTK or Qt.  Here we have an emphasis on Qt, but the general guidelines discussed here, apply to any other GUI framework as well.  Concrete examples are provided only for Qt.
 
@@ -19,6 +19,62 @@ X-windows, i.e. "widgets" in the Qt slang, can be created at the Qt side and pas
 Complex filterchains per camera should be encapsulated in classes, like we did in the :ref:`tutorial <multiple_streams>`.
 
 Some typical filterchain classes are readily accessible at the API 2 level and are suitable for direct integration into your Qt program.
+
+
+Drawing video into a widget
+---------------------------
+
+As you learned in the tutorial, we use the X-window window ids like this:
+
+::
+
+  context_id=glthread.newRenderContextCall(1,window_id,0)
+
+
+That creates a mapping: all frames with slot number "1" are directed to an X-window with a window id "window_id" (the last number "0" is the z-stacking and is not currently used).
+
+We can use the window id of an existing Qt widget "some_widget" like this:
+
+
+::
+
+  window_id=int(some_widget.winId())
+  
+There is a stripped-down example of this in
+
+::
+
+  valkka_examples/api_level_1/qt/
+  
+    single_stream_rtsp.py
+  
+
+However, it's a better idea to let Valkka create the X-window (with correct visual parameters, no XSignals, etc.) and embed that X-window into Qt.  This can be done with:
+
+::
+
+  foreign_window =QtGui.QWindow.fromWinId(win_id)
+  foreign_widget =QtWidgets.QWidget.createWindowContainer(foreign_window,parent=parent)
+
+  
+where "win_id" is the window_id returned by Valkka, "parent" is the parent widget of the widget we're creating here and "foreign_widget" is the resulting widget we're going to use in Qt.
+
+However, "foreign_widget" created this way does not catch mouse gestures.  This can be solved by placing a "dummy" QWidget on top of the "foreign_widget" (using a layout).  An example of this can be found in
+
+::
+
+  valkka_examples/api_level_1/qt/
+  
+    single_stream_rtsp_1.py
+
+    
+Streaming from several cameras
+------------------------------
+    
+For decoding, visualizing and analyzing a large number of cameras, filterchains should be encapsulated in classes, like we did in tutorial, :ref:`lesson 3<multiple_streams>`.  
+
+API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.
+
 
 Python multiprocessing
 ----------------------
@@ -117,61 +173,30 @@ It contains:
 Consult the *test_studio_*.py* programs how to use these classes.
     
     
-Drawing video into a widget
----------------------------
+.. _multiprocess_warning:
 
-As you learned in the tutorial, we use the X-window window ids like this:
+Multiprocessing Warning
+-----------------------
 
-::
+Before you go full-throttle into launching multiprocesses that pull frames from shared memory and perform analysis with Keras on those frames, be aware of a very common multithread/processing pitfall:
 
-  context_id=glthread.newRenderContextCall(1,window_id,0)
+**you should spawn your multiprocess before spawning threads**
+
+Here "spawning the multiprocess" is a synonym to "fork".
+
+You can expect many of the libraries you'll be using with Valkka, to rely heavily on multithreading.  Say, openCV and Keras.
+
+A well-known problem arises, if you **first** import a library that **spawns several threads**, and **after** that perform a **fork**.  This leads to an undefined situation with "dangling" multithreads, creating segfaults and mysterious memory leaks.
+
+In order to avoid all that, be sure to import your modules and instantiate your classes once and only once at the "backend" (see the discussion above), aka "the other side of the fork" of the multiprocess.
+
+This boils down to a simple rule of thumb:
+
+**Import external modules and instantiate the classes of those modules in your python multiprocess' run() method and nowhere else**
+
+Ideally, you'd start the analyzing multiprocesses in the very beginning of your Qt program (that's what we're doing in the *valkka-live* demo program), and communicate them all necessary information when they're services are required.
 
 
-That creates a mapping: all frames with slot number "1" are directed to an X-window with a window id "window_id" (the last number "0" is the z-stacking and is not currently used).
-
-We can use the window id of an existing Qt widget "some_widget" like this:
-
-
-::
-
-  window_id=int(some_widget.winId())
-  
-There is a stripped-down example of this in
-
-::
-
-  valkka_examples/api_level_1/qt/
-  
-    single_stream_rtsp.py
-  
-
-However, it's a better idea to let Valkka create the X-window (with correct visual parameters, no XSignals, etc.) and embed that X-window into Qt.  This can be done with:
-
-::
-
-  foreign_window =QtGui.QWindow.fromWinId(win_id)
-  foreign_widget =QtWidgets.QWidget.createWindowContainer(foreign_window,parent=parent)
-
-  
-where "win_id" is the window_id returned by Valkka, "parent" is the parent widget of the widget we're creating here and "foreign_widget" is the resulting widget we're going to use in Qt.
-
-However, "foreign_widget" created this way does not catch mouse gestures.  This can be solved by placing a "dummy" QWidget on top of the "foreign_widget" (using a layout).  An example of this can be found in
-
-::
-
-  valkka_examples/api_level_1/qt/
-  
-    single_stream_rtsp_1.py
-
-    
-Streaming from several cameras
-------------------------------
-    
-For decoding, visualizing and analyzing a large number of cameras, filterchains should be encapsulated in classes, like we did in tutorial, :ref:`lesson 3<multiple_streams>`.  
-
-API level 2 has several such classes that you might want to use.  The Qt test suite itself constitutes an example code for API level 2.
-
- 
 Just use C++ instead of Python?
 -------------------------------
 
@@ -192,4 +217,3 @@ A python program using an example cpp thread (*TestThread*) which communicates w
 See also the documentation for the cpp source code of `TestThread <https://elsampsa.github.io/valkka-core/html/classTestThread.html>`_
     
 Examples using the API with cpp will be added to this documentation in the near future.
-

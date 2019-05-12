@@ -142,7 +142,17 @@
 <div class="line"><em>rtsp://127.0.0.1:8554/streamN</em></div>
 <div class="line"><br /></div>
 <div class="line">(where <em>N</em> is the number of the camera)</div>
+<div class="line"><br /></div>
 </div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>test_studio_5.py</td>
+<td><div class="first last line-block">
+<div class="line"><strong>experimental</strong></div>
+<div class="line">- Continuous recording to <a class="reference internal" href="valkkafs.html#valkkafs"><span class="std std-ref">ValkkaFS</span></a></div>
+<div class="line">- and simultaneous, interactive playback</div>
+<div class="line">- remove directory <code class="docutils literal notranslate"><span class="pre">fs_directory/`</span></code> if the program refuses to start</div>
 </div>
 </td>
 </tr>
@@ -207,10 +217,23 @@
 <tr class="row-odd"><td>replicate</td>
 <td>Dump each stream to screen this many times</td>
 </tr>
+<tr class="row-even"><td>correct timestamp</td>
+<td><div class="first last line-block">
+<div class="line">1 = smart-correct timestamp (use this!)</div>
+<div class="line">0 = restamp upon arrival</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>socket size bytes</td>
+<td>don’t touch.  Default value = 0.</td>
+</tr>
+<tr class="row-even"><td>ordering time millisecs</td>
+<td>don’t touch.  Default value = 0.</td>
+</tr>
 </tbody>
 </table>
-<p>As you learned from the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>, in Valkka, frames are pre-reserved on the GPU.  If you’re planning to use 720p and 1080p cameras, reserve, say 200 frames for both.</p>
-<p>Decoded frames are being queued for “msbuftime” milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you’ll need and the more lag you get into your live streaming.  A nice value is 300.</p>
+<p id="testsuite-decode">As you learned from the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>, in Valkka, frames are pre-reserved on the GPU.  If you’re planning to use 720p and 1080p cameras, reserve, say 200 frames for both.</p>
+<p>Decoded frames are being queued for “msbuftime” milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you’ll need and the more lag you get into your live streaming.  A nice value is 300.  For more on the subject, read <a class="reference internal" href="decoding.html#decoding"><span class="std std-ref">this</span></a>.</p>
 <p>Replicate demonstrates how Valkka can dump the stream (that’s decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode streams more than once.</p>
 <p>In Valkka, all threads can be bound to a certain processor core.  Value “-1” indicates that the thread is unbound.  You can launch, say, KSysGuard in Kubuntu, to watch how the kernel bounces the threads from one processor to another.  To get rid of that, you can bind the threads for example like this:</p>
 <table border="1" class="docutils">
@@ -359,12 +382,14 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>

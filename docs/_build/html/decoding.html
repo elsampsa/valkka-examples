@@ -1,0 +1,208 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Decoding &#8212; OpenSource Video Management for Linux  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Integrating with Qt and multiprocessing" href="qt_notes.html" />
+    <link rel="prev" title="Lesson 11 : ValkkaFS" href="lesson_11.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="decoding">
+<span id="id1"></span><h1>Decoding<a class="headerlink" href="#decoding" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="single-thread">
+<h2>Single thread<a class="headerlink" href="#single-thread" title="Permalink to this headline">¶</a></h2>
+<p>By default, libValkka uses only a single core per decoder.  The decoding threads can also be bound to a certain core. See <a class="reference internal" href="testsuite.html#testsuite-decode"><span class="std std-ref">the testsuite</span></a> for more details.</p>
+<p>This is a good idea if you have a <em>large number of light streams</em>.  What is exactly a <em>light stream</em> depends on your linux box, but let’s assume here that it is a 1080p video running approx. at 20 frames per second.</p>
+<p>If a single core is capable of decoding the stream, there is no reason to create “thread swarming” and let all streams to use all cores (with decoders constantly switching from one set of cores to another).</p>
+<p>We’re trying to be efficient here.</p>
+</div>
+<div class="section" id="multithread">
+<h2>Multithread<a class="headerlink" href="#multithread" title="Permalink to this headline">¶</a></h2>
+<p>If you need to use a single <em>heavy stream</em>, then you might want to dedicate several cores in decoding a single stream.  A <em>heavy stream</em> could be example that 4000x3000 4K camera of yours running at 60 frames per second (!)</p>
+<p>However, before using such a beast, you must ask yourself, do you really need something like that?</p>
+<p>The biggest screen you’ll ever be viewing the video from, is probably 1080p, while a framerate of 15 fps is good for the human eye.  Modern convoluted neural networks (yolo, for example), are using typically a resolution of ~ 600x600 pixels and analyzing max. 30 frames per seconds.  And we still haven’t talked about clogging up your LAN.</p>
+<p>If you really, really have to use several threads per decoder, modify tutorial’s <a class="reference internal" href="lesson_2.html#decoding-lesson"><span class="std std-ref">lesson 2</span></a> like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">avthread</span> <span class="o">=</span> <span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">info_filter</span><span class="p">)</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">setNumberOfThreads</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That will dedicate four cores to the decoder.  Remember to call <em>setNumberOfThreads</em> before starting the AVThread instance.</p>
+</div>
+<div class="section" id="gpu">
+<h2>GPU<a class="headerlink" href="#gpu" title="Permalink to this headline">¶</a></h2>
+<p>(Nvidia) GPU accelerated decoding is not currently available, but will be in the near future.</p>
+</div>
+<div class="section" id="queueing-frames">
+<span id="buffering"></span><h2>Queueing frames<a class="headerlink" href="#queueing-frames" title="Permalink to this headline">¶</a></h2>
+<p>Typically, when decoding H264 video, handling the intra-frame takes much more time than decoding the consecutive B- and P-frames.  This is very pronounced for <em>heavy streams</em> (see above).</p>
+<p>Because of that the intra frame will arrive late for the presentation, while the consecutive frames arrive in a burst.</p>
+<p>This problem can be solved with buffering.  Modify tutorial’s <a class="reference internal" href="lesson_3.html#xwindow-lesson"><span class="std std-ref">lesson 3</span></a> like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">glthread</span> <span class="o">=</span> <span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
+
+<span class="n">gl_ctx</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">OpenGLFrameFifoContext</span><span class="p">()</span>
+<span class="n">gl_ctx</span><span class="o">.</span><span class="n">n_720p</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">gl_ctx</span><span class="o">.</span><span class="n">n_1080p</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">gl_ctx</span><span class="o">.</span><span class="n">n_1440p</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">gl_ctx</span><span class="o">.</span><span class="n">n_4K</span> <span class="o">=</span> <span class="mi">40</span>
+
+<span class="n">glthread</span> <span class="o">=</span> <span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span> <span class="n">gl_ctx</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That will reserve 40 4K frames for queueing and presentation of video, while the buffering time is 500 milliseconds.</p>
+<p>For level 2 API, it would look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="n">glthread</span> <span class="o">=</span> <span class="n">OpenGLThread</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span>
+    <span class="n">n_720p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">n_1080p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">n_1440p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">n_4K</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">msbuftime</span> <span class="o">=</span> <span class="mi">500</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+<p>Remember also that for certain class of frames (720p, 1080p, etc.):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">number</span> <span class="n">of</span> <span class="n">pre</span><span class="o">-</span><span class="n">reserved</span> <span class="n">frames</span> <span class="o">&gt;=</span> <span class="n">total</span> <span class="n">framerate</span> <span class="n">x</span> <span class="n">buffering</span> <span class="n">time</span>
+</pre></div>
+</div>
+<p>For testing, you should use the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">test_studio_1.py</span></a> program.  See also <a class="reference internal" href="lesson_3.html#xwindow-lesson"><span class="std std-ref">this</span></a> lesson of the tutorial.</p>
+<p>Buffering solves many other issues as well.  If you don’t get any image and the terminal screaming that “there are no more frames”, then just enhance the buffering.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
+<!--
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+-->
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Decoding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#single-thread">Single thread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multithread">Multithread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gpu">GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#queueing-frames">Queueing frames</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/decoding.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-123031237-1']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>

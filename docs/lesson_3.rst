@@ -1,6 +1,8 @@
 Lesson 3 : Streaming to the X-window system
 ============================================
 
+.. _xwindow_lesson:
+
 One camera to one window
 ------------------------
 
@@ -35,6 +37,8 @@ For example, if you are going to use two 720p cameras, each at 20 fps, with 300 
     2 * 20 fps * 0.3 sec = 12 frames
   
 for 720p.  If this math is too hard for you, just reserve several hundred frames for each frame resolution (or until you run out of GPU memory).  :)
+
+If you're extremely ambitious libValkka user who wants to use that brand-new 8K running at 80 frames per second, then read :ref:`this <decoding>` first.
 
 
 One camera to several windows

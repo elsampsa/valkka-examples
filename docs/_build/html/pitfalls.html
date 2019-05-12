@@ -45,9 +45,9 @@
 <p>Expect problems when maintaining several connections to the same camera, or when re-connecting several times to the same camera.</p>
 <p>Before blaming us, <em>generate the same situation with a reference program</em>, say with ffplay, and see if it works or not.  The <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a> offers nice tools for benchmarking agains ffplay and vlc.</p>
 <p><strong>2. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?</strong></p>
-<p><em>Test against a reference program</em> (ffplay).  Launch KSysGuard to monitor your processor usage.</p>
+<p><em>Test against a reference program</em> (ffplay).  Launch KSysGuard to monitor your processor usage.  Read also <a class="reference internal" href="decoding.html#decoding"><span class="std std-ref">this</span></a>.</p>
 <p><strong>3. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?</strong></p>
-<p>The issue of pre-reserved frames and buffering time has been discussed in the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite section</span></a>.</p>
+<p>The issue of pre-reserved frames and buffering time has been discussed <a class="reference internal" href="decoding.html#decoding"><span class="std std-ref">here</span></a> and in the <a class="reference internal" href="testsuite.html#testsuite-decode"><span class="std std-ref">PyQt testsuite section</span></a>.</p>
 <p><strong>4. Disable OpenGL rendering synchronization to vertical refresh (“vsync”).</strong></p>
 <p>On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the <em>nvidia-settings</em> program.</p>
 <p>Test if vsync is disabled with the “glxgears” command.  It should report 1000+ frames per second with vsync disabled.</p>
@@ -67,7 +67,7 @@
 <p><strong>7. Your LAN and/or the LiveThread process sending frames in bursts</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li>Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.</li>
+<li>Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.  See <a class="reference internal" href="decoding.html#buffering"><span class="std std-ref">here</span></a>.</li>
 <li>This is very common problem when streaming over Wifi</li>
 <li>If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and NIC ? (see “System tuning” below)</li>
 </ul>
@@ -160,7 +160,8 @@
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Common problems</a><ul>
@@ -170,7 +171,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Licenses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 </ul>

@@ -2,13 +2,19 @@
 Lesson 2 : Decoding 
 -------------------
 
+.. _decoding_lesson:
+
 **Download lesson** :download:`[here]<snippets/lesson_2_a.py>`
 
 .. include:: snippets/lesson_2_a.py_
 
 When using the API to pass frames between threads, that's all you need to know for now.
 
-"Under the hood", however, things are a bit more complex.  The framefilter requested from AVThread writes into AVThread's internal *FrameFifo*.  This is a first-in-first-out queue where a copy of the incoming frame is placed.  Frames are copied into pre-reserved frames, taken from a pre-reserved stack.  Both the fifo and the stack are thread-safe and mutex-protected.  The user has the possibility to define the size of the stack when instantiating AVThread.  For more details, see the cpp documentation and especially the *FrameFifo* class.
+"Under the hood", however, things are a bit more complex.  
+
+The framefilter requested from AVThread writes into AVThread's internal *FrameFifo*.  This is a first-in-first-out queue where a copy of the incoming frame is placed.  Frames are copied into pre-reserved frames, taken from a pre-reserved stack.  Both the fifo and the stack are thread-safe and mutex-protected.  The user has the possibility to define the size of the stack when instantiating AVThread.  
+
+For more details, see the `cpp documentation <https://elsampsa.github.io/valkka-core/html/process_chart.html>`_ and especially the `FrameFifo class <https://elsampsa.github.io/valkka-core/html/classFrameFifo.html>`_.
 
 However, all these gory details are not a concern for the API user at this stage.  :)
 

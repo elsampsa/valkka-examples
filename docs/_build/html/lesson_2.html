@@ -35,7 +35,7 @@
             
   <div class="section" id="lesson-2-decoding">
 <h1>Lesson 2 : Decoding<a class="headerlink" href="#lesson-2-decoding" title="Permalink to this headline">¶</a></h1>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/27085c8a874ec337b404774e906df6b1/lesson_2_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p id="decoding-lesson"><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/27085c8a874ec337b404774e906df6b1/lesson_2_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Let’s consider the following filtergraph:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Streaming</span> <span class="n">part</span>               <span class="o">|</span> <span class="n">Decoding</span> <span class="n">part</span>
                              <span class="o">|</span>
@@ -128,7 +128,9 @@
 <p>So, instead of H264 packets, we have decoded bitmap frames here.</p>
 <p>In the next lesson, we’ll dump them on the screen.</p>
 <p>When using the API to pass frames between threads, that’s all you need to know for now.</p>
-<p>“Under the hood”, however, things are a bit more complex.  The framefilter requested from AVThread writes into AVThread’s internal <em>FrameFifo</em>.  This is a first-in-first-out queue where a copy of the incoming frame is placed.  Frames are copied into pre-reserved frames, taken from a pre-reserved stack.  Both the fifo and the stack are thread-safe and mutex-protected.  The user has the possibility to define the size of the stack when instantiating AVThread.  For more details, see the cpp documentation and especially the <em>FrameFifo</em> class.</p>
+<p>“Under the hood”, however, things are a bit more complex.</p>
+<p>The framefilter requested from AVThread writes into AVThread’s internal <em>FrameFifo</em>.  This is a first-in-first-out queue where a copy of the incoming frame is placed.  Frames are copied into pre-reserved frames, taken from a pre-reserved stack.  Both the fifo and the stack are thread-safe and mutex-protected.  The user has the possibility to define the size of the stack when instantiating AVThread.</p>
+<p>For more details, see the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/process_chart.html">cpp documentation</a> and especially the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/classFrameFifo.html">FrameFifo class</a>.</p>
 <p>However, all these gory details are not a concern for the API user at this stage.  :)</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -181,7 +183,8 @@
 <li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>

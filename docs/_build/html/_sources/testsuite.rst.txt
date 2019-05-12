@@ -64,6 +64,11 @@ test_studio_rtsp.py        | - Like *test_studio_1.py*
                            |   *rtsp://127.0.0.1:8554/streamN*
                            |
                            |   (where *N* is the number of the camera)
+                           | 
+test_studio_5.py           | **experimental**
+                           | - Continuous recording to :ref:`ValkkaFS <valkkafs>`
+                           | - and simultaneous, interactive playback
+                           | - remove directory ``fs_directory/``` if the program refuses to start
 ========================== ================================================================================
 
 Before launching any of the testsuite programs you should be aware of the :ref:`common problems<pitfalls>` of linux video streaming.
@@ -103,11 +108,17 @@ gl affinity                 Bind the frame presentation thread to a core
 dec affinity start          Bind decoding threads to cores (first core)
 dec affinity stop           Bind decoding threads to cores (last core)
 replicate                   Dump each stream to screen this many times
+correct timestamp           | 1 = smart-correct timestamp (use this!)
+                            | 0 = restamp upon arrival
+socket size bytes           don't touch.  Default value = 0.
+ordering time millisecs     don't touch.  Default value = 0.
 =========================== ==================================================
+
+.. _testsuite_decode:
 
 As you learned from the :ref:`tutorial<tutorial>`, in Valkka, frames are pre-reserved on the GPU.  If you're planning to use 720p and 1080p cameras, reserve, say 200 frames for both.
 
-Decoded frames are being queued for "msbuftime" milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you'll need and the more lag you get into your live streaming.  A nice value is 300.
+Decoded frames are being queued for "msbuftime" milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you'll need and the more lag you get into your live streaming.  A nice value is 300.  For more on the subject, read :ref:`this <decoding>`.
 
 Replicate demonstrates how Valkka can dump the stream (that's decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode streams more than once.
 

@@ -36,7 +36,7 @@
   <div class="section" id="lesson-3-streaming-to-the-x-window-system">
 <h1>Lesson 3 : Streaming to the X-window system<a class="headerlink" href="#lesson-3-streaming-to-the-x-window-system" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="one-camera-to-one-window">
-<h2>One camera to one window<a class="headerlink" href="#one-camera-to-one-window" title="Permalink to this headline">¶</a></h2>
+<span id="xwindow-lesson"></span><h2>One camera to one window<a class="headerlink" href="#one-camera-to-one-window" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/e39fdad294ce6eb8e4b4a78fa0f6122e/lesson_3_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Let’s consider the following filtergraph with streaming, decoding and presentation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Streaming</span> <span class="n">part</span>
@@ -137,6 +137,7 @@
 </pre></div>
 </div>
 <p>for 720p.  If this math is too hard for you, just reserve several hundred frames for each frame resolution (or until you run out of GPU memory).  :)</p>
+<p>If you’re extremely ambitious libValkka user who wants to use that brand-new 8K running at 80 frames per second, then read <a class="reference internal" href="decoding.html#decoding"><span class="std std-ref">this</span></a> first.</p>
 </div>
 <div class="section" id="one-camera-to-several-windows">
 <h2>One camera to several windows<a class="headerlink" href="#one-camera-to-several-windows" title="Permalink to this headline">¶</a></h2>
@@ -311,7 +312,8 @@
 <li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>

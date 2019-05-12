@@ -23,11 +23,11 @@ Before blaming us, *generate the same situation with a reference program*, say w
 
 **2\. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?**  
 
-*Test against a reference program* (ffplay).  Launch KSysGuard to monitor your processor usage.
+*Test against a reference program* (ffplay).  Launch KSysGuard to monitor your processor usage.  Read also :ref:`this <decoding>`.
 
 **3\. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?**  
 
-The issue of pre-reserved frames and buffering time has been discussed in the :ref:`PyQt testsuite section <testsuite>`.
+The issue of pre-reserved frames and buffering time has been discussed :ref:`here <decoding>` and in the :ref:`PyQt testsuite section <testsuite_decode>`.
 
 **4\. Disable OpenGL rendering synchronization to vertical refresh ("vsync").**
 
@@ -57,10 +57,9 @@ Bottlenecks
 
 Once you ramp up the number of streams, you might start to experience some *real* performance issues.  Some typical problems include:
 
-
 **7\. Your LAN and/or the LiveThread process sending frames in bursts**
   
-  - Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.
+  - Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.  See :ref:`here <buffering>`.
   - This is very common problem when streaming over Wifi
   - If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and NIC ? (see "System tuning" below)
   
