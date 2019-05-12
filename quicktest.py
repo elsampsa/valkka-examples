@@ -57,3 +57,15 @@ print("OpenCV loaded ok")
 print("   Version      ",cv2.__version__)
 print("   Loaded from  ",cv2.__file__)
 print()
+
+print("Loading PySide2")
+import PySide2
+
+print("   Version      ",PySide2.__version__)
+print("   Loaded from  ",PySide2.__file__)
+print()
+
+
+
+
+

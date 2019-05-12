@@ -46,7 +46,7 @@ The testsuite and tutorials use also imutils and PyQt5, so install a fresh versi
 
 ::
 
-  pip3 install --user imutils PyQt5 PySide2
+  pip3 install --user imutils PyQt5 PySide2==5.11.1
   
 Here we have installed two flavors of the Qt python bindings, namely, `PyQt5 <https://www.riverbankcomputing.com>`_ and `PySide2 <https://doc.qt.io/qtforpython/contents.html>`_.  They can be used in an identical manner.  If you use PyQt5, be aware of its licensing terms.
 
