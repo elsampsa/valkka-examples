@@ -15,9 +15,7 @@ Use the latest version.  When running the PyQt testsuite, remember to run *quick
 
 **1\. Are you using sub-standard cameras?**
 
-All IP cameras are nowadays manufactured in China.  While the hardware is good and the image quality impressive, the rtsp server and/or timestamping of the cameras is often buggy.  It's like HTC and Samsung mobile phones: they're good, but thwarted by the software.
-
-Expect problems when maintaining several connections to the same camera, or when re-connecting several times to the same camera.
+Nowadays the image quality is impressive in all stock IP cameras, however, the rtsp server and/or timestamping of the cameras can be buggy (there might be problems when maintaining several connections to the same camera, or when re-connecting several times to the same camera).
 
 Before blaming us, *generate the same situation with a reference program*, say with ffplay, and see if it works or not.  The :ref:`PyQt testsuite <testsuite>` offers nice tools for benchmarking agains ffplay and vlc.
 
