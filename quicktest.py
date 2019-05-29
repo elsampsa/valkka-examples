@@ -1,12 +1,6 @@
 print()
-print("Loading numerical python")
-import numpy
-print("Numpy loaded ok")
-print("   Numpy loaded from",numpy.__file__)
-print("   Numpy version    ",numpy.__version__)
-
-print()
 print("Loading Valkka")
+
 import valkka
 from valkka import core
 
@@ -50,6 +44,25 @@ if (VERSION_MAJOR!=core.VERSION_MAJOR or VERSION_MINOR!=core.VERSION_MINOR or VE
   print("   .. or update valkka-examples by running 'git pull' in this directory")
 print()
 
+print("Loading numerical python")
+import numpy
+
+print("Numpy loaded ok")
+print("   Numpy loaded from          : ",numpy.__file__)
+print("   Numpy version              : ",numpy.__version__)
+print("   libValkka was compiled       ")
+print("   with numpy version         : ",core.get_numpy_version())
+
+if (numpy.__version__ != core.get_numpy_version()):
+    print()
+    print("** WARNING ** ")
+    print("YOUR ARE USING A DIFFERENT NUMPY VERSION THAN LIBVALKKA") 
+    print("    If you installed libValkka with apt-get, you'll have a consistent")
+    print("    numpy installed in:")
+    print("    /usr/lib/python3/dist-packages/")
+    print("    you might want to use that version instead")
+print()
+
 print("Loading OpenCV")
 import cv2
   
@@ -64,8 +77,4 @@ import PySide2
 print("   Version      ",PySide2.__version__)
 print("   Loaded from  ",PySide2.__file__)
 print()
-
-
-
-
 
