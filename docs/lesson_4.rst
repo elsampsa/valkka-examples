@@ -20,6 +20,8 @@ Client side: API level 2
 
 .. include:: snippets/lesson_4_a_client_api2.py_
 
+(an older version of this code snippet is available :here:`[here]<snippets/lesson_4_a_client_api2_0_11_0.py>`)
+
 Client side: openCV
 -------------------
 

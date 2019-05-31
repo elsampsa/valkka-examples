@@ -26,13 +26,19 @@ client=ShmemRGBClient(
 The *mstimeout* defines the semaphore timeout in milliseconds, i.e. the time when the client returns even if no frame was received:
 <rtf>"""
 while True:
-  index, isize = client.pull()
+  index, meta = client.pull2()
   if (index==None):
     print("timeout")
   else:
-    data=client.shmem_list[index][0:isize]
-    print("got data: ",data[0:min(10,isize)])
+    data=client.shmem_list[index][0:meta.size]
+    print("data   : ",data[0:min(10,meta.size)])
+    print("width  : ", meta.width)
+    print("height : ", meta.height)
+    print("slot   : ", meta.slot)
+    print("time   : ", meta.mstimestamp)
 
 """<rtf>
-The *client.shmem_list* is a list of numpy arrays, while *isize* defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.
+The *client.shmem_list* is a list of numpy arrays, while meta contains information about the data size, frame width, height, slot and timestamp.  
+
+This example simply prints out the first ten bytes of the RGB image and the metadata of the frame.
 <rtf>"""

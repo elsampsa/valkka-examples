@@ -55,12 +55,22 @@ print("   with numpy version         : ",core.get_numpy_version())
 
 if (numpy.__version__ != core.get_numpy_version()):
     print()
-    print("** WARNING ** ")
-    print("YOUR ARE USING A DIFFERENT NUMPY VERSION THAN LIBVALKKA") 
-    print("    If you installed libValkka with apt-get, you'll have a consistent")
+    print("** ATTENTION ** ")
+    print("    You are using a different numpy version than was used when libvalkka was compiled")
+    print("    Normally this should pose no problem")
+    print("    However,if you installed libValkka with apt-get, you'll have a consistent")
     print("    numpy installed in:")
     print("    /usr/lib/python3/dist-packages/")
     print("    you might want to use that version instead")
+    print("    You can use the make_venv.bash script for creating a virtual environment")
+    
+if not core.numpy_version_ok():
+    print()
+    print("** WARNING ** ")
+    print("    INCOMPATIBLE NUMPY VERSIONS DETECTED")
+    print("    YOU SHOULD INSTALL A COMPATIBLE VERSION OF NUMPY")
+    print("    OR SUFFER THE CONSEQUENCES (SEGFAULTS)")
+    
 print()
 
 print("Loading OpenCV")
