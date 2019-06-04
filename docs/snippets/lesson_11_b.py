@@ -27,7 +27,7 @@ print(a[:,0:10])
 """<rtf>
 Construct the filterchain: write from the reader thread into the verbose InfoFrameFilter
 <rtf>"""
-out_filter =InfoFrameFilter("live_out_filter")
+out_filter =InfoFrameFilter("reader_out_filter")
 readerthread = ValkkaFSReaderThread("reader", valkkafs.core, out_filter)
 
 """<rtf>

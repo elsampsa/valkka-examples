@@ -90,7 +90,8 @@
 </pre></div>
 </div>
 <p>Define connection to camera: frames from 192.168.1.41 are written to live_out_filter and tagged with slot number 1:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, av_in_filter)</span>
+<span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.134&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start processes, stream for 60 seconds and exit:</p>
@@ -159,15 +160,26 @@
 </div>
 <p>The <em>mstimeout</em> defines the semaphore timeout in milliseconds, i.e. the time when the client returns even if no frame was received:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-  <span class="n">index</span><span class="p">,</span> <span class="n">isize</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span>
+  <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
+  <span class="c1"># index, meta = client.pullFrameThread() # alternative method for multithreading</span>
+  <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
   <span class="k">else</span><span class="p">:</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got data: &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">isize</span><span class="p">)])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data   : &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;width  : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;height : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slot   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">slot</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">mstimestamp</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size required : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size copied   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The <em>client.shmem_list</em> is a list of numpy arrays, while <em>isize</em> defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.</p>
+<p>The <em>client.shmem_list</em> is a list of numpy arrays, while meta contains information about the data size, frame width, height, slot and timestamp.</p>
+<p>This example simply prints out the first ten bytes of the RGB image and the metadata of the frame.</p>
+<p>If your Python process is running several Python threads, you should use the pullFrameThread method instead: it releases the Python GIL while waiting frames from the ringbuffer.</p>
+<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/c091de6ad02c47418344ca6ba8098cd4/lesson_4_a_client_api2_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
 </div>
 <div class="section" id="client-side-opencv">
 <h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Permalink to this headline">¶</a></h2>
@@ -192,12 +204,17 @@
 <span class="p">)</span>
 
 <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-  <span class="n">index</span><span class="p">,</span> <span class="n">isize</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pull</span><span class="p">()</span>
+  <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
   <span class="k">else</span><span class="p">:</span>
-    <span class="n">data</span> <span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span>
-    <span class="n">img</span> <span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">height</span><span class="p">,</span><span class="n">width</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data   : &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;width  : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;height : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slot   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">slot</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">mstimestamp</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="c1"># img2 =imutils.resize(img, width=500)</span>
     <span class="n">img</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;valkka_opencv_demo&quot;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
@@ -206,6 +223,7 @@
 </div>
 <p>Here the main difference to the previous example is, that the image data is reshaped.  After this, some gaussian blur is applied to the image.  Then it is visualized using openCV’s own “high-gui” infrastructure.  If everything went ok, you should see a blurred image of your video once in a second.</p>
 <p>Start this script <em>after</em> starting the server side script (server side must also be running).</p>
+<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/22d20658842ddffebebfc4c229103087/lesson_4_a_client_opencv_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
 </div>
 <div class="section" id="client-side-api-level-1">
 <h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Permalink to this headline">¶</a></h2>
@@ -221,34 +239,38 @@
 </pre></div>
 </div>
 <p>The wrapped cpp class is <em>SharedMemRingBufferRGB</em> (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem</span><span class="o">=</span><span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem</span> <span class="o">=</span> <span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
 </pre></div>
 </div>
-<p>We are using integer pointers from python:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">index_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># shmem index</span>
-<span class="n">isize_p</span> <span class="o">=</span><span class="n">new_intp</span><span class="p">()</span> <span class="c1"># size of data</span>
+<p>We are using an integer pointers and a metadata object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">index_p</span> <span class="o">=</span> <span class="n">new_intp</span><span class="p">()</span> <span class="c1"># shmem index</span>
+<span class="n">meta</span>    <span class="o">=</span> <span class="n">RGB24Meta</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Next, get handles to the shared memory as numpy arrays:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_list</span><span class="o">=</span><span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shmem_buffers</span><span class="p">):</span>
-  <span class="n">shmem_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getNumpyShmem</span><span class="p">(</span><span class="n">shmem</span><span class="p">,</span><span class="n">i</span><span class="p">))</span> <span class="c1"># getNumpyShmem defined in the swig interface file</span>
-  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got element i=&quot;</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+<p>Next, get the shared memory ringbuffer as a list of numpy arrays:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_list</span> <span class="o">=</span> <span class="n">shmem</span><span class="o">.</span><span class="n">getBufferListPy</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Finally, start reading frames:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-  <span class="n">got</span><span class="o">=</span><span class="n">shmem</span><span class="o">.</span><span class="n">clientPull</span><span class="p">(</span><span class="n">index_p</span><span class="p">,</span> <span class="n">isize_p</span><span class="p">)</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">got</span><span class="p">):</span>
-    <span class="n">index</span><span class="o">=</span><span class="n">intp_value</span><span class="p">(</span><span class="n">index_p</span><span class="p">)</span>
-    <span class="n">isize</span><span class="o">=</span><span class="n">intp_value</span><span class="p">(</span><span class="n">isize_p</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got index, size =&quot;</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">isize</span><span class="p">)</span>
-    <span class="n">ar</span><span class="o">=</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span> <span class="c1"># this is just a numpy array</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;payload         =&quot;</span><span class="p">,</span> <span class="n">ar</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">isize</span><span class="p">)])</span>
+  <span class="n">got</span> <span class="o">=</span> <span class="n">shmem</span><span class="o">.</span><span class="n">clientPullFrame</span><span class="p">(</span><span class="n">index_p</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
+  <span class="c1"># got = shmem.clientPullFrameThread(index_p, meta) # if you are using multithreading</span>
+  <span class="k">if</span> <span class="n">got</span><span class="p">:</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">intp_value</span><span class="p">(</span><span class="n">index_p</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data   : &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;width  : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;height : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slot   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">slot</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">mstimestamp</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size required : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size copied   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
   <span class="k">else</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/1e210c40ead734059b8e191e78f97f89/lesson_4_a_client_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
 <p>Cpp documentation for Valkka shared memory classes be found <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html">here.</a></p>
 </div>
 </div>
@@ -303,7 +325,6 @@
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>

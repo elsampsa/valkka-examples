@@ -57,7 +57,8 @@ Define the connection to the IP camera as usual, with **slot number** "1":
 
 .. _connection:
 <rtf>"""
-ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
+# ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
+ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:12345@192.168.0.157", 1, av_in_filter)
 
 """<rtf>
 Start all threads, start decoding, and register the live stream.  Starting the threads should be done in end-to-beginning order (in the same order we constructed the filterchain).

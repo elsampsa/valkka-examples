@@ -20,17 +20,12 @@
     )
     
     while True:
-      index, meta = client.pullFrame()
+      index, isize = client.pull()
       if (index==None):
         print("timeout")
       else:
-        data=client.shmem_list[index][0:meta.size]
-        print("data   : ",data[0:min(10,meta.size)])
-        print("width  : ", meta.width)
-        print("height : ", meta.height)
-        print("slot   : ", meta.slot)
-        print("time   : ", meta.mstimestamp)
-        img = data.reshape((meta.height, meta.width, 3))
+        data =client.shmem_list[index][0:isize]
+        img =data.reshape((height,width,3))
         # img2 =imutils.resize(img, width=500)
         img =cv2.GaussianBlur(img, (21, 21), 0)
         cv2.imshow("valkka_opencv_demo",img)

@@ -48,12 +48,14 @@ else:
     #print(":: ")
     #print
     for line in f.readlines():
+        # print("rst_mode>", rst_mode)
         st=line[:-1]
         if (st.strip()=='#<hide>'):
           hide_mode=True
         elif (st.strip()=='#</hide>'):
           hide_mode=False
         elif (c==0 and st.strip()!='"""<rtf>'):
+          # print("fuck>")
           print("")
           print(":: ")
           print("")
@@ -62,9 +64,13 @@ else:
           rst_mode=True
           print("")
         elif (st.strip()=='<rtf>"""'):
+          # print("fuck2>")
           rst_mode=False
           print("")
           print(":: ")
+          print("")
+        elif (st.strip()=='</rtf>"""'):
+          rst_mode=False
           print("")
         elif (hide_mode==False and rst_mode==False):
           print(inst+st)

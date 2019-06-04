@@ -9,32 +9,35 @@ shmem_buffers =10              # Size of the shmem ringbuffer
 """<rtf>
 The wrapped cpp class is *SharedMemRingBufferRGB* (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):
 <rtf>"""
-shmem=SharedMemRingBufferRGB(shmem_name, shmem_buffers, width, height, 1000, False) # shmem id, buffers, w, h, timeout, False=this is a client
+shmem = SharedMemRingBufferRGB(shmem_name, shmem_buffers, width, height, 1000, False) # shmem id, buffers, w, h, timeout, False=this is a client
   
 """<rtf>
-We are using integer pointers from python:
+We are using an integer pointers and a metadata object:
 <rtf>"""
-index_p =new_intp() # shmem index
-isize_p =new_intp() # size of data
+index_p = new_intp() # shmem index
+meta    = RGB24Meta()
   
 """<rtf>
-Next, get handles to the shared memory as numpy arrays:
+Next, get the shared memory ringbuffer as a list of numpy arrays:
 <rtf>"""
-shmem_list=[]
-for i in range(shmem_buffers):
-  shmem_list.append(getNumpyShmem(shmem,i)) # getNumpyShmem defined in the swig interface file
-  print("got element i=",i)
+shmem_list = shmem.getBufferListPy()
   
 """<rtf>
 Finally, start reading frames:
 <rtf>"""
 while True:
-  got=shmem.clientPull(index_p, isize_p)
-  if (got):
-    index=intp_value(index_p)
-    isize=intp_value(isize_p)
-    print("got index, size =", index, isize)
-    ar=shmem_list[index][0:isize] # this is just a numpy array
-    print("payload         =", ar[0:min(10,isize)])
+  got = shmem.clientPullFrame(index_p, meta)
+  # got = shmem.clientPullFrameThread(index_p, meta) # if you are using multithreading
+  if got:
+    index = intp_value(index_p)
+    data = shmem_list[index][0:meta.size]
+    print("data   : ",data[0:min(10,meta.size)])
+    print("width  : ", meta.width)
+    print("height : ", meta.height)
+    print("slot   : ", meta.slot)
+    print("time   : ", meta.mstimestamp)
+    print("size required : ", meta.width * meta.height * 3)
+    print("size copied   : ", meta.size)
+    print()
   else:
     print("timeout")

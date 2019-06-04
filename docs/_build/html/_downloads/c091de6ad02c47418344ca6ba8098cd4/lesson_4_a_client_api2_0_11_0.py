@@ -26,27 +26,13 @@ client=ShmemRGBClient(
 The *mstimeout* defines the semaphore timeout in milliseconds, i.e. the time when the client returns even if no frame was received:
 <rtf>"""
 while True:
-  index, meta = client.pullFrame()
-  # index, meta = client.pullFrameThread() # alternative method for multithreading
-  if index is None:
+  index, isize = client.pull()
+  if (index==None):
     print("timeout")
   else:
-    data = client.shmem_list[index][0:meta.size]
-    print("data   : ",data[0:min(10,meta.size)])
-    print("width  : ", meta.width)
-    print("height : ", meta.height)
-    print("slot   : ", meta.slot)
-    print("time   : ", meta.mstimestamp)
-    print("size required : ", meta.width * meta.height * 3)
-    print("size copied   : ", meta.size)
-    print()
-    
-    
+    data=client.shmem_list[index][0:isize]
+    print("got data: ",data[0:min(10,isize)])
 
 """<rtf>
-The *client.shmem_list* is a list of numpy arrays, while meta contains information about the data size, frame width, height, slot and timestamp.  
-
-This example simply prints out the first ten bytes of the RGB image and the metadata of the frame.
-
-If your Python process is running several Python threads, you should use the pullFrameThread method instead: it releases the Python GIL while waiting frames from the ringbuffer.
+The *client.shmem_list* is a list of numpy arrays, while *isize* defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.
 </rtf>"""
