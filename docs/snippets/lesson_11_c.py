@@ -1,6 +1,3 @@
-"""<rtf>
-Imports as usual:
-<rtf>"""
 import time
 from valkka.core import *
 from valkka.api2 import ValkkaFS

@@ -9,3 +9,5 @@ cleanpy.bash
 tmp/
 api_level_2/qt/fs_directory/
 api_level_2/qt/paska.txt
+venv
+docs/_build/doctrees/environment.pickle

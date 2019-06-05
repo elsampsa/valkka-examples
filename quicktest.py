@@ -1,12 +1,6 @@
 print()
-print("Loading numerical python")
-import numpy
-print("Numpy loaded ok")
-print("   Numpy loaded from",numpy.__file__)
-print("   Numpy version    ",numpy.__version__)
-
-print()
 print("Loading Valkka")
+
 import valkka
 from valkka import core
 
@@ -37,7 +31,7 @@ print()
 
 # this is modified automatically by setver.bash - don't touch!
 VERSION_MAJOR=0
-VERSION_MINOR=11
+VERSION_MINOR=12
 VERSION_PATCH=0
 
 print("Checking Valkka python examples")
@@ -48,6 +42,35 @@ if (VERSION_MAJOR!=core.VERSION_MAJOR or VERSION_MINOR!=core.VERSION_MINOR or VE
   print("   INCONSISTENT VALKKA-CORE AND VALKKA_EXAMPLES VERSIONS")
   print("   You probably need to update your valkka-core module (say, 'sudo apt-get update' and 'sudo apt-get upgrade valkka')")
   print("   .. or update valkka-examples by running 'git pull' in this directory")
+print()
+
+print("Loading numerical python")
+import numpy
+
+print("Numpy loaded ok")
+print("   Numpy loaded from          : ",numpy.__file__)
+print("   Numpy version              : ",numpy.__version__)
+print("   libValkka was compiled       ")
+print("   with numpy version         : ",core.get_numpy_version())
+
+if (numpy.__version__ != core.get_numpy_version()):
+    print()
+    print("** ATTENTION ** ")
+    print("    You are using a different numpy version than was used when libvalkka was compiled")
+    print("    Normally this should pose no problem")
+    print("    However,if you installed libValkka with apt-get, you'll have a consistent")
+    print("    numpy installed in:")
+    print("    /usr/lib/python3/dist-packages/")
+    print("    you might want to use that version instead")
+    print("    You can use the make_venv.bash script for creating a virtual environment")
+    
+if not core.numpy_version_ok():
+    print()
+    print("** WARNING ** ")
+    print("    INCOMPATIBLE NUMPY VERSIONS DETECTED")
+    print("    YOU SHOULD INSTALL A COMPATIBLE VERSION OF NUMPY")
+    print("    OR SUFFER THE CONSEQUENCES (SEGFAULTS)")
+    
 print()
 
 print("Loading OpenCV")
@@ -64,8 +87,4 @@ import PySide2
 print("   Version      ",PySide2.__version__)
 print("   Loaded from  ",PySide2.__file__)
 print()
-
-
-
-
 

@@ -20,6 +20,9 @@ Client side: API level 2
 
 .. include:: snippets/lesson_4_a_client_api2.py_
 
+(an older version of this code snippet is available :download:`[here]<snippets/lesson_4_a_client_api2_0_11_0.py>`)
+
+
 Client side: openCV
 -------------------
 
@@ -35,6 +38,8 @@ Here the main difference to the previous example is, that the image data is resh
 
 Start this script *after* starting the server side script (server side must also be running).
 
+(an older version of this code snippet is available :download:`[here]<snippets/lesson_4_a_client_opencv_0_11_0.py>`)
+
 
 Client side: API level 1
 ------------------------
@@ -45,4 +50,10 @@ API level 2 provides extra wrapping.  Let's see what goes on at the lowest level
 
 .. include:: snippets/lesson_4_a_client.py_
 
+(an older version of this code snippet is available :download:`[here]<snippets/lesson_4_a_client_0_11_0.py>`)
+
 Cpp documentation for Valkka shared memory classes be found `here. <https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html>`_
+
+
+
+

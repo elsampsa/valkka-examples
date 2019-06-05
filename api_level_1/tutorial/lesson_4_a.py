@@ -81,8 +81,8 @@ livethread      =LiveThread("livethread")
 """<rtf>
 Define connection to camera: frames from 192.168.1.41 are written to live_out_filter and tagged with slot number 1:
 <rtf>"""
-ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
-
+# ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
+ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:123456@192.168.0.134", 1, av_in_filter)
 """<rtf>
 Start processes, stream for 60 seconds and exit:
 <rtf>"""

@@ -150,7 +150,7 @@
 </pre></div>
 </div>
 <p>Construct the filterchain: write from the reader thread into the verbose InfoFrameFilter</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;reader_out_filter&quot;</span><span class="p">)</span>
 <span class="n">readerthread</span> <span class="o">=</span> <span class="n">ValkkaFSReaderThread</span><span class="p">(</span><span class="s2">&quot;reader&quot;</span><span class="p">,</span> <span class="n">valkkafs</span><span class="o">.</span><span class="n">core</span><span class="p">,</span> <span class="n">out_filter</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -177,7 +177,6 @@
 <h2>Requesting blocks<a class="headerlink" href="#requesting-blocks" title="Permalink to this headline">¶</a></h2>
 <p>Here we use the data written into ValkkaFS in the writing example</p>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/db921b82fca90f2112c45799dbd9f9cb/lesson_11_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
-<p>Imports as usual:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ValkkaFS</span>

@@ -70,7 +70,8 @@
 </pre></div>
 </div>
 <p>Define the connection to the IP camera as usual, with <strong>slot number</strong> “1”:</p>
-<div class="highlight-default notranslate" id="connection"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
+<div class="highlight-default notranslate" id="connection"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, av_in_filter)</span>
+<span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:12345@192.168.0.157&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start all threads, start decoding, and register the live stream.  Starting the threads should be done in end-to-beginning order (in the same order we constructed the filterchain).</p>

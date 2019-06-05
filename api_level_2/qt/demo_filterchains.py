@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    demo_filterchains.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.11.0 
+@version 0.12.0 
 @brief   
 """
 import sys
