@@ -19,6 +19,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 When using python multiprocesses with Qt, we need a frontend thread that reads the process communication pipes and turns the messages sent by the process into Qt signals.
 """
 import time
+import importlib
 
 # from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware
 # of the licensing consequences
@@ -67,6 +68,7 @@ class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
         # self.analyzer=MovementDetector(verbose=True)
         self.analyzer = MovementDetector(treshold=0.0001)
 
+
     def cycle_(self):
         if self.client is None:
             time.sleep(1.0)
@@ -104,6 +106,80 @@ class QValkkaMovementDetectorProcess(QValkkaOpenCVProcess):
         print(self.pre, "At frontend: movement stopped")
         self.signals.stop_move.emit()
 
+
+
+class QValkkaGlobalDetectorProcess(QValkkaOpenCVProcess):
+    
+    outgoing_signal_defs = {
+        "detected_objects": {"object_list": list}
+    }
+    
+    class Signals(QtCore.QObject):
+        # PySide2 version:
+        detected_objects = QtCore.Signal(object)
+
+    def __init__(self, name, **kwargs):
+        super().__init__(name, **kwargs)  # does parameterInitCheck
+        self.signals = self.Signals()
+
+    def preRun_(self):
+        super().preRun_()
+        # load yolo after the fork
+        try:
+            predictor_module = importlib.import_module("darknet.api2.predictor")
+        except Exception as e:
+            print("Could not import darknet: failed with:", str(e))
+            self.yolo = None
+        else:
+            try:
+                self.yolo = predictor_module.get_YOLOv3_Tiny_Predictor() # tiny yolo v3
+            except Exception as e:
+                print("Could not get yolo predictor: failed with:", str(e))
+                self.yolo = None
+
+    def cycle_(self):
+        if self.client is None:
+            time.sleep(1.0)
+        else:
+            index, meta = self.client.pullFrame()
+            if (index is None):
+                # print(self.pre, "Client timed out..")
+                pass
+            else:
+                # print(self.pre, "Client index, size =", index, isize)
+                data = self.client.shmem_list[index][0:meta.size]
+                """# if you wanna be chatty
+                print("data   : ",data[0:min(10,meta.size)])
+                print("width  : ", meta.width)
+                print("height : ", meta.height)
+                print("slot   : ", meta.slot)
+                print("time   : ", meta.mstimestamp)
+                print("size required : ", meta.width * meta.height * 3)
+                print("size copied   : ", meta.size)
+                print()
+                """
+                try:
+                    img = data.reshape(
+                        (meta.height, meta.width, 3))
+                except BaseException:
+                    print("QValkkaMovementDetectorProcess: WARNING: could not reshape image")
+                    pass
+                else:
+                    if self.yolo is not None:
+                        lis = self.yolo(img) # e.g. [('sofa', 56, 239, 473, 111, 230)]
+                        # print("slot",meta.slot,"got",lis)
+                        object_list = []
+                        for tup in lis:
+                            object_list.append(tup + (meta.slot, meta.mstimestamp)) # add information to tuple: slot number, mstimestamp
+                        self.sendSignal_(name="detected_objects", object_list=object_list) # this'll appear at the frontend
+                    
+                    
+    # *** frontend ***
+                    
+    def detected_objects(self, object_list):
+        # print("frontend: object_list=", object_list)
+        self.signals.detected_objects.emit(object_list)
+        
 
 def test1():
     pass

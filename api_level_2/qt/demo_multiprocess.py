@@ -163,11 +163,19 @@ class QValkkaOpenCVProcess(ValkkaProcess):
 
                 # res=self.analyzer(img) # does something .. returns something ..
 
+
+    def postCreateClient_(self):
+        """Override in child methods: call after the shmem client has been created
+        """
+        pass
+
+
     # *** backend methods corresponding to incoming signals ***
 
     def stop_(self):
         self.running = False
 
+    
     def create_client_(self):
         self.client = ShmemRGBClient(
             name=self.shmem_name,
@@ -178,6 +186,8 @@ class QValkkaOpenCVProcess(ValkkaProcess):
             mstimeout=1000,
             verbose=False
         )
+        self.postCreateClient_()
+        
 
     def test_(self, test_int=0, test_str="nada"):
         print(self.pre, "test_ signal received with", test_int, test_str)
