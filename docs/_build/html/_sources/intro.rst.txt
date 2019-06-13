@@ -77,7 +77,7 @@ Repositories are organized as follows:
 
 **valkka-examples** : the python tutorial and PyQt example/testsuite are available at the `valkka-examples github repository <https://github.com/elsampsa/valkka-examples>`_. MIT licensed.
 
-**valkka-cpp-examples** : Valkka API is usable from cpp as well.  Examples of this and how to build your own Valkka extensions (FrameFilters, Threads) will be made available at some moment.  MIT licensed.
+For more, see :ref:`here <repos>`.
 
 All functional features are demonstrated in the :ref:`tutorial<tutorial>` which is updated as new features appear.  Same goes for the :ref:`PyQt testsuite<testsuite>`.
 

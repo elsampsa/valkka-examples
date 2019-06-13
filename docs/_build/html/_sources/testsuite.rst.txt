@@ -93,9 +93,9 @@ The field on the left is used to specify stream sources, one source per line.  F
 
 The fields on the right are:
 
-=========================== ==================================================
+=========================== ================================================================
 Field name                  What it does
-=========================== ==================================================
+=========================== ================================================================
 n720p                       Number of pre-reserved frames for 720p resolution
 n1080p                      Number of pre-reserved frames for 1080p resolution
 n1440p                      etc.
@@ -103,16 +103,16 @@ n4K                         etc.
 naudio                      (not used)
 verbose                     (not used)
 msbuftime                   Frame buffering time in milliseconds
-live affinity               Bind the streaming thread to a core
-gl affinity                 Bind the frame presentation thread to a core
-dec affinity start          Bind decoding threads to cores (first core)
-dec affinity stop           Bind decoding threads to cores (last core)
+live affinity               Bind the streaming thread to a core. Default = -1 (no binding)
+gl affinity                 Bind frame presentation thread to a core. Default = -1
+dec affinity start          Bind decoding threads to a core (first core). Default = -1
+dec affinity stop           Bind decoding threads to cores (last core). Default = -1
 replicate                   Dump each stream to screen this many times
 correct timestamp           | 1 = smart-correct timestamp (use this!)
                             | 0 = restamp upon arrival
 socket size bytes           don't touch.  Default value = 0.
 ordering time millisecs     don't touch.  Default value = 0.
-=========================== ==================================================
+=========================== ================================================================
 
 .. _testsuite_decode:
 
@@ -122,41 +122,39 @@ Decoded frames are being queued for "msbuftime" milliseconds.  This is necessary
 
 Replicate demonstrates how Valkka can dump the stream (that's decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode streams more than once.
 
-In Valkka, all threads can be bound to a certain processor core.  Value "-1" indicates that the thread is unbound.  You can launch, say, KSysGuard in Kubuntu, to watch how the kernel bounces the threads from one processor to another.  To get rid of that, you can bind the threads for example like this:
+In Valkka, all threads can be bound to a certain processor core.  Default value "-1" indicates that the thread is unbound and that the kernel can switch it from one core to another (normal behaviour).
+
+Let's consider an example:
 
 =================== =====
 Field name          value
 =================== =====
-live affinity       1
-gl affinity         2
-dec affinity start  3
-dec affinity stop   5
+live affinity       0
+gl affinity         1
+dec affinity start  2
+dec affinity stop   4
 =================== =====
 
-Now LiveThread (the thread that streams from cameras) stays at core 1, all OpenGL operations and frame presenting at core 2.  Let's imagine you have ten decoders running, then they will placed like this:
+Now LiveThread (the thread that streams from cameras) stays at core index 0, all OpenGL operations and frame presenting at core index 1.  Let's imagine you have ten decoders running, then they will placed like this:
 
 ======== ==============
 Core     Decoder thread
 ======== ==============
-core 3   1, 4, 7, 10
-core 4   2, 5, 8
-core 5   3, 6, 9
+core 2   1, 4, 7, 10
+core 3   2, 5, 8
+core 4   3, 6, 9
 ======== ==============
    
-Before starting the test suite, you can use the script
+.. Before starting the test suite, you can use the script
+.. !!this is al sooo niche
+.. valkka_examples/aux/
+..   
+..  process_crowd.bash
+.. to throw all system processes into core 0.
 
-::
+Setting processor affinities might help, if you can afford the luxury of having one processor per decoder.  Otherwise, it might mess up the load-balancing performed by the kernel.  
 
-  valkka_examples/aux/
-   
-    process_crowd.bash
-    
-    
-To throw all system processes into core 0.
-
-Is all this fiddling with thread affinities needed?  Not really - just use value "-1" on those fields if you think it doesn't make any difference.  
-
-It certainly doesn't matter if you're streaming and decoding just a few streams.  You can test how many streams your linux box is able to stream, decode and present by observing the core loads with, say, KSysGuard.  When all cores are screaming nearly 100% and smog is coming out of your pc, you'll start to observe frame dropping.  You can test if thread affinities help.
+**By default, don't touch the affinities (simply use the default value -1)**.
 
 Finally, the buttons that launch the test, do the following:
 

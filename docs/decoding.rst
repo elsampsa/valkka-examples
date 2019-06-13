@@ -7,13 +7,11 @@ Decoding
 Single thread
 -------------
 
-By default, libValkka uses only a single core per decoder.  The decoding threads can also be bound to a certain core. See :ref:`the testsuite<testsuite_decode>` for more details.
+By default, libValkka uses only a single core per decoder (the decoding threads can also be bound to a certain core - see :ref:`the testsuite<testsuite_decode>` for more details).
 
 This is a good idea if you have a *large number of light streams*.  What is exactly a *light stream* depends on your linux box, but let's assume here that it is a 1080p video running approx. at 20 frames per second.
 
-If a single core is capable of decoding the stream, there is no reason to create "thread swarming" and let all streams to use all cores (with decoders constantly switching from one set of cores to another).
-
-We're trying to be efficient here.
+.. If a single core is capable of decoding the stream, there is no reason to create "thread swarming" and let all streams to use all cores (with decoders constantly switching from one set of cores to another). # we're being too smart here
 
 Multithread
 -----------

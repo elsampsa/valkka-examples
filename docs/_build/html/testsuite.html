@@ -172,8 +172,8 @@
 <p>The fields on the right are:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="35%" />
-<col width="65%" />
+<col width="30%" />
+<col width="70%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Field name</th>
@@ -203,16 +203,16 @@
 <td>Frame buffering time in milliseconds</td>
 </tr>
 <tr class="row-odd"><td>live affinity</td>
-<td>Bind the streaming thread to a core</td>
+<td>Bind the streaming thread to a core. Default = -1 (no binding)</td>
 </tr>
 <tr class="row-even"><td>gl affinity</td>
-<td>Bind the frame presentation thread to a core</td>
+<td>Bind frame presentation thread to a core. Default = -1</td>
 </tr>
 <tr class="row-odd"><td>dec affinity start</td>
-<td>Bind decoding threads to cores (first core)</td>
+<td>Bind decoding threads to a core (first core). Default = -1</td>
 </tr>
 <tr class="row-even"><td>dec affinity stop</td>
-<td>Bind decoding threads to cores (last core)</td>
+<td>Bind decoding threads to cores (last core). Default = -1</td>
 </tr>
 <tr class="row-odd"><td>replicate</td>
 <td>Dump each stream to screen this many times</td>
@@ -235,7 +235,8 @@
 <p id="testsuite-decode">As you learned from the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>, in Valkka, frames are pre-reserved on the GPU.  If you’re planning to use 720p and 1080p cameras, reserve, say 200 frames for both.</p>
 <p>Decoded frames are being queued for “msbuftime” milliseconds.  This is necessary for de-jitter (among other things).  The bigger the buffering time, the more pre-reserved frames you’ll need and the more lag you get into your live streaming.  A nice value is 300.  For more on the subject, read <a class="reference internal" href="decoding.html#decoding"><span class="std std-ref">this</span></a>.</p>
 <p>Replicate demonstrates how Valkka can dump the stream (that’s decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode streams more than once.</p>
-<p>In Valkka, all threads can be bound to a certain processor core.  Value “-1” indicates that the thread is unbound.  You can launch, say, KSysGuard in Kubuntu, to watch how the kernel bounces the threads from one processor to another.  To get rid of that, you can bind the threads for example like this:</p>
+<p>In Valkka, all threads can be bound to a certain processor core.  Default value “-1” indicates that the thread is unbound and that the kernel can switch it from one core to another (normal behaviour).</p>
+<p>Let’s consider an example:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="79%" />
@@ -248,20 +249,20 @@
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>live affinity</td>
-<td>1</td>
+<td>0</td>
 </tr>
 <tr class="row-odd"><td>gl affinity</td>
-<td>2</td>
+<td>1</td>
 </tr>
 <tr class="row-even"><td>dec affinity start</td>
-<td>3</td>
+<td>2</td>
 </tr>
 <tr class="row-odd"><td>dec affinity stop</td>
-<td>5</td>
+<td>4</td>
 </tr>
 </tbody>
 </table>
-<p>Now LiveThread (the thread that streams from cameras) stays at core 1, all OpenGL operations and frame presenting at core 2.  Let’s imagine you have ten decoders running, then they will placed like this:</p>
+<p>Now LiveThread (the thread that streams from cameras) stays at core index 0, all OpenGL operations and frame presenting at core index 1.  Let’s imagine you have ten decoders running, then they will placed like this:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="36%" />
@@ -273,26 +274,19 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>core 3</td>
+<tr class="row-even"><td>core 2</td>
 <td>1, 4, 7, 10</td>
 </tr>
-<tr class="row-odd"><td>core 4</td>
+<tr class="row-odd"><td>core 3</td>
 <td>2, 5, 8</td>
 </tr>
-<tr class="row-even"><td>core 5</td>
+<tr class="row-even"><td>core 4</td>
 <td>3, 6, 9</td>
 </tr>
 </tbody>
 </table>
-<p>Before starting the test suite, you can use the script</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka_examples</span><span class="o">/</span><span class="n">aux</span><span class="o">/</span>
-
-  <span class="n">process_crowd</span><span class="o">.</span><span class="n">bash</span>
-</pre></div>
-</div>
-<p>To throw all system processes into core 0.</p>
-<p>Is all this fiddling with thread affinities needed?  Not really - just use value “-1” on those fields if you think it doesn’t make any difference.</p>
-<p>It certainly doesn’t matter if you’re streaming and decoding just a few streams.  You can test how many streams your linux box is able to stream, decode and present by observing the core loads with, say, KSysGuard.  When all cores are screaming nearly 100% and smog is coming out of your pc, you’ll start to observe frame dropping.  You can test if thread affinities help.</p>
+<p>Setting processor affinities might help, if you can afford the luxury of having one processor per decoder.  Otherwise, it might mess up the load-balancing performed by the kernel.</p>
+<p><strong>By default, don’t touch the affinities (simply use the default value -1)</strong>.</p>
 <p>Finally, the buttons that launch the test, do the following:</p>
 <table border="1" class="docutils">
 <colgroup>

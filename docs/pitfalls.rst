@@ -49,46 +49,55 @@ Valkka tries hard to correct the timestamps of arriving frames, but if the times
 
 So, either set your IP camera's clock really off (say, 5+ mins off) or exactly to the correct time.  In the latter case, you might want to sync both your IP camera and PC to the same NTP server.
 
+**7\. Are you really using a gigabit nic?**
+
+How's your network interface hardware?  Using an old usb dongle?  Check your nic's capacity with this command:
+
+::
+
+    cat /sys/class/net/<device_name>/speed
+
+It should say at least "100", preferably "1000"
+    
 
 Bottlenecks
 -----------
 
 Once you ramp up the number of streams, you might start to experience some *real* performance issues.  Some typical problems include:
 
-**7\. Your LAN and/or the LiveThread process sending frames in bursts**
+**8\. Your LAN and/or the LiveThread process sending frames in bursts**
   
   - Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.  See :ref:`here <buffering>`.
   - This is very common problem when streaming over Wifi
-  - If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and NIC ? (see "System tuning" below)
+  - If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and nic ? (as we just discussed.  See also "System tuning" below)
   
 ..  - Using several LiveThread(s), instead of just one *might* help
 .. TODO: talk about the multicast loopback test  
   
-**8\. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long**
+**9\. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long**
 
   - This is, of course, to be expected if all your CPU(s) are screaming 100%
-  - Assign AVThreads to certain CPU(s) to check this and monitor the CPU usage
 
-**9\. OpenGLThread that queues YUV frames and does the YUV => RGB interpolation on the GPU is stalling**
+**10\. OpenGLThread that queues YUV frames and does the YUV => RGB interpolation on the GPU is stalling**
 
   - There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core's GitHub page).
   - Your GPU might not have enough muscle
 
 If you compile libValkka from source, there are many available debug options that can be enabled in *run_cmake.bash*.   A particularly useful one is *profile_timing*.  Enabling this debug switch allows you to trace the culprit for frame dropping to slow network, slow decoding or the OpenGL part.
 
-Some common fixes (that are frequently used in commercial video surveillance applications) for problems (7-9) include:
+Some common fixes (that are frequently used in commercial video surveillance applications) include:
 
-* Configure your cameras to a lower frame rate (say, 10 fps): this sucks.
-* Reduce the YUV frame before sending it to GPU: we still use lots of resources for decoding.
-* Tell AVThread to send only every n:th frame to the GPU: unnecessary decoding of all arriving frames.
+* Configure your cameras to a lower frame rate (say, 10 fps): unfortunately this sucks.
 * Tell AVThread to decode only keyframes: choppy video.
 * The mainstream/substream scheme:
 
-  - This is the best solution and it avoids problems (7-9) simultaneously
   - If you have, say, 20 small-sized video streams in your grid, it is an exaggeration to decode full-HD video for each one of the streams.  
   - For small windows, you should switch to using a substream provided by your IP camera.  A resolution of, say, half of HD-ready might be enough.  
   - Decode and present the full-HD mainstream only when there are video windows that are large enough
 
+.. * Reduce the YUV frame before sending it to GPU: however, we'll still use lots of resources for decoding. # this is not really the bottleneck ever
+.. * Tell AVThread to send only every n:th frame to the GPU: unnecessary decoding of all arriving frames.
+  
 Valkka provides (or will provide) API methods and FrameFilter(s) to implement each one of these strategies.
 
 System tuning

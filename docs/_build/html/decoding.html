@@ -37,10 +37,8 @@
 <span id="id1"></span><h1>Decoding<a class="headerlink" href="#decoding" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="single-thread">
 <h2>Single thread<a class="headerlink" href="#single-thread" title="Permalink to this headline">¶</a></h2>
-<p>By default, libValkka uses only a single core per decoder.  The decoding threads can also be bound to a certain core. See <a class="reference internal" href="testsuite.html#testsuite-decode"><span class="std std-ref">the testsuite</span></a> for more details.</p>
+<p>By default, libValkka uses only a single core per decoder (the decoding threads can also be bound to a certain core - see <a class="reference internal" href="testsuite.html#testsuite-decode"><span class="std std-ref">the testsuite</span></a> for more details).</p>
 <p>This is a good idea if you have a <em>large number of light streams</em>.  What is exactly a <em>light stream</em> depends on your linux box, but let’s assume here that it is a 1080p video running approx. at 20 frames per second.</p>
-<p>If a single core is capable of decoding the stream, there is no reason to create “thread swarming” and let all streams to use all cores (with decoders constantly switching from one set of cores to another).</p>
-<p>We’re trying to be efficient here.</p>
 </div>
 <div class="section" id="multithread">
 <h2>Multithread<a class="headerlink" href="#multithread" title="Permalink to this headline">¶</a></h2>
