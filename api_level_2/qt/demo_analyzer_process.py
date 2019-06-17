@@ -170,7 +170,12 @@ class QValkkaGlobalDetectorProcess(QValkkaOpenCVProcess):
                         # print("slot",meta.slot,"got",lis)
                         object_list = []
                         for tup in lis:
-                            object_list.append(tup + (meta.slot, meta.mstimestamp)) # add information to tuple: slot number, mstimestamp
+                            # object_list.append(tup + (meta.slot, meta.mstimestamp)) # add information to tuple: slot number, mstimestamp
+                            object_list.append(
+                                (tup[0], tup[1], # name, prob
+                                tup[2]/meta.width, tup[3]/meta.width, tup[4]/meta.height, tup[5]/meta.height, # coordinates: left, right, top, bottom & scaled to image width / height
+                                meta.slot, meta.mstimestamp) # add information: slot number, mstimestamp
+                                )
                         self.sendSignal_(name="detected_objects", object_list=object_list) # this'll appear at the frontend
                     
                     

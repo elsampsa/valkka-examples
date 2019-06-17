@@ -54,6 +54,7 @@ import cv2
 import sys
 import json
 import os
+import time
 from valkka.api2 import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2 import ShmemFilterchain
 from valkka.api2 import parameterInitCheck
@@ -73,6 +74,8 @@ shmem_ringbuffer_size = 10
 
 image_dimensions = shmem_image_dimensions # actual image dimensions for the RGB bitmaps
 
+
+
 class MyConfigDialog(ConfigDialog):
 
     def setConfigPars(self):
@@ -88,7 +91,128 @@ class MyConfigDialog(ConfigDialog):
         self.vlc_button.hide()
 
 
+
 class MyGui(QtWidgets.QMainWindow):
+
+
+    class OverlayWidget(QtWidgets.QWidget):
+        
+        class Signals(QtCore.QObject):
+            current_rectangle = QtCore.Signal(object) # informs controller about the newly created rectangle
+            draw_rectangles   = QtCore.Signal(object) # carries of list of all rectangles to be drawn
+        
+        def __init__(self, parent):
+            super().__init__(parent)
+            self.signals = self.Signals()
+            self.reset()
+            self.token = None
+            
+        def setToken(self, token):
+            self.token = token
+            
+        def reset(self):
+            self.fac = 1
+            self.old_t = 0
+            self.frame_list = []
+            self.resetRect()
+
+        def resetRect(self):
+            self.rect = None
+            self.x0 = None
+            self.x1 = None
+            self.y0 = None
+            self.y1 = None
+            
+        def mousePressEvent(self, e):
+            print("mousepressevent :", e)
+            self.x0 = e.x()
+            self.y0 = e.y()
+            e.accept()
+        
+        def mouseReleaseEvent(self, e):
+            # print("mousereleaseevent :", e)
+            self.t = time.time()
+            dt = (self.t - self.old_t)
+            self.old_t = self.t
+            
+            if (dt < 0.5):
+                print("double click")
+                self.resetRect()
+                
+            e.accept()
+            # self.signals.current_rectangle.emit(self.getDrawRect())
+            self.signals.draw_rectangles.emit(
+                (self.token, [self.getDrawRect()] + self.frame_list)
+                )
+            
+        def set_frames_slot(self, frame_list):
+            # print("OverlayWidget: set_frames_slot: frame_list=", frame_list)
+            self.frame_list = frame_list
+            self.signals.draw_rectangles.emit(
+                (self.token, [self.getDrawRect()] + self.frame_list)
+                )
+            
+        def mouseMoveEvent(self, e):
+            if self.x0 is not None:
+                self.x1 = e.x()
+                self.y1 = e.y()
+                # print("mousemoveevent : (%i, %i) -> (%i, %i)" % (self.x0, self.y0, self.x1, self.y1))
+                self.repaint()
+                e.accept()
+                
+        def getDrawRect(self):
+            # Return rectangle that can be draw directly with OpenGLThread
+            # return left, right, top, bottom
+            if (self.x1 != None):
+                w = self.width()
+                h = self.height()
+                left    = min(self.x0, self.x1)
+                right   = max(self.x0, self.x1)
+                top     = max(h-self.y0, h-self.y1) # from Qt coordinates (origo: top left) to normal coordinates (origo: bottom left)
+                bottom  = min(h-self.y0, h-self.y1)
+                # print("getDrawRect: l, r, t, b", left, right, top, bottom)
+                return left/w, right/w, top/h, bottom/h
+            else:
+                return 0., 1., 1., 0. # by default, whole image
+        
+        def paintEvent(self, e):
+            # print("paintevent")
+            qp = QtGui.QPainter()
+            qp.begin(self)
+            self.drawWidget(qp)
+            qp.end()
+                
+        """# nopes
+        def resizeEvent(self, e):
+            self.resetRect()
+            super().resizeEvent(e)
+        """
+           
+            
+        """
+        def sizeHint(self):
+            print("default sizeHint: ", super(TagWidget, self).sizeHint())
+            if (self.pixmap):
+                return self.pixmap.size()
+            else:
+                return QtCore.QSize(300,300)
+        """
+        
+        
+        def drawWidget(self, qp):
+            if self.x1 != None: # there is a rectangle
+                pen = QtGui.QPen(QtGui.QColor(20, 255, 20), 6, QtCore.Qt.SolidLine)
+                qp.setPen(pen)
+                qp.setBrush(QtCore.Qt.NoBrush)
+                rect = QtCore.QRect( # QRect starts from top-left
+                    self.x0,
+                    self.y0,
+                    self.x1-self.x0,
+                    self.y1-self.y0
+                )             
+                qp.drawRect(rect)
+                
+        
 
 
     class NativeFrame:
@@ -98,13 +222,11 @@ class MyGui(QtWidgets.QMainWindow):
         class Signals(QtCore.QObject):
             movement = QtCore.Signal()
             still = QtCore.Signal()
+            current_frames = QtCore.Signal(object)
             
 
         def __init__(self, parent):
             self.signals = self.Signals()
-            
-            self.signals.movement.connect(self.set_moving)
-            self.signals.still.connect(self.set_still)
             
             self.objects = [] # list of recently detected objects
             self.counter = 0
@@ -123,6 +245,12 @@ class MyGui(QtWidgets.QMainWindow):
             self.lay.addWidget(self.text)
             self.lay.addWidget(self.video)
             
+            # ad an invisible widget on top of the video
+            self.video_lay = QtWidgets.QHBoxLayout(self.video)
+            self.overlay_widget = MyGui.OverlayWidget(self.video)
+            # overlay_widget.signals.current_rectangle
+            self.video_lay.addWidget(self.overlay_widget)
+            
             self.text.setSizePolicy(
                 QtWidgets.QSizePolicy.Minimum,
                 QtWidgets.QSizePolicy.Minimum)
@@ -132,8 +260,18 @@ class MyGui(QtWidgets.QMainWindow):
             
             self.lay.addWidget(self.object_list)
             
+            self.signals.movement.connect(self.set_moving)
+            self.signals.still.connect(self.set_still)
+            self.signals.current_frames.connect(self.overlay_widget.set_frames_slot)
+            
             self.set_still()
-
+            
+            self.mstimestampsave = 0
+            self.mstimetolerance = 2000 # this far away in time are accepted
+            self.mscleartime = 2000 # detection rectangles are cleared
+            self.frame_list = []
+            
+            
         def getWindowId(self):
             return int(self.video.winId())
 
@@ -143,23 +281,48 @@ class MyGui(QtWidgets.QMainWindow):
         def set_still(self):
             self.setText("still")
             self.widget.setStyleSheet(self.text_stylesheet)
+            self.frame_list = [] # reset detection frames when image is still
+            self.signals.current_frames.emit(self.frame_list) 
 
         def set_moving(self):
             self.setText("MOVING")
             self.widget.setStyleSheet(
                 "QLabel {border: 2px; border-style:solid; border-color: red; margin:0 px; padding:0 px; border-radius:8px;}")
 
-        def add_object(self, name):
-            self.objects.append(name)
-            if len(self.objects) > 5:
-                self.objects.pop(0)
-            txt = ""
-            for obj in self.objects:
-                txt += str(self.counter) +": "+ obj +"\n"
-                self.counter += 1
-            self.object_list.setText(txt)
+        def add_object(self, tup):
+            # [('sofa', 61, 236, 474, 108, 232, 1, 1560108601550), ('chair', 52, 123, 199, 96, 250, 1, 1560108601550)] # object, prob, left, right, top, bottom, slot, mstimestamp
+            name = tup[0]
+            mstimestamp = tup[7]
+            # print("add_object:", tup)
             
             
+            # - accept only detection events that are enough separated in time
+            # - if enought time has passed, clear the detection rectangles first
+            # - accept only detection events from the rectangle
+            if (mstimestamp - self.mstimestampsave) >= self.mscleartime:
+                self.frame_list = []
+            
+            if (mstimestamp - self.mstimestampsave) > self.mstimetolerance: # accept a new event
+                #print("add_object: object accepted by time", tup)
+                left, right, top, bottom = self.overlay_widget.getDrawRect()
+                if (tup[2] >= left and tup[3] <= right and tup[4] <= top and tup[5] >= bottom):
+                    #print("add_object: object accepted by geom", tup)
+                    self.objects.append(name)
+                    # NOTICE: so, this event would go to your database
+                    if len(self.objects) > 5:
+                        self.objects.pop(0)
+                    txt = ""
+                    for obj in self.objects:
+                        txt += str(self.counter) +": "+ obj +"\n"
+                        self.counter += 1
+                    self.object_list.setText(txt)
+                    self.frame_list.append(
+                        (tup[2], tup[3], tup[4], tup[5]) # left, right, top, bottom
+                        )
+                    self.signals.current_frames.emit(self.frame_list)
+                    
+            self.mstimestampsave = mstimestamp
+                    
     debug = False
     # debug=True
 
@@ -234,7 +397,8 @@ class MyGui(QtWidgets.QMainWindow):
             msbuftime=self.pardic["msbuftime"],
             affinity=self.pardic["gl affinity"]
         )
-
+        
+        
         if (self.openglthread.hadVsync()):
             w = QtWidgets.QMessageBox.warning(
                 self,
@@ -279,7 +443,7 @@ class MyGui(QtWidgets.QMainWindow):
 
             frame = self.NativeFrame(self.w)
             win_id = frame.getWindowId()
-
+            
             # print(pre,"setupUi: layout index, address : ",cc//4,cc%4,address)
             # self.lay.addWidget(frame.widget,cc//4,cc%4)
 
@@ -298,7 +462,13 @@ class MyGui(QtWidgets.QMainWindow):
 
             token = self.openglthread.connect(slot=cs, window_id=win_id)
             tokens.append(token)
-
+            print("setupUi: token=", token)
+            # connect signal from current frame to self.selection_slot
+            # frame.overlay_widget.signals.current_rectangle.connect(lambda x: self.selection_slot(cs, token, x))
+            # frame.overlay_widget.signals.draw_rectangles.connect(lambda bbox_list: self.draw_rectangles_slot(token, bbox_list))
+            frame.overlay_widget.setToken(token)
+            frame.overlay_widget.signals.draw_rectangles.connect(self.draw_rectangles_slot)
+    
             chain.decodingOn()  # tell the decoding thread to start its job
             cs += 1
             a += 1
@@ -313,7 +483,7 @@ class MyGui(QtWidgets.QMainWindow):
 
     def movement_callback(self, tup):
         try:
-            print("test_callback:", tup) # (False, 1, 1560108596547)
+            # print("test_callback:", tup) # (False, 1, 1560108596547)
             
             """
             status = tup[0]
@@ -344,7 +514,7 @@ class MyGui(QtWidgets.QMainWindow):
             
         
     def movement_slot(self, tup):
-        print("movement_slot:", tup)
+        # print("movement_slot:", tup)
         status = tup[0]
         slot = tup[1]
         index = slot - 1
@@ -355,14 +525,31 @@ class MyGui(QtWidgets.QMainWindow):
         
         
     def detected_objects_slot(self, lis):
-        print("detected_objects_slot: got:", lis)
+        # print("detected_objects_slot: got:", lis)
         # return
         # e.g.:
-        # [('sofa', 61, 236, 474, 108, 232, 1, 1560108601550), ('chair', 52, 123, 199, 96, 250, 1, 1560108601550)]
+        # [('sofa', 61, 236, 474, 108, 232, 1, 1560108601550), ('chair', 52, 123, 199, 96, 250, 1, 1560108601550)] # object, prob, left, right, top, bottom, slot, mstimestamp
         # object, coords, slot, mstimestamp
         for tup in lis:
             index = tup[6] - 1 # index = slot - 1
-            self.frames[index].add_object(tup[0])
+            # self.frames[index].add_object(tup[0])
+            self.frames[index].add_object(tup)
+        
+    """
+    def selection_slot(self, slot, context_id, bbox):
+        print("selection_slot: for slot number", slot)
+        self.openglthread.core.addRectangleCall(context_id, bbox[0], bbox[1], bbox[2], bbox[3])
+    """
+       
+        
+    def draw_rectangles_slot(self, tup):
+        context_id = tup[0]
+        bbox_list = tup[1]
+        # print("draw_rectangles_slot: context_id=", context_id)
+        self.openglthread.core.clearObjectsCall(context_id)
+        for bbox in bbox_list:
+            # print("draw_rectangles_slot:", bbox) # (381, 463, 35, 256)
+            self.openglthread.core.addRectangleCall(context_id, bbox[0], bbox[1], bbox[2], bbox[3])
         
         
     def startProcesses(self):
