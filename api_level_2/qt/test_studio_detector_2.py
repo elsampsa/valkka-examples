@@ -16,35 +16,75 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @brief   Test live streaming with Qt.  Send copies of the streams to OpenCV movement detector processes.
 
 
-In the main text field, write live video sources, one to each line, e.g.
+This came up a bit messy.  Should be re-structured:
 
-::
-
-    rtsp://admin:admin@192.168.1.10
-    rtsp://admin:admin@192.168.1.12
-    multicast.sdp
-    multicast2.dfp
-
-Reserve enough frames into the pre-reserved frame stack.  There are stacks for 720p, 1080p, etc.  The bigger the buffering time "msbuftime" (in milliseconds), the bigger stack you'll be needing.
-
-When affinity is greater than -1, the processes are bound to a certain processor.  Setting "live affinity" to 0, will bind the Live555 thread to processor one.  Setting "dec affinity start" to 1 and "dec affinity start 3" will bind the decoding threads to processors 1-3.  (first decoder process to 1, second to 2, third to 3, fourth to 1 again, etc.)
-
-It's very important to disable vertical sync in OpenGL rendering..!  Otherwise your *total* framerate is limited to 60 fps.  Disabling vsync can be done in mesa-based open source drives with:
-
-export vblank_mode=0
-
-and in nvidia proprietary drivers with
-
-export __GL_SYNC_TO_VBLANK=0
-
-For benchmarking purposes, you can launch the video streams with:
-
-  -PyQt created X windowses (this is the intended use case) : RUN(QT)
-  -With X windowses created by valkka : RUN
-  -With ffplay or vlc (if you have them installed)
+MyGui
 
 
-This Qt test program produces a config file.  You might want to remove that config file after updating the program.
+    OverlayWidget
+        - Catches mouse gestures
+        - Click'n'drag drawing of the selection rectangle
+        - ..has knowledge of the selection
+        - has the OpenGLThread token corresponding to the video surface
+        
+        Signals:
+            current_rectangle 
+                - Sends the current selection rect
+                => connected to MyGui.selection_rectangle_slot
+                - fired when user has changed the selection rectangle
+            draw_rectangles 
+                - Sends current selection rect & bboxes in self.frame_list
+                => connected to MyGui.draw_rectangles_slot, carries (token, bbox_list)
+                - fired when frame_list has updated or when user has changed the selection rect
+            
+        Methods:
+            setToken(self, token)
+                - saves the OpenGLThread token
+            
+            set_frames_slot(self, frame_list)
+                - updates frame_list, fires Signals.draw_rectangles
+            
+            
+    NativeFrame
+        - Has the widget whose surface is taken over by OpenGL for drawing video frames (identified by token)
+        - Has reference to the corresponding OverlayWidget
+        
+        Signals:
+            current_frames
+                => connected to OverlayWidget.set_frames_slot
+        
+        Methods:
+            add_object(self, tup)
+                - get's the current selection from OverlayWidget.getDrawRect()
+                - discards object that are not within the selection rectangle
+                - discards tups that are two close in time
+                - adds the tup to the list of know objects
+                - fires Signals.current_frames
+
+
+    Methods:
+    
+        openValkka(self)
+            - Connects framefilters into a global shmem queue
+            - ..on the other side of the queue, there is yolo object detection
+            - ..which send sends signal "detected_objects"
+            - ..that is connected to detected_objects_slot
+    
+
+        detected_objects_slot(self, lis)
+            - gets a list of tuples
+            - each tuple has the slot number
+            - get the correct NativeFrame, based on the slot number
+            - calls NativeFrame.add_object(tup)
+        
+    
+        selection_rectangle_slot(self, slot, bbox):
+            - save the bbox if you want to
+    
+    
+        draw_rectangles_slot(self, (token, bbox_list)):
+            - tells OpenGLThread to draw bboxes to the video with token
+        
 """
 
 # from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware
@@ -55,6 +95,7 @@ import sys
 import json
 import os
 import time
+import argparse
 from valkka.api2 import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
 from valkka.api2 import ShmemFilterchain
 from valkka.api2 import parameterInitCheck
@@ -81,9 +122,12 @@ class MyConfigDialog(ConfigDialog):
     def setConfigPars(self):
         self.tooltips = {        # how about some tooltips?
         }
-        self.pardic.update({})  # add more parameter key/value pairs
-        self.plis += []         # list of parameter keys that are saved to config file
+        self.pardic.update({
+            "grace time ms" : 2000
+            })
+        self.plis += ["grace time ms"]
         self.config_fname = "test_studio_detector_2.config"  # define the config file name
+
 
     def extra(self):
         self.run2_button.hide()
@@ -98,17 +142,21 @@ class MyGui(QtWidgets.QMainWindow):
     class OverlayWidget(QtWidgets.QWidget):
         
         class Signals(QtCore.QObject):
-            current_rectangle = QtCore.Signal(object) # informs controller about the newly created rectangle
-            draw_rectangles   = QtCore.Signal(object) # carries of list of all rectangles to be drawn
+            current_rectangle = QtCore.Signal(object) # informs about the newly created rectangle
+            draw_rectangles   = QtCore.Signal(object) # carries of list of all rectangles to be drawn (selection & detected)
         
         def __init__(self, parent):
             super().__init__(parent)
             self.signals = self.Signals()
             self.reset()
             self.token = None
+            self.slot = None
             
         def setToken(self, token):
             self.token = token
+            
+        def setSlot(self, slot):
+            self.slot = slot
             
         def reset(self):
             self.fac = 1
@@ -140,7 +188,7 @@ class MyGui(QtWidgets.QMainWindow):
                 self.resetRect()
                 
             e.accept()
-            # self.signals.current_rectangle.emit(self.getDrawRect())
+            self.signals.current_rectangle.emit((self.slot, self.getDrawRect()))
             self.signals.draw_rectangles.emit(
                 (self.token, [self.getDrawRect()] + self.frame_list)
                 )
@@ -175,6 +223,25 @@ class MyGui(QtWidgets.QMainWindow):
             else:
                 return 0., 1., 1., 0. # by default, whole image
         
+        
+        def setDrawRect(self, tup): # in normal coordinates
+            left   = tup[0] # left
+            right  = tup[1] # right
+            top    = tup[2] # top
+            bottom = tup[3] # bottom
+        
+            w = self.width()
+            h = self.height()
+            
+            self.x0 = w * left
+            self.x1 = w * right
+            self.y0 = h * bottom  
+            self.y1 = h * top
+            # from normal to Qt coordinates:
+            self.y0 = h - self.y0
+            self.y1 = h - self.y1
+            
+            
         def paintEvent(self, e):
             # print("paintevent")
             qp = QtGui.QPainter()
@@ -212,7 +279,6 @@ class MyGui(QtWidgets.QMainWindow):
                 )             
                 qp.drawRect(rect)
                 
-        
 
 
     class NativeFrame:
@@ -222,10 +288,10 @@ class MyGui(QtWidgets.QMainWindow):
         class Signals(QtCore.QObject):
             movement = QtCore.Signal()
             still = QtCore.Signal()
-            current_frames = QtCore.Signal(object)
+            current_frames = QtCore.Signal(object) # sends all frames (selection & detection)
             
 
-        def __init__(self, parent):
+        def __init__(self, parent, mstimetolerance = 2000):
             self.signals = self.Signals()
             
             self.objects = [] # list of recently detected objects
@@ -267,7 +333,7 @@ class MyGui(QtWidgets.QMainWindow):
             self.set_still()
             
             self.mstimestampsave = 0
-            self.mstimetolerance = 2000 # this far away in time are accepted
+            self.mstimetolerance = mstimetolerance # this far away in time are accepted
             self.mscleartime = 2000 # detection rectangles are cleared
             self.frame_list = []
             
@@ -293,12 +359,12 @@ class MyGui(QtWidgets.QMainWindow):
             # [('sofa', 61, 236, 474, 108, 232, 1, 1560108601550), ('chair', 52, 123, 199, 96, 250, 1, 1560108601550)] # object, prob, left, right, top, bottom, slot, mstimestamp
             name = tup[0]
             mstimestamp = tup[7]
-            # print("add_object:", tup)
-            
+            print("add_object:", tup)
             
             # - accept only detection events that are enough separated in time
             # - if enought time has passed, clear the detection rectangles first
             # - accept only detection events from the rectangle
+            
             if (mstimestamp - self.mstimestampsave) >= self.mscleartime:
                 self.frame_list = []
             
@@ -320,9 +386,9 @@ class MyGui(QtWidgets.QMainWindow):
                         (tup[2], tup[3], tup[4], tup[5]) # left, right, top, bottom
                         )
                     self.signals.current_frames.emit(self.frame_list)
-                    
-            self.mstimestampsave = mstimestamp
-                    
+                    # self.mstimetolerance milliseconds must pass before next event will be accepted
+                    self.mstimestampsave = mstimestamp
+                        
     debug = False
     # debug=True
 
@@ -441,7 +507,7 @@ class MyGui(QtWidgets.QMainWindow):
             )
             self.chains.append(chain)
 
-            frame = self.NativeFrame(self.w)
+            frame = self.NativeFrame(self.w, mstimetolerance = self.pardic["grace time ms"])
             win_id = frame.getWindowId()
             
             # print(pre,"setupUi: layout index, address : ",cc//4,cc%4,address)
@@ -467,7 +533,11 @@ class MyGui(QtWidgets.QMainWindow):
             # frame.overlay_widget.signals.current_rectangle.connect(lambda x: self.selection_slot(cs, token, x))
             # frame.overlay_widget.signals.draw_rectangles.connect(lambda bbox_list: self.draw_rectangles_slot(token, bbox_list))
             frame.overlay_widget.setToken(token)
+            frame.overlay_widget.setSlot(cs)
+            # TODO: read rectangles from a file
+            # TODO: frame.overlay_widget.setDrawRect()
             frame.overlay_widget.signals.draw_rectangles.connect(self.draw_rectangles_slot)
+            frame.overlay_widget.signals.current_rectangle.connect(self.selection_rectangle_slot)
     
             chain.decodingOn()  # tell the decoding thread to start its job
             cs += 1
@@ -535,12 +605,12 @@ class MyGui(QtWidgets.QMainWindow):
             # self.frames[index].add_object(tup[0])
             self.frames[index].add_object(tup)
         
-    """
-    def selection_slot(self, slot, context_id, bbox):
-        print("selection_slot: for slot number", slot)
-        self.openglthread.core.addRectangleCall(context_id, bbox[0], bbox[1], bbox[2], bbox[3])
-    """
-       
+        
+    def selection_rectangle_slot(self, tup):
+        slot = tup[0]
+        bbox = tup[1]
+        print("selection_rectangle: slot, rectangle", slot, bbox)
+        
         
     def draw_rectangles_slot(self, tup):
         context_id = tup[0]
@@ -582,17 +652,38 @@ class MyGui(QtWidgets.QMainWindow):
         super().closeEvent(e)
 
 
+  
+def str2bool(v):
+    return v.lower() in ("yes", "true", "t", "1")
+
+
 def main():
     app = QtWidgets.QApplication(["test_app"])
     conf = MyConfigDialog()
-    pardic = conf.exec_()
-    # print(pre,"got",pardic)
-    # return
+
+    parser = argparse.ArgumentParser("--diag=true launches the config dialog (default)")
+    parser.register('type','bool',str2bool)
+    parser.add_argument("--dialog",   action="store", type="bool", required=False, default=True)
+    parsed_args, unparsed_args = parser.parse_known_args()
+
+    print("--dialog:", parsed_args.dialog)
+
+    if parsed_args.dialog:
+        pardic = conf.exec_()
+    else:
+        conf.readPars()
+        pardic = conf.pardic
+    
     if (pardic["ok"]):
         mg = MyGui(pardic)
         mg.show()
         app.exec_()
+    else:
+        print("error in reading parameters")
 
 
 if (__name__ == "__main__"):
     main()
+
+
+
