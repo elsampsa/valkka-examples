@@ -65,10 +65,10 @@ test_studio_rtsp.py        | - Like *test_studio_1.py*
                            |
                            |   (where *N* is the number of the camera)
                            | 
-test_studio_5.py           | **experimental**
+test_studio_5.py           | **Experimental**
                            | - Continuous recording to :ref:`ValkkaFS <valkkafs>`
                            | - and simultaneous, interactive playback
-                           | - remove directory ``fs_directory/``` if the program refuses to start
+                           | - remove directory ``fs_directory/`` if the program refuses to start
 ========================== ================================================================================
 
 Before launching any of the testsuite programs you should be aware of the :ref:`common problems<pitfalls>` of linux video streaming.

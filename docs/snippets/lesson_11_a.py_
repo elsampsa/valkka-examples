@@ -1,6 +1,13 @@
     
 
-Import valkka level 1 API, and ValkkaFS from level 2 API
+
+This will be our filtergraph:
+
+::
+
+    (LiveThread:livethread) -->> (ValkkaFSWriterThread:writerthread)
+
+Let's import valkka level 1 API, and ValkkaFS from level 2 API
 
 :: 
 
@@ -15,7 +22,7 @@ ValkkaFS instance handles the metadata of the filesystem.  Let's create a new fi
 
     valkkafs = ValkkaFS.newFromDirectory(
         dirname = "/home/sampsa/tmp/testvalkkafs", 
-        blocksize = 512*512,
+        blocksize = 512*1024,
         n_blocks = 10,
         verbose = True)
     
@@ -49,6 +56,12 @@ If you want to use an entire partition for saving the video streams, you would b
 
 That uses 100 GB from a partition identified with its uuid.
 
+Disk uuids can be found with the command
+
+::
+
+    sudo blkid
+
 For details on handling partitions and disks, see :ref:`ValkkaFS section <valkkafs>`
 
 Next, we create and start (1) the thread responsible for writing the frames into ValkkaFS and (2) LiveThread that is reading the cameras:
@@ -77,7 +90,7 @@ Any additional cameras would use the same framefilter:
 
 ::
 
-    ctx = LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, file_input_framefilter)
+    ctx = LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, file_input_framefilter)
 
 Next, start threads
 

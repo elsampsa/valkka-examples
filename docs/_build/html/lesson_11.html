@@ -38,12 +38,17 @@
 <p>As you learned from earlier lessons, you can redirect video streams to matroska (.mkv) video files.</p>
 <p>Here we’ll be streaming video to the custom ValkkaFS filesystem.</p>
 <p>ValkkaFS dumps video to a dedicated file, or to an entire partition or disk.  Arriving H264 frames from all cameras are written in their arriving time order, into the same (large) file that is organized in blocks.  For more details, consult the <a class="reference internal" href="valkkafs.html#valkkafs"><span class="std std-ref">ValkkaFS section</span></a> and the cpp documentation.</p>
-<p>Here we provide two examples, one for writing to, and another one for reading from ValkkaFS.  Normally in an application, writing and reading would run in parallel: writing thread dumps frames continuously and reading thread evoked only at users request.</p>
+<p>Here we provide several examples for writing to and reading from ValkkaFS.  These include importing video from ValkkaFS to matroska, and caching frames from ValkkaFS and passing them downstream at play speed.</p>
+<p>In a typical application, writing and reading run concurrently: writing thread dumps frames continuously and reading thread evoked only at users request.</p>
 <div class="section" id="writing">
 <h2>Writing<a class="headerlink" href="#writing" title="Permalink to this headline">¶</a></h2>
-<p>Let’s start by dumping video from IP cameras into ValkkaFS</p>
+<p>Let’s start by dumping video from IP cameras into ValkkaFS.</p>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/27791edf7c01d596478cd05237901f5a/lesson_11_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
-<p>Import valkka level 1 API, and ValkkaFS from level 2 API</p>
+<p>This will be our filtergraph:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;&gt;</span> <span class="p">(</span><span class="n">ValkkaFSWriterThread</span><span class="p">:</span><span class="n">writerthread</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s import valkka level 1 API, and ValkkaFS from level 2 API</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ValkkaFS</span>
@@ -52,7 +57,7 @@
 <p>ValkkaFS instance handles the metadata of the filesystem.  Let’s create a new filesystem and save the metadata into directory <em>/home/sampsa/tmp/testvalkkafs</em></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkkafs</span> <span class="o">=</span> <span class="n">ValkkaFS</span><span class="o">.</span><span class="n">newFromDirectory</span><span class="p">(</span>
     <span class="n">dirname</span> <span class="o">=</span> <span class="s2">&quot;/home/sampsa/tmp/testvalkkafs&quot;</span><span class="p">,</span>
-    <span class="n">blocksize</span> <span class="o">=</span> <span class="mi">512</span><span class="o">*</span><span class="mi">512</span><span class="p">,</span>
+    <span class="n">blocksize</span> <span class="o">=</span> <span class="mi">512</span><span class="o">*</span><span class="mi">1024</span><span class="p">,</span>
     <span class="n">n_blocks</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
     <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -76,6 +81,10 @@
 </pre></div>
 </div>
 <p>That uses 100 GB from a partition identified with its uuid.</p>
+<p>Disk uuids can be found with the command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">blkid</span>
+</pre></div>
+</div>
 <p>For details on handling partitions and disks, see <a class="reference internal" href="valkkafs.html#valkkafs"><span class="std std-ref">ValkkaFS section</span></a></p>
 <p>Next, we create and start (1) the thread responsible for writing the frames into ValkkaFS and (2) LiveThread that is reading the cameras:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">writerthread</span> <span class="o">=</span> <span class="n">ValkkaFSWriterThread</span><span class="p">(</span><span class="s2">&quot;writer&quot;</span><span class="p">,</span> <span class="n">valkkafs</span><span class="o">.</span><span class="n">core</span><span class="p">)</span>
@@ -91,7 +100,7 @@
 </pre></div>
 </div>
 <p>Any additional cameras would use the same framefilter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span> <span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">file_input_framefilter</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span> <span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">file_input_framefilter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Next, start threads</p>
@@ -130,9 +139,9 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="reading">
-<h2>Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
-<p>Here we use the data written into ValkkaFS in the previous example</p>
+<div class="section" id="reading-1">
+<h2>Reading 1<a class="headerlink" href="#reading-1" title="Permalink to this headline">¶</a></h2>
+<p>In these following two examples, we request frames from ValkkaFS</p>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/a7116db46a92fcf254d114004882f2c8/lesson_11_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Same imports as before:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
@@ -173,9 +182,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="requesting-blocks">
-<h2>Requesting blocks<a class="headerlink" href="#requesting-blocks" title="Permalink to this headline">¶</a></h2>
-<p>Here we use the data written into ValkkaFS in the writing example</p>
+<div class="section" id="reading-2">
+<h2>Reading 2<a class="headerlink" href="#reading-2" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/db921b82fca90f2112c45799dbd9f9cb/lesson_11_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
@@ -220,7 +228,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Min and Max time in milliseconds:&quot;</span><span class="p">,</span> <span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>These are milliseconds, so to get struct_time object we need to do this:</p>
+<p>These are milliseconds, so to get <em>struct_time</em> object we need to do this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Min time:&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">t0</span><span class="o">/</span><span class="mi">1000</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max time:&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">t1</span><span class="o">/</span><span class="mi">1000</span><span class="p">))</span>
 </pre></div>
@@ -240,6 +248,227 @@
 </div>
 <p>That will return the target block plus two blocks surrounding it.</p>
 <p>You would call this method when a user requests a seek to a certain time and you want to be sure that there are enough frames surrounding that time instant</p>
+</div>
+<div class="section" id="matroska-import">
+<h2>Matroska import<a class="headerlink" href="#matroska-import" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start by recalling <a class="reference internal" href="lesson_1.html#lesson-1-a"><span class="std std-ref">the very first lesson</span></a>.  There we saw how LiveThread sends <strong>Setup Frames</strong> at streaming initialization.  Setup frames are used all over the libValkka infrastructure, to carry information about the video stream, to signal the stream start and to initialize decoders, muxers, etc.</p>
+<p>On the other hand, ValkkaFSReaderThread is designed to be a simple beast: it does not have any notion of stream initialization.  It simply provides frames on a per-block basis.</p>
+<p>We must use a special FrameFilter called <strong>InitStreamFrameFilter</strong>, in order to add the Setup Frames into the stream.</p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/c0b6948a694662af1f3b694a1deb3074/lesson_11_d.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>Same imports as before:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ValkkaFS</span><span class="p">,</span> <span class="n">loglevel_debug</span><span class="p">,</span> <span class="n">loglevel_normal</span>
+
+<span class="n">setLogLevel_filelogger</span><span class="p">(</span><span class="n">loglevel_debug</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Load ValkkaFS metadata:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkkafs</span> <span class="o">=</span> <span class="n">ValkkaFS</span><span class="o">.</span><span class="n">loadFromDirectory</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;/home/sampsa/tmp/testvalkkafs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s take a look at the blocktable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">valkkafs</span><span class="o">.</span><span class="n">getBlockTable</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Next, construct the filterchain.  It looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                                                                          <span class="o">+--&gt;</span> <span class="o">...</span>
+<span class="n">main</span> <span class="n">branch</span>                                                               <span class="o">|</span>
+<span class="p">(</span><span class="n">ValkkaFSWriterThread</span><span class="p">:</span><span class="n">readerthread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">ForkFrameFilterN</span><span class="p">:</span><span class="n">fork_filter</span><span class="p">}</span> <span class="o">---+</span>
+                                                                          <span class="o">|</span>
+                                                                          <span class="o">+--&gt;</span> <span class="n">branch</span> <span class="mi">1</span>
+
+<span class="n">branch</span> <span class="mi">1</span> <span class="p">:</span> <span class="p">{</span><span class="n">PassSlotFrameFilter</span><span class="p">:</span><span class="n">slot_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">InitStreamFrameFilter</span><span class="p">:</span><span class="n">init_stream</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">FileFrameFilter</span><span class="p">:</span><span class="n">file_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="n">output</span> <span class="n">file</span>
+</pre></div>
+</div>
+<p>Here we have introduced yet another FrameFilter that performs forking.  An arbitrary number of terminals can be connected to <strong>ForkFrameFilterN</strong>.  Terminals can be connected and disconnected also while threads are running.</p>
+<p>The PassSlotFrameFilter passes frames with a certain slot number as we want frames only from a single stream to the final output file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># main branch</span>
+<span class="n">fork_filter</span> <span class="o">=</span> <span class="n">ForkFrameFilterN</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">)</span>
+<span class="n">readerthread</span> <span class="o">=</span> <span class="n">ValkkaFSReaderThread</span><span class="p">(</span><span class="s2">&quot;reader&quot;</span><span class="p">,</span> <span class="n">valkkafs</span><span class="o">.</span><span class="n">core</span><span class="p">,</span> <span class="n">fork_filter</span><span class="p">)</span>
+
+<span class="c1"># branch 1</span>
+<span class="n">file_filter</span> <span class="o">=</span> <span class="n">FileFrameFilter</span><span class="p">(</span><span class="s2">&quot;file_filter&quot;</span><span class="p">)</span>
+<span class="n">init_stream</span> <span class="o">=</span> <span class="n">InitStreamFrameFilter</span><span class="p">(</span><span class="s2">&quot;init_filter&quot;</span><span class="p">,</span> <span class="n">file_filter</span><span class="p">)</span>
+<span class="n">slot_filter</span> <span class="o">=</span> <span class="n">PassSlotFrameFilter</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">init_stream</span><span class="p">)</span>
+
+<span class="c1"># connect branch 1</span>
+<span class="n">fork_filter</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">slot_filter</span><span class="p">)</span>
+
+<span class="c1"># activate file write</span>
+<span class="n">file_filter</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="s2">&quot;kokkelis.mkv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Start the reader thread:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">readerthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Frames with id number 925412 are mapped into slot 1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">readerthread</span><span class="o">.</span><span class="n">setSlotIdCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">925412</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Request blocks 0-4 from the reader thread.  Information of frames from these blocks are dumped on the terminal</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">readerthread</span><span class="o">.</span><span class="n">pullBlocksPyCall</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Exit the thread:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">readerthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="playing-frames">
+<h2>Playing frames<a class="headerlink" href="#playing-frames" title="Permalink to this headline">¶</a></h2>
+<p>As you learned in the previous examples of this section, ValkkaFSReader pushes frames downstream in “bursts”, several blocks worth of frames in a single shot.</p>
+<p>However, we also need something that passes recorded frames downstream (say, for visualization and/or for transmission) at “play speed” (say, at that 25 fps).</p>
+<p>This is achieved with <strong>FrameCacherThread</strong>, which caches, seeks and passes frames downstream at play speed.</p>
+<p>In detail, ValkkaFSReaderThread passes frames to FrameCacherThread which caches them into memory.  After this, <em>seek</em>, <em>play</em> and <em>stop</em> can be requested from FrameCacherThread, which then passes the frames downstream from a seek point and at the original play speed at which the frames were recorded into ValkkaFS.</p>
+<p>FrameCacherThread can be given special python callback functions that are being called when the min and max time of cached frames changes and when frame presentation time goes forward.</p>
+<p>FrameCacherThread is very similar to other threads that send stream (like LiveThread), so it also handles the sending of Setup Frames downstream correctly.</p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/7d8aa6f63bb2296734a11860912ca4fb/lesson_11_e.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>Same imports as before:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ValkkaFS</span><span class="p">,</span> <span class="n">loglevel_debug</span><span class="p">,</span> <span class="n">loglevel_normal</span>
+
+<span class="n">setLogLevel_filelogger</span><span class="p">(</span><span class="n">loglevel_debug</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Load ValkkaFS metadata:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkkafs</span> <span class="o">=</span> <span class="n">ValkkaFS</span><span class="o">.</span><span class="n">loadFromDirectory</span><span class="p">(</span><span class="n">dirname</span><span class="o">=</span><span class="s2">&quot;/home/sampsa/tmp/testvalkkafs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s take a look at the blocktable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">valkkafs</span><span class="o">.</span><span class="n">getBlockTable</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Filterchain is going to look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(ValkkaFSReaderThread:readerthread) --&gt;&gt; (FileCacheThread:cacherthread) --&gt; {InfoFrameFilter:out_filter}
+                                                 |
+                                                 $
+                                   setPyCallback  : [int] current mstime, freq: 500 ms
+                                   setPyCallback2 : [tuple] (min mstimestamp, max mstimestamp)
+</pre></div>
+</div>
+<p>As you can see, where have introduced new notation here.</p>
+<p><strong>$</strong> designates callbacks that are used by FileCacheThread.  It’s up to you to define the python code in these callbacks.  The callbacks are registered by using the <em>setPyCallback</em> and <em>setPyCallback2</em> methods.</p>
+<p>Next, we proceed in constructing the filterchain in end-to-beginning order.</p>
+<p>ValkkaFSReaderThread will write all it’s frames into FileCacheThread’s input FrameFilter.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">out_filter</span>   <span class="o">=</span> <span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;out_filter&quot;</span><span class="p">)</span> <span class="c1"># will be registered later with cacherthread</span>
+<span class="n">cacherthread</span> <span class="o">=</span> <span class="n">FileCacheThread</span><span class="p">(</span><span class="s2">&quot;cacher&quot;</span><span class="p">)</span>
+<span class="n">readerthread</span> <span class="o">=</span> <span class="n">ValkkaFSReaderThread</span><span class="p">(</span><span class="s2">&quot;reader&quot;</span><span class="p">,</span> <span class="n">valkkafs</span><span class="o">.</span><span class="n">core</span><span class="p">,</span> <span class="n">cacherthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">())</span> <span class="c1"># ValkkaFSReaderThread =&gt; FileCacheThread</span>
+</pre></div>
+</div>
+<p>Next, define callbacks for FileCacheThread</p>
+<p>Define a global variable: a tuple that holds the min and max millisecond timestamps of cached frames:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">current_time_limits</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>This following function will be called frequently by FileCacheThread to inform us about the current millisecond timestamp:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">current_time_callback</span><span class="p">(</span><span class="n">mstime</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">current_time_limits</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;current time&quot;</span><span class="p">,</span> <span class="n">mstime</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">current_time_limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">mstime</span> <span class="o">&gt;=</span> <span class="n">current_time_limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;current time over cached time limits!&quot;</span><span class="p">)</span>
+            <span class="c1"># cacherthread.rewindCall() # TODO</span>
+            <span class="c1"># # or alternatively, handle the situation as you please</span>
+            <span class="c1"># # .. for example, request more blocks:</span>
+            <span class="c1"># readerthread.pullBlocksPyCall(your_list_of_blocks)</span>
+            <span class="k">pass</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;current_time_callback failed with &quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span>
+</pre></div>
+</div>
+<p>The next callback is evoked when FileCacheThread receives new frames for caching.  It informs us about the minimum and maximum millisecond timestamps:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">time_limits_callback</span><span class="p">(</span><span class="n">times</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">current_time_limits</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;new time limits&quot;</span><span class="p">,</span> <span class="n">times</span><span class="p">)</span>
+        <span class="n">current_time_limits</span> <span class="o">=</span> <span class="n">times</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time_limits_callback failed with &quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="k">return</span>
+</pre></div>
+</div>
+<p>The callbacks should be kept ASAP (as-simple-as-possible) and return immediately.  You also might wan’t them to send a Qt signal in your GUI application.</p>
+<p>Typically, they should use only the following methods of the libValkka API:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka</span><span class="o">.</span><span class="n">api2</span><span class="o">.</span><span class="n">ValkkaFS</span>
+                    <span class="o">.</span><span class="n">getBlockTable</span>
+                    <span class="o">.</span><span class="n">getTimeRange</span>
+
+<span class="n">valkka</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">ValkkaFSReaderThread</span>
+                    <span class="o">.</span><span class="n">pullBlocksPyCall</span>
+</pre></div>
+</div>
+<p>Register the callbacks into the FileCacheThread</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cacherthread</span><span class="o">.</span><span class="n">setPyCallback</span><span class="p">(</span><span class="n">current_time_callback</span><span class="p">)</span>
+<span class="n">cacherthread</span><span class="o">.</span><span class="n">setPyCallback2</span><span class="p">(</span><span class="n">time_limits_callback</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Start the threads</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cacherthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">readerthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Frames saved with id number 925412 to ValkkaFS are mapped into slot number 1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">readerthread</span><span class="o">.</span><span class="n">setSlotIdCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">925412</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>FileCacheThread will write frames with slot number 1 into InfoFrameFilter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span> <span class="n">FileStreamContext</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_filter</span><span class="p">)</span>
+<span class="n">cacherthread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Request blocks 0-4 from the reader thread.  The frames will be cached by FileCacheThread.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">readerthread</span><span class="o">.</span><span class="n">pullBlocksPyCall</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Before frames can be played, a seek must be performed to set a time reference.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mstimestamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># take the first timestamp from the blocktable.  Use int() to convert to normal python integer.</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;seeking to&quot;</span><span class="p">,</span> <span class="n">mstimestamp</span><span class="p">)</span>
+<span class="n">cacherthread</span><span class="o">.</span><span class="n">seekStreamsCall</span><span class="p">(</span><span class="n">mstimestamp</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It’s up to the API user to assure that the used mstimestamp is within the correct limits (i.e. requested blocks).</p>
+<p>Next, let the stream play for 10 seconds</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cacherthread</span><span class="o">.</span><span class="n">playStreamsCall</span><span class="p">()</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Stop threads</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cacherthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">readerthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="valkkafsmanager">
+<h2>ValkkaFSManager<a class="headerlink" href="#valkkafsmanager" title="Permalink to this headline">¶</a></h2>
+<p>In the previous example, two callback functions which define the application’s behaviour with respect to recorded and cached frames were written.</p>
+<p>How you define the callback functions, depends completely on your application.</p>
+<p>If you’re creating an application that does playback of recorded stream, you might want to request new blocks at your <em>current_time_callback</em>, once the time goes over limits of currently cached frames.</p>
+<p>If your application send same video stream in a loop for an RTSP server, you might want to rewind to the beginning of cached frames, when the time goes over limits of available frames.</p>
+<p><em>etc.</em></p>
+<p>LibValkka’s API level 2 provides a class that implements a correct behaviour for the playback of continuously recorded streams, like this:</p>
+<ul class="simple">
+<li>Instantiates ValkkaFSWriter, ValkkaFSReader and FileCacheThread, based on a ValkkaFS instance</li>
+<li>Queries the blocktable frequently for changes</li>
+<li>Requests new blocks from ValkkaFSReaderThread, when there are no more frames available in FrameCacherThread’s cache</li>
+<li>etc.</li>
+</ul>
+<p>TODO: comment on blocktable reading</p>
+<p>For an example on how to use ValkkaFSManager, please see <code class="docutils literal notranslate"><span class="pre">test_studio_5.py</span></code> at the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a></p>
 </div>
 </div>
 

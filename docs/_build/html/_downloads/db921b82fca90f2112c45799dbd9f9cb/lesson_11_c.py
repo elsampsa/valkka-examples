@@ -52,7 +52,7 @@ Let's see the min and max time of frames written in this ValkkaFS
 print("Min and Max time in milliseconds:", t0, t1)
 
 """<rtf>
-These are milliseconds, so to get struct_time object we need to do this:
+These are milliseconds, so to get *struct_time* object we need to do this:
 <rtf>"""
 print("Min time:", time.gmtime(t0/1000))
 print("Max time:", time.gmtime(t1/1000))

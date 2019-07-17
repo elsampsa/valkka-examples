@@ -67,7 +67,7 @@ Let's see the min and max time of frames written in this ValkkaFS
     print("Min and Max time in milliseconds:", t0, t1)
     
 
-These are milliseconds, so to get struct_time object we need to do this:
+These are milliseconds, so to get *struct_time* object we need to do this:
 
 :: 
 

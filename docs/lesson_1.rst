@@ -2,6 +2,8 @@
 Lesson 1 : Receiving frames from an IP camera
 =============================================
 
+.. _lesson_1_a:
+
 A single FrameFilter
 --------------------
 
