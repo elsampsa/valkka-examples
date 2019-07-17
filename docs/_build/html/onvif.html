@@ -1,0 +1,261 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>OnVif &#8212; OpenSource Video Management for Linux  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Common problems" href="pitfalls.html" />
+    <link rel="prev" title="ValkkaFS" href="valkkafs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="onvif">
+<h1>OnVif<a class="headerlink" href="#onvif" title="Permalink to this headline">¶</a></h1>
+<p><em>(Your short primer to SOAP and OnVif)</em></p>
+<div class="section" id="intro">
+<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h2>
+<p>OnVif is a remote-control protocol for manipulating IP cameras, developed by <a class="reference external" href="http://www.axis.com">Axis</a>.</p>
+<p>You can use it to PTZ (pan-tilt-zoom) the camera, for setting camera’s credentials and resolution, and for almost anything else you can imagine.</p>
+<p>OnVif is based on <a class="reference external" href="https://en.wikipedia.org/wiki/SOAP">SOAP</a>, i.e. in sending rather complex XML messages between your client computer and the IP camera.  The messages (remote protocol calls), the responses and the parameters, are defined by <strong>WSDL files</strong>, which look like <a class="reference external" href="http://www.onvif.org/ver20/ptz/wsdl">this</a>.</p>
+</div>
+<div class="section" id="python-onvif">
+<h2>Python OnVif<a class="headerlink" href="#python-onvif" title="Permalink to this headline">¶</a></h2>
+<p>In Python, the main bottleneck has been finding a decent open source SOAP library that would do the trick.  Recently, things have got a lot easier with the arrival of <a class="reference external" href="https://github.com/mvantellingen/python-zeep">Zeep</a>.</p>
+<p>Before Zeep existed, there was a library called <a class="reference external" href="https://github.com/suds-community/suds">Suds</a>, which has become a bit obsolete by now.  A library called <a class="reference external" href="https://github.com/quatanium/python-onvif">python-onvif</a>, in turn, was based on Suds.</p>
+<p>That python-onvif module has since then been forked and modded <a class="reference external" href="https://github.com/FalkTannhaeuser/python-onvif-zeep">to work with Zeep</a>.</p>
+<p>However, we don’t need any of that, since it’s a better idea to</p>
+<p><strong>just use Zeep directly</strong></p>
+<p>Use Zeep as your SOAP client, give it the WSDL file and that’s about it!</p>
+</div>
+<div class="section" id="onvif-with-zeep">
+<h2>OnVif with Zeep<a class="headerlink" href="#onvif-with-zeep" title="Permalink to this headline">¶</a></h2>
+<p>Rather than giving you an obscure and complicated OnVif client implementation, it’s better that you learn to do this by yourself using Zeep, so let’s begin with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">zeep</span>
+</pre></div>
+</div>
+<p>You also need this table to get started:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="26%" />
+<col width="26%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">WSDL Declaration</th>
+<th class="head">camera http sub address</th>
+<th class="head">wsdl file</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference external" href="http://www.onvif.org/ver10/device/wsdl">http://www.onvif.org/ver10/device/wsdl</a></td>
+<td>device_service</td>
+<td>devicemgmt.wsdl</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="http://www.onvif.org/ver10/device/wsdl">http://www.onvif.org/ver10/device/wsdl</a></td>
+<td>Media</td>
+<td>media.wsdl</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="http://www.onvif.org/ver10/events/wsdl">http://www.onvif.org/ver10/events/wsdl</a></td>
+<td>Events</td>
+<td>events.wsdl</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="http://www.onvif.org/ver20/ptz/wsdl">http://www.onvif.org/ver20/ptz/wsdl</a></td>
+<td>PTZ</td>
+<td>ptz.wsdl</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="http://www.onvif.org/ver20/imaging/wsdl">http://www.onvif.org/ver20/imaging/wsdl</a></td>
+<td>Imaging</td>
+<td>imaging.wsdl</td>
+</tr>
+<tr class="row-odd"><td><a class="reference external" href="http://www.onvif.org/ver10/deviceIO/wsdl">http://www.onvif.org/ver10/deviceIO/wsdl</a></td>
+<td>DeviceIO</td>
+<td>deviceio.wsdl</td>
+</tr>
+<tr class="row-even"><td><a class="reference external" href="http://www.onvif.org/ver20/analytics/wsdl">http://www.onvif.org/ver20/analytics/wsdl</a></td>
+<td>Analytics</td>
+<td>analytics.wsdl</td>
+</tr>
+</tbody>
+</table>
+<p>Here is an example on how to use it to instantiate an OnVif service connection to your camera:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.onvif</span> <span class="k">import</span> <span class="n">OnVifService</span>
+
+<span class="n">device_service</span> <span class="o">=</span> <span class="n">OnVifService</span><span class="p">(</span>
+    <span class="n">wsdl_file</span>      <span class="o">=</span> <span class="s2">&quot;devicemgmt.wsdl&quot;</span><span class="p">,</span>
+    <span class="n">wsdl_port</span>      <span class="o">=</span> <span class="s2">&quot;DeviceBinding&quot;</span><span class="p">,</span>
+    <span class="n">wsdl_namespace</span> <span class="o">=</span> <span class="s2">&quot;http://www.onvif.org/ver10/device/wsdl&quot;</span><span class="p">,</span>
+
+    <span class="n">sub_addr</span>    <span class="o">=</span> <span class="s2">&quot;device_service&quot;</span><span class="p">,</span>
+    <span class="n">ip</span>          <span class="o">=</span> <span class="s2">&quot;192.168.0.157&quot;</span><span class="p">,</span>
+    <span class="n">port</span>        <span class="o">=</span> <span class="mi">80</span><span class="p">,</span>
+    <span class="n">user</span>        <span class="o">=</span> <span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+    <span class="n">password</span>    <span class="o">=</span> <span class="s2">&quot;12345&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>The implementation if <code class="docutils literal notranslate"><span class="pre">OnVifService</span></code> is only a few lines long, please do take a look at it.  The parameters that go in, are:</p>
+<ul class="simple">
+<li>The remote control protocol is declared / visualized in the link at the first column.  Go to <code class="docutils literal notranslate"><span class="pre">http://www.onvif.org/ver10/device/wsdl</span></code> to see the detailed specifications.</li>
+<li>In that specification, we see that <code class="docutils literal notranslate"><span class="pre">wsdl_port</span></code> should be <code class="docutils literal notranslate"><span class="pre">DeviceBinding</span></code>.</li>
+<li>Each SOAP remote control protocol comes with a certain namespace.  This is the same as that address in the first column, so we set <code class="docutils literal notranslate"><span class="pre">wsdl_namespace</span></code> to <code class="docutils literal notranslate"><span class="pre">http://www.onvif.org/ver10/device/wsdl</span></code>.</li>
+<li>We use a local modified version of the wsdl file.  This can be found in the third column, i.e. set <code class="docutils literal notranslate"><span class="pre">wsdl_file</span></code> to <code class="docutils literal notranslate"><span class="pre">devicemgmt.wsdl</span></code> (these files come included in libValkka).</li>
+<li>Camera’s local http subaddress <code class="docutils literal notranslate"><span class="pre">sub_addr</span></code> is <code class="docutils literal notranslate"><span class="pre">device_service</span></code> (the second column of the table)</li>
+<li>Rest of the parameters define camera’s local IP address and credentials</li>
+</ul>
+<p>Now you are ready to go!</p>
+<p>Let’s try a remote protocol call.</p>
+<p>If you look at that specification in <code class="docutils literal notranslate"><span class="pre">http://www.onvif.org/ver10/device/wsdl</span></code>, there is a remote protocol call name <code class="docutils literal notranslate"><span class="pre">GetCapabilities</span></code>.  Let’s call it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cap</span> <span class="o">=</span> <span class="n">device_service</span><span class="o">.</span><span class="n">ws_client</span><span class="o">.</span><span class="n">GetCapabilities</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cap</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can also pass a variable to that <code class="docutils literal notranslate"><span class="pre">GetCapabilities</span></code> call.  Variables are nested objects, that must be constructed separately.  Like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">factory</span> <span class="o">=</span> <span class="n">device_service</span><span class="o">.</span><span class="n">zeep_client</span><span class="o">.</span><span class="n">type_factory</span><span class="p">(</span><span class="s2">&quot;http://www.onvif.org/ver10/schema&quot;</span><span class="p">)</span>
+<span class="n">category</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">CapabilityCategory</span><span class="p">(</span><span class="s2">&quot;Device&quot;</span><span class="p">)</span>
+<span class="n">cap</span> <span class="o">=</span> <span class="n">device_service</span><span class="o">.</span><span class="n">ws_client</span><span class="o">.</span><span class="n">GetCapabilities</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cap</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>here we see that namespace <code class="docutils literal notranslate"><span class="pre">http://www.onvif.org/ver10/schema</span></code> declares all basic variables used by the wsdl files.</p>
+<p>That’s about it.  Now you are able to remote control your camera.</p>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">isodate</span>
+<span class="n">Timeout</span> <span class="o">=</span> <span class="n">isodate</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">seconds</span> <span class="o">=</span> <span class="n">timeout</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
+<!--
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+-->
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">OnVif</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#intro">Intro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-onvif">Python OnVif</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onvif-with-zeep">OnVif with Zeep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/onvif.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-123031237-1']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>
