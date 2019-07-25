@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Multi-GPU systems &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ValkkaFS" href="valkkafs.html" />
@@ -40,9 +39,9 @@
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Consider the following setup:</p>
 <ul class="simple">
-<li>You have 2 graphic cards (GPUs)</li>
-<li>Each card is connected to 4 monitors</li>
-<li>You want to build a video wall with 8 monitors</li>
+<li><p>You have 2 graphic cards (GPUs)</p></li>
+<li><p>Each card is connected to 4 monitors</p></li>
+<li><p>You want to build a video wall with 8 monitors</p></li>
 </ul>
 <p>The two graphic cards are physically separate entities with their own resources, so it actually makes sense to keep them that way in the software side as well.</p>
 <p>For creating such a separation, Linux offers a robust, well-tested and ancient (!) solution: <strong>multiple X-Screens</strong>.</p>
@@ -84,20 +83,22 @@
 <h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
 <p>We’ve been succesful in setting up multi-gpu systems with the following setup:</p>
 <ul class="simple">
-<li>Use identical Nvidia graphic cards</li>
-<li>Use the NVidia proprietary driver</li>
-<li>With the <em>nvidia-settings</em> applet, configure your system as follows:<ul>
-<li>Do <strong>not</strong> use Xinerama</li>
-<li>Configure each graphic card as a separate X-screen</li>
-<li>Use “relative” not “absolute” positioning of the screens and monitors</li>
+<li><p>Use identical Nvidia graphic cards</p></li>
+<li><p>Use the NVidia proprietary driver</p></li>
+<li><p>With the <em>nvidia-settings</em> applet, configure your system as follows:</p>
+<ul>
+<li><p>Do <strong>not</strong> use Xinerama</p></li>
+<li><p>Configure each graphic card as a separate X-screen</p></li>
+<li><p>Use “relative” not “absolute” positioning of the screens and monitors</p></li>
 </ul>
 </li>
-<li>Use the Xcfe desktop/window manager instead of Kwin/KDE<ul>
-<li>Can be installed with <em>sudo apt-get install xubuntu-desktop</em></li>
-<li>Turn off window-manager composition: <em>Settings Manager -&gt; Window Manager Tweaks -&gt; Compositor -&gt; uncheck Enable Display Compositor</em></li>
+<li><p>Use the Xcfe desktop/window manager instead of Kwin/KDE</p>
+<ul>
+<li><p>Can be installed with <em>sudo apt-get install xubuntu-desktop</em></p></li>
+<li><p>Turn off window-manager composition: <em>Settings Manager -&gt; Window Manager Tweaks -&gt; Compositor -&gt; uncheck Enable Display Compositor</em></p></li>
 </ul>
 </li>
-<li>Use Pyside2 or PyQt5 version 5.11.2 or greater (you probably have to install with <em>pip3 install</em>)</li>
+<li><p>Use Pyside2 or PyQt5 version 5.11.2 or greater (you probably have to install with <em>pip3 install</em>)</p></li>
 </ul>
 <p>Finally, test the configuration with the PyQt testsuite’s “test_studio_3.py”</p>
 </div>
@@ -152,6 +153,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
@@ -160,13 +162,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -179,7 +179,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -42,7 +42,7 @@ Reading 2
 .. include:: snippets/lesson_11_c.py_
 
 
-Matroska import
+Matroska export
 ---------------
 
 Let's start by recalling :ref:`the very first lesson <lesson_1_a>`.  There we saw how LiveThread sends **Setup Frames** at streaming initialization.  Setup frames are used all over the libValkka infrastructure, to carry information about the video stream, to signal the stream start and to initialize decoders, muxers, etc.
@@ -96,7 +96,7 @@ LibValkka's API level 2 provides a class that implements a correct behaviour for
 - Requests new blocks from ValkkaFSReaderThread, when there are no more frames available in FrameCacherThread's cache
 - etc.
 
-TODO: comment on blocktable reading
+.. TODO: comment on blocktable reading
 
 For an example on how to use ValkkaFSManager, please see ``test_studio_5.py`` at the :ref:`PyQt testsuite <testsuite>`
 

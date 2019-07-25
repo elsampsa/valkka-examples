@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Tutorial &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 1 : Receiving frames from an IP camera" href="lesson_1.html" />
@@ -47,22 +46,24 @@
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>Before starting with the tutorial, you need at least:</p>
 <ul class="simple">
-<li>A decent desktop/laptop linux box with Ubuntu 16 installed</li>
-<li>At least 4 GB of total memory (as modern linux distros take around 2 GB out of that)</li>
-<li>Valkka and its python bindings installed (instructions <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>)</li>
-<li>OpenCV installed (instructions <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>)</li>
-<li>An RTSP camera connected to your router<ul>
-<li>Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market</li>
-<li>If your camera is “OnVif compliant”, then it support RTSP and RTP</li>
+<li><p>A decent desktop/laptop linux box with Ubuntu 16 installed</p></li>
+<li><p>At least 4 GB of total memory (as modern linux distros take around 2 GB out of that)</p></li>
+<li><p>Valkka and its python bindings installed (instructions <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>)</p></li>
+<li><p>OpenCV installed (instructions <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">here</span></a>)</p></li>
+<li><p>An RTSP camera connected to your router</p>
+<ul>
+<li><p>Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market</p></li>
+<li><p>If your camera is “OnVif compliant”, then it support RTSP and RTP</p></li>
 </ul>
 </li>
-<li>For the USB camera example, a H264 streaming USB camera is required</li>
-<li>Basic knowledge of media streaming in linux:<ul>
-<li>How to connect to an rtsp camera (e.g. “ffplay <a class="reference external" href="rtsp://username:passwd&#64;ip_address">rtsp://username:passwd&#64;ip_address</a>”)</li>
-<li>What are RTSP, SDP, etc., what is H264 and how video is streamed, etc.</li>
+<li><p>For the USB camera example, a H264 streaming USB camera is required</p></li>
+<li><p>Basic knowledge of media streaming in linux:</p>
+<ul>
+<li><p>How to connect to an rtsp camera (e.g. “ffplay <a class="reference external" href="rtsp://username:passwd&#64;ip_address">rtsp://username:passwd&#64;ip_address</a>”)</p></li>
+<li><p>What are RTSP, SDP, etc., what is H264 and how video is streamed, etc.</p></li>
 </ul>
 </li>
-<li>A media player installed, say, vlc and/or ffplay</li>
+<li><p>A media player installed, say, vlc and/or ffplay</p></li>
 </ul>
 </div>
 <div class="section" id="lessons">
@@ -109,7 +110,7 @@
 <li class="toctree-l2"><a class="reference internal" href="lesson_11.html#writing">Writing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lesson_11.html#reading-1">Reading 1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lesson_11.html#reading-2">Reading 2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lesson_11.html#matroska-import">Matroska import</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lesson_11.html#matroska-export">Matroska export</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lesson_11.html#playing-frames">Playing frames</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lesson_11.html#valkkafsmanager">ValkkaFSManager</a></li>
 </ul>
@@ -168,6 +169,7 @@
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
@@ -176,13 +178,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -195,7 +195,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

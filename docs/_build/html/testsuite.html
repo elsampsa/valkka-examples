@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>The PyQt testsuite &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorial" href="tutorial.html" />
@@ -43,27 +42,27 @@
 <p>The testsuite is intended for:</p>
 <blockquote>
 <div><ul class="simple">
-<li>Demonstration</li>
-<li>Benchmarking</li>
-<li>Ultimate debugging</li>
-<li>As <em>materia prima</em> for developers - take a copy of your own and use it as a basis for your own Valkka / Qt program</li>
+<li><p>Demonstration</p></li>
+<li><p>Benchmarking</p></li>
+<li><p>Ultimate debugging</p></li>
+<li><p>As <em>materia prima</em> for developers - take a copy of your own and use it as a basis for your own Valkka / Qt program</p></li>
 </ul>
 </div></blockquote>
 <p>If you want a more serious demonstration, try out <a class="reference external" href="https://elsampsa.github.io/valkka-live/">Valkka Live</a> instead.</p>
 <p>Currently the testsuite consists of the following programs:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="25%" />
-<col width="75%" />
+<col style="width: 25%" />
+<col style="width: 75%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">File</th>
-<th class="head">Explanation</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Explanation</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>test_studio_1.py</td>
-<td><div class="first last line-block">
+<tbody>
+<tr class="row-even"><td><p>test_studio_1.py</p></td>
+<td><div class="line-block">
 <div class="line">- Stream from several rtsp cameras or sdp sources</div>
 <div class="line">- Widgets are grouped together</div>
 <div class="line">- This is just live streaming, so use:</div>
@@ -77,24 +76,24 @@
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>test_studio_2.py</td>
-<td><div class="first last line-block">
+<tr class="row-odd"><td><p>test_studio_2.py</p></td>
+<td><div class="line-block">
 <div class="line">- Like <em>test_studio_1.py</em></div>
 <div class="line">- Floating widgets</div>
 <div class="line"><br /></div>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>test_studio_3.py</td>
-<td><div class="first last line-block">
+<tr class="row-even"><td><p>test_studio_3.py</p></td>
+<td><div class="line-block">
 <div class="line">- Like <em>test_studio_2.py</em></div>
 <div class="line">- On a multi-gpu system, video can be sent to another gpu/x-screen pair</div>
 <div class="line"><br /></div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>test_studio_4.py</td>
-<td><div class="first last line-block">
+<tr class="row-odd"><td><p>test_studio_4.py</p></td>
+<td><div class="line-block">
 <div class="line">- Like <em>test_studio_3.py</em></div>
 <div class="line">- A simple user menu where video widgets can be opened</div>
 <div class="line">- Open the <em>File</em> menu to add video on the screen</div>
@@ -102,8 +101,8 @@
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>test_studio_detector.py</td>
-<td><div class="first last line-block">
+<tr class="row-even"><td><p>test_studio_detector.py</p></td>
+<td><div class="line-block">
 <div class="line">- Like <em>test_studio_1.py</em></div>
 <div class="line">- Shares video to OpenCV processes</div>
 <div class="line">- OpenCV processes connect to Qt signal/slot system</div>
@@ -111,8 +110,8 @@
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>test_studio_file.py</td>
-<td><div class="first last line-block">
+<tr class="row-odd"><td><p>test_studio_file.py</p></td>
+<td><div class="line-block">
 <div class="line">- Read and play stream from a matroska file</div>
 <div class="line">- Only matroska contained h264 is accepted.</div>
 <div class="line">- Convert your video with:</div>
@@ -124,16 +123,16 @@
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>test_studio_multicast.py</td>
-<td><div class="first last line-block">
+<tr class="row-even"><td><p>test_studio_multicast.py</p></td>
+<td><div class="line-block">
 <div class="line">- Like <em>test_studio_1.py</em></div>
 <div class="line">- Recast multiple IP cameras into multicast</div>
 <div class="line"><br /></div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>test_studio_rtsp.py</td>
-<td><div class="first last line-block">
+<tr class="row-odd"><td><p>test_studio_rtsp.py</p></td>
+<td><div class="line-block">
 <div class="line">- Like <em>test_studio_1.py</em></div>
 <div class="line">- Recast IP cameras to unicast.</div>
 <div class="line">- Streams are accessible from local server:</div>
@@ -147,8 +146,8 @@
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>test_studio_5.py</td>
-<td><div class="first last line-block">
+<tr class="row-even"><td><p>test_studio_5.py</p></td>
+<td><div class="line-block">
 <div class="line"><strong>Experimental</strong></div>
 <div class="line">- Continuous recording to <a class="reference internal" href="valkkafs.html#valkkafs"><span class="std std-ref">ValkkaFS</span></a></div>
 <div class="line">- and simultaneous, interactive playback</div>
@@ -170,65 +169,65 @@
 <a class="reference internal image-reference" href="_images/test_config.png"><img alt="_images/test_config.png" src="_images/test_config.png" style="width: 70%;" /></a>
 <p>The field on the left is used to specify stream sources, one source per line.  For IP cameras, use “<a class="reference external" href="rtsp://">rtsp://</a>”, for sdp files, just give the filename.  In the above example, we are connecting to two rtsp IP cams.</p>
 <p>The fields on the right are:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="30%" />
-<col width="70%" />
+<col style="width: 30%" />
+<col style="width: 70%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Field name</th>
-<th class="head">What it does</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Field name</p></th>
+<th class="head"><p>What it does</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>n720p</td>
-<td>Number of pre-reserved frames for 720p resolution</td>
+<tbody>
+<tr class="row-even"><td><p>n720p</p></td>
+<td><p>Number of pre-reserved frames for 720p resolution</p></td>
 </tr>
-<tr class="row-odd"><td>n1080p</td>
-<td>Number of pre-reserved frames for 1080p resolution</td>
+<tr class="row-odd"><td><p>n1080p</p></td>
+<td><p>Number of pre-reserved frames for 1080p resolution</p></td>
 </tr>
-<tr class="row-even"><td>n1440p</td>
-<td>etc.</td>
+<tr class="row-even"><td><p>n1440p</p></td>
+<td><p>etc.</p></td>
 </tr>
-<tr class="row-odd"><td>n4K</td>
-<td>etc.</td>
+<tr class="row-odd"><td><p>n4K</p></td>
+<td><p>etc.</p></td>
 </tr>
-<tr class="row-even"><td>naudio</td>
-<td>(not used)</td>
+<tr class="row-even"><td><p>naudio</p></td>
+<td><p>(not used)</p></td>
 </tr>
-<tr class="row-odd"><td>verbose</td>
-<td>(not used)</td>
+<tr class="row-odd"><td><p>verbose</p></td>
+<td><p>(not used)</p></td>
 </tr>
-<tr class="row-even"><td>msbuftime</td>
-<td>Frame buffering time in milliseconds</td>
+<tr class="row-even"><td><p>msbuftime</p></td>
+<td><p>Frame buffering time in milliseconds</p></td>
 </tr>
-<tr class="row-odd"><td>live affinity</td>
-<td>Bind the streaming thread to a core. Default = -1 (no binding)</td>
+<tr class="row-odd"><td><p>live affinity</p></td>
+<td><p>Bind the streaming thread to a core. Default = -1 (no binding)</p></td>
 </tr>
-<tr class="row-even"><td>gl affinity</td>
-<td>Bind frame presentation thread to a core. Default = -1</td>
+<tr class="row-even"><td><p>gl affinity</p></td>
+<td><p>Bind frame presentation thread to a core. Default = -1</p></td>
 </tr>
-<tr class="row-odd"><td>dec affinity start</td>
-<td>Bind decoding threads to a core (first core). Default = -1</td>
+<tr class="row-odd"><td><p>dec affinity start</p></td>
+<td><p>Bind decoding threads to a core (first core). Default = -1</p></td>
 </tr>
-<tr class="row-even"><td>dec affinity stop</td>
-<td>Bind decoding threads to cores (last core). Default = -1</td>
+<tr class="row-even"><td><p>dec affinity stop</p></td>
+<td><p>Bind decoding threads to cores (last core). Default = -1</p></td>
 </tr>
-<tr class="row-odd"><td>replicate</td>
-<td>Dump each stream to screen this many times</td>
+<tr class="row-odd"><td><p>replicate</p></td>
+<td><p>Dump each stream to screen this many times</p></td>
 </tr>
-<tr class="row-even"><td>correct timestamp</td>
-<td><div class="first last line-block">
+<tr class="row-even"><td><p>correct timestamp</p></td>
+<td><div class="line-block">
 <div class="line">1 = smart-correct timestamp (use this!)</div>
 <div class="line">0 = restamp upon arrival</div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>socket size bytes</td>
-<td>don’t touch.  Default value = 0.</td>
+<tr class="row-odd"><td><p>socket size bytes</p></td>
+<td><p>don’t touch.  Default value = 0.</p></td>
 </tr>
-<tr class="row-even"><td>ordering time millisecs</td>
-<td>don’t touch.  Default value = 0.</td>
+<tr class="row-even"><td><p>ordering time millisecs</p></td>
+<td><p>don’t touch.  Default value = 0.</p></td>
 </tr>
 </tbody>
 </table>
@@ -237,82 +236,82 @@
 <p>Replicate demonstrates how Valkka can dump the stream (that’s decoded only once) to multiple X windows.  Try for example the value 24 - you get each stream on the screen 24 times, without any performance degradation or the need to decode streams more than once.</p>
 <p>In Valkka, all threads can be bound to a certain processor core.  Default value “-1” indicates that the thread is unbound and that the kernel can switch it from one core to another (normal behaviour).</p>
 <p>Let’s consider an example:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="79%" />
-<col width="21%" />
+<col style="width: 79%" />
+<col style="width: 21%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Field name</th>
-<th class="head">value</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Field name</p></th>
+<th class="head"><p>value</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>live affinity</td>
-<td>0</td>
+<tbody>
+<tr class="row-even"><td><p>live affinity</p></td>
+<td><p>0</p></td>
 </tr>
-<tr class="row-odd"><td>gl affinity</td>
-<td>1</td>
+<tr class="row-odd"><td><p>gl affinity</p></td>
+<td><p>1</p></td>
 </tr>
-<tr class="row-even"><td>dec affinity start</td>
-<td>2</td>
+<tr class="row-even"><td><p>dec affinity start</p></td>
+<td><p>2</p></td>
 </tr>
-<tr class="row-odd"><td>dec affinity stop</td>
-<td>4</td>
+<tr class="row-odd"><td><p>dec affinity stop</p></td>
+<td><p>4</p></td>
 </tr>
 </tbody>
 </table>
 <p>Now LiveThread (the thread that streams from cameras) stays at core index 0, all OpenGL operations and frame presenting at core index 1.  Let’s imagine you have ten decoders running, then they will placed like this:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="36%" />
-<col width="64%" />
+<col style="width: 36%" />
+<col style="width: 64%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Core</th>
-<th class="head">Decoder thread</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Core</p></th>
+<th class="head"><p>Decoder thread</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>core 2</td>
-<td>1, 4, 7, 10</td>
+<tbody>
+<tr class="row-even"><td><p>core 2</p></td>
+<td><p>1, 4, 7, 10</p></td>
 </tr>
-<tr class="row-odd"><td>core 3</td>
-<td>2, 5, 8</td>
+<tr class="row-odd"><td><p>core 3</p></td>
+<td><p>2, 5, 8</p></td>
 </tr>
-<tr class="row-even"><td>core 4</td>
-<td>3, 6, 9</td>
+<tr class="row-even"><td><p>core 4</p></td>
+<td><p>3, 6, 9</p></td>
 </tr>
 </tbody>
 </table>
 <p>Setting processor affinities might help, if you can afford the luxury of having one processor per decoder.  Otherwise, it might mess up the load-balancing performed by the kernel.</p>
 <p><strong>By default, don’t touch the affinities (simply use the default value -1)</strong>.</p>
 <p>Finally, the buttons that launch the test, do the following:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="20%" />
-<col width="80%" />
+<col style="width: 20%" />
+<col style="width: 80%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Button</th>
-<th class="head">What it does?</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Button</p></th>
+<th class="head"><p>What it does?</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>SAVE</td>
-<td>Saves the test configuration (yes, save it)</td>
+<tbody>
+<tr class="row-even"><td><p>SAVE</p></td>
+<td><p>Saves the test configuration (yes, save it)</p></td>
 </tr>
-<tr class="row-odd"><td><strong>RUN(QT)</strong></td>
-<td>Runs THE TEST (after saving, press this!)</td>
+<tr class="row-odd"><td><p><strong>RUN(QT)</strong></p></td>
+<td><p>Runs THE TEST (after saving, press this!)</p></td>
 </tr>
-<tr class="row-even"><td>RUN</td>
-<td>Runs the test without Qt</td>
+<tr class="row-even"><td><p>RUN</p></td>
+<td><p>Runs the test without Qt</p></td>
 </tr>
-<tr class="row-odd"><td>FFPLAY</td>
-<td>Runs the streams in ffplay instead (if installed)</td>
+<tr class="row-odd"><td><p>FFPLAY</p></td>
+<td><p>Runs the streams in ffplay instead (if installed)</p></td>
 </tr>
-<tr class="row-even"><td>VLC</td>
-<td>Runs the streams in vlc instead (if installed)</td>
+<tr class="row-even"><td><p>VLC</p></td>
+<td><p>Runs the streams in vlc instead (if installed)</p></td>
 </tr>
 </tbody>
 </table>
@@ -380,6 +379,7 @@
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
@@ -388,13 +388,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -407,7 +405,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

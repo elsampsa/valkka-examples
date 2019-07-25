@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Licensing &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -13,6 +11,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Benchmarking" href="benchmarking.html" />
@@ -51,22 +50,22 @@
 <p>In the case of Valkka, this license is called the <strong>Valkka License</strong>.</p>
 <p>Instead of obscure and long legal text (which we can send you upon request), here are the main features of the <strong>Valkka License</strong>:</p>
 <ol class="arabic simple">
-<li>You have the right to use all cpp and python code in all valkka repositories without restrictions.</li>
-<li>The only exception to this rule is the <strong>cpp code</strong> at <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core</a> repository.</li>
-<li>The copyright of <strong>cpp code modifications and/or any new cpp code implemented to</strong> <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core</a>, must be transferred to us.</li>
+<li><p>You have the right to use all cpp and python code in all valkka repositories without restrictions.</p></li>
+<li><p>The only exception to this rule is the <strong>cpp code</strong> at <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core</a> repository.</p></li>
+<li><p>The copyright of <strong>cpp code modifications and/or any new cpp code implemented to</strong> <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core</a>, must be transferred to us.</p></li>
 </ol>
 <p>An the motivation for this is ..?</p>
 <p>With (2 &amp; 3) we simply assure that any bugfix or enhancement made to the cpp core code is available to us and also for the community.</p>
 <p>However, if you create a separate cpp module (say, using <a class="reference external" href="https://github.com/elsampsa/valkka-cpp-examples">valkka-cpp-examples</a> repository), there are no restrictions on your cpp code since it is not part of the valkka-core cpp code.</p>
 <p>For license versions and validity the following applies:</p>
 <ol class="arabic simple" start="4">
-<li>Licenses are granted per version.  If you get a license for version 0.10.0, then you don’t automatically get a license for 0.11.0</li>
-<li>Licenses do not expire.  If you have a license for a certain version (say, 0.10.0), then its valid forever.</li>
-<li>When purchasing a license, you will automatically have <strong>Valkka License</strong> for all versions of Valkka, published during the calender year of your purchase.</li>
+<li><p>Licenses are granted per version.  If you get a license for version 0.10.0, then you don’t automatically get a license for 0.11.0</p></li>
+<li><p>Licenses do not expire.  If you have a license for a certain version (say, 0.10.0), then its valid forever.</p></li>
+<li><p>When purchasing a license, you will automatically have <strong>Valkka License</strong> for all versions of Valkka, published during the calender year of your purchase.</p></li>
 </ol>
 <p>Number of developers per license:</p>
 <ol class="arabic simple" start="7">
-<li>One license entitles a company to use Valkka under the terms of the <strong>Valkka License</strong> for three developers.</li>
+<li><p>One license entitles a company to use Valkka under the terms of the <strong>Valkka License</strong> for three developers.</p></li>
 </ol>
 </div>
 <div class="section" id="examples">
@@ -134,6 +133,7 @@
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Licensing</a><ul>
@@ -150,13 +150,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -169,7 +167,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
