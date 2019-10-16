@@ -73,7 +73,7 @@ Valkka is in alpha stage.  Even so, you can do lot of stuff with it - at least a
 
 Repositories are organized as follows:
 
-**valkka-core** : the cpp codebase and its python bindings are available at the `valkka-core github repository <https://github.com/elsampsa/valkka-core>`_.  The cpp core library is licensed under the GNU Affero General Public License.  If you need another licensing arrangement (say, LGPL), please contact us.
+**valkka-core** : the cpp codebase and its python bindings are available at the `valkka-core github repository <https://github.com/elsampsa/valkka-core>`_.  The cpp core library is licensed under the GNU Affero General Public License.  If you prefer the Lesser General Public License, see :ref:`here <licensing>`.
 
 **valkka-examples** : the python tutorial and PyQt example/testsuite are available at the `valkka-examples github repository <https://github.com/elsampsa/valkka-examples>`_. MIT licensed.
 

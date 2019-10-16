@@ -18,3 +18,6 @@ Repository                                                                  Lice
                                                                                     |                                               | darknet.api2
                                                                                     |                                               | darknet.turk
 =========================================================================== ======= =============================================== =================
+
+
+All AGPL licensed repositories can be licensed as LGPL, see :ref:`here <licensing>`.
