@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Lesson 3 : Streaming to the X-window system &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -50,8 +52,8 @@
 </div>
 <p>Compared to the previous lesson, we’re continuying the filterchain from AVThread to OpenGLThread.  OpenGLThread is responsible for sending the frames to designated x windows.</p>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>OpenGLThread uses OpenGL texture streaming.  YUV interpolation to RGB is done on the GPU, using the shader language.</p>
+<p class="first admonition-title">Note</p>
+<p class="last">OpenGLThread uses OpenGL texture streaming.  YUV interpolation to RGB is done on the GPU, using the shader language.</p>
 </div>
 <p>Start constructing the filterchain from end-to-beginning:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># presentation part</span>
@@ -161,8 +163,8 @@
 <p>Presenting the same stream in several windows is a typical situation in video surveillance applications, where one would like to have the same stream be shown simultaneously in various “views”</p>
 <p>Keep in mind that here we have connected to the IP camera only once - and that the H264 stream has been decoded only once.</p>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh (“vsync”) should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the “glxgears” command (in package “mesa-utils”).  Glxgears should report 1000+ frames per second with vsync disabled.</p>
+<p class="first admonition-title">Note</p>
+<p class="last">When streaming video (from multiple sources) to multiple windows, OpenGL rendering synchronization to vertical refresh (“vsync”) should be disabled, as it will limit your total framerate to the refresh rate of your monitor (i.e. to around 50 frames per second).  On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the nvidia-settings program.  You can test if vsync is disabled with the “glxgears” command (in package “mesa-utils”).  Glxgears should report 1000+ frames per second with vsync disabled.</p>
 </div>
 </div>
 <div class="section" id="decoding-multiple-streams">
@@ -325,11 +327,13 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -342,7 +346,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

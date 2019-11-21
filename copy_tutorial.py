@@ -14,12 +14,20 @@ subs={
   }
 """
 
-#"""
+"""
 subs={
   "rtsp://admin:nordic12345@192.168.1.41" : "rtsp://admin:123456@192.168.0.134", # first camera used in the tutorial and its substitution
   "rtsp://admin:nordic12345@192.168.1.42" : "rtsp://admin:123456@192.168.0.134"  # second camera used in the tutorial and its substitution
   }
+"""
+
 #"""
+subs={
+  "rtsp://admin:nordic12345@192.168.1.41" : "rtsp://admin:12345@192.168.0.124", # first camera used in the tutorial and its substitution
+  "rtsp://admin:nordic12345@192.168.1.42" : "rtsp://admin:12345@192.168.0.124"  # second camera used in the tutorial and its substitution
+  }
+#"""
+
 
 os.system("mkdir tmp")
 os.system("cp -f api_level_1/tutorial/* tmp/")

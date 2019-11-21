@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Common problems &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -71,34 +73,33 @@
 <p><strong>8. Your LAN and/or the LiveThread process sending frames in bursts</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.  See <a class="reference internal" href="decoding.html#buffering"><span class="std std-ref">here</span></a>.</p></li>
-<li><p>This is very common problem when streaming over Wifi</p></li>
-<li><p>If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and nic ? (as we just discussed.  See also “System tuning” below)</p></li>
+<li>Frames arrive late, and all in once.  You should increase the buffering time OpenGLThread.  See <a class="reference internal" href="decoding.html#buffering"><span class="std std-ref">here</span></a>.</li>
+<li>This is very common problem when streaming over Wifi</li>
+<li>If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and nic ? (as we just discussed.  See also “System tuning” below)</li>
 </ul>
 </div></blockquote>
 <p><strong>9. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>This is, of course, to be expected if all your CPU(s) are screaming 100%</p></li>
+<li>This is, of course, to be expected if all your CPU(s) are screaming 100%</li>
 </ul>
 </div></blockquote>
 <p><strong>10. OpenGLThread that queues YUV frames and does the YUV =&gt; RGB interpolation on the GPU is stalling</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core’s GitHub page).</p></li>
-<li><p>Your GPU might not have enough muscle</p></li>
+<li>There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core’s GitHub page).</li>
+<li>Your GPU might not have enough muscle</li>
 </ul>
 </div></blockquote>
 <p>If you compile libValkka from source, there are many available debug options that can be enabled in <em>run_cmake.bash</em>.   A particularly useful one is <em>profile_timing</em>.  Enabling this debug switch allows you to trace the culprit for frame dropping to slow network, slow decoding or the OpenGL part.</p>
 <p>Some common fixes (that are frequently used in commercial video surveillance applications) include:</p>
 <ul class="simple">
-<li><p>Configure your cameras to a lower frame rate (say, 10 fps): unfortunately this sucks.</p></li>
-<li><p>Tell AVThread to decode only keyframes: choppy video.</p></li>
-<li><p>The mainstream/substream scheme:</p>
-<ul>
-<li><p>If you have, say, 20 small-sized video streams in your grid, it is an exaggeration to decode full-HD video for each one of the streams.</p></li>
-<li><p>For small windows, you should switch to using a substream provided by your IP camera.  A resolution of, say, half of HD-ready might be enough.</p></li>
-<li><p>Decode and present the full-HD mainstream only when there are video windows that are large enough</p></li>
+<li>Configure your cameras to a lower frame rate (say, 10 fps): unfortunately this sucks.</li>
+<li>Tell AVThread to decode only keyframes: choppy video.</li>
+<li>The mainstream/substream scheme:<ul>
+<li>If you have, say, 20 small-sized video streams in your grid, it is an exaggeration to decode full-HD video for each one of the streams.</li>
+<li>For small windows, you should switch to using a substream provided by your IP camera.  A resolution of, say, half of HD-ready might be enough.</li>
+<li>Decode and present the full-HD mainstream only when there are video windows that are large enough</li>
 </ul>
 </li>
 </ul>
@@ -179,11 +180,13 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -196,7 +199,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

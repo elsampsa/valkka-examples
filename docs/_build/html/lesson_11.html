@@ -1,9 +1,11 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Lesson 11 : ValkkaFS &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -461,10 +463,10 @@
 <p><em>etc.</em></p>
 <p>LibValkka’s API level 2 provides a class that implements a correct behaviour for the playback of continuously recorded streams, like this:</p>
 <ul class="simple">
-<li><p>Instantiates ValkkaFSWriter, ValkkaFSReader and FileCacheThread, based on a ValkkaFS instance</p></li>
-<li><p>Queries the blocktable frequently for changes</p></li>
-<li><p>Requests new blocks from ValkkaFSReaderThread, when there are no more frames available in FrameCacherThread’s cache</p></li>
-<li><p>etc.</p></li>
+<li>Instantiates ValkkaFSWriter, ValkkaFSReader and FileCacheThread, based on a ValkkaFS instance</li>
+<li>Queries the blocktable frequently for changes</li>
+<li>Requests new blocks from ValkkaFSReaderThread, when there are no more frames available in FrameCacherThread’s cache</li>
+<li>etc.</li>
 </ul>
 <p>For an example on how to use ValkkaFSManager, please see <code class="docutils literal notranslate"><span class="pre">test_studio_5.py</span></code> at the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a></p>
 </div>
@@ -528,11 +530,13 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -545,7 +549,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
