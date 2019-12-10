@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_detector.py
 @author  Sampsa Riikonen
 @date    2018
-@version 0.14.1 
+@version 0.15.0 
 @brief   Test live streaming with Qt.  Send copies of the streams to OpenCV movement detector processes.
 
 
