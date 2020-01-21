@@ -31,6 +31,17 @@ If you're not using a recent Ubuntu distro and need to build libValkka and it's 
 
 The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
 
+
+Numpy
+-----
+
+Valkka-core binaries has been compiled with the numpy version that comes with the corresponding Ubuntu distro, i.e. the numpy you would install with ```sudo apt-get install python3-numpy```.
+
+That version is automatically installed when you install valkka core with ```sudo apt-get```, but it might be "shadowed" by your *locally* installed numpy.
+
+If you get errors about numpy import, try removing your locally installed numpy (i.e. the version you installed with ```pip install --user```).
+
+
 Install the testsuite
 ---------------------
 
@@ -46,7 +57,7 @@ The testsuite and tutorials use also imutils and PyQt5, so install a fresh versi
 
 ::
 
-  pip3 install --user imutils PyQt5 PySide2==5.11.1
+  pip3 install --user imutils PyQt5 PySide2
   
 Here we have installed two flavors of the Qt python bindings, namely, `PyQt5 <https://www.riverbankcomputing.com>`_ and `PySide2 <https://doc.qt.io/qtforpython/contents.html>`_.  They can be used in an identical manner.  If you use PyQt5, be aware of its licensing terms.
 
@@ -104,15 +115,6 @@ If you wan't to use `GTK <https://www.gtk.org/>`_ as your graphical user interfa
     
 OpenCV
 ------
-
-**Ubuntu 16**
-
-There are many options available to install OpenCV and its python bindings.  A binary package with a working high-gui for **python 3.5** (used by Ubuntu 16 LTS) is provided `here <https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)>`_.  Download the files and use:
-
-:: 
-  
-    sudo dpkg -i OpenCV*.deb
-    sudo apt-get -fy install
   
 **Ubuntu 18**
 
@@ -121,7 +123,8 @@ Simply:
 ::
 
     sudo apt-get install python3-opencv
-    
+
+Remember that if you prefer to install with ```pip```, OpenCV's high-gui environment won't probably work for you.
 
 Development version
 -------------------

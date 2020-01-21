@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Lesson 5 : Transmitting stream &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -38,7 +36,7 @@
 <h1>Lesson 5 : Transmitting stream<a class="headerlink" href="#lesson-5-transmitting-stream" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="sending-multicast">
 <h2>Sending multicast<a class="headerlink" href="#sending-multicast" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/4e4f0e389f45e6db4a371b2a8f0c0fed/lesson_5_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/8bc580835284588b1f06063725163ab7/lesson_5_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>In this lesson, we are receiving frames from an IP camera using LiveThread and recast those frames to a multicast address using another LiveThread. The filterchain looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">InfoFrameFilter</span><span class="p">:</span><span class="n">info_filter</span><span class="p">)</span> <span class="o">--&gt;&gt;</span> <span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread2</span><span class="p">)</span>
 </pre></div>
@@ -112,13 +110,13 @@
 </div>
 <p>(feel free to launch this command several times simultaneously)</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Receiving and recasting the stream can also be done using a single LiveThread only.  This is left as an excercise.</p>
+<p class="admonition-title">Note</p>
+<p>Receiving and recasting the stream can also be done using a single LiveThread only.  This is left as an excercise.</p>
 </div>
 </div>
 <div class="section" id="using-the-rtsp-server">
 <h2>Using the RTSP server<a class="headerlink" href="#using-the-rtsp-server" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/665de7af286d6ff1db427b2cdb0f1bd1/lesson_5_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/fd937a01642bfa1bc2c3e65c1064c0ae/lesson_5_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>In this lesson, we establish an on-demand RTSP server at the localhost.</p>
 <p>Stream is read from an IP camera and then re-streamed (shared) to a local RTSP server that serves at port 8554.  While this snippet is running, you can test the RTSP server with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ffplay</span> <span class="n">rtsp</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8554</span><span class="o">/</span><span class="n">stream1</span>
@@ -239,13 +237,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -258,7 +254,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

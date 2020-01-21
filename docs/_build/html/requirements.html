@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Installing &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -55,6 +53,12 @@
 <p>If you’re not using a recent Ubuntu distro and need to build libValkka and it’s python bindings yourself, please refer to the <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github page</a>.</p>
 <p>The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed “globally” into <em>/usr/lib/python3/dist-packages/</em></p>
 </div>
+<div class="section" id="numpy">
+<h2>Numpy<a class="headerlink" href="#numpy" title="Permalink to this headline">¶</a></h2>
+<p>Valkka-core binaries has been compiled with the numpy version that comes with the corresponding Ubuntu distro, i.e. the numpy you would install with <code class="docutils literal notranslate"><span class="pre">`sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-numpy`</span></code>.</p>
+<p>That version is automatically installed when you install valkka core with <code class="docutils literal notranslate"><span class="pre">`sudo</span> <span class="pre">apt-get`</span></code>, but it might be “shadowed” by your <em>locally</em> installed numpy.</p>
+<p>If you get errors about numpy import, try removing your locally installed numpy (i.e. the version you installed with <code class="docutils literal notranslate"><span class="pre">`pip</span> <span class="pre">install</span> <span class="pre">--user`</span></code>).</p>
+</div>
 <div class="section" id="install-the-testsuite">
 <h2>Install the testsuite<a class="headerlink" href="#install-the-testsuite" title="Permalink to this headline">¶</a></h2>
 <p>First, install some debian packages:</p>
@@ -63,7 +67,7 @@
 </div>
 <p>some of these will be used for benchmarking Valkka agains other programs.</p>
 <p>The testsuite and tutorials use also imutils and PyQt5, so install a fresh version of them locally with pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">imutils</span> <span class="n">PyQt5</span> <span class="n">PySide2</span><span class="o">==</span><span class="mf">5.11</span><span class="o">.</span><span class="mi">1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="n">imutils</span> <span class="n">PyQt5</span> <span class="n">PySide2</span>
 </pre></div>
 </div>
 <p>Here we have installed two flavors of the Qt python bindings, namely, <a class="reference external" href="https://www.riverbankcomputing.com">PyQt5</a> and <a class="reference external" href="https://doc.qt.io/qtforpython/contents.html">PySide2</a>.  They can be used in an identical manner.  If you use PyQt5, be aware of its licensing terms.</p>
@@ -95,17 +99,12 @@
 </div>
 <div class="section" id="opencv">
 <span id="install-opencv"></span><h2>OpenCV<a class="headerlink" href="#opencv" title="Permalink to this headline">¶</a></h2>
-<p><strong>Ubuntu 16</strong></p>
-<p>There are many options available to install OpenCV and its python bindings.  A binary package with a working high-gui for <strong>python 3.5</strong> (used by Ubuntu 16 LTS) is provided <a class="reference external" href="https://www.dropbox.com/sh/cx3uutbavp2cqpa/AAC_uDh-plu0Oo50r_klYPEXa?dl=0)">here</a>.  Download the files and use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">OpenCV</span><span class="o">*.</span><span class="n">deb</span>
-<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="o">-</span><span class="n">fy</span> <span class="n">install</span>
-</pre></div>
-</div>
 <p><strong>Ubuntu 18</strong></p>
 <p>Simply:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python3</span><span class="o">-</span><span class="n">opencv</span>
 </pre></div>
 </div>
+<p>Remember that if you prefer to install with <code class="docutils literal notranslate"><span class="pre">`pip`</span></code>, OpenCV’s high-gui environment won’t probably work for you.</p>
 </div>
 <div class="section" id="development-version">
 <h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
@@ -185,6 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#install-valkka-core">Install valkka-core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#numpy">Numpy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-the-testsuite">Install the testsuite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gtk">GTK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opencv">OpenCV</a></li>
@@ -206,13 +206,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -225,7 +223,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

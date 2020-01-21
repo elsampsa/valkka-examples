@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>About Valkka &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -70,11 +68,11 @@
 <h2>The Project<a class="headerlink" href="#the-project" title="Permalink to this headline">¶</a></h2>
 <p>In Valkka, the “streaming pipeline” from IP cameras to decoders and to the GPU has been completely re-thinked and written from scratch:</p>
 <ul class="simple">
-<li>No dependencies on external libraries or x window extensions (we use only glx)</li>
-<li>Everything is pre-reserved in the system memory and in the GPU.  During streaming, frames are pulled from pre-reserved stacks</li>
-<li>OpenGL pixel buffer objects are used for texture video streaming (in the future, we will implement fish-eye projections)</li>
-<li>Customized queueing and presentation algorithms</li>
-<li>etc., etc.</li>
+<li><p>No dependencies on external libraries or x window extensions (we use only glx)</p></li>
+<li><p>Everything is pre-reserved in the system memory and in the GPU.  During streaming, frames are pulled from pre-reserved stacks</p></li>
+<li><p>OpenGL pixel buffer objects are used for texture video streaming (in the future, we will implement fish-eye projections)</p></li>
+<li><p>Customized queueing and presentation algorithms</p></li>
+<li><p>etc., etc.</p></li>
 </ul>
 <p>Valkka is in alpha stage.  Even so, you can do lot of stuff with it - at least all the things we have promised here in the intro.</p>
 <p>Repositories are organized as follows:</p>
@@ -84,13 +82,13 @@
 <p>All functional features are demonstrated in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a> which is updated as new features appear.  Same goes for the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a>.</p>
 <p>We’d like to see the following features in the first beta release:</p>
 <ul class="simple">
-<li>Interserver communications between Valkka-based server and clients</li>
-<li>ValkkaFS filesystem, designed for recording large amounts of video</li>
-<li>Synchronized recording of video</li>
-<li>Picture-in-picture</li>
-<li>Fisheye projections (trivial to implement as we are using OpenGL textures)</li>
-<li>Support for sound</li>
-<li>An ultralight OnVif client library, based on <a class="reference external" href="http://docs.python-zeep.org/en/master/">Zeep</a></li>
+<li><p>Interserver communications between Valkka-based server and clients</p></li>
+<li><p>ValkkaFS filesystem, designed for recording large amounts of video</p></li>
+<li><p>Synchronized recording of video</p></li>
+<li><p>Picture-in-picture</p></li>
+<li><p>Fisheye projections (trivial to implement as we are using OpenGL textures)</p></li>
+<li><p>Support for sound</p></li>
+<li><p>An ultralight OnVif client library, based on <a class="reference external" href="http://docs.python-zeep.org/en/master/">Zeep</a></p></li>
 </ul>
 <p>Valkka is based on the following opensource libraries and technologies:</p>
 <div style="overflow: hidden; position: relative;">
@@ -167,13 +165,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -186,7 +182,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

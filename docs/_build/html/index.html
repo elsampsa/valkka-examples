@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="A python programming library for building opensource video surveillance, management and analysis programs with Qt" name="description" />
+    <meta charset="utf-8" /><meta content="A python programming library for building opensource video surveillance, management and analysis programs with Qt" name="description" />
 <meta content="opensource, python, video surveillance, video management, video analysis, machine vision, qt" name="keywords" />
 
     <title>Valkka &#8212; OpenSource Video Management for Linux  documentation</title>
@@ -40,14 +38,14 @@
 <p>Valkka is a python programming library for creating video surveillance and management solutions for linux desktop in local area / virtual private networks.</p>
 <p><em>Some highlights of Valkka</em></p>
 <ul class="simple">
-<li>Python3 API, while streaming itself runs in the background at the cpp level</li>
-<li>Works with stock OnVif compliant IP cameras</li>
-<li>Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice via shared memory</li>
-<li>Share decoded video with python processes across your Linux system</li>
-<li>Plug in your python-based machine vision modules</li>
-<li>Designed for massive video streaming : view and analyze simultaneously a large number of IP cameras</li>
-<li>Recast the IP camera video streams to either multicast or unicast</li>
-<li>Build graphical user interfaces with PyQt, interact machine vision with Qt’s signal/slot system and build highly customized GUIs</li>
+<li><p>Python3 API, while streaming itself runs in the background at the cpp level</p></li>
+<li><p>Works with stock OnVif compliant IP cameras</p></li>
+<li><p>Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice via shared memory</p></li>
+<li><p>Share decoded video with python processes across your Linux system</p></li>
+<li><p>Plug in your python-based machine vision modules</p></li>
+<li><p>Designed for massive video streaming : view and analyze simultaneously a large number of IP cameras</p></li>
+<li><p>Recast the IP camera video streams to either multicast or unicast</p></li>
+<li><p>Build graphical user interfaces with PyQt, interact machine vision with Qt’s signal/slot system and build highly customized GUIs</p></li>
 </ul>
 <p>This documentation is a quickstart for installing and developing with Valkka using the Python3 API.  A Tutorial, a PyQt testsuite and some benchmarking results are provided.</p>
 <p>For a demo program using Valkka, check out <a class="reference external" href="https://elsampsa.github.io/valkka-live/">Valkka Live</a></p>
@@ -66,6 +64,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="requirements.html#install-valkka-core">Install valkka-core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#numpy">Numpy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="requirements.html#install-the-testsuite">Install the testsuite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="requirements.html#gtk">GTK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="requirements.html#opencv">OpenCV</a></li>
@@ -141,7 +140,7 @@
 </ul>
 </div>
 <ul class="simple">
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
 
@@ -198,13 +197,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -217,7 +214,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Lesson 11 : ValkkaFS &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -44,7 +42,7 @@
 <div class="section" id="writing">
 <h2>Writing<a class="headerlink" href="#writing" title="Permalink to this headline">¶</a></h2>
 <p>Let’s start by dumping video from IP cameras into ValkkaFS.</p>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/27791edf7c01d596478cd05237901f5a/lesson_11_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/adb6150054a616234da4c9cfb899b555/lesson_11_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>This will be our filtergraph:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;&gt;</span> <span class="p">(</span><span class="n">ValkkaFSWriterThread</span><span class="p">:</span><span class="n">writerthread</span><span class="p">)</span>
 </pre></div>
@@ -143,7 +141,7 @@
 <div class="section" id="reading-1">
 <h2>Reading 1<a class="headerlink" href="#reading-1" title="Permalink to this headline">¶</a></h2>
 <p>In these following two examples, we request frames from ValkkaFS</p>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/a7116db46a92fcf254d114004882f2c8/lesson_11_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/fa57ff7a1a80932d10bc5455d4a7be73/lesson_11_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Same imports as before:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
@@ -185,7 +183,7 @@
 </div>
 <div class="section" id="reading-2">
 <h2>Reading 2<a class="headerlink" href="#reading-2" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/db921b82fca90f2112c45799dbd9f9cb/lesson_11_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/c5bdd42951708478308d706828cd7003/lesson_11_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ValkkaFS</span>
@@ -255,7 +253,7 @@
 <p>Let’s start by recalling <a class="reference internal" href="lesson_1.html#lesson-1-a"><span class="std std-ref">the very first lesson</span></a>.  There we saw how LiveThread sends <strong>Setup Frames</strong> at streaming initialization.  Setup frames are used all over the libValkka infrastructure, to carry information about the video stream, to signal the stream start and to initialize decoders, muxers, etc.</p>
 <p>On the other hand, ValkkaFSReaderThread is designed to be a simple beast: it does not have any notion of stream initialization.  It simply provides frames on a per-block basis.</p>
 <p>We must use a special FrameFilter called <strong>InitStreamFrameFilter</strong>, in order to add the Setup Frames into the stream.</p>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/c0b6948a694662af1f3b694a1deb3074/lesson_11_d.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/fad4d01366b1f34fac74a45b1abc3376/lesson_11_d.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Same imports as before:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
@@ -328,7 +326,7 @@
 <p>In detail, ValkkaFSReaderThread passes frames to FrameCacherThread which caches them into memory.  After this, <em>seek</em>, <em>play</em> and <em>stop</em> can be requested from FrameCacherThread, which then passes the frames downstream from a seek point and at the original play speed at which the frames were recorded into ValkkaFS.</p>
 <p>FrameCacherThread can be given special python callback functions that are being called when the min and max time of cached frames changes and when frame presentation time goes forward.</p>
 <p>FrameCacherThread is very similar to other threads that send stream (like LiveThread), so it also handles the sending of Setup Frames downstream correctly.</p>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/7d8aa6f63bb2296734a11860912ca4fb/lesson_11_e.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/29e388442fbc0581eca5be01df503dc2/lesson_11_e.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Same imports as before:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
@@ -463,10 +461,10 @@
 <p><em>etc.</em></p>
 <p>LibValkka’s API level 2 provides a class that implements a correct behaviour for the playback of continuously recorded streams, like this:</p>
 <ul class="simple">
-<li>Instantiates ValkkaFSWriter, ValkkaFSReader and FileCacheThread, based on a ValkkaFS instance</li>
-<li>Queries the blocktable frequently for changes</li>
-<li>Requests new blocks from ValkkaFSReaderThread, when there are no more frames available in FrameCacherThread’s cache</li>
-<li>etc.</li>
+<li><p>Instantiates ValkkaFSWriter, ValkkaFSReader and FileCacheThread, based on a ValkkaFS instance</p></li>
+<li><p>Queries the blocktable frequently for changes</p></li>
+<li><p>Requests new blocks from ValkkaFSReaderThread, when there are no more frames available in FrameCacherThread’s cache</p></li>
+<li><p>etc.</p></li>
 </ul>
 <p>For an example on how to use ValkkaFSManager, please see <code class="docutils literal notranslate"><span class="pre">test_studio_5.py</span></code> at the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a></p>
 </div>
@@ -530,13 +528,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -549,7 +545,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

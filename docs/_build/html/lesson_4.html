@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Lesson 4 : Sharing streams between python processes &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -38,7 +36,7 @@
 <h1>Lesson 4 : Sharing streams between python processes<a class="headerlink" href="#lesson-4-sharing-streams-between-python-processes" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="server-side">
 <h2>Server side<a class="headerlink" href="#server-side" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download server side</strong> <a class="reference download internal" download="" href="_downloads/a7c1a242b3e2f7c3f41f0546498804ae/lesson_4_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download server side</strong> <a class="reference download internal" download="" href="_downloads/738c6677ef608ca9799fad3351e7b156/lesson_4_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>By now, we have learned how to receive, decode and send streams to the x window system.  In this chapter, we do all that, but at the same time, also send copies of the decoded frames to another python process.</p>
 <p>The filtergraph looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">-------------------------------------+</span>  <span class="n">main</span> <span class="n">branch</span><span class="p">,</span> <span class="n">streaming</span>
@@ -131,13 +129,16 @@
 </div>
 <p>Next we need a separate python process, a client, that reads the frames.  Two versions are provided, the API level 2 being the most compact one.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">In the previous lessons, all streaming has taken place at the cpp level.  Here we are starting to use posix shared memory and semaphores in order to share frames between python processes.  However, don’t expect posix shared memory and semaphores to keep up with several full-hd cameras running at 25+ fps!  Such high-throughput should be implemented at the cpp level using multithreading (while defining only the connections at the python level)</p>
+<p class="admonition-title">Note</p>
+<p>In the previous lessons, all streaming has taken place at the cpp level.
+Here we are starting to use posix shared memory and semaphores in order to share frames between python processes, with the ultimate goal
+to share them with machine vision processes.  However, if you need very high-resolution and high fps solutions, you might want to implement the sharing
+of frames and your machine vision routines directly at the cpp level.</p>
 </div>
 </div>
 <div class="section" id="client-side-api-level-2">
 <h2>Client side: API level 2<a class="headerlink" href="#client-side-api-level-2" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download client side API level 2</strong> <a class="reference download internal" download="" href="_downloads/74ea4aded4307dae5e4948a8ca5fe4a2/lesson_4_a_client_api2.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download client side API level 2</strong> <a class="reference download internal" download="" href="_downloads/4d209a445656b551399dd423340a8a12/lesson_4_a_client_api2.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>This is a <em>separate</em> python program for reading the frames that are written by Valkka to the shared memory.</p>
 <p>The parameters used both in the server side (above) and on the client side (below) <strong>must be exactly the same</strong> and the client program should be started <em>after</em> the server program (and while the server is running).  Otherwise undefined behaviour will occur.</p>
 <p>The used shmem_name(s) should be same in both server and client, but different for another server/client pair.</p>
@@ -180,11 +181,11 @@
 <p>The <em>client.shmem_list</em> is a list of numpy arrays, while meta contains information about the data size, frame width, height, slot and timestamp.</p>
 <p>This example simply prints out the first ten bytes of the RGB image and the metadata of the frame.</p>
 <p>If your Python process is running several Python threads, you should use the pullFrameThread method instead: it releases the Python GIL while waiting frames from the ringbuffer.</p>
-<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/c091de6ad02c47418344ca6ba8098cd4/lesson_4_a_client_api2_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
+<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/5e3a9a98e0d0abcb2209904985ffcaea/lesson_4_a_client_api2_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
 </div>
 <div class="section" id="client-side-opencv">
 <h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Permalink to this headline">¶</a></h2>
-<p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" download="" href="_downloads/b07674010ec3c9b078e33c7558895464/lesson_4_a_client_opencv.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" download="" href="_downloads/981a3decc198653c1940a8e577a3ea36/lesson_4_a_client_opencv.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>OpenCV is a popular machine vision library.  We modify the previous example to make it work with openCV like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ShmemRGBClient</span>
@@ -224,11 +225,11 @@
 </div>
 <p>Here the main difference to the previous example is, that the image data is reshaped.  After this, some gaussian blur is applied to the image.  Then it is visualized using openCV’s own “high-gui” infrastructure.  If everything went ok, you should see a blurred image of your video once in a second.</p>
 <p>Start this script <em>after</em> starting the server side script (server side must also be running).</p>
-<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/22d20658842ddffebebfc4c229103087/lesson_4_a_client_opencv_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
+<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/f4edf8f15f7fde0ca5343048d6f59004/lesson_4_a_client_opencv_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
 </div>
 <div class="section" id="client-side-api-level-1">
 <h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Permalink to this headline">¶</a></h2>
-<p><strong>Download client side example</strong> <a class="reference download internal" download="" href="_downloads/32d77dda757932ecb345623e8f0db454/lesson_4_a_client.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download client side example</strong> <a class="reference download internal" download="" href="_downloads/2874db4374884d7afc83d4ebc3e7c010/lesson_4_a_client.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>API level 2 provides extra wrapping.  Let’s see what goes on at the lowest level (plain, cpp wrapped python code).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
 
@@ -271,8 +272,25 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/1e210c40ead734059b8e191e78f97f89/lesson_4_a_client_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
+<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/63bea3c536de0191fd3d46f4b71b7fdc/lesson_4_a_client_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
 <p>Cpp documentation for Valkka shared memory classes be found <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html">here.</a></p>
+</div>
+<div class="section" id="advanced-topics">
+<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h2>
+<p>By now you have learned how to pass frames from the libValkka infrastructure into a separate python program.</p>
+<p>When creating more serious solutions, you can use a single python program to span multiprocesses (using Python’s multiprocessing module) into servers and clients.</p>
+<p>In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication between them, so that the multiprocesses
+will instantiate the server and client in the correct order.</p>
+<p>You can also create shared memory servers, where you can feed frames from the python side (vs. at the cpp side)</p>
+<p>LibValkka shared memory server and client also features a posix file-descriptor API. It is convenient in cases, where a single process is listening simultaneously to several shared memory servers,
+and you want to do the i/o efficiently: you can use python’s “select” module to do efficient “multiplexing” of pulling frames from several shmem clients.</p>
+<p>For example, the Valkka Live program takes advantage of these features.  It performs the following joggling of the frames through the shared memory:</p>
+<ol class="arabic simple">
+<li><p>Several shared memory servers, each one sending video from one camera.</p></li>
+<li><p>Several client processes, each one receiving video from a shared memory server.  Each client process establish it’s own shared memory server for further sharing of the frames.</p></li>
+<li><p>A master process that listens to multiple clients at the same time.</p></li>
+</ol>
+<p>Number (1) works at the cpp side.  (2) Is a separate multiprocess running OpenCV-based analysis.  (3) Is a common Yolo object detector for all the clients.</p>
 </div>
 </div>
 
@@ -334,13 +352,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -353,7 +369,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

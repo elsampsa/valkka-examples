@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Integrating with Qt and multiprocessing &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -41,10 +39,10 @@
 <p>Valkka can be used with any GUI framework, say, with GTK or Qt.  Here we have an emphasis on Qt, but the general guidelines discussed here, apply to any other GUI framework as well.  Concrete examples are provided only for Qt.</p>
 <p>For any GUI framework, this is what you want to do:</p>
 <ol class="arabic simple">
-<li>At the GUI’s main window constructor, program your filtergraph and create signal/slot connections to Valkka’s methods</li>
-<li>Still at the main window ctor, start all threads</li>
-<li>Start your GUI frameworks execution loop</li>
-<li>At main window close event, close all threads</li>
+<li><p>At the GUI’s main window constructor, program your filtergraph and create signal/slot connections to Valkka’s methods</p></li>
+<li><p>Still at the main window ctor, start all threads</p></li>
+<li><p>Start your GUI frameworks execution loop</p></li>
+<li><p>At main window close event, close all threads</p></li>
 </ol>
 <p>X-windows, i.e. “widgets” in the Qt slang, can be created at the Qt side and passed to Valkka.  Alternatively, x-windows can be created at the Valkka side and passed to Qt as “foreign widgets”.</p>
 <p>Complex filterchains per camera should be encapsulated in classes, like we did in the <a class="reference internal" href="lesson_3.html#multiple-streams"><span class="std std-ref">tutorial</span></a>.</p>
@@ -157,9 +155,9 @@
 <p>It contains:</p>
 <blockquote>
 <div><ul class="simple">
-<li><em>QValkkaProcess</em> (a general multiprocess class with Qt signals)</li>
-<li><em>QValkkaOpenCVProcess</em> (multiprocess with Qt signals and OpenCV)</li>
-<li><em>QValkkaThread</em> (the frontend QThread) that you can use in your own applications.</li>
+<li><p><em>QValkkaProcess</em> (a general multiprocess class with Qt signals)</p></li>
+<li><p><em>QValkkaOpenCVProcess</em> (multiprocess with Qt signals and OpenCV)</p></li>
+<li><p><em>QValkkaThread</em> (the frontend QThread) that you can use in your own applications.</p></li>
 </ul>
 </div></blockquote>
 <p>Consult the <em>test_studio_</em>.py* programs how to use these classes.</p>
@@ -253,13 +251,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -272,7 +268,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

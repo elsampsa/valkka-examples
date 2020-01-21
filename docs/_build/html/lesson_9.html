@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Lesson 9 : Drawing Bounding Boxes &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,7 +35,7 @@
   <div class="section" id="lesson-9-drawing-bounding-boxes">
 <h1>Lesson 9 : Drawing Bounding Boxes<a class="headerlink" href="#lesson-9-drawing-bounding-boxes" title="Permalink to this headline">¶</a></h1>
 <p>Here we stream video to a single X-window just like in tutorial example 3, but we also draw some bounding boxes on the video.</p>
-<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/09a25c467f0e05f5c03f652cf6f98c3b/lesson_9.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/8d2e39d2e41e5da72044b8cbe3c980b3/lesson_9.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>First, business as usual (and like in tutorial example 3)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
@@ -156,13 +154,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -175,7 +171,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

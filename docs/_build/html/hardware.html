@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Supported hardware &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -39,18 +37,18 @@
 <div class="section" id="cameras">
 <h2>Cameras<a class="headerlink" href="#cameras" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>OnVif compliant IP cameras (supporting the RTSP protocol)</li>
-<li>USB Cameras capable of streaming H264.  We have tested against <em>Logitech HD Pro Webcam C920</em></li>
-<li>For the moment, the only codec supported is H264</li>
+<li><p>OnVif compliant IP cameras (supporting the RTSP protocol)</p></li>
+<li><p>USB Cameras capable of streaming H264.  We have tested against <em>Logitech HD Pro Webcam C920</em></p></li>
+<li><p>For the moment, the only codec supported is H264</p></li>
 </ul>
 </div>
 <div class="section" id="linux-clients">
 <h2>Linux clients<a class="headerlink" href="#linux-clients" title="Permalink to this headline">¶</a></h2>
 <p>libValkka uses OpenGL and OpenGL texture streaming, so it needs a robust OpenGL implementation.  The current situation is:</p>
 <ul class="simple">
-<li>Intel: the stock <strong>i915</strong> driver is OK</li>
-<li>Nvidia: use <strong>nvidia</strong> proprietary driver</li>
-<li>ATI: <strong>not tested</strong></li>
+<li><p>Intel: the stock <strong>i915</strong> driver is OK</p></li>
+<li><p>Nvidia: use <strong>nvidia</strong> proprietary driver</p></li>
+<li><p>ATI: <strong>not tested</strong></p></li>
 </ul>
 <p>OpenGL version 3 or greater is required.  You can check your OpenGL version with the command <em>glxinfo</em>.</p>
 </div>
@@ -113,13 +111,11 @@
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -132,7 +128,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
