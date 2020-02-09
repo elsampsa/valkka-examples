@@ -122,3 +122,19 @@ Turns off swap and sets maximum allowed read/write socket sizes to 2 MB.
 
 Receiving socket size can be adjusted for each live connection with the associated *LiveConnectionContext* (see the tutorial).  For an example how to do this, refer to **valkka.api2.basic.BasicFilterChain**
 
+FAQ
+---
+
+*How can I stream over internet, instead of just LAN?*
+
+By default, stream is transported through UDP sockets.  When streaming over internet, most of the ports are closed due to firewalls, etc., so you have to stream through the same TCP port
+that is used for the RTSP negotiation (typically port 554).
+
+Modify your LiveConnectionContext like this:
+
+::
+
+    ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, live_out_filter)
+    ctx.request_tcp = True
+
+(for more information, see `here <https://elsampsa.github.io/valkka-core/html/structLiveConnectionContext.html>`_)

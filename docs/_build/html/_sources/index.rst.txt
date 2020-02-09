@@ -45,6 +45,7 @@ For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github
    license
    benchmarking
    authors
+   knowledge
    
 .. Indices and tables
 .. ==================

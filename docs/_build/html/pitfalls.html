@@ -119,6 +119,18 @@
 <p>Turns off swap and sets maximum allowed read/write socket sizes to 2 MB.</p>
 <p>Receiving socket size can be adjusted for each live connection with the associated <em>LiveConnectionContext</em> (see the tutorial).  For an example how to do this, refer to <strong>valkka.api2.basic.BasicFilterChain</strong></p>
 </div>
+<div class="section" id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h2>
+<p><em>How can I stream over internet, instead of just LAN?</em></p>
+<p>By default, stream is transported through UDP sockets.  When streaming over internet, most of the ports are closed due to firewalls, etc., so you have to stream through the same TCP port
+that is used for the RTSP negotiation (typically port 554).</p>
+<p>Modify your LiveConnectionContext like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">request_tcp</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>(for more information, see <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/structLiveConnectionContext.html">here</a>)</p>
+</div>
 </div>
 
 
@@ -170,12 +182,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#pitfalls">Pitfalls</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bottlenecks">Bottlenecks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#system-tuning">System tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#faq">FAQ</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowldge Base</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
