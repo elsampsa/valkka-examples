@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Knowledge Base &#8212; OpenSource Video Management for Linux  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Authors" href="authors.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="knowledge-base">
+<h1>Knowledge Base<a class="headerlink" href="#knowledge-base" title="Permalink to this headline">¶</a></h1>
+<p>Tips, instructions, etc. for compiling libValkka, Qt &amp; Yolo on out-of-the-ordinary hardware</p>
+<div class="section" id="general">
+<h2>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<p>When compiling and generating yourself python binary packages these commands come handy:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">wheel</span> <span class="o">--</span><span class="n">wheel</span><span class="o">-</span><span class="nb">dir</span><span class="o">=</span><span class="n">YOUR_DIRECTORY</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">index</span> <span class="o">--</span><span class="n">find</span><span class="o">-</span><span class="n">links</span><span class="o">=</span><span class="n">YOUR_DIRECTORY</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>The first one downloads binary whl packages, defined in requirements.txt, from pypi.org to directory YOUR_DIRECTORY.</p>
+<p>Next, put your manually compiled packages into YOUR_DIRECTORY</p>
+<p>After that, launch the second command: it installs packages, defined in requirements.txt from YOUR_DIRECTORY.</p>
+</div>
+<div class="section" id="jetson-nano">
+<h2>Jetson Nano<a class="headerlink" href="#jetson-nano" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt-python-bindings">
+<h3>Qt Python Bindings<a class="headerlink" href="#qt-python-bindings" title="Permalink to this headline">¶</a></h3>
+<p>There are two flavors of Qt Python bindings, namely, PyQt and PySide2.  Here we deal with the latter.  If you have information on PyQt on JetsonNano, please do send us an email.</p>
+<p>PySide2 Qt python bindings are not available for all architectures simply from pypi using <code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span></code> command.  This is the case for Jetson Nano as well.</p>
+<p>Install clang, build tools, Qt module clang header files, etc:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">git</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">cmake</span> <span class="n">libclang</span><span class="o">-</span><span class="n">dev</span> <span class="n">qt5</span><span class="o">-</span><span class="n">default</span> <span class="n">qtscript5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libssl</span><span class="o">-</span><span class="n">dev</span> <span class="n">qttools5</span><span class="o">-</span><span class="n">dev</span> <span class="n">qttools5</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">tools</span> <span class="n">qtmultimedia5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5svg5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5webkit5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libsdl2</span><span class="o">-</span><span class="n">dev</span> <span class="n">libasound2</span> <span class="n">libxmu</span><span class="o">-</span><span class="n">dev</span> <span class="n">libxi</span><span class="o">-</span><span class="n">dev</span> <span class="n">freeglut3</span><span class="o">-</span><span class="n">dev</span> <span class="n">libasound2</span><span class="o">-</span><span class="n">dev</span> <span class="n">libjack</span><span class="o">-</span><span class="n">jackd2</span><span class="o">-</span><span class="n">dev</span> <span class="n">libxrandr</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5xmlpatterns5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5xmlpatterns5</span> <span class="n">libqt5xmlpatterns5</span><span class="o">-</span><span class="n">dev</span> <span class="n">qtdeclarative5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span> <span class="n">qtbase5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span> <span class="n">qttools5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span> <span class="n">qtwebengine5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>Git clone PySide2 python bindings source code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">code</span><span class="o">.</span><span class="n">qt</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">pyside</span><span class="o">/</span><span class="n">pyside</span><span class="o">-</span><span class="n">setup</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">pyside_setup</span>
+</pre></div>
+</div>
+<p>PySide2 python bindings must be compatible with your system’s Qt version.  Find out the version with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qmake</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+<p>For ubuntu 18 LTS for example, the version is 5.9.5, so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="mf">5.9</span>
+</pre></div>
+</div>
+<p>Next, edit this file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sources</span><span class="o">/</span><span class="n">pyside2</span><span class="o">/</span><span class="n">PySide2</span><span class="o">/</span><span class="n">QtGui</span><span class="o">/</span><span class="n">CMakeLists</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Comment out (using #), these two lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${QtGui_GEN_DIR}/qopengltimemonitor_wrapper.cpp
+${QtGui_GEN_DIR}/qopengltimerquery_wrapper.cpp
+</pre></div>
+</div>
+<p>Finally, compile the bindings with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build</span>
+</pre></div>
+</div>
+<p>That might take up to 8 hrs, so see a movie using your favorite streaming service.  :)</p>
+<p>That compiles python bindings for all Qt features, so it could be a good idea to comment out more wrappers in that <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code></p>
+<p>After that, you can create a distributable package by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">only</span><span class="o">-</span><span class="n">package</span> <span class="n">bdist_wheel</span>
+</pre></div>
+</div>
+<p>The package appears in directory <code class="docutils literal notranslate"><span class="pre">dist/</span></code> and is installable with <code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">--user</span> <span class="pre">packagename.whl</span></code></p>
+<p>References:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/PySide/pyside2/wiki/Dependencies">https://github.com/PySide/pyside2/wiki/Dependencies</a></p></li>
+<li><p><a class="reference external" href="https://wiki.qt.io/Qt_for_Python">https://wiki.qt.io/Qt_for_Python</a></p></li>
+<li><p>Pyside’s <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> : read the comments within the first lines</p></li>
+<li><p><a class="reference external" href="https://bugreports.qt.io/browse/PYSIDE-568">https://bugreports.qt.io/browse/PYSIDE-568</a></p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
+<!--
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+-->
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Knowledge Base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jetson-nano">Jetson Nano</a></li>
+</ul>
+</li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/knowledge.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-123031237-1']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>
