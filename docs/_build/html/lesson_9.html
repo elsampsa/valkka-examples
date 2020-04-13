@@ -7,11 +7,11 @@
     <title>Lesson 9 : Drawing Bounding Boxes &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 10 : USB Cameras" href="lesson_10.html" />
@@ -38,7 +38,7 @@
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/8d2e39d2e41e5da72044b8cbe3c980b3/lesson_9.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>First, business as usual (and like in tutorial example 3)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
 <span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 
@@ -151,6 +151,7 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
@@ -162,7 +163,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -171,7 +172,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

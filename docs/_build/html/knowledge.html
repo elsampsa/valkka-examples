@@ -7,11 +7,11 @@
     <title>Knowledge Base &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Authors" href="authors.html" />
@@ -44,13 +44,76 @@
 <p>The first one downloads binary whl packages, defined in requirements.txt, from pypi.org to directory YOUR_DIRECTORY.</p>
 <p>Next, put your manually compiled packages into YOUR_DIRECTORY</p>
 <p>After that, launch the second command: it installs packages, defined in requirements.txt from YOUR_DIRECTORY.</p>
+<p>References:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pip.readthedocs.io/en/stable/user_guide/#installing-from-wheels">https://pip.readthedocs.io/en/stable/user_guide/#installing-from-wheels</a></p></li>
+</ul>
+</div>
+<div class="section" id="opencv-opencv-contrib">
+<h2>OpenCV &amp; OpenCV contrib<a class="headerlink" href="#opencv-opencv-contrib" title="Permalink to this headline">¶</a></h2>
+<p>Normally you might install OpenCV &amp; its python bindings just with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">opencv</span><span class="o">-</span><span class="n">python</span> <span class="n">opencv</span><span class="o">-</span><span class="n">contrib</span><span class="o">-</span><span class="n">python</span>
+</pre></div>
+</div>
+<p>The “contrib” module includes the “non-free” part (with patented algorithms etc.) of OpenCV library.  However, most of the time
+this won’t work either, since the libraries have been compiled with non-free algorithms disabled.</p>
+<p>There’s no other way here than to compile this by yourself.  You need to install (at least):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">cmake</span> <span class="n">git</span> <span class="n">libgtk2</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="n">dev</span> <span class="n">pkg</span><span class="o">-</span><span class="n">config</span> <span class="n">libavcodec</span><span class="o">-</span><span class="n">dev</span> <span class="n">libavformat</span><span class="o">-</span><span class="n">dev</span> <span class="n">libswscale</span><span class="o">-</span><span class="n">dev</span> <span class="n">libv4l</span><span class="o">-</span><span class="n">dev</span> <span class="n">python</span><span class="o">-</span><span class="n">dev</span> <span class="n">python</span><span class="o">-</span><span class="n">numpy</span> <span class="n">libtbb2</span> <span class="n">libtbb</span><span class="o">-</span><span class="n">dev</span> <span class="n">libjpeg</span><span class="o">-</span><span class="n">dev</span> <span class="n">libpng</span><span class="o">-</span><span class="n">dev</span> <span class="n">libtiff</span><span class="o">-</span><span class="n">dev</span> <span class="n">libjasper</span><span class="o">-</span><span class="n">dev</span> <span class="n">libdc1394</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="n">dev</span> <span class="n">libxvidcore</span><span class="o">-</span><span class="n">dev</span> <span class="n">libx264</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>Check out <a class="reference external" href="https://github.com/opencv/opencv">opencv</a> &amp; <a class="reference external" href="https://github.com/opencv/opencv_contrib">opencv-contrib</a> from github.
+Add build directory and therein a file named run_cmake.bash.  Your directory structure should look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">opencv</span><span class="o">/</span>
+    <span class="n">build</span><span class="o">/</span>
+        <span class="n">run_cmake</span><span class="o">.</span><span class="n">bash</span>
+<span class="n">opencv</span><span class="o">-</span><span class="n">contrib</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>run_cmake.bash looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="n">cmake</span>   <span class="o">-</span><span class="n">D</span> <span class="n">WITH_CUDA</span><span class="o">=</span><span class="n">OFF</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">OPENCV_EXTRA_MODULES_PATH</span><span class="o">=../../</span><span class="n">opencv_contrib</span><span class="o">/</span><span class="n">modules</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">OPENCV_ENABLE_NONFREE</span><span class="o">=</span><span class="n">ON</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">WITH_GSTREAMER</span><span class="o">=</span><span class="n">ON</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">WITH_LIBV4L</span><span class="o">=</span><span class="n">ON</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">BUILD_opencv_python2</span><span class="o">=</span><span class="n">OFF</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">BUILD_opencv_python3</span><span class="o">=</span><span class="n">ON</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">CPACK_BINARY_DEB</span><span class="o">=</span><span class="n">ON</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">BUILD_TESTS</span><span class="o">=</span><span class="n">OFF</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">BUILD_PERF_TESTS</span><span class="o">=</span><span class="n">OFF</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">BUILD_EXAMPLES</span><span class="o">=</span><span class="n">OFF</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">RELEASE</span> \
+        <span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_INSTALL_PREFIX</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span> \
+        <span class="o">..</span>
+</pre></div>
+</div>
+<p>While at build directory, do</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">run_cmake</span><span class="o">.</span><span class="n">bash</span>
+<span class="n">make</span> <span class="o">-</span><span class="n">j</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>There’s a bug in the opencv build system, so we have to employ a
+<a class="reference external" href="https://stackoverflow.com/questions/45582565/opencv-cmake-error-no-such-file-or-directory-on-ubuntu">trick</a>
+before building the debian packages: comment out this line</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS &quot;TRUE&quot;)</span>
+</pre></div>
+</div>
+<p>from “CPackConfig.cmake”.  After that you should be able to run</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">package</span>
+</pre></div>
+</div>
+<p>Before installing all deb packages from the directory with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="o">*.</span><span class="n">deb</span>
+</pre></div>
+</div>
+<p>remember to remove any pip-installed opencv and opencv contrib modules</p>
 </div>
 <div class="section" id="jetson-nano">
 <h2>Jetson Nano<a class="headerlink" href="#jetson-nano" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="qt-python-bindings">
 <h3>Qt Python Bindings<a class="headerlink" href="#qt-python-bindings" title="Permalink to this headline">¶</a></h3>
 <p>There are two flavors of Qt Python bindings, namely, PyQt and PySide2.  Here we deal with the latter.  If you have information on PyQt on JetsonNano, please do send us an email.</p>
-<p>PySide2 Qt python bindings are not available for all architectures simply from pypi using <code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span></code> command.  This is the case for Jetson Nano as well.</p>
+<p>PySide2 Qt python bindings are not available for all architectures simply from pypi using <code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span></code> command.  This is the case for Jetson Nano.  So we have to compile ourselves.</p>
 <p>Install clang, build tools, Qt module clang header files, etc:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">git</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">cmake</span> <span class="n">libclang</span><span class="o">-</span><span class="n">dev</span> <span class="n">qt5</span><span class="o">-</span><span class="n">default</span> <span class="n">qtscript5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libssl</span><span class="o">-</span><span class="n">dev</span> <span class="n">qttools5</span><span class="o">-</span><span class="n">dev</span> <span class="n">qttools5</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">tools</span> <span class="n">qtmultimedia5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5svg5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5webkit5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libsdl2</span><span class="o">-</span><span class="n">dev</span> <span class="n">libasound2</span> <span class="n">libxmu</span><span class="o">-</span><span class="n">dev</span> <span class="n">libxi</span><span class="o">-</span><span class="n">dev</span> <span class="n">freeglut3</span><span class="o">-</span><span class="n">dev</span> <span class="n">libasound2</span><span class="o">-</span><span class="n">dev</span> <span class="n">libjack</span><span class="o">-</span><span class="n">jackd2</span><span class="o">-</span><span class="n">dev</span> <span class="n">libxrandr</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5xmlpatterns5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5xmlpatterns5</span> <span class="n">libqt5xmlpatterns5</span><span class="o">-</span><span class="n">dev</span> <span class="n">qtdeclarative5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span> <span class="n">qtbase5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span> <span class="n">qttools5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span> <span class="n">qtwebengine5</span><span class="o">-</span><span class="n">private</span><span class="o">-</span><span class="n">dev</span>
 </pre></div>
@@ -151,6 +214,7 @@ ${QtGui_GEN_DIR}/qopengltimerquery_wrapper.cpp
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Knowledge Base</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opencv-opencv-contrib">OpenCV &amp; OpenCV contrib</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#jetson-nano">Jetson Nano</a></li>
 </ul>
 </li>
@@ -165,7 +229,7 @@ ${QtGui_GEN_DIR}/qopengltimerquery_wrapper.cpp
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -174,7 +238,7 @@ ${QtGui_GEN_DIR}/qopengltimerquery_wrapper.cpp
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

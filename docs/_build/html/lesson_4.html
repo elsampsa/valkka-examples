@@ -7,11 +7,11 @@
     <title>Lesson 4 : Sharing streams between python processes &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 5 : Transmitting stream" href="lesson_5.html" />
@@ -142,7 +142,7 @@ of frames and your machine vision routines directly at the cpp level.</p>
 <p>This is a <em>separate</em> python program for reading the frames that are written by Valkka to the shared memory.</p>
 <p>The parameters used both in the server side (above) and on the client side (below) <strong>must be exactly the same</strong> and the client program should be started <em>after</em> the server program (and while the server is running).  Otherwise undefined behaviour will occur.</p>
 <p>The used shmem_name(s) should be same in both server and client, but different for another server/client pair.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ShmemRGBClient</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -188,7 +188,7 @@ of frames and your machine vision routines directly at the cpp level.</p>
 <p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" download="" href="_downloads/981a3decc198653c1940a8e577a3ea36/lesson_4_a_client_opencv.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>OpenCV is a popular machine vision library.  We modify the previous example to make it work with openCV like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">ShmemRGBClient</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -231,7 +231,7 @@ of frames and your machine vision routines directly at the cpp level.</p>
 <h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download client side example</strong> <a class="reference download internal" download="" href="_downloads/2874db4374884d7afc83d4ebc3e7c010/lesson_4_a_client.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>API level 2 provides extra wrapping.  Let’s see what goes on at the lowest level (plain, cpp wrapped python code).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -349,6 +349,7 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
@@ -360,7 +361,7 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -369,7 +370,7 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

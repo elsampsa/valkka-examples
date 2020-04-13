@@ -7,11 +7,11 @@
     <title>Lesson 8: API level 2 &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 9 : Drawing Bounding Boxes" href="lesson_9.html" />
@@ -44,11 +44,11 @@
 <p>So, by now you have learned how to construct complex filtergraphs with framefilters and threads, and how to encapsulate parts of the filtergraphs into separate classes in <a class="reference internal" href="lesson_3.html#multiple-streams"><span class="std std-ref">lesson 3</span></a>.</p>
 <p>API level 2 does just that.  It encapsulates some common cases into compact classes, starts the decoding threads for you, and provides easily accessible end-points (for the posix shared memory interface, etc.) for the API user.</p>
 <p>The API level 2 filterchains, threads and shared memory processes can be imported with</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="o">...</span>
 </pre></div>
 </div>
 <p>API level 2 provides also extra wrapping for the thread classes (LiveThread, OpenGLThread, etc.).  The underlying API level 1 instances can be accessed like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">LiveThread</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">LiveThread</span>
 
 <span class="n">livethread</span><span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;live_thread&quot;</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">core</span> <span class="c1"># this is the API level 1 instance, i.e. valkka.valkka_core.LiveThread</span>
@@ -56,8 +56,8 @@
 </div>
 <p>Keep in mind never to do a full import simultaneously from API levels one and two, i.e.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># NEVER DO THIS!</span>
-<span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">valkka.valkka_core</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
 <p>as the threads (LiveThread, OpenGLThread, etc.) have indentical names.</p>
@@ -68,8 +68,8 @@
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/ecc3ba8a9a7e7840cdbfea5369b2b7d7/lesson_8_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>First, import API level 2:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">LiveThread</span><span class="p">,</span> <span class="n">OpenGLThread</span>
-<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="n">BasicFilterchain</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">LiveThread</span><span class="p">,</span> <span class="n">OpenGLThread</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">BasicFilterchain</span>
 </pre></div>
 </div>
 <p>Instantiating the API level 2 LiveThread starts running the underlying cpp thread:</p>
@@ -184,6 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
@@ -195,7 +196,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -204,7 +205,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

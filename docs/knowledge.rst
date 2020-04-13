@@ -26,6 +26,89 @@ References:
 - https://pip.readthedocs.io/en/stable/user_guide/#installing-from-wheels
 
 
+
+OpenCV & OpenCV contrib
+=======================
+
+Normally you might install OpenCV & its python bindings just with
+
+::
+
+    pip3 install --user --upgrade opencv-python opencv-contrib-python
+
+The "contrib" module includes the "non-free" part (with patented algorithms etc.) of OpenCV library.  However, most of the time
+this won't work either, since the libraries have been compiled with non-free algorithms disabled.
+
+There's no other way here than to compile this by yourself.  You need to install (at least):
+
+::
+
+    sudo apt-get install build-essential cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libv4l-dev python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev libxvidcore-dev libx264-dev
+
+Check out `opencv <https://github.com/opencv/opencv>`_ & `opencv-contrib <https://github.com/opencv/opencv_contrib>`_ from github.  
+Add build directory and therein a file named run_cmake.bash.  Your directory structure should look like this:
+
+::
+
+    opencv/
+        build/
+            run_cmake.bash
+    opencv-contrib/
+
+
+run_cmake.bash looks like this:
+
+::
+
+    #!/bin/bash
+    cmake   -D WITH_CUDA=OFF \
+            -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+            -D OPENCV_ENABLE_NONFREE=ON \
+            -D WITH_GSTREAMER=ON \
+            -D WITH_LIBV4L=ON \
+            -D BUILD_opencv_python2=OFF \                                                                                                                                       
+            -D BUILD_opencv_python3=ON \
+            -D CPACK_BINARY_DEB=ON \
+            -D BUILD_TESTS=OFF \
+            -D BUILD_PERF_TESTS=OFF \
+            -D BUILD_EXAMPLES=OFF \
+            -D CMAKE_BUILD_TYPE=RELEASE \
+            -D CMAKE_INSTALL_PREFIX=/usr/local \
+            ..
+
+While at build directory, do
+
+::
+
+    ./run_cmake.bash
+    make -j 4
+
+There's a bug in the opencv build system, so we have to employ a 
+`trick <https://stackoverflow.com/questions/45582565/opencv-cmake-error-no-such-file-or-directory-on-ubuntu>`_
+before building the debian packages: comment out this line
+
+::
+
+    # set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS "TRUE")
+
+from "CPackConfig.cmake".  After that you should be able to run
+
+::
+
+    make package
+
+Before installing all deb packages from the directory with
+
+::
+
+    sudo dpkg -i *.deb
+
+remember to remove any pip-installed opencv and opencv contrib modules
+
+
+
+
+
 Jetson Nano
 ===========
 

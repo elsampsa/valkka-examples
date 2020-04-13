@@ -7,11 +7,11 @@
     <title>Decoding &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Integrating with Qt and multiprocessing" href="qt_notes.html" />
@@ -60,7 +60,7 @@
 <p>Typically, when decoding H264 video, handling the intra-frame takes much more time than decoding the consecutive B- and P-frames.  This is very pronounced for <em>heavy streams</em> (see above).</p>
 <p>Because of that the intra frame will arrive late for the presentation, while the consecutive frames arrive in a burst.</p>
 <p>This problem can be solved with buffering.  Modify tutorial’s <a class="reference internal" href="lesson_3.html#xwindow-lesson"><span class="std std-ref">lesson 3</span></a> like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">glthread</span> <span class="o">=</span> <span class="n">OpenGLThread</span> <span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
 
@@ -75,7 +75,7 @@
 </div>
 <p>That will reserve 40 4K frames for queueing and presentation of video, while the buffering time is 500 milliseconds.</p>
 <p>For level 2 API, it would look like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">glthread</span> <span class="o">=</span> <span class="n">OpenGLThread</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span><span class="s2">&quot;glthread&quot;</span><span class="p">,</span>
@@ -152,6 +152,7 @@
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
 </ul>
 
 <div id="searchbox" style="display: none" role="search">
@@ -163,7 +164,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -172,7 +173,7 @@
       &copy;2017 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
