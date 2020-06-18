@@ -34,13 +34,26 @@
             
   <div class="section" id="supported-hardware">
 <h1>Supported hardware<a class="headerlink" href="#supported-hardware" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="cameras">
-<h2>Cameras<a class="headerlink" href="#cameras" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>OnVif compliant IP cameras (supporting the RTSP protocol)</p></li>
-<li><p>USB Cameras capable of streaming H264.  We have tested against <em>Logitech HD Pro Webcam C920</em></p></li>
-<li><p>For the moment, the only codec supported is H264</p></li>
-</ul>
+<div class="section" id="ip-cameras">
+<h2>IP Cameras<a class="headerlink" href="#ip-cameras" title="Permalink to this headline">¶</a></h2>
+<p><em>OnVif compliant IP cameras (supporting the RTSP protocol)</em></p>
+<p>Initial configuration of IP cameras can be a hurdle:</p>
+<p>Chinese IP cameras typically require a half-broken Active-X (!) web-extension you have to download (to use with some outdated version of internet explorer).</p>
+<p>Once you have sorted out this chinese software-engineering <em>tour-de-force</em>, you are good to go with OnVif and the RTSP protocol (as supported by libValkka).</p>
+<p>Axis cameras, on the other hand, have a decent (standard javascript) web-interface for camera initial configuration.</p>
+<p>Once you have done succesfull initial configuration, you can test the rtsp connection, with, say, using ffmpeg:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ffmpeg</span> <span class="n">rtsp</span><span class="p">:</span><span class="o">//</span><span class="n">user</span><span class="p">:</span><span class="n">password</span><span class="nd">@ip</span><span class="o">-</span><span class="n">address</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usb-cameras">
+<h2>USB Cameras<a class="headerlink" href="#usb-cameras" title="Permalink to this headline">¶</a></h2>
+<p><em>USB Cameras capable of streaming H264</em></p>
+<p>We have tested against <em>Logitech HD Pro Webcam C920</em></p>
+</div>
+<div class="section" id="codecs">
+<h2>Codecs<a class="headerlink" href="#codecs" title="Permalink to this headline">¶</a></h2>
+<p>For the moment, the only supported codec is H264</p>
 </div>
 <div class="section" id="linux-clients">
 <h2>Linux clients<a class="headerlink" href="#linux-clients" title="Permalink to this headline">¶</a></h2>
@@ -91,7 +104,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Supported hardware</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#cameras">Cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ip-cameras">IP Cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usb-cameras">USB Cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#codecs">Codecs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#linux-clients">Linux clients</a></li>
 </ul>
 </li>
@@ -102,7 +117,7 @@
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>

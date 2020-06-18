@@ -1,6 +1,6 @@
 
-OnVif
-=====
+OnVif & Discovery
+=================
 
 *(Your short primer to SOAP and OnVif)*
 
@@ -144,3 +144,21 @@ Now that variable ``timeout`` can be used with OnVif calls
 
     
     
+Discovery
+---------
+
+In libValkka, cameras can be discovered like this:
+
+::
+
+    from valkka.discovery import runWSDiscovery, runARPScan
+    ips = runWSDiscovery()
+    ips2 = runARPScan(exclude_list = ips) # run this if you want to use arp-scan
+
+
+If you want arp-scan to work, you must permit normal users to run the executable, with:
+
+::
+
+    sudo chmod a+x /usr/sbin/arp-scan
+

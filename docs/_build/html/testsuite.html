@@ -113,11 +113,20 @@
 <tr class="row-odd"><td><p>test_studio_file.py</p></td>
 <td><div class="line-block">
 <div class="line">- Read and play stream from a matroska file</div>
-<div class="line">- Only matroska contained h264 is accepted.</div>
-<div class="line">- Convert your video with:</div>
+<div class="line">- Only matroska-contained h264 is accepted.</div>
+<div class="line">- Convert your video to “ip-camera-like” stream with:</div>
 <div class="line"><br /></div>
 <div class="line-block">
-<div class="line"><em>ffmpeg -i your_video_file -c:v h264 -an outfile.mkv</em></div>
+<div class="line"><em>ffmpeg -i your_video_file -c:v h264 -r 10 -preset ultrafast</em></div>
+<div class="line"><em>-profile:v baseline</em></div>
+<div class="line"><em>-bsf h264_mp4toannexb -x264-params keyint=10:min-keyint=10</em></div>
+<div class="line"><em>-an outfile.mkv</em></div>
+<div class="line"><br /></div>
+</div>
+<div class="line">- If you’re recording directly from an IP camera, use:</div>
+<div class="line"><br /></div>
+<div class="line-block">
+<div class="line"><em>ffmpeg -i rtsp://username:password&#64;your_ip -c:v copy -an outfile.mkv</em></div>
 <div class="line"><br /></div>
 </div>
 </div>
@@ -379,7 +388,7 @@
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>

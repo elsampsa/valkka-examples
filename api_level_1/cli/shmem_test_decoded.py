@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    shmem_test_decoded.py
 @author  Sampsa Riikonen
 @date    2017
-@version 0.17.0 
+@version 0.17.5 
 @brief   Stream decoded (bitmap) frames from a single rtsp camera.  Share the bitmap between python processes.
 """
 

@@ -49,10 +49,17 @@ test_studio_detector.py    | - Like *test_studio_1.py*
                            | - OpenCV processes connect to Qt signal/slot system 
                            |
 test_studio_file.py        | - Read and play stream from a matroska file
-                           | - Only matroska contained h264 is accepted.  
-                           | - Convert your video with:
+                           | - Only matroska-contained h264 is accepted.  
+                           | - Convert your video to "ip-camera-like" stream with:
                            |
-                           |   *ffmpeg -i your_video_file -c:v h264 -an outfile.mkv*
+                           |   *ffmpeg -i your_video_file -c:v h264 -r 10 -preset ultrafast*
+                           |   *-profile:v baseline*
+                           |   *-bsf h264_mp4toannexb -x264-params keyint=10:min-keyint=10* 
+                           |   *-an outfile.mkv*
+                           |
+                           | - If you're recording directly from an IP camera, use:
+                           |  
+                           |   *ffmpeg -i rtsp://username:password@your_ip -c:v copy -an outfile.mkv*
                            |
 test_studio_multicast.py   | - Like *test_studio_1.py*
                            | - Recast multiple IP cameras into multicast

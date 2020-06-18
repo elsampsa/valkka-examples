@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>OnVif &#8212; OpenSource Video Management for Linux  documentation</title>
+    <title>OnVif &amp; Discovery &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -32,8 +32,8 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="onvif">
-<h1>OnVif<a class="headerlink" href="#onvif" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="onvif-discovery">
+<h1>OnVif &amp; Discovery<a class="headerlink" href="#onvif-discovery" title="Permalink to this headline">¶</a></h1>
 <p><em>(Your short primer to SOAP and OnVif)</em></p>
 <div class="section" id="intro">
 <h2>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h2>
@@ -193,6 +193,19 @@
 </div>
 <p>Now that variable <code class="docutils literal notranslate"><span class="pre">timeout</span></code> can be used with OnVif calls</p>
 </div>
+<div class="section" id="discovery">
+<h2>Discovery<a class="headerlink" href="#discovery" title="Permalink to this headline">¶</a></h2>
+<p>In libValkka, cameras can be discovered like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.discovery</span> <span class="kn">import</span> <span class="n">runWSDiscovery</span><span class="p">,</span> <span class="n">runARPScan</span>
+<span class="n">ips</span> <span class="o">=</span> <span class="n">runWSDiscovery</span><span class="p">()</span>
+<span class="n">ips2</span> <span class="o">=</span> <span class="n">runARPScan</span><span class="p">(</span><span class="n">exclude_list</span> <span class="o">=</span> <span class="n">ips</span><span class="p">)</span> <span class="c1"># run this if you want to use arp-scan</span>
+</pre></div>
+</div>
+<p>If you want arp-scan to work, you must permit normal users to run the executable, with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">chmod</span> <span class="n">a</span><span class="o">+</span><span class="n">x</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">arp</span><span class="o">-</span><span class="n">scan</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -239,13 +252,14 @@
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">OnVif</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">OnVif &amp; Discovery</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#intro">Intro</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-onvif">Python OnVif</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#onvif-with-zeep">OnVif with Zeep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#service-classes">Service classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example-call">Example call</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#discovery">Discovery</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
