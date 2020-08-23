@@ -6,6 +6,8 @@
 Benchmarking
 ============
 
+*not up-do-date / maintained*
+
 Here you will find some tabulated benchmark tests.  Tests are performed (if not otherwise mentioned) with the :ref:`PyQt testsuite program<testsuite>` "test_studio_1.py".  Parameters are same as in that program.  Some abbreviations are used:
 
 ====== ===========================
@@ -46,3 +48,35 @@ Benchmarks
    |  | 16.04 LTS  |            | 1920p      |        |         |         |       |         |           |           |      |     |     |     |        |                              |
    |  | 8xi7-4770  |            | 25 fps     |        |         |         |       |         |           |           |      |     |     |     |        |                              |
    +--+------------+------------+------------+--------+---------+---------+-------+---------+-----------+-----------+------+-----+-----+-----+--------+------------------------------+
+
+|
+Debugging
+=========
+
+LibValkka is rigorously "valgrinded" to remove any memory leaks at the cpp level.  However, combining cpp and python (with swig) and throwing into the mix multithreading, multiprocessing and 
+sharing memory between processes, can (and will) give surprises.
+
+To begin with, be sure that you are not pulling frames from the same shared-memory channel using more than one clients.  If that doesn't help, you might want to run the whole python + libValkka/cpp
+combination using gdb:
+
+First, install python3 debugging symbols:
+
+::
+
+    sudo apt-get install gdb python3-dbg
+
+Then, create a custom build of libValkka with debug symbols enabled.
+
+Finally, run your application's entry point with:
+
+::
+
+    gdb --args python3 python_program.py
+    run
+
+
+It's also a good idea to clear semaphores and shared memory every now and then by removing these files:
+
+::
+
+    /dev/shm/*valkka*
