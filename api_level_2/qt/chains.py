@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    chains.py
 @author  Sampsa Riikonen
 @date    2019
-@version 0.18.0 
+@version 0.18.1 
 @brief   
 """
 

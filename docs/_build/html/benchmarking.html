@@ -201,8 +201,8 @@ Laptop</p></td>
 <h1>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h1>
 <p>LibValkka is rigorously “valgrinded” to remove any memory leaks at the cpp level.  However, combining cpp and python (with swig) and throwing into the mix multithreading, multiprocessing and
 sharing memory between processes, can (and will) give surprises.</p>
-<p>To begin with, be sure that you are not pulling frames from the same shared-memory channel using more than one clients.  If that doesn’t help, you might want to run the whole python + libValkka/cpp
-combination using gdb:</p>
+<p><strong>1. Check that you are not pulling frames from the same shared-memory channel using more than one client</strong></p>
+<p><strong>2. Run Python + libValkka using gdb</strong></p>
 <p>First, install python3 debugging symbols:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gdb</span> <span class="n">python3</span><span class="o">-</span><span class="n">dbg</span>
 </pre></div>
@@ -213,10 +213,18 @@ combination using gdb:</p>
 <span class="n">run</span>
 </pre></div>
 </div>
-<p>It’s also a good idea to clear semaphores and shared memory every now and then by removing these files:</p>
+<p><strong>3. Clear semaphores and shared memory every now and then by removing these files</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">shm</span><span class="o">/*</span><span class="n">valkka</span><span class="o">*</span>
 </pre></div>
 </div>
+<p><strong>4. Follow python process memory consumption</strong></p>
+<p>Install smem:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">smem</span>
+</pre></div>
+</div>
+<p>After that, run the script memwatch.bash in the aux/ directory.</p>
+<p>Valkka-live, for example, names all multiprocesses adequately, so you can easily see if a process is
+leaking memory.</p>
 </div>
 
 

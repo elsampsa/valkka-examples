@@ -56,8 +56,9 @@ Debugging
 LibValkka is rigorously "valgrinded" to remove any memory leaks at the cpp level.  However, combining cpp and python (with swig) and throwing into the mix multithreading, multiprocessing and 
 sharing memory between processes, can (and will) give surprises.
 
-To begin with, be sure that you are not pulling frames from the same shared-memory channel using more than one clients.  If that doesn't help, you might want to run the whole python + libValkka/cpp
-combination using gdb:
+**1\. Check that you are not pulling frames from the same shared-memory channel using more than one client**
+
+**2\. Run Python + libValkka using gdb**
 
 First, install python3 debugging symbols:
 
@@ -75,8 +76,24 @@ Finally, run your application's entry point with:
     run
 
 
-It's also a good idea to clear semaphores and shared memory every now and then by removing these files:
+**3\. Clear semaphores and shared memory every now and then by removing these files**
 
 ::
 
     /dev/shm/*valkka*
+
+
+**4\. Follow python process memory consumption**
+
+Install smem:
+
+::
+
+    sudo apt-get install smem
+
+After that, run the script memwatch.bash in the aux/ directory.
+
+Valkka-live, for example, names all multiprocesses adequately, so you can easily see if a process is
+leaking memory.
+
+
