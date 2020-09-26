@@ -75,6 +75,14 @@ Finally, run your application's entry point with:
     gdb --args python3 python_program.py
     run
 
+See backtrace with
+
+::
+
+    bt
+
+If the trace point into ``Objects/obmalloc.c``, then the cpp extensions have messed up python object reference counting.  See also `here <https://stackoverflow.com/questions/26330621/python-segfaults-in-pyobject-malloc>`_
+
 
 **3\. Clear semaphores and shared memory every now and then by removing these files**
 

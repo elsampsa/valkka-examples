@@ -1,5 +1,11 @@
-Lesson 4 : Sharing streams between python processes
-===================================================
+Lesson 4 : Receiving Frames at Python
+=====================================
+
+Here we start with two separate python programs: (1) a server that reads RTSP cameras and writes RGB frames into shared memory
+and (2) a client that reads those RGB frames from memory.  For the client program, two versions are provided, the API level 2 being the most compact one.
+    
+Such scheme is only for demo/tutorial purposes.  Normally you would start both the server and client from within the same
+python program.  We give an example of that as well.
 
 Server side
 -----------
@@ -8,8 +14,6 @@ Server side
 
 .. include:: snippets/lesson_4_a.py_
 
-Next we need a separate python process, a client, that reads the frames.  Two versions are provided, the API level 2 being the most compact one.
-    
 .. note:: In the previous lessons, all streaming has taken place at the cpp level.  
           Here we are starting to use posix shared memory and semaphores in order to share frames between python processes, with the ultimate goal
           to share them with machine vision processes.  However, if you need very high-resolution and high fps solutions, you might want to implement the sharing 
@@ -22,9 +26,6 @@ Client side: API level 2
 
 .. include:: snippets/lesson_4_a_client_api2.py_
 
-(an older version of this code snippet is available :download:`[here]<snippets/lesson_4_a_client_api2_0_11_0.py>`)
-
-
 Client side: openCV
 -------------------
 
@@ -36,11 +37,10 @@ OpenCV is a popular machine vision library.  We modify the previous example to m
 
 .. include:: snippets/lesson_4_a_client_opencv.py_
 
-Here the main difference to the previous example is, that the image data is reshaped.  After this, some gaussian blur is applied to the image.  Then it is visualized using openCV's own "high-gui" infrastructure.  If everything went ok, you should see a blurred image of your video once in a second.
+After receiving the RGB frame, some gaussian blur is applied to the image.  Then it is visualized using openCV's own "high-gui" infrastructure.  
+If everything went ok, you should see a blurred image of your video once in a second.
 
 Start this script *after* starting the server side script (server side must also be running).
-
-(an older version of this code snippet is available :download:`[here]<snippets/lesson_4_a_client_opencv_0_11_0.py>`)
 
 
 Client side: API level 1
@@ -52,15 +52,54 @@ API level 2 provides extra wrapping.  Let's see what goes on at the lowest level
 
 .. include:: snippets/lesson_4_a_client.py_
 
-(an older version of this code snippet is available :download:`[here]<snippets/lesson_4_a_client_0_11_0.py>`)
-
 Cpp documentation for Valkka shared memory classes be found `here. <https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html>`_
 
+
+Server + Client
+---------------
+
+**Download server + client example** :download:`[here]<snippets/lesson_4_b.py>`
+
+Here we have a complete example running both server & client within the same python file.
+
+You could wrap the client part further into a python thread, releasing your main python process
+to, say, run a GUI.
+
+Yet another possibility is to run the server and client in separate multiprocesses.  
+In this case one must be extra carefull to spawn the multiprocesses *before* instantiating any libValkka objects,
+since libValkka relies heavily on multithreading (this is the well-known "fork must go before threading" problem).
+
+These problems have been addressed/resolved more deeply in the valkka-live video surveillance client.
+
+But let's turn back to the complete server + client example
+
+.. include:: snippets/lesson_4_b.py_
+
+
+.. _fragmp4:
+
+Receiving frag-MP4 at Python
+----------------------------
+
+**Download frag-MP4 example** :download:`[here]<snippets/lesson_4_c.py>`
+
+Fragmented MP4 (frag-MP4) is a container format suitable for live streaming and playing the video in most web browsers.
+For more information about this, see :ref:`here <cloud>`.
+
+With libValkka you can mux your IP camera's H264 stream on-the-fly into frag-MP4 and then push it into cloud, using Python3 only.
+
+This is similar what we have just done for the RGB bitmap frames.  Now, instead of RGB24 frames, we receive frag-MP4 to the python side.
+
+And, of course, we could do all the following things simultaneously: decode, show on screen, push RGB24 frames for video analysis, push
+frag-MP4 to your browser, etc. However, for clarity, here we just show the video on screen & receive frag-MP4 frames in our
+python process.
+
+.. include:: snippets/lesson_4_c.py_
 
 Advanced topics
 ---------------
 
-By now you have learned how to pass frames from the libValkka infrastructure into a separate python program.
+By now you have learned how to pass frames from the libValkka infrastructure into python.
 
 When creating more serious solutions, you can use a single python program to span multiprocesses (using Python's multiprocessing module) into servers and clients.
 

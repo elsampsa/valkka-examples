@@ -39,6 +39,7 @@ For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github
    qt_notes
    multi_gpu
    valkkafs
+   cloud
    onvif
    pitfalls
    repos

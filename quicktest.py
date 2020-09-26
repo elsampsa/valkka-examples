@@ -33,9 +33,9 @@ else:
     print()
 
     # this is modified automatically by setver.bash - don't touch!
-    VERSION_MAJOR=0
-    VERSION_MINOR=18
-    VERSION_PATCH=1
+    VERSION_MAJOR=1
+    VERSION_MINOR=0
+    VERSION_PATCH=0
 
     print("Checking Valkka python examples")
     print("   version:",str(VERSION_MAJOR)+"."+str(VERSION_MINOR)+"."+str(VERSION_PATCH))
@@ -47,6 +47,7 @@ else:
         print("   .. or update valkka-examples by running 'git pull' in this directory")
         print()
 
+print()
 print("Loading numerical python")
 try:
     import numpy
@@ -78,6 +79,7 @@ else:
         print("    OR SUFFER THE CONSEQUENCES (SEGFAULTS)")
         print()
 
+print()
 print("Loading OpenCV")
 try:
     import cv2
@@ -89,6 +91,7 @@ else:
     print("   Loaded from  ",cv2.__file__)
     print()
 
+print()
 print("Loading PySide2")
 try:
     import PySide2
@@ -99,3 +102,16 @@ else:
     print("   Loaded from  ",PySide2.__file__)
     print()
 
+print()
+print("Checking Shapely")
+try:
+    import shapely
+except Exception as e:
+    print("    shapely not installed")
+else:
+    if shapely.__version__ != '1.6.0':
+        print("    your shapely version is not 1.6.0")
+        print("    with newer shapely versions, prepare for segfaults")
+    else:
+        print("   shapely ok")
+print()

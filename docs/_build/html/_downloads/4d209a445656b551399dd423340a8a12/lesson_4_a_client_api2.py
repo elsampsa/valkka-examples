@@ -7,46 +7,34 @@ The used shmem_name(s) should be same in both server and client, but different f
 <rtf>"""
 from valkka.api2 import ShmemRGBClient
 
-width  =1920//4
-height =1080//4
+width = 1920//4
+height = 1080//4
 
-shmem_name    ="lesson_4"      # This identifies posix shared memory - must be same as in the server side
-shmem_buffers =10              # Size of the shmem ringbuffer
+# This identifies posix shared memory - must be same as in the server side
+shmem_name = "lesson_4"
+shmem_buffers = 10              # Size of the shmem ringbuffer
 
-client=ShmemRGBClient(
-  name          =shmem_name, 
-  n_ringbuffer  =shmem_buffers,   
-  width         =width,
-  height        =height,
-  mstimeout     =1000,        # client timeouts if nothing has been received in 1000 milliseconds
-  verbose       =False
+client = ShmemRGBClient(
+    name=shmem_name,
+    n_ringbuffer=shmem_buffers,
+    width=width,
+    height=height,
+    mstimeout=1000,        # client timeouts if nothing has been received in 1000 milliseconds
+    verbose=False
 )
 
 """<rtf>
 The *mstimeout* defines the semaphore timeout in milliseconds, i.e. the time when the client returns even if no frame was received:
 <rtf>"""
 while True:
-  index, meta = client.pullFrame()
-  # index, meta = client.pullFrameThread() # alternative method for multithreading
-  if index is None:
-    print("timeout")
-  else:
-    data = client.shmem_list[index][0:meta.size]
-    print("data   : ",data[0:min(10,meta.size)])
-    print("width  : ", meta.width)
-    print("height : ", meta.height)
-    print("slot   : ", meta.slot)
-    print("time   : ", meta.mstimestamp)
-    print("size required : ", meta.width * meta.height * 3)
-    print("size copied   : ", meta.size)
-    print()
-    
-    
+    index, meta = client.pullFrame()
+    if (index == None):
+        print("timeout")
+    else:
+        data = client.shmem_list[index][0:meta.size]
+        data = data.reshape((meta.height, meta.width, 3))
+        print("got data: ", data.shape)
 
 """<rtf>
-The *client.shmem_list* is a list of numpy arrays, while meta contains information about the data size, frame width, height, slot and timestamp.  
-
-This example simply prints out the first ten bytes of the RGB image and the metadata of the frame.
-
-If your Python process is running several Python threads, you should use the pullFrameThread method instead: it releases the Python GIL while waiting frames from the ringbuffer.
+The *client.shmem_list* is a list of numpy arrays, while *isize* defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.
 </rtf>"""

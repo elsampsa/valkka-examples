@@ -3,49 +3,60 @@
 
     from valkka.core import *
     
-    width  =1920//4
-    height =1080//4
+    width = 1920//4
+    height = 1080//4
     
-    shmem_name    ="lesson_4"      # This identifies posix shared memory - must be unique
-    shmem_buffers =10              # Size of the shmem ringbuffer
+    shmem_name = "lesson_4"  # This identifies posix shared memory - must be unique
+    shmem_buffers = 10       # Size of the shmem ringbuffer
     
 
 The wrapped cpp class is *SharedMemRingBufferRGB* (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):
 
 :: 
 
-    shmem=SharedMemRingBufferRGB(shmem_name, shmem_buffers, width, height, 1000, False) # shmem id, buffers, w, h, timeout, False=this is a client
-      
+    shmem = SharedMemRingBufferRGB(shmem_name, shmem_buffers, width, height,
+                                   1000, False)  # shmem id, buffers, w, h, timeout, False=this is a client
+    
 
 We are using integer pointers from python:
 
 :: 
 
-    index_p =new_intp() # shmem index
-    isize_p =new_intp() # size of data
-      
+    index_p = new_intp()  # shmem index
+    isize_p = new_intp()  # size of data
+    
 
 Next, get handles to the shared memory as numpy arrays:
 
 :: 
 
-    shmem_list=[]
+    shmem_list = []
     for i in range(shmem_buffers):
-      shmem_list.append(getNumpyShmem(shmem,i)) # getNumpyShmem defined in the swig interface file
-      print("got element i=",i)
-      
+        # getNumpyShmem defined in the swig interface file
+        shmem_list.append(getNumpyShmem(shmem, i))
+        print("got element i=", i)
+    
 
-Finally, start reading frames:
+Finally, start reading frames.
+
+shmem.clientPullPy() returns a tuple with the shared memory ringbuffer
+index and metadata.
+
 
 :: 
 
     while True:
-      got=shmem.clientPull(index_p, isize_p)
-      if (got):
-        index=intp_value(index_p)
-        isize=intp_value(isize_p)
+        tup = shmem.clientPullPy()
+        index = tup[0]
+        if index < 0:
+            print("timeout")
+            continue
+        isize         = tup[1]
+        width         = tup[2]
+        height        = tup[3]
+        slot          = tup[4]
+        mstimestamp   = tup[5]
         print("got index, size =", index, isize)
-        ar=shmem_list[index][0:isize] # this is just a numpy array
-        print("payload         =", ar[0:min(10,isize)])
-      else:
-        print("timeout")
+        ar = shmem_list[index][0:isize]  # this is just a numpy array
+        ar = ar.reshape((height, width, 3)) # this is your rgb image
+        print("payload         =", ar.shape)

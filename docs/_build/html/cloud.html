@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cloud Streaming &#8212; OpenSource Video Management for Linux  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="OnVif &amp; Discovery" href="onvif.html" />
+    <link rel="prev" title="ValkkaFS" href="valkkafs.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cloud-streaming">
+<span id="cloud"></span><h1>Cloud Streaming<a class="headerlink" href="#cloud-streaming" title="Permalink to this headline">¶</a></h1>
+<p>Here we describe how to stream live, low latency video from your IP cameras to cloud and how to visualize the live video in a web browser.</p>
+<p>A good video container format for this is “fragmented MP4” (frag-MP4 aka FMP4).  This is basically the same
+format you have in those .mp4 files of yours, but it is fragmented into smaller chunks (aka “boxes”), so that it can be sent, chunk-by-chunk,
+for low-latency live video streaming over your LAN or WAN.</p>
+<p>LibValkka is able produce the fragmented MP4 “boxes” for you, while you can read them one-by-one, in your python code.  How to do this, please refer to
+the <a class="reference internal" href="lesson_4.html#fragmp4"><span class="std std-ref">tutorial</span></a>.</p>
+<p>After obtaining the MP4 boxes, just use your imagination.  You can send them over the internet using websockets, <a class="reference external" href="https://grpc.io/">gRRP</a>, or any protocol of your choice.
+You can also dump them into an .mp4 file, and that file is understood by all media clients (just remember to cache and write the ftyp and moov packets in the beginning of the file).</p>
+<p>To play live video in your browser, use <a class="reference external" href="https://www.w3.org/TR/media-source/">Media Source Extensions (MSEs)</a>.  Receive the MP4 boxes through a websocket and push them
+into the MSE API to achieve low-latency live video.</p>
+<p>This is a true cross-platform solution, that works in Linux, Windows and desktop Mac iOS.</p>
+<p>As of September 2020, iPhone iOS is still lacking the MSEs, so that is the only
+device where this approach doesn’t work.
+In that case, you should use dynamically generated <a class="reference external" href="https://developer.apple.com/documentation/http_live_streaming/example_playlists_for_http_live_streaming">HLS playlists</a>, while
+in this approach it is again convenient to use frag-MP4.</p>
+<p>For more information about the frag-MP4 structure, see  <a class="reference external" href="https://stackoverflow.com/questions/54186634/sending-periodic-metadata-in-fragmented-live-mp4-stream">this stack overflow post</a>
+and <a class="reference external" href="https://github.com/elsampsa/websocket-mse-demo">this github repository</a>.</p>
+<p>MP4 is described extensively in <a class="reference external" href="https://www.iso.org/standard/68960.html">this document</a>.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
+<a href="index.html">
+    <img class="logo" src="_static/valkka.png">
+</a>
+
+<p>OpenSource Video Management for Linux</p>
+<a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
+<!--
+<p>
+  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+-->
+
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li>
+</ul>
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cloud Streaming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarking.html#debugging">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017 Sampsa Riikonen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/cloud.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-123031237-1']);
+      _gaq.push(['_setDomainName', 'none']);
+      _gaq.push(['_setAllowLinker', true]);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    
+  </body>
+</html>

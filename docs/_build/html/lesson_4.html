@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Lesson 4 : Sharing streams between python processes &#8212; OpenSource Video Management for Linux  documentation</title>
+    <title>Lesson 4 : Receiving Frames at Python &#8212; OpenSource Video Management for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -32,8 +32,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="lesson-4-sharing-streams-between-python-processes">
-<h1>Lesson 4 : Sharing streams between python processes<a class="headerlink" href="#lesson-4-sharing-streams-between-python-processes" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="lesson-4-receiving-frames-at-python">
+<h1>Lesson 4 : Receiving Frames at Python<a class="headerlink" href="#lesson-4-receiving-frames-at-python" title="Permalink to this headline">¶</a></h1>
+<p>Here we start with two separate python programs: (1) a server that reads RTSP cameras and writes RGB frames into shared memory
+and (2) a client that reads those RGB frames from memory.  For the client program, two versions are provided, the API level 2 being the most compact one.</p>
+<p>Such scheme is only for demo/tutorial purposes.  Normally you would start both the server and client from within the same
+python program.  We give an example of that as well.</p>
 <div class="section" id="server-side">
 <h2>Server side<a class="headerlink" href="#server-side" title="Permalink to this headline">¶</a></h2>
 <p><strong>Download server side</strong> <a class="reference download internal" download="" href="_downloads/738c6677ef608ca9799fad3351e7b156/lesson_4_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
@@ -127,7 +131,6 @@
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Next we need a separate python process, a client, that reads the frames.  Two versions are provided, the API level 2 being the most compact one.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In the previous lessons, all streaming has taken place at the cpp level.
@@ -144,44 +147,35 @@ of frames and your machine vision routines directly at the cpp level.</p>
 <p>The used shmem_name(s) should be same in both server and client, but different for another server/client pair.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
-<span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
-<span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
+<span class="n">height</span> <span class="o">=</span> <span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
 
-<span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be same as in the server side</span>
-<span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
+<span class="c1"># This identifies posix shared memory - must be same as in the server side</span>
+<span class="n">shmem_name</span> <span class="o">=</span> <span class="s2">&quot;lesson_4&quot;</span>
+<span class="n">shmem_buffers</span> <span class="o">=</span> <span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 
-<span class="n">client</span><span class="o">=</span><span class="n">ShmemRGBClient</span><span class="p">(</span>
-  <span class="n">name</span>          <span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
-  <span class="n">n_ringbuffer</span>  <span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
-  <span class="n">width</span>         <span class="o">=</span><span class="n">width</span><span class="p">,</span>
-  <span class="n">height</span>        <span class="o">=</span><span class="n">height</span><span class="p">,</span>
-  <span class="n">mstimeout</span>     <span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
-  <span class="n">verbose</span>       <span class="o">=</span><span class="kc">False</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">ShmemRGBClient</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
+    <span class="n">n_ringbuffer</span><span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+    <span class="n">mstimeout</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>The <em>mstimeout</em> defines the semaphore timeout in milliseconds, i.e. the time when the client returns even if no frame was received:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-  <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
-  <span class="c1"># index, meta = client.pullFrameThread() # alternative method for multithreading</span>
-  <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data   : &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;width  : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;height : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slot   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">slot</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">mstimestamp</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size required : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size copied   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
+    <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got data: &quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <em>client.shmem_list</em> is a list of numpy arrays, while meta contains information about the data size, frame width, height, slot and timestamp.</p>
-<p>This example simply prints out the first ten bytes of the RGB image and the metadata of the frame.</p>
-<p>If your Python process is running several Python threads, you should use the pullFrameThread method instead: it releases the Python GIL while waiting frames from the ringbuffer.</p>
-<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/5e3a9a98e0d0abcb2209904985ffcaea/lesson_4_a_client_api2_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
+<p>The <em>client.shmem_list</em> is a list of numpy arrays, while <em>isize</em> defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.</p>
 </div>
 <div class="section" id="client-side-opencv">
 <h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Permalink to this headline">¶</a></h2>
@@ -190,42 +184,46 @@ of frames and your machine vision routines directly at the cpp level.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
-<span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
-<span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
+<span class="n">width</span> <span class="o">=</span> <span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
+<span class="n">height</span> <span class="o">=</span> <span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
 
-<span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be same as in the server side</span>
-<span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
+<span class="c1"># This identifies posix shared memory - must be same as in the server side</span>
+<span class="n">shmem_name</span> <span class="o">=</span> <span class="s2">&quot;lesson_4&quot;</span>
+<span class="n">shmem_buffers</span> <span class="o">=</span> <span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 
-<span class="n">client</span><span class="o">=</span><span class="n">ShmemRGBClient</span><span class="p">(</span>
-  <span class="n">name</span>          <span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
-  <span class="n">n_ringbuffer</span>  <span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
-  <span class="n">width</span>         <span class="o">=</span><span class="n">width</span><span class="p">,</span>
-  <span class="n">height</span>        <span class="o">=</span><span class="n">height</span><span class="p">,</span>
-  <span class="n">mstimeout</span>     <span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
-  <span class="n">verbose</span>       <span class="o">=</span><span class="kc">False</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">ShmemRGBClient</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
+    <span class="n">n_ringbuffer</span><span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+    <span class="n">mstimeout</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
 <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-  <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">index</span><span class="o">==</span><span class="kc">None</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data   : &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)])</span>
+    <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data   : &quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;width  : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;height : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slot   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">slot</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">mstimestamp</span><span class="p">)</span>
     <span class="n">img</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="c1"># img2 =imutils.resize(img, width=500)</span>
-    <span class="n">img</span> <span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;valkka_opencv_demo&quot;</span><span class="p">,</span><span class="n">img</span><span class="p">)</span>
-    <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got frame&quot;</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c1">## depending on how you have installed your openCV, this might not work:</span>
+    <span class="c1">## (use at your own risk)</span>
+    <span class="c1">#cv2.imshow(&quot;valkka_opencv_demo&quot;, img)</span>
+    <span class="c1">#cv2.waitKey(1)</span>
 </pre></div>
 </div>
-<p>Here the main difference to the previous example is, that the image data is reshaped.  After this, some gaussian blur is applied to the image.  Then it is visualized using openCV’s own “high-gui” infrastructure.  If everything went ok, you should see a blurred image of your video once in a second.</p>
+<p>After receiving the RGB frame, some gaussian blur is applied to the image.  Then it is visualized using openCV’s own “high-gui” infrastructure.
+If everything went ok, you should see a blurred image of your video once in a second.</p>
 <p>Start this script <em>after</em> starting the server side script (server side must also be running).</p>
-<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/f4edf8f15f7fde0ca5343048d6f59004/lesson_4_a_client_opencv_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
 </div>
 <div class="section" id="client-side-api-level-1">
 <h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Permalink to this headline">¶</a></h2>
@@ -233,51 +231,305 @@ of frames and your machine vision routines directly at the cpp level.</p>
 <p>API level 2 provides extra wrapping.  Let’s see what goes on at the lowest level (plain, cpp wrapped python code).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 
+<span class="n">width</span> <span class="o">=</span> <span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
+<span class="n">height</span> <span class="o">=</span> <span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
+
+<span class="n">shmem_name</span> <span class="o">=</span> <span class="s2">&quot;lesson_4&quot;</span>  <span class="c1"># This identifies posix shared memory - must be unique</span>
+<span class="n">shmem_buffers</span> <span class="o">=</span> <span class="mi">10</span>       <span class="c1"># Size of the shmem ringbuffer</span>
+</pre></div>
+</div>
+<p>The wrapped cpp class is <em>SharedMemRingBufferRGB</em> (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem</span> <span class="o">=</span> <span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span>
+                               <span class="mi">1000</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
+</pre></div>
+</div>
+<p>Next, get handles to the shared memory as numpy arrays:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shmem_buffers</span><span class="p">):</span>
+    <span class="c1"># getNumpyShmem defined in the swig interface file</span>
+    <span class="n">shmem_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getNumpyShmem</span><span class="p">(</span><span class="n">shmem</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got element i=&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, start reading frames.</p>
+<p>shmem.clientPullPy() returns a tuple with the shared memory ringbuffer
+index and metadata.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">tup</span> <span class="o">=</span> <span class="n">shmem</span><span class="o">.</span><span class="n">clientPullPy</span><span class="p">()</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">isize</span>         <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">width</span>         <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">height</span>        <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">slot</span>          <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">mstimestamp</span>   <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got index, size =&quot;</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">isize</span><span class="p">)</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">isize</span><span class="p">]</span>  <span class="c1"># this is just a numpy array</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># this is your rgb image</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;payload         =&quot;</span><span class="p">,</span> <span class="n">ar</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Cpp documentation for Valkka shared memory classes be found <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html">here.</a></p>
+</div>
+<div class="section" id="server-client">
+<h2>Server + Client<a class="headerlink" href="#server-client" title="Permalink to this headline">¶</a></h2>
+<p><strong>Download server + client example</strong> <a class="reference download internal" download="" href="_downloads/70a10ba3fb755997055f76662af6b20d/lesson_4_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>Here we have a complete example running both server &amp; client within the same python file.</p>
+<p>You could wrap the client part further into a python thread, releasing your main python process
+to, say, run a GUI.</p>
+<p>Yet another possibility is to run the server and client in separate multiprocesses.
+In this case one must be extra carefull to spawn the multiprocesses <em>before</em> instantiating any libValkka objects,
+since libValkka relies heavily on multithreading (this is the well-known “fork must go before threading” problem).</p>
+<p>These problems have been addressed/resolved more deeply in the valkka-live video surveillance client.</p>
+<p>But let’s turn back to the complete server + client example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
+</pre></div>
+</div>
+<p>The filtergraph, once again:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">-------------------------------------+</span>  <span class="n">main</span> <span class="n">branch</span><span class="p">,</span> <span class="n">streaming</span>
+                                                             <span class="o">|</span>
+<span class="p">{</span><span class="n">ForkFrameFilter</span><span class="p">:</span> <span class="n">fork_filter</span><span class="p">}</span> <span class="o">&lt;----</span><span class="p">(</span><span class="n">AVThread</span><span class="p">:</span><span class="n">avthread</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="o">--+</span>  <span class="n">main</span> <span class="n">branch</span><span class="p">,</span> <span class="n">decoding</span>
+               <span class="o">|</span>
+      <span class="n">branch</span> <span class="mi">1</span> <span class="o">+-&gt;&gt;</span> <span class="p">(</span><span class="n">OpenGLThread</span><span class="p">:</span><span class="n">glthread</span><span class="p">)</span>
+               <span class="o">|</span>
+      <span class="n">branch</span> <span class="mi">2</span> <span class="o">+--&gt;</span> <span class="p">{</span><span class="n">IntervalFrameFilter</span><span class="p">:</span> <span class="n">interval_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">SwScaleFrameFilter</span><span class="p">:</span> <span class="n">sws_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">RGBSharedMemFrameFilter</span><span class="p">:</span> <span class="n">shmem_filter</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
+<span class="n">image_interval</span><span class="o">=</span><span class="mi">1000</span>  <span class="c1"># YUV =&gt; RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer</span>
+
+<span class="c1"># define rgb image dimensions</span>
 <span class="n">width</span>  <span class="o">=</span><span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span><span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
-
+</pre></div>
+</div>
+<p>RGBSharedMemFrameFilter needs unique name and the size of the shared memory ring-buffer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># posix shared memory</span>
 <span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 </pre></div>
 </div>
-<p>The wrapped cpp class is <em>SharedMemRingBufferRGB</em> (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem</span> <span class="o">=</span> <span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
+<p>Next, we construct the filterchain as usual, from end-to-beginning:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
+<span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
+<span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+
+<span class="c1"># branch 2</span>
+<span class="n">shmem_filter</span>    <span class="o">=</span><span class="n">RGBShmemFrameFilter</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="c1"># shmem_filter    =BriefInfoFrameFilter(&quot;shmem&quot;) # a nice way for debugging to see of you are actually getting any frames here ..</span>
+<span class="n">sws_filter</span>      <span class="o">=</span><span class="n">SwScaleFrameFilter</span><span class="p">(</span><span class="s2">&quot;sws_filter&quot;</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">shmem_filter</span><span class="p">)</span>
+<span class="n">interval_filter</span> <span class="o">=</span><span class="n">TimeIntervalFrameFilter</span><span class="p">(</span><span class="s2">&quot;interval_filter&quot;</span><span class="p">,</span> <span class="n">image_interval</span><span class="p">,</span> <span class="n">sws_filter</span><span class="p">)</span>
+
+<span class="c1"># fork</span>
+<span class="n">fork_filter</span>     <span class="o">=</span><span class="n">ForkFrameFilter</span><span class="p">(</span><span class="s2">&quot;fork_filter&quot;</span><span class="p">,</span> <span class="n">gl_in_filter</span><span class="p">,</span> <span class="n">interval_filter</span><span class="p">)</span>
+
+<span class="c1"># main branch</span>
+<span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">fork_filter</span><span class="p">)</span>
+<span class="n">av_in_filter</span>    <span class="o">=</span><span class="n">avthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+<span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We are using an integer pointers and a metadata object:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">index_p</span> <span class="o">=</span> <span class="n">new_intp</span><span class="p">()</span> <span class="c1"># shmem index</span>
-<span class="n">meta</span>    <span class="o">=</span> <span class="n">RGB24Meta</span><span class="p">()</span>
+<p>Define connection to camera: frames from the IP camera are written to live_out_filter and tagged with slot number 1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, av_in_filter)</span>
+<span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.134&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Next, get the shared memory ringbuffer as a list of numpy arrays:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_list</span> <span class="o">=</span> <span class="n">shmem</span><span class="o">.</span><span class="n">getBufferListPy</span><span class="p">()</span>
+<p>Start threads:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+
+<span class="c1"># start decoding</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">decodingOnCall</span><span class="p">()</span>
+
+<span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+
+<span class="c1"># create an X-window</span>
+<span class="n">window_id</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">newRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+
+<span class="c1"># maps stream with slot 1 to window &quot;window_id&quot;</span>
+<span class="n">context_id</span><span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderContextCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">window_id</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Finally, start reading frames:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-  <span class="n">got</span> <span class="o">=</span> <span class="n">shmem</span><span class="o">.</span><span class="n">clientPullFrame</span><span class="p">(</span><span class="n">index_p</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
-  <span class="c1"># got = shmem.clientPullFrameThread(index_p, meta) # if you are using multithreading</span>
-  <span class="k">if</span> <span class="n">got</span><span class="p">:</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="n">intp_value</span><span class="p">(</span><span class="n">index_p</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data   : &quot;</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;width  : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;height : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slot   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">slot</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">mstimestamp</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size required : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">meta</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size copied   : &quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-  <span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+<p>Ok, the server is alive and running.  Let’s do the client part for receiving frames.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">ShmemRGBClient</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
+    <span class="n">n_ringbuffer</span><span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span>
+    <span class="n">mstimeout</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>        <span class="c1"># client timeouts if nothing has been received in 1000 milliseconds</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>(an older version of this code snippet is available <a class="reference download internal" download="" href="_downloads/63bea3c536de0191fd3d46f4b71b7fdc/lesson_4_a_client_0_11_0.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a>)</p>
-<p>Cpp documentation for Valkka shared memory classes be found <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html">here.</a></p>
+<p>The client is ready to go.  Before starting to receive frames, start playing the RTSP camera</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Read 10 frames &amp; exit</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;client starting&quot;</span><span class="p">)</span>
+<span class="n">cc</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">meta</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got data: &quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">cc</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="k">break</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stopping..&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Clear the server</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+
+<span class="c1"># stop decoding</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">decodingOffCall</span><span class="p">()</span>
+
+<span class="c1"># stop threads</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="receiving-frag-mp4-at-python">
+<span id="fragmp4"></span><h2>Receiving frag-MP4 at Python<a class="headerlink" href="#receiving-frag-mp4-at-python" title="Permalink to this headline">¶</a></h2>
+<p><strong>Download frag-MP4 example</strong> <a class="reference download internal" download="" href="_downloads/809879b6893b71bfa91393646ed0ebe4/lesson_4_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
+<p>Fragmented MP4 (frag-MP4) is a container format suitable for live streaming and playing the video in most web browsers.
+For more information about this, see <a class="reference internal" href="cloud.html#cloud"><span class="std std-ref">here</span></a>.</p>
+<p>With libValkka you can mux your IP camera’s H264 stream on-the-fly into frag-MP4 and then push it into cloud, using Python3 only.</p>
+<p>This is similar what we have just done for the RGB bitmap frames.  Now, instead of RGB24 frames, we receive frag-MP4 to the python side.</p>
+<p>And, of course, we could do all the following things simultaneously: decode, show on screen, push RGB24 frames for video analysis, push
+frag-MP4 to your browser, etc. However, for clarity, here we just show the video on screen &amp; receive frag-MP4 frames in our
+python process.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">FragMP4ShmemClient</span>
+</pre></div>
+</div>
+<p>The filtergraph for simultaneous video viewing and frag-MP4 muxing looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;----------------------------------+</span>  <span class="n">main</span> <span class="n">branch</span> <span class="p">(</span><span class="n">forks</span> <span class="n">into</span> <span class="n">two</span><span class="p">)</span>
+                                                             <span class="o">|</span>
+<span class="p">(</span><span class="n">OpenGLThread</span><span class="p">:</span><span class="n">glthread</span><span class="p">)</span> <span class="o">&lt;----</span><span class="p">(</span><span class="n">AVThread</span><span class="p">:</span><span class="n">avthread</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="o">---------+</span>  <span class="n">decoding</span> <span class="n">branch</span>
+                                                             <span class="o">|</span>
+     <span class="o">+-----------------------------------------&lt;-------------+</span>  <span class="n">mux</span> <span class="n">branch</span>
+     <span class="o">|</span>
+     <span class="o">+--&gt;</span> <span class="p">{</span><span class="n">FragMP4MuxFrameFilter</span><span class="p">:</span><span class="n">fragmp4muxer</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">FragMP4ShmemFrameFilter</span><span class="p">:</span><span class="n">fragmp4shmem</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_buffers</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 10 element in the ring-buffer</span>
+<span class="n">shmem_name</span> <span class="o">=</span> <span class="s2">&quot;lesson_4_c&quot;</span> <span class="c1"># unique name identifying the shared memory</span>
+<span class="n">cellsize</span> <span class="o">=</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="o">*</span><span class="mi">3</span> <span class="c1"># max size for each MP4 fragment</span>
+<span class="n">timeout</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># in ms</span>
+
+<span class="c1"># decoding branch</span>
+<span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
+<span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+<span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">gl_in_filter</span><span class="p">)</span>
+<span class="n">av_in_filter</span>    <span class="o">=</span><span class="n">avthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
+
+<span class="c1"># mux branch</span>
+<span class="n">shmem_filter</span>    <span class="o">=</span><span class="n">FragMP4ShmemFrameFilter</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">cellsize</span><span class="p">)</span>
+<span class="n">mux_filter</span>      <span class="o">=</span><span class="n">FragMP4MuxFrameFilter</span><span class="p">(</span><span class="s2">&quot;fragmp4muxer&quot;</span><span class="p">,</span> <span class="n">shmem_filter</span><span class="p">)</span>
+<span class="n">mux_filter</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span> <span class="c1"># don&#39;t forget!</span>
+
+<span class="c1"># fork</span>
+<span class="n">fork_filter</span>     <span class="o">=</span><span class="n">ForkFrameFilter</span><span class="p">(</span><span class="s2">&quot;fork_filter&quot;</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">,</span> <span class="n">mux_filter</span><span class="p">)</span>
+
+<span class="c1"># main branch</span>
+<span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Define connection to camera: frames from the IP camera are written to live_out_filter and tagged with slot number 1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, fork_filter)</span>
+<span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.134&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fork_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Start threads:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+
+<span class="c1"># start decoding</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">decodingOnCall</span><span class="p">()</span>
+
+<span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+
+<span class="c1"># create an X-window</span>
+<span class="n">window_id</span> <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">createWindow</span><span class="p">()</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">newRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+
+<span class="c1"># maps stream with slot 1 to window &quot;window_id&quot;</span>
+<span class="n">context_id</span><span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">newRenderContextCall</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">window_id</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Ok, the server is alive and running.  Let’s do the client part for receiving frames.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">FragMP4ShmemClient</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
+    <span class="n">n_ringbuffer</span><span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
+    <span class="n">n_size</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span>
+    <span class="n">mstimeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The client is ready to go.  Before starting to receive frames, start playing the RTSP camera</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Read 10 frames &amp; exit</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;client starting&quot;</span><span class="p">)</span>
+<span class="n">cc</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">shmem_list</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got&quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="s2">&quot;of size&quot;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">cc</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="k">break</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;stopping..&quot;</span><span class="p">)</span>
+
+<span class="n">mux_filter</span><span class="o">.</span><span class="n">deActivate</span><span class="p">()</span> <span class="c1"># don&#39;t forget!</span>
+</pre></div>
+</div>
+<p>Clear the server</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
+
+<span class="c1"># stop decoding</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">decodingOffCall</span><span class="p">()</span>
+
+<span class="c1"># stop threads</span>
+<span class="n">livethread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">avthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+<span class="n">glthread</span><span class="o">.</span><span class="n">stopCall</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="advanced-topics">
 <h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h2>
-<p>By now you have learned how to pass frames from the libValkka infrastructure into a separate python program.</p>
+<p>By now you have learned how to pass frames from the libValkka infrastructure into python.</p>
 <p>When creating more serious solutions, you can use a single python program to span multiprocesses (using Python’s multiprocessing module) into servers and clients.</p>
 <p>In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication between them, so that the multiprocesses
 will instantiate the server and client in the correct order.</p>
@@ -343,6 +595,7 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
