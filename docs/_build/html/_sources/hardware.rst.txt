@@ -8,9 +8,10 @@ IP Cameras
 
 Initial configuration of IP cameras can be a hurdle:
 
-Chinese IP cameras typically require a half-broken Active-X (!) web-extension you have to download (to use with some outdated version of internet explorer).
+Many IP cameras typically require a half-broken Active-X (!) web-extension you have to download 
+(to use with some outdated version of internet explorer).
 
-Once you have sorted out this chinese software-engineering *tour-de-force*, you are good to go with OnVif and the RTSP protocol (as supported by libValkka).
+Once you have sorted out those manufacturer-dependent issues you are good to go with OnVif and the RTSP protocol (as supported by libValkka).
 
 Axis cameras, on the other hand, have a decent (standard javascript) web-interface for camera initial configuration.
 

@@ -38,8 +38,9 @@
 <h2>IP Cameras<a class="headerlink" href="#ip-cameras" title="Permalink to this headline">¶</a></h2>
 <p><em>OnVif compliant IP cameras (supporting the RTSP protocol)</em></p>
 <p>Initial configuration of IP cameras can be a hurdle:</p>
-<p>Chinese IP cameras typically require a half-broken Active-X (!) web-extension you have to download (to use with some outdated version of internet explorer).</p>
-<p>Once you have sorted out this chinese software-engineering <em>tour-de-force</em>, you are good to go with OnVif and the RTSP protocol (as supported by libValkka).</p>
+<p>Many IP cameras typically require a half-broken Active-X (!) web-extension you have to download
+(to use with some outdated version of internet explorer).</p>
+<p>Once you have sorted out those manufacturer-dependent issues you are good to go with OnVif and the RTSP protocol (as supported by libValkka).</p>
 <p>Axis cameras, on the other hand, have a decent (standard javascript) web-interface for camera initial configuration.</p>
 <p>Once you have done succesfull initial configuration, you can test the rtsp connection, with, say, using ffmpeg:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ffmpeg</span> <span class="n">rtsp</span><span class="p">:</span><span class="o">//</span><span class="n">user</span><span class="p">:</span><span class="n">password</span><span class="nd">@ip</span><span class="o">-</span><span class="n">address</span>
