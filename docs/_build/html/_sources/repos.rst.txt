@@ -6,7 +6,7 @@ Repository Index
 =========================================================================== ======= =============================================== =================
 Repository                                                                  License About                                           Namespaces
 =========================================================================== ======= =============================================== =================
-`valkka-core <https://github.com/elsampsa/valkka-core>`_                    AGPL    | Core cpp code, api level 1 & 2 python code    | valkka.core
+`valkka-core <https://github.com/elsampsa/valkka-core>`_                    LGPL    | Core cpp code, api level 1 & 2 python code    | valkka.core
                                                                                     |                                               | valkka.api2
 `valkka-examples <https://github.com/elsampsa/valkka-examples>`_            MIT     | Python tests & demo programs.  Qt demo        |
                                                                                     | programs. See :ref:`here <testsuite>`         |
@@ -20,4 +20,4 @@ Repository                                                                  Lice
 =========================================================================== ======= =============================================== =================
 
 
-All AGPL licensed repositories can be licensed as LGPL, see :ref:`here <licensing>`.
+If you need an LGPL license for valkka-live, please contact us.

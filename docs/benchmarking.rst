@@ -104,4 +104,7 @@ After that, run the script memwatch.bash in the aux/ directory.
 Valkka-live, for example, names all multiprocesses adequately, so you can easily see if a process is
 leaking memory.
 
+**\5. Prefer PyQt5 over PySide2**
 
+You have the option of using PyQt5 instead of PySide2.  The former is significantly more stable and handles the tricky
+cpp Qt vs. Python reference counting correctly.  Especially if you get that thing mention in (2), consider switching to PyQt5.
