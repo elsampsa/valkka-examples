@@ -1,0 +1,22 @@
+FROM ubuntu:18.04
+
+USER root
+
+ENV TZ=Europe/Helsinki
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update
+RUN apt-get install -y python3 mesa-utils glew-utils python3-numpy v4l-utils python3-pip openssl
+RUN apt-get install -y python3-opencv
+## some additional tools to test with:
+RUN apt-get install -y ffmpeg vlc wget
+
+RUN mkdir -p /valkka
+WORKDIR /valkka
+COPY Valkka-* .
+
+## debug build created at my localhost
+RUN dpkg -i *.deb
+# RUN apt-get install -fy
+
+RUN wget https://raw.githubusercontent.com/elsampsa/valkka-examples/master/quicktest.py

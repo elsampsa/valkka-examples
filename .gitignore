@@ -13,3 +13,4 @@ venv
 docs/_build/doctrees/environment.pickle
 playground
 /.vscode/
+docker/Valkka-*.deb
