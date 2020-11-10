@@ -63,18 +63,17 @@ class BasicFilterChain:
     - They are typically read using another multiprocess elsewhere in your streaming system.
     """
 
-    def __init__(self, address = None, slot = None, rgb_sync_event = None, fmp4_sync_event = None):
+    def __init__(self, address = None, slot = None):
         assert(isinstance(address, str))
         assert(isinstance(slot, int))
-        assert(isinstance(rgb_sync_event, core.EventFd))
-        assert(isinstance(fmp4_sync_event, core.EventFd))
+
+        self.rgb_sync_event = reserveEventFd()
+        self.fmp4_sync_event = reserveEventFd()
 
         id_ = str(id(self))        
         self.active = True
         self.rtsp_address = address
         self.slot = slot
-        self.rgb_sync_event = rgb_sync_event
-        self.fmp4_sync_event = fmp4_sync_event
 
         # RGB interpolation interval and shared memory definitions
         # define yuv=>rgb interpolation interval
@@ -173,12 +172,16 @@ class BasicFilterChain:
 
     def getRGBParameters(self):
         """Returns shared memory parameters.  Use this function to get them for the client
+        
+        TODO: get eventfd & add it to the pars, same for fmp4
         """
+
         return {
             "name": self.rgb_shmem_name,
             "n_ringbuffer": self.rgb_shmem_buffers,
             "width": self.width,
-            "height": self.height
+            "height": self.height,
+            "ipc_index" : eventFdToIndex(self.rgb_sync_event)
         }
 
 
@@ -194,7 +197,8 @@ class BasicFilterChain:
         return {
             "name": self.fmp4_shmem_name,
             "n_ringbuffer": self.fmp4_shmem_buffers,
-            "n_size": self.fmp4_shmem_cellsize
+            "n_size": self.fmp4_shmem_cellsize,
+            "ipc_index" : eventFdToIndex(self.fmp4_sync_event)
         }
 
 

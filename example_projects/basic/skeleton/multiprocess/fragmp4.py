@@ -50,6 +50,7 @@ class FragMP4Process(AsyncBackMessageProcess):
         """    
         print("preRun__")
         self.client_by_fd = {}
+        self.count_by_fd = {}
         self.shmem_pars_by_slot = {}
 
 
@@ -69,7 +70,10 @@ class FragMP4Process(AsyncBackMessageProcess):
         """This is the final thing executed in the asynchronous event loop before process exit
         """
         print("asyncPost__")
-        self.client_by_fd = {}
+        for fd in list(self.client_by_fd.keys()):
+            self.client_by_fd.pop(fd)
+            self.count_by_fd.pop(fd)
+            asyncio.get_event_loop().remove_reader(fd)
 
 
     async def c__activateFMP4Client(self, 
@@ -96,6 +100,7 @@ class FragMP4Process(AsyncBackMessageProcess):
             # tell asyncio to listen to a file-descriptor and 
             # launch a callback when that file-descriptor triggers
             asyncio.get_event_loop().add_reader(fd, self.fmp4callback__, fd)
+            self.count_by_fd[fd] = 0
             # .. that callback must be normal (not asyncio) python
             # finally, let's send a message to the main python process:
         except Exception as e:
@@ -109,23 +114,33 @@ class FragMP4Process(AsyncBackMessageProcess):
         fd = eventfd.getFd()
         try:
             self.client_by_fd.pop(fd)
+            self.count_by_fd.pop(fd)
         except KeyError:
             print("deactivateFMP4Client__ : no client at ipc_index", ipc_index)
             raise
+        asyncio.get_event_loop().remove_reader(fd)
     
 
     def fmp4callback__(self, fd):
         """NOTE:
         - "normal" (i.e. not asyncio) python
         - use only non-blocking calls!
+        - remember to cache moov & ftyp packets for later use
         """
-        client = self.client_by_fd[fd]
+        try:
+            client = self.client_by_fd[fd]
+        except KeyError:
+            print("FragMP4Process: fmp4callback__ : no client at fd", fd)
         index, meta = client.pullFrame()
         if (index == None):
-            print("frag-mp4 client timeout")
+            print("FragMP4Process: fmp4callback__ : client timeout")
         else:
-            print("got fmp4 fragment of size", meta.size)
-            print("of type", meta.name)
+            self.count_by_fd[fd] += 1
+            if self.count_by_fd[fd] % 100 == 0:
+                print("FragMP4Process: fmp4callback__ : number of fmp4 fragments received is", self.count_by_fd[fd])
+                print("FragMP4Process: fmp4callback__ : got fmp4 fragment of size", meta.size)
+                print("FragMP4Process: fmp4callback__ : of type", meta.name)
+
             data = client.shmem_list[index][0:meta.size]
             """
             ..thats a numpy array of your fmp4 fragment

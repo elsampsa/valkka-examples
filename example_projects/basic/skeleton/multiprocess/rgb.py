@@ -85,7 +85,7 @@ class RGB24Process(MessageProcess):
                 client = self.client_by_fd[fd]
                 index, meta = client.pullFrame()
                 if (index == None):
-                    print("weird.. rgb client got none")
+                    print("RGB24Process: handleFrame__ : weird.. rgb client got none")
                 else:
                     data = client.shmem_list[index][0:meta.size]
                     data = data.reshape((meta.height, meta.width, 3))
@@ -93,7 +93,7 @@ class RGB24Process(MessageProcess):
 
 
     def handleFrame__(self, frame, meta):
-        print("got frame", frame.shape, "from slot", meta.slot)
+        print("RGB24Process: handleFrame__ : rgb client got frame", frame.shape, "from slot", meta.slot)
         """metadata has the following members:
         size 
         width
@@ -102,11 +102,10 @@ class RGB24Process(MessageProcess):
         mstimestamp
         """
         # send a message to the main process like this:
-        # self.send_out__({})
+        self.send_out__({"results from" : "RGB24Process"})
 
 
     # commands that come from the main python process (aka frontend)
-
     def c__activateRGB24Client(self, 
             name = None, 
             n_ringbuffer = None, 
@@ -117,7 +116,7 @@ class RGB24Process(MessageProcess):
         """This will activate a shared memory client that reads RGB24 frames
         from shared memory libValkka c++ side (as defined in your filterchain)
         """
-        print("c__activateClient called with", name, n_ringbuffer, width, height)
+        print("c__activateRGB24Client called with", name, n_ringbuffer, width, height)
         client = ShmemRGBClient(
             name = name,
             n_ringbuffer = n_ringbuffer,
@@ -141,7 +140,7 @@ class RGB24Process(MessageProcess):
         try:
             self.client_by_fd.pop(fd)
         except KeyError:
-            print("c__deactivateClient : no client at ipc_index", ipc_index)
+            print("c__deactivateRGB24Client : no client at ipc_index", ipc_index)
 
 
     def c__customCall(self, parameter = 1):

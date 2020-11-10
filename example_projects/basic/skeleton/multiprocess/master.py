@@ -57,8 +57,11 @@ class MasterProcess(MessageProcess):
             if fd in frame_fds:
                 client = self.client_by_fd[fd]
                 index, meta = client.pullFrame()
+                # TODO at cpp side : if shmem server side feeds much larger frames
+                # than defined for the client, that line gets stuck
+
                 if (index == None):
-                    print("weird.. rgb client got none")
+                    print("MasterProcess: weird.. rgb client got none")
                 else:
                     data = client.shmem_list[index][0:meta.size]
                     data = data.reshape((meta.height, meta.width, 3))
@@ -66,7 +69,7 @@ class MasterProcess(MessageProcess):
 
 
     def handleFrame__(self, frame, meta, fd):
-        print("got frame", frame.shape)
+        print("MasterProcess: handleFrame__ : got frame", frame.shape)
         server = self.intercom_server_by_client_fd[fd]
         # here you would use your heavy neural net detector instance
         # and create a message with, for example, the bounding box coordinates
@@ -91,13 +94,15 @@ class MasterProcess(MessageProcess):
             n_ringbuffer = n_ringbuffer,
             width = width,
             height = height,
-            mstimeout = self.mstimeout,
+            # mstimeout = self.mstimeout,
+            mstimeout = 1,
             verbose = False
         )
         eventfd = getEventFd(ipc_index)
         client.useEventFd(eventfd) # do not forget!
         # let's get a posix file descriptor, i.e. a plain integer:
         fd = eventfd.getFd()
+        print("c__registerClientProcess: will listen fd", fd)
         self.client_by_fd[fd] = client
         # establish a shmem channel for communicating the results back to the client process
 
@@ -111,6 +116,7 @@ class MasterProcess(MessageProcess):
         server = ShmemServer(**intercom_pars)
         server.useEventFd(eventfd)
         intercom_fd = eventfd.getFd()
+        print("c__registerClientProcess: will write messages to fd", fd)
         self.intercom_server_by_fd[intercom_fd] = server
         self.intercom_server_by_client_fd[fd] = server
         intercom_pars["ipc_index"] = intercom_ipc_index

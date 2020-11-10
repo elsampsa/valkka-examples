@@ -1,8 +1,11 @@
-"""This is a global singleton module that must be imported in the very beginning by any other module that wishes to do multiprocess intercommunication.
+"""This is a global singleton module that must be imported in the very beginning 
+by any other module that wishes to do multiprocess intercommunication.
 
-This way the interprocess-communication (ipc) file descriptors are visible to all multiprocesses (for more info, see [here](https://linux.die.net/man/2/eventfd)).
+This way the interprocess-communication (ipc) file descriptors are visible 
+to all multiprocesses.
 
-File descriptors allow you to multiplex several frame sources at a single process.  What that means, please see Python's socket howto: https://docs.python.org/3/howto/sockets.html
+File descriptors allow you to multiplex several frame sources at a single process.  
+For multiplexing file descriptors, see this: https://docs.python.org/3/howto/sockets.html
 
 Never call reserveEventFd / releaseEventFd 
 from a multiprocess backend as the eventfd file-descriptors 
@@ -18,7 +21,12 @@ events_index = []
 
 for i in range(n):
     events.append(core.EventFd())
-    # EventFD has method getFd that returns the numerical value of
+    #
+    # core.EventFd encapsulates an event file descriptor:
+    #
+    # https://linux.die.net/man/2/eventfd
+    # 
+    # EventFd has method getFd that returns the numerical value of
     # the file descriptor
     events_index.append(i)
 
