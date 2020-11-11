@@ -119,6 +119,9 @@ For example, the Valkka Live program takes advantage of these features.  It perf
 
 Number (1) works at the cpp side.  (2) Is a separate multiprocess running OpenCV-based analysis.  (3) Is a common Yolo object detector for all the clients.
 
+For an example of a more serious multiprocessing project, please take a look `here <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_.
+
+
 
 
 

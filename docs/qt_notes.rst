@@ -99,7 +99,7 @@ Let's state that graphically:
                                                          
                                                          python multiprocesses doing their thing
                                                          and writing/reading their communication pipes
-                                                         ==> subclass from valkka.api2.multiprocess.ValkkaProcess
+                                                         ==> subclass from valkka.multiprocess.MessageProcess
 
   
 Note that we only need a single QValkkaThread to control several multiprocesses.
@@ -125,7 +125,7 @@ Let's dig deeper into our strategy for interprocess communication with the Qt si
     |                          |       |          : 
     | def pong(): # qt slot    |       |          :
     |   sendSignal("pong") ---------+  |          :
-    |                          |    |  |          :    valkka.api2.multiprocess.ValkkaProcess    
+    |                          |    |  |          :    valkka.multiprocess.MessageProcess
     +--------------------------+    |  |          :
     | Backend methods          |    |  |          :    Backend is running in the "background" in its own virtual memory space
     |                          |    |  |          :
@@ -139,11 +139,13 @@ Let's dig deeper into our strategy for interprocess communication with the Qt si
     +--------------------------+                ..:
           
           
-The class **valkka.api2.multiprocess.ValkkaProcess** provides a model class that has been derived from python's **multiprocessing.Process** class.  In ValkkaProcess, the class has both "frontend" and "backend" methods.  
+The class **valkka.multiprocess.MessageProcess** provides a model class that has been derived from python's **multiprocessing.Process** class.  
+In MessageProcess, the class has both "frontend" and "backend" methods.  
 
-Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), while backend methods are called only from within the processes "run" method - i.e. at the "other side" of the fork, where the forked process lives in its own virtual memory space.
+Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), 
+while backend methods are called only from within the processes "run" method - i.e. at the "other side" of the fork, where the forked process lives in its own virtual memory space.
 
-A signalling scheme between back- and frontend is provided in the ValkkaProcess class.  Don't be afraid - the ValkkaProcess class is just a few lines of python code!
+A signalling scheme between back- and frontend is provided in the MessageProcess class.  Don't be afraid - the MessageProcess class is just a few lines of python code!
           
 To make starting easier, two stripped-down sample programs are provided in:
 
@@ -154,7 +156,7 @@ To make starting easier, two stripped-down sample programs are provided in:
     multiprocessing_demo.py
     multiprocessing_demo_signals.py
 
-Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system!
+Try them with python3 to see the magic of python multiprocesses connecting with the Qt signal/slot system.
 
 Finally, for creating your own Qt application having a frontend QThread, that controls OpenCV process(es), copy the following file into your own module:
 
@@ -171,20 +173,22 @@ It contains:
   - *QValkkaThread* (the frontend QThread) that you can use in your own applications.  
 
 Consult the *test_studio_*.py* programs how to use these classes.
-    
+
+A more full-blown multiprocess orchestration example can be found as a separate python package, from `here <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_.
+
     
 .. _multiprocess_warning:
 
 Multiprocessing Warning
 -----------------------
 
-Before you go full-throttle into launching multiprocesses that pull frames from shared memory and perform analysis with Keras on those frames, be aware of a very common multithread/processing pitfall:
+Before you go full-throttle into launching multiprocesses that pull frames from shared memory, please be aware of a very common multithread/processing pitfall:
 
 **you should spawn your multiprocess before spawning threads**
 
 Here "spawning the multiprocess" is a synonym to "fork".
 
-You can expect many of the libraries you'll be using with Valkka, to rely heavily on multithreading.  Say, openCV and Keras.
+You can expect many of the libraries you'll be using with Valkka, to rely heavily on multithreading.
 
 A well-known problem arises, if you **first** import a library that **spawns several threads**, and **after** that perform a **fork**.  This leads to an undefined situation with "dangling" multithreads, creating segfaults and mysterious memory leaks.
 

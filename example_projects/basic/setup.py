@@ -8,7 +8,7 @@ version = '0.0.0'
 setup(
     name = "skeleton",
     version = version,
-    install_requires = [
+    install_requires = [  
     ],
     include_package_data=True, # # conclusion: NEVER forget this : files get included but not installed
     # # WARNING: If you are using namespace packages, automatic package finding does not work, so use this:

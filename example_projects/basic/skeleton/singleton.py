@@ -7,7 +7,7 @@ to all multiprocesses.
 File descriptors allow you to multiplex several frame sources at a single process.  
 For multiplexing file descriptors, see this: https://docs.python.org/3/howto/sockets.html
 
-Never call reserveEventFd / releaseEventFd 
+A warning: Never call reserveEventFd / releaseEventFd 
 from a multiprocess backend as the eventfd file-descriptors 
 are maintained by the main python process
 (calling them from the multiprocess frontend is ok)
@@ -16,7 +16,11 @@ are maintained by the main python process
 from valkka import core
 
 n = 100 # add more if you really need to
+
+# created & cached eventfds: stays constant 
 events = []
+
+# a global vector of available eventfd indexes of "events":
 events_index = []
 
 for i in range(n):
