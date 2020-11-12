@@ -12,6 +12,9 @@ Trying to manage large video streaming / machine vision systems requires you to 
 video streams between various threads and/or processes (regardless of your programming language of choice)
 and will always, and without expections, create an impenetrable mess.
 
+[This talk](https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ/) gives you some typical example cases you might and will run into.
+This example repo also gives you code that can be used to resolve the example cases.
+
 LibValkka comes to your help: you can write clean python code, where different parts of your system run in isolated
 python multiprocesses.  Within the isolated multiprocesses you are free to use neural nets and OpenCV as you wish.
 You can also create a websocket server, running asyncio python and serving frag-mp4 streams.
@@ -99,7 +102,7 @@ call your multiprocess classes' ``run`` method.
 We have created more advanced subclasses from the [python multiprocessing class](https://docs.python.org/2/library/multiprocessing.html#the-process-class):
 
 Namely, when you call ``someprocess.someCommand(pars)`` in the frontend, the parameters are silently communicated to the backend and
-the corresponding ``c__someCommand(pars)`` is executed therein.  This makes multiprocess programming so much more humane.
+the corresponding ``c__someCommand(pars)`` is executed therein.
 
 Backend may also run asynchronous python.
 

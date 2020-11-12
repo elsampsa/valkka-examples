@@ -10,7 +10,9 @@ Valkka
    :description: A python programming library for building opensource video surveillance, management and analysis programs with Qt
    :keywords: opensource, python, video surveillance, video management, video analysis, machine vision, qt
 
-Valkka is a python programming library for creating video surveillance and management solutions for linux desktop in local area / virtual private networks.
+*Valkka is a python media streaming framework*
+
+You can use it to create intelligent video surveillance solutions in Linux.
 
 *Some highlights of Valkka*
 
@@ -22,6 +24,9 @@ Valkka is a python programming library for creating video surveillance and manag
 - Designed for massive video streaming : view and analyze simultaneously a large number of IP cameras
 - Recast the IP camera video streams to either multicast or unicast
 - Build graphical user interfaces with PyQt, interact machine vision with Qt's signal/slot system and build highly customized GUIs
+
+Take also a look at `this presentation <https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ>`_
+to see some of the typical video streaming / machine vision problems libValkka can solve for you.
 
 This documentation is a quickstart for installing and developing with Valkka using the Python3 API.  A Tutorial, a PyQt testsuite and some benchmarking results are provided.
 
