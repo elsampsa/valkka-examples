@@ -10,10 +10,10 @@
 
 Trying to manage large video streaming / machine vision systems requires you to joggle
 video streams between various threads and/or processes (regardless of your programming language of choice)
-and will always, and without expections, create an impenetrable mess.
+and will always, and without exceptions, create an impenetrable mess.
 
 [This talk](https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ/) gives you some typical example cases you might and will run into.
-This example repo also gives you code that can be used to resolve the example cases.
+This example repo also gives you code that can be used to resolve those example cases.
 
 LibValkka comes to your help: you can write clean python code, where different parts of your system run in isolated
 python multiprocesses.  Within the isolated multiprocesses you are free to use neural nets and OpenCV as you wish.
@@ -22,7 +22,7 @@ You can also create a websocket server, running asyncio python and serving frag-
 So, no more encapsulating those ffmpeg processes into separate multiprocesses and reading their stdout and things like that.  How cools is that!?
 
 LibValkka uses python multiprocessing (*not* multi*threading*) and shared memory to pass video streams (and other data) between processes.
-One process can also "multiplex" several stream simultaneously, either using asyncio python or python's select module.
+One process can also "multiplex" several streams simultaneously, either using asyncio python or python's select module.
 [Eventfd](https://linux.die.net/man/2/eventfd) is heavily used.
 
 This is all very neat, but of course, comes with a price tag in the form of a learning curve.  However, it's much better than paper-clip & house-of-cards solutions and besides, so much more enjoyable..!
@@ -89,13 +89,15 @@ Here is a nice way to extend [python's multiprocessing class](https://docs.pytho
                           intercom
 backend                  <--------->  frontend 
 
+                                      def __init__(self)
 def c__someCommand(pars)              def someCommand(pars)
-def run
+def run                               def start(self)
+...                                   ...
 
 ```
 
 "backend" corresponds to the (forked) multiprocess running in its own, isolated virtual memory space.  The multiprocess (and backend) is created, once you
-call your multiprocess classes' ``run`` method.
+call your multiprocess classes' ``start`` method.
 
 "frontend" methods can be called in the context/frame of your python main process
 
