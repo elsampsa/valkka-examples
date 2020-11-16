@@ -37,6 +37,8 @@ Remember also to install libValkka (as instructed [here](https://elsampsa.github
 After that, you can move into ``skeleton/`` directory and launch ``python3 main.py rtsp://username:passwd@ip``
 
 This example project can be used to create a websocket-based IP-camera stream server that does simultaneous machine vision analysis with OpenCV.  It is easily scaled up to a massive number of IP cameras.
+[This project](https://github.com/elsampsa/websocket-mse-demo) will also help you on the way.
+
 
 Here are some details about the project structure:
 ```

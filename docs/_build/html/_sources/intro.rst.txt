@@ -18,15 +18,22 @@ About Valkka
 Why this library?
 -----------------
 
-*So, yet another media player?  I need to stream video from my IP camera into my python/Qt program and I want something that can be developed fast and is easy to integrate into my code.  What's here for me?*
+*So, yet another media player?  I need to stream video from my IP camera into my python/Qt program and I want something that can be developed fast and is easy to integrate into my code.  
+What's here for me?*
 
-If you just need to stream video from your IP cameras, decode it and show it on the screen, we recommend a standard media player, say, VLC and its python bindings.
+If you just need to stream video from your IP cameras, decode it and show it on the screen, we recommend a standard media player, 
+say, VLC and its python bindings.
 
-However, if you need to stream video and *simultaneously* (1) present it on the screen, (2) analyze it with machine vision, (3) write it to disk, and even (4) recast it to other clients, stock media players won't do.
+However, if you need to stream video and *simultaneously* (1) present it on the screen, (2) analyze it with machine vision, (3) write it to disk, 
+and even (4) recast it to other clients, stock media players won't do.
 
-Such requirements are typical in large-scale video surveillance, management and analysis solutions.  Demand for them is growing rapidly due to continuous decline in IP camera prices and growing computing power.
+Such requirements are typical in large-scale video surveillance, management and analysis solutions.  
+Demand for them is growing rapidly due to continuous decline in IP camera prices and growing computing power.
 
-As a solution, you might try connect to the *same* camera 4 times and decode the stream 4 times - but then you'll burn all that CPU for nothing (you should decode only once).  And try to scale that only to, say, 20+ cameras.  In order avoid too many connections to your IP cameras (this is typically limited by the camera), you might desperately try your luck even with the multicast loopback.  We've been there and it's not a good idea.  And how about pluggin in your favorite machine vision/learning module, written with OpenCV or TensorFlow?
+As a solution, you might try connect to the *same* camera 4 times and decode the stream 4 times - but then you'll burn all that CPU for nothing (you should decode only once).  
+And try to scale that only to, say, 20+ cameras.  In order avoid too many connections to your IP cameras (this is typically limited by the camera), 
+you might desperately try your luck even with the multicast loopback.  We've been there and it's not a good idea.  
+And how about pluggin in your favorite machine vision/learning module, written with OpenCV or TensorFlow?
 
 Valkka API
 ----------
