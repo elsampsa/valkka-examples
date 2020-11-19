@@ -114,7 +114,9 @@ class BasicFilterChain:
         # connect livethread to main branch
         self.live_ctx = core.LiveConnectionContext(core.LiveConnectionType_rtsp, self.rtsp_address, self.slot, self.main_fork) # stream writes to main_fork
         ## some parameters you can give to the live streaming context:
-        #self.live_ctx.request_tcp = True
+        ## (1) for NATs and streaming over the internet, use tcp streaming:
+        self.live_ctx.request_tcp = True
+        ## (2) if you don't have enough buffering or timestamps are wrong, use this:
         #self.live_ctx.time_correction = core.TimeCorrectionType_smart
         ## see more here: https://elsampsa.github.io/valkka-core/html/structLiveConnectionContext.html
         self.livethread.registerStreamCall(self.live_ctx)

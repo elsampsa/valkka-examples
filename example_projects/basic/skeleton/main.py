@@ -73,7 +73,20 @@ def main1(address):
     rgb_process.start()
 
     # openglthread is used to dump live video to the screen
-    openglthread = core.OpenGLThread("openglthread")
+    # preserved frames in the memory and at the GPI
+    gl_ctx = core.OpenGLFrameFifoContext()
+    gl_ctx.n_720p = 20
+    gl_ctx.n_1080p = 20
+    gl_ctx.n_1440p = 0
+    gl_ctx.n_4K = 0
+    # .. your max possible buffering time depends
+    # on those frames available:
+    buffering_time_ms = 1000
+    # create thread:
+    openglthread = core.OpenGLThread(
+        "openglthread",
+        gl_ctx,
+        buffering_time_ms)
     openglthread.startCall()
 
     # livethread uses Live555
