@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>About Valkka &#8212; OpenSource Video Management for Linux  documentation</title>
+    <title>About Valkka &#8212; Python Media Streaming Framework for Linux  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -53,7 +53,8 @@ And how about pluggin in your favorite machine vision/learning module, written w
 <h2>Valkka API<a class="headerlink" href="#valkka-api" title="Permalink to this headline">¶</a></h2>
 <p>Valkka will solve the problem for you; It is a programming library and an API to do just that - large scale video surveillance, management and analysis programs, from the comfort of python3.</p>
 <p>With Valkka, you can create complex pipings (“filtergraphs”) of media streams from the camera, to screen, machine vision subroutines, to disk, to the net, etc.  The code runs at the cpp level with threads, thread-safe queues, mutexes, semaphores, etc.  All those gory details are hidden from the API user that programs filtergraphs at the python level only.  Valkka can also share frames between python processes (and from there, with OpenCV, TensorFlow, etc.)</p>
-<p>If you got interested, we recommend that you do the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>, and use it together with the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a> as a starting point for your own projects.</p>
+<p>If you got interested, we recommend that you do the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>, and use it together with the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a>,
+and <a class="reference external" href="https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic">the example project</a> as starting points for your own project.</p>
 <p>This manual has a special emphasis for Qt and OpenCV.  You can create video streaming applications using PyQt: streaming video to widgets, and connect the signals from your machine vision subprograms to the Qt signal/slot system - and beyond.</p>
 <p>For more technical information, check out the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/process_chart.html">library architecture page</a></p>
 <p>Finally, here is a small sample from the tutorial.  You’ll get the idea.</p>
@@ -87,15 +88,13 @@ And how about pluggin in your favorite machine vision/learning module, written w
 <p><strong>valkka-examples</strong> : the python tutorial and PyQt example/testsuite are available at the <a class="reference external" href="https://github.com/elsampsa/valkka-examples">valkka-examples github repository</a>. MIT licensed.</p>
 <p>For more, see <a class="reference internal" href="repos.html#repos"><span class="std std-ref">here</span></a>.</p>
 <p>All functional features are demonstrated in the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a> which is updated as new features appear.  Same goes for the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a>.</p>
-<p>We’d like to see the following features in the first beta release:</p>
+<p>Near-term goals for new features are:</p>
 <ul class="simple">
 <li><p>Interserver communications between Valkka-based server and clients</p></li>
-<li><p>ValkkaFS filesystem, designed for recording large amounts of video</p></li>
+<li><p>ValkkaFS filesystem, designed for recording large amounts of video (not yet fully operational / debugged)</p></li>
 <li><p>Synchronized recording of video</p></li>
-<li><p>Picture-in-picture</p></li>
-<li><p>Fisheye projections (trivial to implement as we are using OpenGL textures)</p></li>
+<li><p>Fisheye projections</p></li>
 <li><p>Support for sound</p></li>
-<li><p>An ultralight OnVif client library, based on <a class="reference external" href="http://docs.python-zeep.org/en/master/">Zeep</a></p></li>
 </ul>
 <p>Valkka is based on the following opensource libraries and technologies:</p>
 <div style="overflow: hidden; position: relative;">
@@ -129,7 +128,7 @@ And how about pluggin in your favorite machine vision/learning module, written w
     <img class="logo" src="_static/valkka.png">
 </a>
 
-<p>OpenSource Video Management for Linux</p>
+<p>Python Media Streaming Framework for Linux</p>
 <a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
 <!--
 <p>
@@ -190,7 +189,7 @@ And how about pluggin in your favorite machine vision/learning module, written w
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017 Sampsa Riikonen.
+      &copy;2017-2020 Sampsa Riikonen.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>

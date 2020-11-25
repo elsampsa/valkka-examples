@@ -42,7 +42,8 @@ Valkka will solve the problem for you; It is a programming library and an API to
 
 With Valkka, you can create complex pipings ("filtergraphs") of media streams from the camera, to screen, machine vision subroutines, to disk, to the net, etc.  The code runs at the cpp level with threads, thread-safe queues, mutexes, semaphores, etc.  All those gory details are hidden from the API user that programs filtergraphs at the python level only.  Valkka can also share frames between python processes (and from there, with OpenCV, TensorFlow, etc.)
 
-If you got interested, we recommend that you do the :ref:`tutorial<tutorial>`, and use it together with the :ref:`PyQt testsuite<testsuite>` as a starting point for your own projects.
+If you got interested, we recommend that you do the :ref:`tutorial<tutorial>`, and use it together with the :ref:`PyQt testsuite<testsuite>`, 
+and `the example project <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_ as starting points for your own project.
 
 This manual has a special emphasis for Qt and OpenCV.  You can create video streaming applications using PyQt: streaming video to widgets, and connect the signals from your machine vision subprograms to the Qt signal/slot system - and beyond.  
 
@@ -88,16 +89,13 @@ For more, see :ref:`here <repos>`.
 
 All functional features are demonstrated in the :ref:`tutorial<tutorial>` which is updated as new features appear.  Same goes for the :ref:`PyQt testsuite<testsuite>`.
 
-We'd like to see the following features in the first beta release:
+Near-term goals for new features are:
 
 - Interserver communications between Valkka-based server and clients
-- ValkkaFS filesystem, designed for recording large amounts of video
+- ValkkaFS filesystem, designed for recording large amounts of video (not yet fully operational / debugged)
 - Synchronized recording of video
-- Picture-in-picture 
-- Fisheye projections (trivial to implement as we are using OpenGL textures)
+- Fisheye projections
 - Support for sound
-- An ultralight OnVif client library, based on `Zeep <http://docs.python-zeep.org/en/master/>`_
-
 
 Valkka is based on the following opensource libraries and technologies:
 
