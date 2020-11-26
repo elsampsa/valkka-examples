@@ -28,7 +28,8 @@ You can use it to create intelligent video surveillance solutions in Linux.
 Take also a look at `this presentation <https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ>`_
 to see some of the typical video streaming / machine vision problems libValkka can solve for you.
 
-This documentation is a quickstart for installing and developing with Valkka using the Python3 API.  A Tutorial, a PyQt testsuite and some benchmarking results are provided.
+This documentation is a quickstart for :ref:`installing <requirements>` and developing with Valkka using the Python3 API. :ref:`A Tutorial <tutorial>`, :ref:`PyQt testsuite<testsuite>`
+and `an example python project/package <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_ are provided.
 
 For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_
 
