@@ -93,13 +93,19 @@ If the trace point into ``Objects/obmalloc.c``, then the cpp extensions have mes
 
 **4\. Follow python process memory consumption**
 
-Install smem:
+Use the `setproctitle python module <https://github.com/dvarrazzo/py-setproctitle>`_ to name your python multiprocesses.  This way you can find them easily using standard
+linux monitoring tools, such as htop and smem.
+
+Setting the name of the process should, of course, happen after the multiprocessing fork.
+
+Install smem and htop:
 
 ::
 
-    sudo apt-get install smem
+    sudo apt-get install smem htop
 
-After that, run the script memwatch.bash in the aux/ directory.
+After that, run for example the script memwatch.bash in the aux/ directory.  Or just launch htop.  In htop, remember to go to setup => display options and enable "Hide userland process threads" to make
+the output more readable.
 
 Valkka-live, for example, names all multiprocesses adequately, so you can easily see if a process is
 leaking memory.

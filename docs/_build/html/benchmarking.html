@@ -223,11 +223,15 @@ sharing memory between processes, can (and will) give surprises.</p>
 </pre></div>
 </div>
 <p><strong>4. Follow python process memory consumption</strong></p>
-<p>Install smem:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">smem</span>
+<p>Use the <a class="reference external" href="https://github.com/dvarrazzo/py-setproctitle">setproctitle python module</a> to name your python multiprocesses.  This way you can find them easily using standard
+linux monitoring tools, such as htop and smem.</p>
+<p>Setting the name of the process should, of course, happen after the multiprocessing fork.</p>
+<p>Install smem and htop:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">smem</span> <span class="n">htop</span>
 </pre></div>
 </div>
-<p>After that, run the script memwatch.bash in the aux/ directory.</p>
+<p>After that, run for example the script memwatch.bash in the aux/ directory.  Or just launch htop.  In htop, remember to go to setup =&gt; display options and enable “Hide userland process threads” to make
+the output more readable.</p>
 <p>Valkka-live, for example, names all multiprocesses adequately, so you can easily see if a process is
 leaking memory.</p>
 <p><strong>5. Prefer PyQt5 over PySide2</strong></p>
