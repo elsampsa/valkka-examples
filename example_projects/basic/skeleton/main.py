@@ -81,7 +81,7 @@ def main1(address):
     gl_ctx.n_4K = 0
     # .. your max possible buffering time depends
     # on those frames available:
-    buffering_time_ms = 1000
+    buffering_time_ms = 200
     # create thread:
     openglthread = core.OpenGLThread(
         "openglthread",

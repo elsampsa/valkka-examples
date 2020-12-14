@@ -1,4 +1,5 @@
 import time, sys
+from setproctitle import setproctitle
 from valkka.multiprocess import MessageProcess, MessageObject, safe_select
 from valkka.api2 import ShmemRGBClient
 from skeleton.singleton import getEventFd, reserveIndex
@@ -42,9 +43,15 @@ class RGB24Process(MessageProcess):
     """
 
     def preRun__(self):
-        """Do variable initialization etc. before the async execution starts
+        """This should be subclassed for your multiprocess class.  It is executed just after the fork (i.e. in the backend)
+        
+        Use this to do variable initialization etc. before the async execution starts and for naming your multiprocess
         """    
         print("preRun__")
+        # name your multiprocess: now you can easily find it with linux process and memory
+        # monitoring tools
+        # I recommend using smem and/or htop
+        setproctitle("Valkka-example-RGB24Process")
         self.client_by_fd = {}
         self.shmem_pars_by_slot = {}
 
