@@ -147,8 +147,17 @@ def main1(address):
 
     print("bye!")
     print("subprocess stop")
+
+    frag_mp4_process.deactivateFMP4Client(
+        ipc_index = frag_mp4_pars["ipc_index"]
+    )
     frag_mp4_process.stop()
+    
+    rgb_process.deactivateRGB24Client(
+        ipc_index = rgb_pars["ipc_index"]
+    )
     rgb_process.stop()
+    
     print("livethread stop")
     livethread.stopCall()
     filterchain.close()

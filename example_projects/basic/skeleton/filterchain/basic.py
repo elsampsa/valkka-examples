@@ -211,10 +211,24 @@ class BasicFilterChain:
 
 
     def close(self):
+        """Called on garbage-collection (see the __del__ method)
+        """
         # stop muxing
-        self.fmp4_muxer.deActivate() # TODO: remove (in core)
+        self.fmp4_muxer.deActivate()
         # stop streaming
+        
         self.livethread.stopStreamCall(self.live_ctx)
+        self.livethread.deregisterStreamCall(self.live_ctx)
+        # WARNING
+        # This BasicFilterChain object contains a series of framefilters
+        # that are written by self.livethread.
+        # The effect of "self.livethread.deregisterStreamCall" may
+        # kick in _after_ the garbage collection of those framefilters
+        # has been performed - in that case livethread will try to write
+        # into non-existing framefilters
+        # So, wait until self.livethread has processed its pending operations:
+        self.livethread.waitReady()
+
         self.avthread.stopCall()
         if self.openglthread is not None:
             self.openglthread.delRenderContextCall(self.context_id)

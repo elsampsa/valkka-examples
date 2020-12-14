@@ -33,10 +33,8 @@ RUN unzip master.zip
 WORKDIR /valkka/valkka-core-master
 ## build
 ## this downloads ffmpeg & live555 .. but we'd like to have some more version control with the latter:
-# RUN ./prepare_build.bash
-## download just ffmpeg, take live555 from a local copy.  Place it into directory "live/"
-RUN ./prepare_build0.bash
-ADD live /valkka/valkka-core-master/ext/
+RUN ./prepare_build.bash
+# ADD live /valkka/valkka-core-master/ext/
 RUN ./easy_build.bash
 WORKDIR /valkka/valkka-core-master/build_dir
 RUN make package

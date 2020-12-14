@@ -2,6 +2,7 @@ import time, sys
 from valkka.multiprocess import MessageProcess, MessageObject, safe_select
 from valkka.api2 import ShmemRGBClient
 from skeleton.singleton import getEventFd, reserveIndex
+from .sync import EventGroup, SyncIndex
 
 
 class RGB24Process(MessageProcess):
@@ -29,6 +30,9 @@ class RGB24Process(MessageProcess):
     def __init__(self, mstimeout = 1000):
         super().__init__()
         self.mstimeout = mstimeout
+        # events to synchronize some multiprocessing frontend calls
+        # with the backend excecution:
+        self.eg = EventGroup(5)
 
 
     """BACKEND methods
@@ -133,7 +137,9 @@ class RGB24Process(MessageProcess):
         
 
     def c__deactivateRGB24Client(self,
-        ipc_index = None):
+        ipc_index = None,
+        event_index = None
+        ):
         eventfd = getEventFd(ipc_index)
         # let's get a posix file descriptor, i.e. a plain integer
         fd = eventfd.getFd()
@@ -141,6 +147,9 @@ class RGB24Process(MessageProcess):
             self.client_by_fd.pop(fd)
         except KeyError:
             print("c__deactivateRGB24Client : no client at ipc_index", ipc_index)
+        # inform multiprocessing frontend (= main python process)
+        # that this command has been finalized:
+        self.eg.set(event_index)
 
 
     def c__customCall(self, parameter = 1):
@@ -185,10 +194,23 @@ class RGB24Process(MessageProcess):
 
 
     def deactivateRGB24Client(self, ipc_index):
-        self.sendMessageToBack(MessageObject(
-            "deactivateRGB24Client",
-            ipc_index = ipc_index
-        ))
+        """This frontend method returns only after the backend 
+        method "c__deactivateRGB24Client" exits.
+
+        It's a good idea to do this, for example, when adding/removing rgb shmem
+        servers and clients.  
+
+        This is done using the SyncIndex context manager:
+        """
+        with SyncIndex(self.eg) as i:
+            # this section exits once the backend
+            # call is ready
+            self.sendMessageToBack(MessageObject(
+                "deactivateRGB24Client",
+                ipc_index = ipc_index,
+                event_index = i
+            ))
+        print("deactivateRGB24Client OK", ipc_index)
 
 
     def customCall(self, parameter = 1):
