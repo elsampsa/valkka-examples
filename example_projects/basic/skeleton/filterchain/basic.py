@@ -118,6 +118,8 @@ class BasicFilterChain:
         self.live_ctx.request_tcp = True
         ## (2) if you don't have enough buffering or timestamps are wrong, use this:
         #self.live_ctx.time_correction = core.TimeCorrectionType_smart
+        ## (3) enable automatic reconnection every 10 seconds if camera is offline
+        self.live_ctx.mstimeout = 10000
         ## see more here: https://elsampsa.github.io/valkka-core/html/structLiveConnectionContext.html
         self.livethread.registerStreamCall(self.live_ctx)
 
