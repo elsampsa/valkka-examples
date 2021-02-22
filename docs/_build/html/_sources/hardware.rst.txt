@@ -46,3 +46,7 @@ libValkka uses OpenGL and OpenGL texture streaming, so it needs a robust OpenGL 
 
 OpenGL version 3 or greater is required.  You can check your OpenGL version with the command *glxinfo*.
 
+Hardware Acceleration
+---------------------
+
+Nvidia cuda-accelerated decoding for libValkka is available `here <https://github.com/xiaoxoxin/valkka-nv>`__

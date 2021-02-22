@@ -95,6 +95,8 @@ class BasicFilterChain:
         if self.active:
             self.close()
 
+    def alert_cb(self, tup):
+        print("alert cb got", tup)
 
     def __call__(self, livethread = None, openglthread = None):
         """Register running live & openglthreads, construct filterchain, start threads
@@ -110,9 +112,21 @@ class BasicFilterChain:
         """Filtergraphs are always constructed from end to beginning
         """
         # main branch
+
         self.main_fork = core.ForkFrameFilterN("main_fork_"+str(self.slot))
+
+        """# experimental
+        self.alert = core.AlertFrameFilter(
+            "alert_"+str(self.slot),
+            self.alert_cb,
+            self.main_fork)
+        """
+
         # connect livethread to main branch
-        self.live_ctx = core.LiveConnectionContext(core.LiveConnectionType_rtsp, self.rtsp_address, self.slot, self.main_fork) # stream writes to main_fork
+        self.live_ctx = core.LiveConnectionContext(core.LiveConnectionType_rtsp, 
+            self.rtsp_address, 
+            self.slot, 
+            self.main_fork) # stream writes to main_fork
         ## some parameters you can give to the live streaming context:
         ## (1) for NATs and streaming over the internet, use tcp streaming:
         self.live_ctx.request_tcp = True

@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_5.py
 @author  Sampsa Riikonen
 @date    2019
-@version 1.0.3 
+@version 1.2.0 
 @brief   Test live streaming, recording and playback in Qt
 
 
