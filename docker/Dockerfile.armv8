@@ -68,3 +68,4 @@ RUN apt-get install -y ffmpeg vlc
 
 WORKDIR /root
 RUN wget https://raw.githubusercontent.com/elsampsa/valkka-examples/master/quicktest.py
+RUN python3 quicktest.py
