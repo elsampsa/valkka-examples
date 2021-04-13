@@ -93,7 +93,15 @@ To identify disks, Valkka uses uuid partition identification.  The uuid can be f
 ::
 
     blkid /dev/sdb1
-    
+
+Suppose you get:
+
+::
+
+    /dev/sdb1: UUID="db572185-2ac1-4ef5-b8af-c2763e639a67" TYPE="swap" PARTUUID="37c591e3-b33b-4548-a1eb-81add9da8a58"
+
+Then "37c591e3-b33b-4548-a1eb-81add9da8a58" is what you are looking for.
+
 Next, suppose that we have:
 
 - 16 cameras
