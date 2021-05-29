@@ -54,7 +54,7 @@ import cv2
 import sys
 import json
 import os
-from valkka.api2 import LiveThread, OpenGLThread, ValkkaProcess, ShmemClient
+from valkka.api2 import LiveThread, OpenGLThread, ShmemClient
 from valkka.api2 import ShmemFilterchain
 from valkka.api2 import parameterInitCheck
 from valkka.core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
