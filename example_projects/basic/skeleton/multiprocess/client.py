@@ -1,7 +1,8 @@
 import time, sys
 from valkka.multiprocess import MessageProcess, MessageObject, safe_select
 from valkka.api2 import ShmemRGBClient, ShmemRGBServer, ShmemClient
-from skeleton.singleton import getEventFd, reserveEventFd, releaseEventFd, eventFdToIndex, reserveIndex
+# from skeleton.singleton import getEventFd, reserveEventFd, releaseEventFd, eventFdToIndex, reserveIndex
+from skeleton.singleton import event_fd_group_1
 from skeleton.multiprocess.rgb import RGB24Process
 
 
@@ -17,7 +18,8 @@ class ClientProcess(RGB24Process):
         server_img_width = 100, 
         server_img_height = 100):
         super().__init__(mstimeout = mstimeout)
-        self.event_fd = reserveEventFd() # event fd for the RGB24 shmem server
+        # self.event_fd = reserveEventFd() # event fd for the RGB24 shmem server
+        _, self.event_fd = event_fd_group_1.reserve()
 
         self.server_name = str(id(self))
         self.server_n_ringbuffer = 10
@@ -30,7 +32,8 @@ class ClientProcess(RGB24Process):
 
 
     def __del__(self):
-        releaseEventFd(self.event_fd)
+        # releaseEventFd(self.event_fd)
+        event_fd_group_1.release(self.event_fd)
 
 
     """BACKEND methods
@@ -135,7 +138,8 @@ class ClientProcess(RGB24Process):
             n_bytes = n_bytes,
             mstimeout = self.mstimeout
         )
-        eventfd = getEventFd(ipc_index)
+        # eventfd = getEventFd(ipc_index)
+        eventfd = event_fd_group_1.fromIndex(ipc_index)
         client.useEventFd(eventfd)
         fd = eventfd.getFd()
         # self.intercom_client_by_fd[fd] = client # if you would be listening many clients at a time
@@ -202,7 +206,7 @@ class ClientProcess(RGB24Process):
 
 
 def test1():
-    ipc_index = reserveIndex()
+    # ipc_index = reserveIndex()
     p = ClientProcess()
     p.start()
     time.sleep(1)

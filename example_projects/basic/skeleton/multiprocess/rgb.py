@@ -2,8 +2,9 @@ import time, sys
 from setproctitle import setproctitle
 from valkka.multiprocess import MessageProcess, MessageObject, safe_select
 from valkka.api2 import ShmemRGBClient
-from skeleton.singleton import getEventFd, reserveIndex
-from .sync import EventGroup, SyncIndex
+# from skeleton.singleton import getEventFd, reserveIndex
+from skeleton.sync import EventGroup, SyncIndex
+from skeleton.singleton import event_fd_group_1
 
 
 class RGB24Process(MessageProcess):
@@ -33,7 +34,7 @@ class RGB24Process(MessageProcess):
         self.mstimeout = mstimeout
         # events to synchronize some multiprocessing frontend calls
         # with the backend excecution:
-        self.eg = EventGroup(5)
+        self.eg = EventGroup(100)
 
 
     """BACKEND methods
@@ -136,7 +137,8 @@ class RGB24Process(MessageProcess):
             mstimeout = self.mstimeout,
             verbose = False
         )
-        eventfd = getEventFd(ipc_index)
+        # eventfd = getEventFd(ipc_index)
+        eventfd = event_fd_group_1.fromIndex(ipc_index)
         client.useEventFd(eventfd) # do not forget!
         # let's get a posix file descriptor, i.e. a plain integer:
         fd = eventfd.getFd()
@@ -147,7 +149,8 @@ class RGB24Process(MessageProcess):
         ipc_index = None,
         event_index = None
         ):
-        eventfd = getEventFd(ipc_index)
+        # eventfd = getEventFd(ipc_index)
+        eventfd = event_fd_group_1.fromIndex(ipc_index)
         # let's get a posix file descriptor, i.e. a plain integer
         fd = eventfd.getFd()
         try:
@@ -235,7 +238,9 @@ def test1():
     p.start()
     time.sleep(1)
     print("sending activate")
-    ipc_index = reserveIndex()
+    # ipc_index = reserveIndex()
+    ipc_index, eventfd = event_fd_group_1.reserve()
+
     p.activateRGB24Client(
         name = "kokkelis",
         n_ringbuffer = 10,

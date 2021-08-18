@@ -2,7 +2,9 @@ import time, sys, asyncio, copy
 from valkka.multiprocess import MessageProcess, AsyncBackMessageProcess,\
     MessageObject, safe_select
 from valkka.api2 import FragMP4ShmemClient
-from skeleton.singleton import getEventFd, reserveIndex
+# from skeleton.singleton import getEventFd, reserveIndex
+from skeleton.singleton import event_fd_group_1
+
 """NOTE:
 Never call reserveEventFd / releaseEventFd from a child multiprocess
 eventfd file-descriptors are maintained by the main process
@@ -93,7 +95,8 @@ class FragMP4Process(AsyncBackMessageProcess):
                 n_size = n_size,
                 mstimeout = self.mstimeout
             )
-            eventfd = getEventFd(ipc_index)
+            # eventfd = getEventFd(ipc_index)
+            eventfd = event_fd_group_1.fromIndex(ipc_index)
             # let's get a posix file descriptor, i.e. a plain integer:
             fd = eventfd.getFd()
             self.client_by_fd[fd] = client
@@ -110,7 +113,8 @@ class FragMP4Process(AsyncBackMessageProcess):
 
     async def c__deactivateFMP4Client(self,
         ipc_index = None):
-        eventfd = getEventFd(ipc_index)
+        # eventfd = getEventFd(ipc_index)
+        eventfd = event_fd_group_1.fromIndex(ipc_index)
         fd = eventfd.getFd()
         try:
             self.client_by_fd.pop(fd)
@@ -216,7 +220,8 @@ def main():
     p.start()
     time.sleep(1)
     print("activate")
-    ipc_index = reserveIndex()
+    # ipc_index = reserveIndex()
+    ipc_index, event_fd = event_fd_group_1.reserve()
     p.activateFMP4Client(
         name = "kokkelis",
         n_ringbuffer = 10,

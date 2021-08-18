@@ -1,8 +1,10 @@
 import sys, os, uuid, time
 from valkka.multiprocess import MessageProcess, MessageObject, safe_select
 from valkka.api2 import ShmemRGBClient, ShmemRGBServer, ShmemClient, ShmemServer
-from skeleton.singleton import getEventFd, reserveEventFd, releaseEventFd, eventFdToIndex, reserveIndex, getFdFromIndex
-
+# from skeleton.singleton import getEventFd, reserveEventFd, releaseEventFd, eventFdToIndex, reserveIndex, getFdFromIndex
+from skeleton.singleton import event_fd_group_1
+from skeleton.sync import EventGroup, SyncIndex
+from skeleton.multiprocess.client import ClientProcess
 
 class MasterProcess(MessageProcess):
     """Receives RGB24 frames from a client process & responds with a message and some other data
@@ -13,6 +15,7 @@ class MasterProcess(MessageProcess):
         self.mstimeout = mstimeout
         self.intercom_n_bytes = 1024*1024*1 # 1 MB
         self.intercom_n_buffer = 10
+        self.eg = EventGroup(100)
         
 
     def preRun__(self):
@@ -85,8 +88,8 @@ class MasterProcess(MessageProcess):
             n_ringbuffer = None,
             width = None,
             height = None,
-            ipc_index = None,
-            intercom_ipc_index = None
+            ipc_index = None, # master listening to client
+            intercom_ipc_index = None # client listening to master
         ):
         print("c__registerClientProcess called with", name, n_ringbuffer, width, height)
         client = ShmemRGBClient(
@@ -98,21 +101,22 @@ class MasterProcess(MessageProcess):
             mstimeout = 1,
             verbose = False
         )
-        eventfd = getEventFd(ipc_index)
+        # eventfd = getEventFd(ipc_index)
+        eventfd = event_fd_group_1.fromIndex(ipc_index)
         client.useEventFd(eventfd) # do not forget!
         # let's get a posix file descriptor, i.e. a plain integer:
         fd = eventfd.getFd()
         print("c__registerClientProcess: will listen fd", fd)
         self.client_by_fd[fd] = client
         # establish a shmem channel for communicating the results back to the client process
-
         name = uuid.uuid1().hex
         intercom_pars = {
             "name"            :name,
             "n_ringbuffer"    :self.intercom_n_buffer,   # size of ring buffer
             "n_bytes"         :self.intercom_n_bytes,
         }
-        eventfd = getEventFd(intercom_ipc_index)
+        # eventfd = getEventFd(intercom_ipc_index)
+        eventfd = event_fd_group_1.fromIndex(intercom_ipc_index)
         server = ShmemServer(**intercom_pars)
         server.useEventFd(eventfd)
         intercom_fd = eventfd.getFd()
@@ -125,25 +129,29 @@ class MasterProcess(MessageProcess):
 
     def c__deregisterClientProcess(self,
             ipc_index = None,
-            intercom_ipc_index = None
+            intercom_ipc_index = None,
+            sync_index = None
         ):
-        fd = getFdFromIndex(ipc_index)
+        # fd = getFdFromIndex(ipc_index)
+        fd = event_fd_group_1.fromIndex(ipc_index).getFd()
         try:
             self.client_by_fd.pop(fd)
             self.intercom_server_by_client_fd.pop(fd)
         except KeyError:
             print("c__deregisterClientProcess : no client at ipc_index", ipc_index)
 
-        fd = getFdFromIndex(intercom_ipc_index)
+        # fd = getFdFromIndex(intercom_ipc_index)
+        fd = event_fd_group_1.fromIndex(intercom_ipc_index).getFd()
         try:
             self.intercom_server_by_fd.pop(fd)
         except KeyError:
             print("c__deregisterClientProcess : no intercom client at ipc_index", intercom_ipc_index)
+        self.eg.set(sync_index) # tell frontend we're ready
 
 
     # *** frontend ***
 
-    def registerClientProcess(self, client_process):
+    def registerClientProcess(self, client_process: ClientProcess):
         """
         - A client process has sharedmem channel for receiving RGB24 frames from libValkka c++ side
         - ..then the client process forwards that RGB24 frame (or a part of it) to this master process
@@ -153,12 +161,13 @@ class MasterProcess(MessageProcess):
             print("registerClientProcess: process already registered", client_process)
             return
 
-        intercom_ipc_index = reserveIndex() # reserving eventFd always at the frontend
+        # intercom_ipc_index = reserveIndex() # reserving eventFd always at the frontend
+        intercom_ipc_index, event_fd = event_fd_group_1.reserve() # client listening to master
         pars = client_process.getRGB24ServerPars()
         pars["intercom_ipc_index"] = intercom_ipc_index
         self.sendMessageToBack(MessageObject( # tell master process to start listening to the RGB24 shmem server
             "registerClientProcess",
-            **pars
+            **pars # pars include the ipc_index that is the evenfd corresponding to ClientProcesses shmem server
         ))
         # as a reply, we receive the shmem server parameters we need to listen for result messages
         # tell client that it can start listening the shmem intercom channel
@@ -168,7 +177,7 @@ class MasterProcess(MessageProcess):
         self.registered_clients.append(client_process)
 
 
-    def deregisterClientProcess(self, client_process):
+    def deregisterClientProcess(self, client_process: ClientProcess):
         """Sends client's Shmem Server parameters to this process & 
         """
         try:
@@ -180,12 +189,14 @@ class MasterProcess(MessageProcess):
         ipc_index = client_process.getRGB24ServerPars()["ipc_index"]
         intercom_ipc_index = client_process.intercom_ipc_index
 
-        self.sendMessageToBack(MessageObject(
-            "deregisterClientProcess",
-            ipc_index = ipc_index,
-            intercom_ipc_index = intercom_ipc_index
-        ))
-        
+        with SyncIndex(self.eg) as sync_index: # wait until backend has finished
+            self.sendMessageToBack(MessageObject(
+                "deregisterClientProcess",
+                ipc_index = ipc_index,
+                intercom_ipc_index = intercom_ipc_index,
+                sync_index = sync_index
+            ))
+        event_fd_group_1.release_ind(intercom_ipc_index)
 
 
 def test1():
