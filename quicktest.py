@@ -115,3 +115,11 @@ else:
     else:
         print("   shapely ok")
 print()
+
+print()
+print("Loading setproctitle")
+try:
+    import setproctitle
+except Exception as e:
+    print("    setproctitle not installed")
+    

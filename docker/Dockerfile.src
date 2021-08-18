@@ -27,7 +27,7 @@ RUN apt-get install -y yasm cmake pkg-config swig libglew-dev \
 RUN mkdir /valkka
 WORKDIR /valkka
 ## download a specific version
-ENV ver="1.2.0"
+ENV ver="1.2.1"
 RUN wget "https://github.com/elsampsa/valkka-core/archive/"${ver}".zip"
 RUN unzip ${ver}".zip"
 WORKDIR "/valkka/valkka-core-"${ver}

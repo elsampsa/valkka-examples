@@ -113,7 +113,7 @@ def main():
     with SyncIndex(eg) as i:
         print("waiting ", i)
         print(eg)
-        kokkelis
+        # kokkelis
 
 if __name__ == "__main__":
     main()

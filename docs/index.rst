@@ -12,11 +12,11 @@ Valkka
 
 *Valkka is a python media streaming framework*
 
-You can use it to create intelligent video surveillance solutions in Linux.
+You can use it to create video streaming and surveillance solutions purely in Python.  No need to go C++ ever again.
 
 *Some highlights of Valkka*
 
-- Python3 API, while streaming itself runs in the background at the cpp level
+- Python3 API, while streaming itself runs in the background at the cpp level.  Threads, semaphores, frame queues etc. are hidden from the API user.
 - Works with stock OnVif compliant IP cameras
 - Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice via shared memory
 - Share decoded video with python processes across your Linux system
@@ -28,8 +28,12 @@ You can use it to create intelligent video surveillance solutions in Linux.
 Take also a look at `this presentation <https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ>`_
 to see some of the typical video streaming / machine vision problems libValkka can solve for you.
 
-This documentation is a quickstart for :ref:`installing <requirements>` and developing with Valkka using the Python3 API. :ref:`A Tutorial <tutorial>`, :ref:`PyQt testsuite<testsuite>`
-and `an example python project/package <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_ are provided.
+This documentation is a quickstart for :ref:`installing <requirements>` and developing with Valkka using the Python3 API.  Consider this learning process:
+
+- Start with the :ref:`tutorial <tutorial>`
+- Valkka streams video and images between python multiprocesses, so reading `this article <https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300>`_ is a must
+- If you're into creating PyQt/PySide2 applications, take a look at :ref:`the PyQt testsuite<testsuite>`
+- If you're more into cloud apps, check out `this example python project/package <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_
 
 For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_
 

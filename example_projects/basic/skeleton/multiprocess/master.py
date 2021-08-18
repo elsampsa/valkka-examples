@@ -159,7 +159,7 @@ class MasterProcess(MessageProcess):
         self.sendMessageToBack(MessageObject( # tell master process to start listening to the RGB24 shmem server
             "registerClientProcess",
             **pars
-        )) # TODO: we need a blocking call that can give a reply
+        ))
         # as a reply, we receive the shmem server parameters we need to listen for result messages
         # tell client that it can start listening the shmem intercom channel
         intercom_pars = self.returnFromBack()

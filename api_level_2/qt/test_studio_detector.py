@@ -1,7 +1,7 @@
 """
-test_studio_detector.py : Test live streaming with Qt.  Send copies of streams to OpenCV movement processes.  There is one OpenCV detector & multiprocess for each stream.
+test_studio_detector.py : Test live streaming with Qt.  Send copies of streams to OpenCV movement detector processes.  There is one OpenCV detector & multiprocess for each stream.
 
-Copyright 2017 - 2019 Sampsa Riikonen
+Copyright 2017 - 2021 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
@@ -13,8 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @author  Sampsa Riikonen
 @date    2018
 @version 1.2.1 
-@brief   Test live streaming with Qt.  Send copies of the streams to OpenCV movement detector processes.
-
+@brief   Test live streaming with Qt.  Send copies of streams to OpenCV movement detector processes.  There is one OpenCV detector & multiprocess for each stream.
 
 In the main text field, write live video sources, one to each line, e.g.
 
@@ -31,11 +30,15 @@ When affinity is greater than -1, the processes are bound to a certain processor
 
 It's very important to disable vertical sync in OpenGL rendering..!  Otherwise your *total* framerate is limited to 60 fps.  Disabling vsync can be done in mesa-based open source drives with:
 
-export vblank_mode=0
+::
+
+    export vblank_mode=0
 
 and in nvidia proprietary drivers with
 
-export __GL_SYNC_TO_VBLANK=0
+::
+
+    export __GL_SYNC_TO_VBLANK=0
 
 For benchmarking purposes, you can launch the video streams with:
 
@@ -50,25 +53,25 @@ This Qt test program produces a config file.  You might want to remove that conf
 # from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware
 # of the licensing consequences
 from PySide2 import QtWidgets, QtCore, QtGui
-import cv2
 import sys
 import json
 import os
-from valkka.api2 import LiveThread, OpenGLThread, ShmemClient
-from valkka.api2 import ShmemFilterchain
+from valkka.api2 import LiveThread, OpenGLThread
 from valkka.api2 import parameterInitCheck
 from valkka.core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
 
-# Local imports from this directory
-from demo_multiprocess import QValkkaThread
-from demo_analyzer_process import QValkkaMovementDetectorProcess
+# Local imports from this directory:
+from basic import ShmemFilterchain
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
+from demo_rgb import RGB24Process
+from demo_qthread import QHandlerThread
+from demo_analyzer import MovementDetector
+from demo_singleton import event_fd_group_1
 
 pre = "test_studio_detector : "
 
 # valkka_xwin =True # use x windows create by Valkka and embed them into Qt
 valkka_xwin = False  # use Qt provided x windows
-
 
 class MyConfigDialog(ConfigDialog):
 
@@ -83,6 +86,57 @@ class MyConfigDialog(ConfigDialog):
         self.run2_button.hide()
         self.ffplay_button.hide()
         self.vlc_button.hide()
+
+
+class MovementDetectorProcess(RGB24Process):
+    """To implement your own detector process, just override handleFrame__  :)
+    """
+    class Signals(QtCore.QObject):
+        """These signals are instantiated into the member "signals"
+
+        Typically emitted by a QThread that's listening to this processes self.front_pipe
+        """
+        # PyQt5
+        #start_move = QtCore.pyqtSignal(object)
+        #stop_move = QtCore.pyqtSignal(object)
+        # PySide2        
+        start_move = QtCore.Signal(object)
+        stop_move = QtCore.Signal(object)
+
+
+    def __init__(self, mstimeout = 1000):
+        super().__init__(mstimeout = mstimeout)
+        self.signals = self.Signals()
+
+    def preRun__(self):
+        """This takes place in the multiprocessing backend
+        """
+        super().preRun__()
+        # analyzer class is instantiated in the backend:
+        self.analyzer = MovementDetector(treshold=0.0001)
+
+    def sendSignal__(self, name):
+        self.send_out__({"signal": name}) # send a dict object to the frontend
+        # this message is typically captured by a QThread running in the frontend
+        # which then converts it into a Qt signal
+
+    def handleFrame__(self, frame, meta):
+        print("RGB24Process: handleFrame__ : rgb client got frame", frame.shape, "from slot", meta.slot)
+        """metadata has the following members:
+        size 
+        width
+        height
+        slot
+        mstimestamp
+        """
+        result = self.analyzer(frame)
+        if (result == MovementDetector.state_same):
+            pass
+        elif (result == MovementDetector.state_start):
+            self.sendSignal__(name="start_move")
+        elif (result == MovementDetector.state_stop):
+            self.sendSignal__(name="stop_move")
+        
 
 
 class MyGui(QtWidgets.QMainWindow):
@@ -189,33 +243,29 @@ class MyGui(QtWidgets.QMainWindow):
     def openValkka(self):
         # some constant values
         # Images passed over shmem are quarter of the full-hd reso
-        shmem_image_dimensions = (1920 // 4, 1080 // 4)
+        shmem_image_dimensions = (1920 // 4, 1080 // 4) # x, y
         # YUV => RGB interpolation to the small size is done each 1000
         # milliseconds and passed on to the shmem ringbuffer
         shmem_image_interval = 1000
         shmem_ringbuffer_size = 10
 
-        # the very first thing: create & start multiprocesses
+        # create & start multiprocesses before threads:
+        # https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300
         cs = 1
         self.processes = []
         for address in self.addresses:
             shmem_name = "test_studio_" + str(cs)
-            process = QValkkaMovementDetectorProcess(
-                "process_" + str(cs),
-                shmem_name=shmem_name,
-                n_buffer=shmem_ringbuffer_size,
-                image_dimensions=shmem_image_dimensions)
+            process = MovementDetectorProcess()
+            process.start()
             self.processes.append(process)
 
-        print(self.processes)
-
-        # Give the multiprocesses to a qthread that's reading their message
-        # pipe
-        self.thread = QValkkaThread(processes=self.processes)
-
-        # starts the multiprocesses
-        self.startProcesses()
-        # ..so, forks have been done.  Now we can spawn threads
+        # ..so, forks have been done.  Now we can spawn all threads
+        self.thread = QHandlerThread()
+        self.thread.start()
+        for process in self.processes:
+            self.thread.addProcess(process)
+        # ..now the QThread listens to all multiprocesses
+        # and converts their outgoing messages into signals
 
         self.livethread = LiveThread(         # starts live stream services (using live555)
             name="live_thread",
@@ -258,6 +308,9 @@ class MyGui(QtWidgets.QMainWindow):
             # this filterchain creates a shared memory server
             # identifies shared memory buffer must be same as in the
             # multiprocess
+
+            ipc_index, event_fd = event_fd_group_1.reserve()
+
             chain = ShmemFilterchain(       # decoding and branching the stream happens here
                 livethread=self.livethread,
                 openglthread=self.openglthread,
@@ -268,7 +321,8 @@ class MyGui(QtWidgets.QMainWindow):
                 shmem_image_dimensions=shmem_image_dimensions,
                 shmem_image_interval=shmem_image_interval,
                 shmem_ringbuffer_size=shmem_ringbuffer_size,
-                msreconnect=10000
+                msreconnect=10000,
+                event_fd = event_fd # use event file descriptors
                 # time_correction   =TimeCorrectionType_smart # this is the default, no need to specify
             )
             self.chains.append(chain)
@@ -301,23 +355,30 @@ class MyGui(QtWidgets.QMainWindow):
 
             # take corresponding analyzer multiprocess
             process = self.processes[cc]
-            process.createClient()  # creates the shared memory client at the multiprocess
+
+            # tell process to create the shmem client
+            # it's important to do this _after_ the filterchain has been created, since
+            # the filterchain creates the shmem server
+            process.activateRGB24Client(
+                name = "test_studio_" + str(cs), # must be exactly same as up there..
+                n_ringbuffer = shmem_ringbuffer_size,
+                width  = shmem_image_dimensions[0],
+                height = shmem_image_dimensions[1],
+                ipc_index = ipc_index
+            )
+
             # connect signals to the nested widget
             process.signals.start_move.connect(frame.set_moving)
-            process.signals.stop_move. connect(frame.set_still)
+            process.signals.stop_move.connect(frame.set_still)
 
             chain.decodingOn()  # tell the decoding thread to start its job
             cs += 1  # TODO: crash when repeating the same slot number ..?
             a += 1
             cc += 1
 
-    def startProcesses(self):
-        self.thread.start()
-        for p in self.processes:
-            p.start()
-
     def stopProcesses(self):
         for p in self.processes:
+            p.deactivateRGB24Client()
             p.stop()
         print(pre, "stopping QThread")
         self.thread.stop()
@@ -330,15 +391,16 @@ class MyGui(QtWidgets.QMainWindow):
             chain.close()
 
         self.chains = []
+        self.openglthread.close()
         self.widget_pairs = []
         self.videoframes = []
-        self.openglthread.close()
 
     def closeEvent(self, e):
         print(pre, "closeEvent!")
         self.stopProcesses()
         self.closeValkka()
-        super().closeEvent(e)
+        # super().closeEvent(e)
+        e.accept()
 
 
 def main():

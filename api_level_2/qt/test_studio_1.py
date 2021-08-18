@@ -1,13 +1,15 @@
 """
 test_studio_1.py : Test live streaming with Qt
 
-Copyright 2017, 2018 Sampsa Riikonen
+Copyright 2017-2021 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
 This file is part of the Valkka Python3 examples library
 
-Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
+Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  
+This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+See the MIT License for more details.
 
 @file    test_studio_1.py
 @author  Sampsa Riikonen
@@ -27,24 +29,28 @@ In the main text field, write live video sources, one to each line, e.g.
 
 Reserve enough frames into the pre-reserved frame stack.  There are stacks for 720p, 1080p, etc.  The bigger the buffering time "msbuftime" (in milliseconds), the bigger stack you'll be needing.
 
-When affinity is greater than -1, the processes are bound to a certain processor.  Setting "live affinity" to 0, will bind the Live555 thread to processor one.  Setting "dec affinity start" to 1 and "dec affinity start 3" will bind the decoding threads to processors 1-3.  (first decoder process to 1, second to 2, third to 3, fourth to 1 again, etc.)
+When affinity is greater than -1, the processes are bound to a certain processor.  Setting "live affinity" to 0, will bind the Live555 thread to processor one.  
+Setting "dec affinity start" to 1 and "dec affinity start 3" will bind the decoding threads to processors 1-3.  (first decoder process to 1, second to 2, third to 3, fourth to 1 again, etc.)
 
 If replicate is 10, then each video is replicated 10 times.  It is _not_ decoded 10 times, but just copied to 10 more x windoses.
 
 It's very important to disable vertical sync in OpenGL rendering..!  Otherwise your *total* framerate is limited to 60 fps.  Disabling vsync can be done in mesa-based open source drives with:
 
-export vblank_mode=0
+::
+
+    export vblank_mode=0
 
 and in nvidia proprietary drivers with
 
-export __GL_SYNC_TO_VBLANK=0
+::
+
+    export __GL_SYNC_TO_VBLANK=0
 
 For benchmarking purposes, you can launch the video streams with:
 
   -PyQt created X windowses (this is the intended use case) : RUN(QT)
   -With X windowses created by valkka : RUN
   -With ffplay or vlc (if you have them installed)
-
 
 This Qt test program produces a config file.  You might want to remove that config file after updating the program.
 """
@@ -56,17 +62,16 @@ import json
 import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
-from valkka.api2 import BasicFilterchain
-from valkka.api2.logging import *
+from valkka.api2.logging import setValkkaLogLevel, loglevel_silent, loglevel_crazy
 from valkka.core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, setLogLevel_livelogger
 
 # Local imports form this directory
+from basic import BasicFilterchain # a file in this directory, implementing filterchains
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 
 pre="test_studio : " # aux string for debugging 
 
-
-# valkka_xwin =True # use x windows create by Valkka and embed them into Qt
+# valkka_xwin =True # use x windows created by Valkka and embed them into Qt
 valkka_xwin =False # use Qt provided x windows
 
 # setValkkaLogLevel(loglevel_silent) # set all loggers to silent
@@ -78,13 +83,15 @@ class MyConfigDialog(ConfigDialog):
   def setConfigPars(self):
     self.tooltips={        # how about some tooltips?
       }
+    # define customizable parameters
     self.pardic.update({
-      "replicate"          : 1,
-      "correct timestamp"  : 1,
-      "socket size bytes"  : 0,
-      "ordering time millisecs" : 0,
-      "threads per decoder": 1
+      "replicate"          :        1,
+      "correct timestamp"  :        1,
+      "socket size bytes"  :        0,
+      "ordering time millisecs" :   0,
+      "threads per decoder":        1
       })
+    # self.plis defines parameters to be saved on the disk
     self.plis +=["replicate"]
     self.plis +=["correct timestamp"]
     self.plis +=["socket size bytes"]
@@ -138,8 +145,6 @@ class MyGui(QtWidgets.QMainWindow):
       n_1080p  =self.pardic["n_1080p"],
       n_1440p  =self.pardic["n_1440p"],
       n_4K     =self.pardic["n_4K"],
-      # naudio  =self.pardic["naudio"], # obsolete
-      # verbose =True,
       verbose =False,
       msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
@@ -147,10 +152,11 @@ class MyGui(QtWidgets.QMainWindow):
 
     
     if (self.openglthread.hadVsync()):
-      w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
+      w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n\
+      THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
 
-    tokens     =[]
-    self.chains=[]
+    tokens     =[] # list of tokens representing slot number => X window-id mappings
+    self.chains=[] # list of BasicFilterChain instances
     
     a =self.pardic["dec affinity start"]
     cw=0 # widget / window index
@@ -160,7 +166,6 @@ class MyGui(QtWidgets.QMainWindow):
       # now livethread and openglthread are running
       if (a>self.pardic["dec affinity stop"]): a=self.pardic["dec affinity start"]
       print(pre,"openValkka: setting decoder thread on processor",a)
-
 
       # Timestamp correction type: TimeCorrectionType_none, TimeCorrectionType_dummy, or TimeCorrectionType_smart (default)
       if self.pardic["correct timestamp"] == 1:
@@ -174,7 +179,6 @@ class MyGui(QtWidgets.QMainWindow):
         address     =address,
         slot        =cs,
         affinity    =a,
-        # verbose    =True
         verbose     =False,
         msreconnect =10000,
         
@@ -207,7 +211,7 @@ class MyGui(QtWidgets.QMainWindow):
           
           if (valkka_xwin==False):
             # (2) Let Qt create the widget
-            fr =TestWidget0(self.w)
+            fr =TestWidget0(self.w) # widget for showing the video
             win_id =int(fr.winId()) 
           else:
             # """
@@ -220,10 +224,10 @@ class MyGui(QtWidgets.QMainWindow):
             
           nrow=self.pardic["videos per row"]
           print(pre,"setupUi: layout index, address : ",cw//nrow,cw%nrow,address)
-          self.lay.addWidget(fr,cw//nrow,cw%nrow)
+          self.lay.addWidget(fr,cw//nrow,cw%nrow) # add TestWidget0 to the layout
           self.videoframes.append(fr)
           
-        token  =self.openglthread.connect(slot=cs,window_id=win_id) # present frames with slot number cs at window win_id
+        token  =self.openglthread.connect(slot=cs,window_id=win_id) # show frames with slot number cs at window win_id
         tokens.append(token)
         cw+=1
       
@@ -235,15 +239,12 @@ class MyGui(QtWidgets.QMainWindow):
   
   def closeValkka(self):
     self.livethread.close()
-    
     for chain in self.chains:
       chain.close()
-    
     self.chains       =[]
+    self.openglthread.close()
     self.widget_pairs =[]
     self.videoframes  =[]
-    self.openglthread.close()
-    
     
   def start_streams(self):
     pass

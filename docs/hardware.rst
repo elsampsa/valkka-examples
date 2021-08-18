@@ -49,4 +49,6 @@ OpenGL version 3 or greater is required.  You can check your OpenGL version with
 Hardware Acceleration
 ---------------------
 
-Nvidia cuda-accelerated decoding for libValkka is available `here <https://github.com/xiaxoxin2/valkka-nv>`__
+- `Nvidia's celebrated CUDA <https://github.com/xiaxoxin2/valkka-nv>`_
+- `Huawei's CANN <https://gitee.com/ElSampsa/valkka_cann>`_ (kinda experimental)
+

@@ -1,7 +1,7 @@
 """
 test_studio_rtsp_server.py : Test live streaming with Qt.  Establish an rtsp server.
 
-Copyright 2017, 2018 Sampsa Riikonen
+Copyright 2017-2021 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
@@ -33,11 +33,15 @@ If replicate is 10, then each video is replicated 10 times.  It is _not_ decoded
 
 It's very important to disable vertical sync in OpenGL rendering..!  Otherwise your *total* framerate is limited to 60 fps.  Disabling vsync can be done in mesa-based open source drives with:
 
-export vblank_mode=0
+::
+
+    export vblank_mode=0
 
 and in nvidia proprietary drivers with
 
-export __GL_SYNC_TO_VBLANK=0
+::
+
+    export __GL_SYNC_TO_VBLANK=0
 
 For benchmarking purposes, you can launch the video streams with:
 
@@ -56,18 +60,17 @@ import json
 import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
-from valkka.api2 import BasicFilterchain
 from valkka.api2 import setValkkaLogLevel, loglevel_debug, loglevel_normal
 from valkka import core
 
 # Local imports form this directory
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
-from demo_filterchains import RTSPFilterchain
+from cast import RTSPFilterchain
 
 pre="test_studio_rtsp_server : " # aux string for debugging 
 
-valkka_xwin =True # use x windows create by Valkka and embed them into Qt
-# valkka_xwin =False # use Qt provided x windows
+# valkka_xwin =True # use x windows create by Valkka and embed them into Qt
+valkka_xwin =False # use Qt provided x windows
 
 rtsp_server_portnum=8554
 
@@ -76,9 +79,11 @@ class MyConfigDialog(ConfigDialog):
   def setConfigPars(self):
     self.tooltips={        # how about some tooltips?
       }
+    # define customizable parameters
     self.pardic.update({
       "live2 affinity"            : -1
       })
+    # self.plis defines parameters to be saved on the disk
     self.plis +=["live2 affinity"]
     self.config_fname="test_studio_rtsp_server.config" # define the config file name
   
@@ -141,7 +146,6 @@ class MyGui(QtWidgets.QMainWindow):
       rtsp_server=rtsp_server_portnum # rtsp server port number
     )
 
-
     self.openglthread=OpenGLThread(     # starts frame presenting services
       name    ="mythread",
       n_720p   =self.pardic["n_720p"],   # reserve stacks of YUV video frames for various resolutions
@@ -154,7 +158,6 @@ class MyGui(QtWidgets.QMainWindow):
       msbuftime=self.pardic["msbuftime"],
       affinity=self.pardic["gl affinity"]
       )
-
     
     if (self.openglthread.hadVsync()):
       w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
@@ -241,11 +244,10 @@ class MyGui(QtWidgets.QMainWindow):
     for chain in self.chains:
       chain.close()
     
+    self.openglthread.close()
+    self.livethread2.close()
     self.widget_pairs =[]
     self.videoframes  =[]
-    self.openglthread.close()
-    
-    self.livethread2.close()
     
     
   def start_streams(self):

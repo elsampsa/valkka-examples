@@ -34,7 +34,7 @@ That will dedicate four cores to the decoder.  Remember to call *setNumberOfThre
 GPU
 ---
 
-(Nvidia) GPU accelerated decoding is available as a separated extension module, please see `here <https://github.com/xiaoxoxin/valkka-nv>`__
+(Nvidia) GPU accelerated decoding is available as a separated extension module, please see `here <https://github.com/xiaxoxin2/valkka-nv>`__
 
 .. _buffering:
 

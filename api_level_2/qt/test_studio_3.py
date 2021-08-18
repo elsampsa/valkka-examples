@@ -1,7 +1,7 @@
 """
 test_studio_3.py : Test live streaming with Qt.  Jump video from one x-screen (and gpu) to another
 
-Copyright 2017, 2018 Sampsa Riikonen
+Copyright 2017-2021 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
@@ -13,7 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @author  Sampsa Riikonen
 @date    2018
 @version 1.2.1 
-@brief   Test live streaming with Qt
+@brief   Jump video from one x-screen (and gpu) to another
 
 
 In the main text field, write live video sources, one to each line, e.g.
@@ -33,11 +33,15 @@ If replicate is 10, then each video is replicated 10 times.  It is _not_ decoded
 
 It's very important to disable vertical sync in OpenGL rendering..!  Otherwise your *total* framerate is limited to 60 fps.  Disabling vsync can be done in mesa-based open source drives with:
 
-export vblank_mode=0
+::
+
+    export vblank_mode=0
 
 and in nvidia proprietary drivers with
 
-export __GL_SYNC_TO_VBLANK=0
+::
+
+    export __GL_SYNC_TO_VBLANK=0
 
 For benchmarking purposes, you can launch the video streams with:
 
@@ -56,11 +60,11 @@ import json
 import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
-from valkka.api2.chains import OpenFilterchain
-from valkka.api2.logging import *
+from valkka.api2.logging import setValkkaLogLevel, loglevel_silent, loglevel_crazy
 from valkka.core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart, ForkFrameFilterN, ValkkaXInitThreads
 
 # Local imports form this directory
+from basic2 import OpenFilterchain
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair, DesktopHandler
 
 pre="test_studio_3 : " # aux string for debugging 
@@ -73,9 +77,11 @@ class MyConfigDialog(ConfigDialog):
   def setConfigPars(self):
     self.tooltips={        # how about some tooltips?
       }
+    # define customizable parameters
     self.pardic.update({
       "replicate"          : 1
       })
+    # self.plis defines parameters to be saved on the disk
     self.plis +=["replicate"]
     self.config_fname="test_studio_3.config" # define the config file name
   
@@ -380,11 +386,14 @@ class MyGui(QtWidgets.QMainWindow):
       chain.close()
     
     self.chains       =[]
+    self.gpu_handler.close()
+    # of couse, do _not_ "annihilate" the floating Qt windows while openglthread is still trying to write into them
+    # after openglthread has been closed:
     self.widget_pairs =[]
     self.videoframes  =[]
-    self.gpu_handler.close()
+
     
-    
+
   def start_streams(self):
     pass
     

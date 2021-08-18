@@ -1,19 +1,21 @@
 """
-test_studio_2.py : Test live streaming with Qt
+test_studio_2.py : Test live streaming with Qt with floating instead of grouped widgets
 
-Copyright 2017, 2018 Sampsa Riikonen
+Copyright 2017-2021 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
 This file is part of the Valkka Python3 examples library
 
-Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
+Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  
+This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+See the MIT License for more details.
 
 @file    test_studio_2.py
 @author  Sampsa Riikonen
 @date    2018
 @version 1.2.1 
-@brief   Test live streaming with Qt
+@brief   Test live streaming with Qt with floating instead of grouped widgets
 
 
 In the main text field, write live video sources, one to each line, e.g.
@@ -27,17 +29,22 @@ In the main text field, write live video sources, one to each line, e.g.
 
 Reserve enough frames into the pre-reserved frame stack.  There are stacks for 720p, 1080p, etc.  The bigger the buffering time "msbuftime" (in milliseconds), the bigger stack you'll be needing.
 
-When affinity is greater than -1, the processes are bound to a certain processor.  Setting "live affinity" to 0, will bind the Live555 thread to processor one.  Setting "dec affinity start" to 1 and "dec affinity start 3" will bind the decoding threads to processors 1-3.  (first decoder process to 1, second to 2, third to 3, fourth to 1 again, etc.)
+When affinity is greater than -1, the processes are bound to a certain processor.  Setting "live affinity" to 0, will bind the Live555 thread to processor one.  
+Setting "dec affinity start" to 1 and "dec affinity start 3" will bind the decoding threads to processors 1-3.  (first decoder process to 1, second to 2, third to 3, fourth to 1 again, etc.)
 
 If replicate is 10, then each video is replicated 10 times.  It is _not_ decoded 10 times, but just copied to 10 more x windoses.
 
 It's very important to disable vertical sync in OpenGL rendering..!  Otherwise your *total* framerate is limited to 60 fps.  Disabling vsync can be done in mesa-based open source drives with:
 
-export vblank_mode=0
+::
+
+    export vblank_mode=0
 
 and in nvidia proprietary drivers with
 
-export __GL_SYNC_TO_VBLANK=0
+::
+
+    export __GL_SYNC_TO_VBLANK=0
 
 For benchmarking purposes, you can launch the video streams with:
 
@@ -49,12 +56,6 @@ For benchmarking purposes, you can launch the video streams with:
 This Qt test program produces a config file.  You might want to remove that config file after updating the program.
 """
 
-# TODO:
-# - video on different windows
-# - a button that sends the window to another xscreen
-# - edit that desktophandler in demo_base.py
-# https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
-
 # from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware of the licensing consequences
 from PySide2 import QtWidgets, QtCore, QtGui
 import sys
@@ -62,97 +63,51 @@ import json
 import os
 import time
 from valkka.api2 import LiveThread, OpenGLThread
-from valkka.api2 import BasicFilterchain
-from valkka.api2.logging import *
+from valkka.api2.logging import setValkkaLogLevel, loglevel_silent, loglevel_crazy
 from valkka.core import TimeCorrectionType_dummy, TimeCorrectionType_none, TimeCorrectionType_smart
 
 # Local imports form this directory
+from basic import BasicFilterchain # a file in this directory, implementing filterchains
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair, DesktopHandler
 
-pre="test_studio : " # aux string for debugging 
+pre="test_studio_2 : " # aux string for debugging 
 
-valkka_xwin =True # use x windows create by Valkka and embed them into Qt
-# valkka_xwin =False # use Qt provided x windows
+# valkka_xwin =True # use x windows created by Valkka and embed them into Qt
+valkka_xwin =False # use Qt provided x windows
 
 # setValkkaLogLevel(loglevel_silent)
+# setValkkaLogLevel(loglevel_crazy)
 
 class MyConfigDialog(ConfigDialog):
   
   def setConfigPars(self):
     self.tooltips={        # how about some tooltips?
       }
+    # define customizable parameters
     self.pardic.update({
       "replicate"          : 1
       })
+    # self.plis defines parameters to be saved on the disk
     self.plis +=["replicate"]
     self.config_fname="test_studio_2.config" # define the config file name
   
 
   
 class VideoContainer:
-  """A widget container: video window and a button that sends it to another X-Screen
+  """A widget container: a floating window containing a video widget
   
   :param parent:    Parent widget (if any)
-  :param video:     The video widget
-  :param n:         Number of screens
+  :param video:     The video widget (A subclassed QWidget)
   """
     
   def __init__(self,parent,video,n=0):
     self.n =n
     self.main_widget=QtWidgets.QWidget(parent)
     self.lay        =QtWidgets.QVBoxLayout(self.main_widget)
-    # self.video      =QtWidgets.QWidget(self.main_widget)
     self.video      =video; self.video.setParent(self.main_widget)
-    self.button     =QtWidgets.QPushButton("Change Screen",self.main_widget)
-    self.lay.addWidget(self.video)
-    self.lay.addWidget(self.button)
-    
-    self.button.setSizePolicy(QtWidgets.QSizePolicy.Minimum,QtWidgets.QSizePolicy.Minimum)
+    self.lay.addWidget(self.video)    
     self.video.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
-    
-    qapp    =QtCore.QCoreApplication.instance()
-    desktop =qapp.desktop()
-    self.n  =desktop.primaryScreen()
-    
-    self.button.clicked.connect(self.cycle_slot)
-    
-    
-  def cycle_slot(self):
-    """Cycle from one X-Screen / virtual screen to another
-    """
-    
-    # this does not seem to work..
-    # https://stackoverflow.com/questions/3203095/display-window-full-screen-on-secondary-monitor-using-qt
-    """
-    self.main_widget.show();
-    # self.main_widget.windowHandle().setScreen(qApp.screens()[1]);
-    qapp=QtCore.QCoreApplication.instance()
-    print("VideoContainer: qapp screens=",qapp.screens())
-    self.main_widget.windowHandle().setScreen(qapp.screens()[0])
-    self.main_widget.show();
-    # self.main_widget.showFullScreen();
-    """
-    
-    qapp    =QtCore.QCoreApplication.instance()
-    
-    # desktop =qapp.desktop()
-    # n_max   =desktop.screenCount()
-    
-    n_max =len(qapp.screens())
-    
-    self.n +=1
-    if (self.n>=n_max):
-      self.n=0
-    
-    # geom    =desktop.screenGeometry(self.n)    
-    # self.main_widget.move(QtCore.QPoint(geom.x(), geom.y()));
-    # # self.main_widget.resize(geom.width(), geom.height());
-    # # self.main_widget.showFullScreen();
-    
-    self.main_widget.windowHandle().setScreen(qapp.screens()[self.n])
-    self.main_widget.show()
-    
-    
+        
     
   def mouseDoubleClickEvent(self,e):
     print("double click!")
@@ -165,8 +120,8 @@ class VideoContainer:
   def getWidget(self):
     return self.main_widget
   
- 
- 
+    
+
 class MyGui(QtWidgets.QMainWindow):
 
   debug=False
@@ -216,44 +171,22 @@ class MyGui(QtWidgets.QMainWindow):
       n_1080p  =self.pardic["n_1080p"],
       n_1440p  =self.pardic["n_1440p"],
       n_4K     =self.pardic["n_4K"],
-      # naudio  =self.pardic["naudio"], # obsolete
-      # verbose =True,
-      verbose =False,
+      # verbose =False,
+      verbose = True,
       msbuftime=self.pardic["msbuftime"],
-      affinity=self.pardic["gl affinity"],
-      x_connection =":0.0"
-      # x_connection =":0.1" # works .. video appears on the other xscreen
+      affinity=self.pardic["gl affinity"]
       )
 
-    """ # this results in a segfault
-    print("> starting second OpenGLThread")
-    # testing: start another OpenGLThread
-    self.openglthread2=OpenGLThread(     # starts frame presenting services
-      name    ="mythread2",
-      n_720p   =self.pardic["n_720p"],   # reserve stacks of YUV video frames for various resolutions
-      n_1080p  =self.pardic["n_1080p"],
-      n_1440p  =self.pardic["n_1440p"],
-      n_4K     =self.pardic["n_4K"],
-      # naudio  =self.pardic["naudio"], # obsolete
-      # verbose =True,
-      verbose =False,
-      msbuftime=self.pardic["msbuftime"],
-      affinity=self.pardic["gl affinity"],
-      x_connection =":0.1" # works .. video appears on the other xscreen
-      )
-    print("> second OpenGLThread started")
-    """
-    
     if (self.openglthread.hadVsync()):
-      w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
+      w=QtWidgets.QMessageBox.warning(self,"VBLANK WARNING","Syncing to vertical refresh enabled\n\
+      THIS WILL DESTROY YOUR FRAMERATE\n Disable it with 'export vblank_mode=0' for nvidia proprietary drivers, use 'export __GL_SYNC_TO_VBLANK=0'")
 
-    tokens     =[]
-    self.chains=[]
+    tokens     =[] # list of tokens representing slot number => X window-id mappings
+    self.chains=[] # list of BasicFilterChain instances
     
     a =self.pardic["dec affinity start"]
     cw=0 # widget / window index
     cs=1 # slot / stream count
-    
     
     ntotal=len(self.addresses)*self.pardic["replicate"]
     nrow  =self.pardic["videos per row"]
@@ -270,7 +203,7 @@ class MyGui(QtWidgets.QMainWindow):
         address     =address,
         slot        =cs,
         affinity    =a,
-        # verbose     =True
+        # verbose     =True,
         verbose     =False,
         msreconnect =10000,
         
@@ -334,15 +267,17 @@ class MyGui(QtWidgets.QMainWindow):
   
   def closeValkka(self):
     self.livethread.close()
-    
     for chain in self.chains:
       chain.close()
-    
     self.chains       =[]
+    print(pre, "closeValkka: closing openglthread")
+    self.openglthread.close()
+    print(pre, "closeValkka: openglthread closed")
+    # of couse, do _not_ "annihilate" the floating Qt windows while openglthread is still trying to write into them
+    # after openglthread has been closed:
     self.widget_pairs =[]
     self.videoframes  =[]
-    self.openglthread.close()
-    
+
     
   def start_streams(self):
     pass

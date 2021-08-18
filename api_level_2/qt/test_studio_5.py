@@ -1,7 +1,7 @@
 """
 test_studio_5.py : Test live streaming, recording and playback in Qt
 
-Copyright 2017-2019 Sampsa Riikonen
+Copyright 2017-2021 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
@@ -33,11 +33,15 @@ If replicate is 10, then each video is replicated 10 times.  It is _not_ decoded
 
 It's very important to disable vertical sync in OpenGL rendering..!  Otherwise your *total* framerate is limited to 60 fps.  Disabling vsync can be done in mesa-based open source drives with:
 
-export vblank_mode=0
+::
+
+    export vblank_mode=0
 
 and in nvidia proprietary drivers with
 
-export __GL_SYNC_TO_VBLANK=0
+::
+
+    export __GL_SYNC_TO_VBLANK=0
 
 For benchmarking purposes, you can launch the video streams with:
 
@@ -72,11 +76,12 @@ del t
 """
 
 # valkka
-from valkka.api2 import LiveThread, OpenGLThread, ValkkaFS, ValkkaFSManager, ValkkaFSLiveFilterchain, ValkkaFSFileFilterchain
-from valkka.api2.logging import *
+from valkka.api2 import LiveThread, OpenGLThread, ValkkaFS, ValkkaFSManager
+from valkka.api2.logging import setValkkaLogLevel, loglevel_silent, loglevel_crazy
 from valkka import core # for logging
 
 # Local imports form this directory
+from valkkafs import ValkkaFSLiveFilterchain, ValkkaFSFileFilterchain
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 from demo_widget import ValkkaFSConfig
 from playback import PlaybackController
@@ -101,7 +106,6 @@ core.setLogLevel_valkkafslogger(loglevel_debug)
 core.setLogLevel_avthreadlogger(loglevel_debug)
 core.setLogLevel_valkkafslogger(loglevel_debug)
 """
-
 
 valkka_fs_dirname = "fs_directory"
 blocksize_default = 25*1024*1024 # blocksize in B # one block per two seconds, assuming 25 fps, 2Mbits/sec, 2 cameras, key frame each second for both
@@ -230,6 +234,7 @@ class MyGui(QtWidgets.QMainWindow):
         
         
     def openValkka(self):
+        # this resides in valkka.api2 and is kinda complex..  :/
         self.valkkafsmanager = ValkkaFSManager(
             self.valkkafs,
             # read = False,   # debugging

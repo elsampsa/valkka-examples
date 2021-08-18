@@ -86,6 +86,7 @@ MyGui
             - tells OpenGLThread to draw bboxes to the video with token
         
 """
+raise(BaseException("NOT UP TO DATE"))
 
 # from PyQt5 import QtWidgets, QtCore, QtGui # If you use PyQt5, be aware
 # of the licensing consequences

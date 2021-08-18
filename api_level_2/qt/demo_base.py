@@ -63,7 +63,7 @@ class TestWidget0(QtWidgets.QWidget):
 
 
 def getForeignWidget(parent, win_id): 
-    """Valkka creates a window.  The window is used to generate the widget.. however.. here we loose the interaction with the window .. clicks on it, etc. (were detached from the qt system)
+    """Valkka creates a window.  The window is used to generate the widget.. however.. here we lose the interaction with the window .. clicks on it, etc. (were detached from the qt system)
     """
     # some interesting flags for the createWindowContainer method: QtCore.Qt.ForeignWindow QtCore.Qt.X11BypassWindowManagerHint
     # other things: QtGui.QSurface(QtGui.QSurface.OpenGLSurface), q_widget.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
@@ -135,7 +135,6 @@ class ConfigDialog(QtWidgets.QDialog):
       "ok"                 : True
     }
     
-    # ["n_720p", "n_1080p", "n_1440p", "n_4K", "naudio", "verbose", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop"]
     self.plis=["n_720p", "n_1080p", "n_1440p", "n_4K", "naudio", "verbose", "msbuftime", "live affinity", "gl affinity", "dec affinity start", "dec affinity stop","videos per row"]
     
     self.setConfigPars() # custom pars

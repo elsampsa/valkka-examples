@@ -36,10 +36,10 @@
   <div class="section" id="valkka">
 <h1>Valkka<a class="headerlink" href="#valkka" title="Permalink to this headline">¶</a></h1>
 <p><em>Valkka is a python media streaming framework</em></p>
-<p>You can use it to create intelligent video surveillance solutions in Linux.</p>
+<p>You can use it to create video streaming and surveillance solutions purely in Python.  No need to go C++ ever again.</p>
 <p><em>Some highlights of Valkka</em></p>
 <ul class="simple">
-<li><p>Python3 API, while streaming itself runs in the background at the cpp level</p></li>
+<li><p>Python3 API, while streaming itself runs in the background at the cpp level.  Threads, semaphores, frame queues etc. are hidden from the API user.</p></li>
 <li><p>Works with stock OnVif compliant IP cameras</p></li>
 <li><p>Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice via shared memory</p></li>
 <li><p>Share decoded video with python processes across your Linux system</p></li>
@@ -50,8 +50,13 @@
 </ul>
 <p>Take also a look at <a class="reference external" href="https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ">this presentation</a>
 to see some of the typical video streaming / machine vision problems libValkka can solve for you.</p>
-<p>This documentation is a quickstart for <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">installing</span></a> and developing with Valkka using the Python3 API. <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">A Tutorial</span></a>, <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a>
-and <a class="reference external" href="https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic">an example python project/package</a> are provided.</p>
+<p>This documentation is a quickstart for <a class="reference internal" href="requirements.html#requirements"><span class="std std-ref">installing</span></a> and developing with Valkka using the Python3 API.  Consider this learning process:</p>
+<ul class="simple">
+<li><p>Start with the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a></p></li>
+<li><p>Valkka streams video and images between python multiprocesses, so reading <a class="reference external" href="https://medium.com/&#64;sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300">this article</a> is a must</p></li>
+<li><p>If you’re into creating PyQt/PySide2 applications, take a look at <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">the PyQt testsuite</span></a></p></li>
+<li><p>If you’re more into cloud apps, check out <a class="reference external" href="https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic">this example python project/package</a></p></li>
+</ul>
 <p>For a demo program using Valkka, check out <a class="reference external" href="https://elsampsa.github.io/valkka-live/">Valkka Live</a></p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -99,10 +104,8 @@ and <a class="reference external" href="https://github.com/elsampsa/valkka-examp
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="qt_notes.html#qt-integration">Qt integration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qt_notes.html#drawing-video-into-a-widget">Drawing video into a widget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#streaming-from-several-cameras">Streaming from several cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qt_notes.html#python-multiprocessing">Python multiprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#multiprocessing-warning">Multiprocessing Warning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#just-use-c-instead-of-python">Just use C++ instead of Python?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#c-api">C++ API</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a><ul>

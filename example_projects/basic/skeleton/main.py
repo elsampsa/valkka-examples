@@ -8,19 +8,12 @@ main.py : libValkka and multiprocess orchestration example
 
 [copy-paste your license here]
 
-main1 does the following:
+Does the following:
 
 - Starts libValkka & reading an IP camera & producing data at the cpp side
 - RGB24 images and fragmented mp4 is produced at the cpp side and passed through shared memory to python multiprocesses
 - In those multiprocesses you can then do image analysis and simultaneously send fragmented mp4 into, say, a webscket
 - The video is simultaneously visualized on your screen
-
-main2:
-
-- Similar to main1, but..
-
-TODO
-
 """
 import logging
 
@@ -32,8 +25,7 @@ from valkka.multiprocess import safe_select
 """A "filterchain" defines the streaming topology,
 see here: https://elsampsa.github.io/valkka-examples/_build/html/intro.html#valkka-api
 
-Streamin runs at the cpp level, 
-while the toplogy is defined at python level
+Streaming runs at the cpp level, while the toplogy is defined at python level
 """
 from skeleton.filterchain import BasicFilterChain
 
@@ -73,7 +65,7 @@ def main1(address):
     rgb_process.start()
 
     # openglthread is used to dump live video to the screen
-    # preserved frames in the memory and at the GPI
+    # frames are preserved in the memory and at the GPU
     gl_ctx = core.OpenGLFrameFifoContext()
     gl_ctx.n_720p = 20
     gl_ctx.n_1080p = 20
