@@ -10,22 +10,60 @@
 
 Trying to manage large video streaming / machine vision systems requires you to joggle
 video streams between various threads and/or processes (regardless of your programming language of choice)
-and will always, and without exceptions, create an impenetrable mess.
-
-[This talk](https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ/) gives you some typical example cases you might and will run into.
-This example repo also gives you code that can be used to resolve those example cases.
+and will always, and without exceptions, create a mess.
 
 LibValkka comes to your help: you can write clean python code, where different parts of your system run in isolated
-python multiprocesses.  Within the isolated multiprocesses you are free to use neural nets and OpenCV as you wish.
-You can also create a websocket server, running asyncio python and serving frag-mp4 streams.
+python multiprocesses.  Within the isolated multiprocesses you'll be using neural nets and OpenCV.
+You can also create a websocket server, running asyncio python and serving frag-mp4 streams for realtime video in the browser.
 
-So, no more encapsulating those ffmpeg processes into separate multiprocesses and reading their stdout and things like that.  How cools is that!?
+So, no more encapsulating those ffmpeg processes into separate multiprocesses and reading their stdout and things like that.  How cool is that?
+
+[This talk](https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ/) gives you some typical example cases you might and will run into.
+
+This example repo gives you code that can be used to resolve some of those cases:
+```
+
+CASE 1
+
+                        +-----> (a) python multiprocess receiving frag-mp4 
+                        |           (for cloud streaming)
+                        |
+libValkka c++ side -----+
+                        |
+                        +-----> (b) python multiprocess receiving 
+                                    RGB24 frames (for OpenCV analysis) >--+
+                                                                          |
+                                                                          |
+                        python main process (d) <--------messages---------+
+
+CASE 2
+
+                        +-----> (a) python multiprocess receiving frag-mp4
+                        |           (for cloud streaming)
+                        |
+libValkka c++ side -----+
+                        |
+                        +-----> (b) python multiprocess receiving <---+
+                +-------------<     RGB24 frames (for OpenCV)         |
+                |                                   |                 |
+                |                                   |                 |
+                |      (c) python master <---RGB24--+                 |
+                |          multiprocess  >---------messages-----------+
+                |
+                +--messages----> (d) python main process
+
+
+```
+
+- In case (1) you can span several multiprocesses doing OpenCV analysis.  The results are returned as messages to your main python process (d).
+- In case (2) you can share a common neural net detector (c) between several OpenCV detectors (b).
+- In both cases, the stream is *simultaneously* served as live frag-mp4 stream.
 
 LibValkka uses python multiprocessing (*not* multi*threading*) and shared memory to pass video streams (and other data) between processes.
 One process can also "multiplex" several streams simultaneously, either using asyncio python or python's select module.
 [Eventfd](https://linux.die.net/man/2/eventfd) is heavily used.
 
-This is all very neat, but of course, comes with a price tag in the form of a learning curve.  However, it's much better than paper-clip & house-of-cards solutions and besides, so much more enjoyable..!
+This is all very neat, but of course, comes with a price tag in the form of a learning curve (however, much better than paper-clip & house-of-cards ffmpeg/stdout solutions).
 
 Here we have a complete example of a multiprocess orchestration, which you can install with (launch in this directory):
 ```
@@ -38,7 +76,6 @@ After that, you can move into ``skeleton/`` directory and launch ``python3 main.
 
 This example project can be used to create a websocket-based IP-camera stream server that does simultaneous machine vision analysis with OpenCV.  It is easily scaled up to a massive number of IP cameras.
 [This project](https://github.com/elsampsa/websocket-mse-demo) will also help you on the way.
-
 
 Here are some details about the project structure:
 ```
@@ -64,6 +101,7 @@ Here are some details about the project structure:
 │       │   ├── master.py           # get's RGB24 frames from client.py & replies to client.py with a message
 │       │   └── rgb.py              # reads RGB24 frames from libValkka c++ side
 │       ├── singleton.py            # global inter-process communication objects
+|       ├── sync.py                 # classes for global inter-process communication objects, used by singleton.py
 │       ├── template.py
 │       ├── tools.py
 │       └── version.py
@@ -71,7 +109,7 @@ Here are some details about the project structure:
 ```
 
 
-The code itself servers as a tutorial, and we suggest that you proceed like this:
+The code itself serves as a tutorial, and we suggest that you proceed like this:
 
 - Read ``singleton.py``
 - Read ``basic.py``
@@ -84,8 +122,7 @@ The code itself servers as a tutorial, and we suggest that you proceed like this
 
 *not to be confused with web front/backends, of course*
 
-Here is a nice way to extend [python's multiprocessing class](https://docs.python.org/2/library/multiprocessing.html#the-process-class):
-
+In order to understand the codebase, you really need to read [this tutorial](https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300):
 ```
                           pipe
                           intercom
@@ -128,15 +165,13 @@ to see how this is dealt with.
 
 As already discussed, global event file descriptors are created in the very beginning of your program in the ``singleton.py`` module.
 
-After that, ``singleton.events`` are visible to all of your python code.  They are also visible to any multiprocess (backends) you might span later on in your program.
+After that, ``singleton.event_fd_group_1`` is visible to all your python code.  They are also visible to any multiprocess (backends) you might span later on in your program.
 
 Regularly, your main python process needs to tell to a multiprocess (backend), which eventfd it should use to synchronize a stream of RGB24 frames, originating from the main python process.
 
-The main process must send this information as a global index, referring to an element in ``singleton.events``.
+The main process sends this information as a global index, referring to an element in ``singleton.event_fd_group_1``.
 
-*The indices (and eventfds) should only be reserved / released by the main python process* (see ``singleton.reserveEventFd`` and ``singleton.releaseEventFd``).
-
-I know this might sound a bit complicated, but just think about it a while and you'll get it.  :)
+*The indices (and eventfds) should only be reserved / released by the main python process* (see ``sync.EvenFdGroup.reserve`` and ``sync.EvenFdGroup.release``).
 
 # Now what?
 

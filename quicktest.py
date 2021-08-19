@@ -122,4 +122,6 @@ try:
     import setproctitle
 except Exception as e:
     print("    setproctitle not installed")
-    
+else:
+    print("    setproctitle ok")
+print()

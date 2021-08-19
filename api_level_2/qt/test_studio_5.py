@@ -82,8 +82,8 @@ from valkka import core # for logging
 
 # Local imports form this directory
 from valkkafs import ValkkaFSLiveFilterchain, ValkkaFSFileFilterchain
+from valkkafs2 import ValkkaFSConfig
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
-from demo_widget import ValkkaFSConfig
 from playback import PlaybackController
 from playwidget import TimeLineWidget, CalendarWidget
 

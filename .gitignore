@@ -17,3 +17,5 @@ docker/Valkka-*.deb
 __pycache__/
 *.egg-info/
 docker/data/
+*.txt
+*.mkv

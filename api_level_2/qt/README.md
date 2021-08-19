@@ -52,5 +52,6 @@ cpp_thread_demo.py      A custom libValkka thread, created at cpp level, running
 demo_base.py            Common widgets for the test_studio demos
 playback.py             Playback controller
 playwidget.py           Timeline & calendar widget
+valkkafs2.py            Widget for managing valkkafs parameters
 tools.py                Some tools
 ```

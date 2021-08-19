@@ -2,7 +2,8 @@ import time
 import sys
 from valkka import core
 # The objects in that "core" namespace are just wrapped cpp code.  You can find the documentation here: https://elsampsa.github.io/valkka-core/html/annotated.html
-from skeleton.singleton import releaseEventFd, reserveEventFd, eventFdToIndex
+# from skeleton.singleton import releaseEventFd, reserveEventFd, eventFdToIndex
+from skeleton.singleton import event_fd_group_1
 
 
 class BasicFilterChain:
@@ -67,8 +68,8 @@ class BasicFilterChain:
         assert(isinstance(address, str))
         assert(isinstance(slot, int))
 
-        self.rgb_sync_event = reserveEventFd()
-        self.fmp4_sync_event = reserveEventFd()
+        _, self.rgb_sync_event = event_fd_group_1.reserve()
+        _, self.fmp4_sync_event = event_fd_group_1.reserve()
 
         id_ = str(id(self))        
         self.active = True
@@ -199,7 +200,7 @@ class BasicFilterChain:
             "n_ringbuffer": self.rgb_shmem_buffers,
             "width": self.width,
             "height": self.height,
-            "ipc_index" : eventFdToIndex(self.rgb_sync_event)
+            "ipc_index" : event_fd_group_1.asIndex(self.rgb_sync_event)
         }
 
 
@@ -216,7 +217,7 @@ class BasicFilterChain:
             "name": self.fmp4_shmem_name,
             "n_ringbuffer": self.fmp4_shmem_buffers,
             "n_size": self.fmp4_shmem_cellsize,
-            "ipc_index" : eventFdToIndex(self.fmp4_sync_event)
+            "ipc_index" : event_fd_group_1.asIndex(self.fmp4_sync_event)
         }
 
 
@@ -249,12 +250,10 @@ class BasicFilterChain:
         if self.openglthread is not None:
             self.openglthread.delRenderContextCall(self.context_id)
             self.openglthread.delRenderGroupCall(self.window_id)
-        releaseEventFd(self.rgb_sync_event)
-        releaseEventFd(self.fmp4_sync_event)
+        event_fd_group_1.release(self.rgb_sync_event)
+        event_fd_group_1.release(self.fmp4_sync_event)
         self.active = False
 
-
-    
 
 def main():
     """Simple filterchain creation test
@@ -269,9 +268,7 @@ def main():
 
     filterchain = BasicFilterChain(
         address = sys.argv[1],
-        slot = 1,
-        rgb_sync_event = reserveEventFd(),
-        fmp4_sync_event = reserveEventFd()
+        slot = 1
     )
 
     ## runs the filterchain

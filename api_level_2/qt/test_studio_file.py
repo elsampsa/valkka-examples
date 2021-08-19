@@ -331,7 +331,7 @@ class MyGui(QtWidgets.QMainWindow):
 
     def set_still_slot(self):
         self.infotext.setText("still")
-        self.messages.append("Movement stopped at ")
+        self.messages.append("Movement stopped")
         if (len(self.messages) > 10):
             self.messages.pop(0)
         st = ""
@@ -341,7 +341,7 @@ class MyGui(QtWidgets.QMainWindow):
 
     def set_moving_slot(self):
         self.infotext.setText("MOVING")
-        self.messages.append("Movement started at ")
+        self.messages.append("Movement started")
         if (len(self.messages) > 10):
             self.messages.pop(0)
         st = ""

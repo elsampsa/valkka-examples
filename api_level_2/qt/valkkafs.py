@@ -152,7 +152,7 @@ class ValkkaFSLiveFilterchain:
         # initial connections : live stream
         self.createLiveContext() # LiveThread writes to self.fork
         self.connect_to_stream("live_decode_"+str(self.slot), self.avthread.getFrameFilter()) # self.fork to AVThread
-        self.connect_to_stream("recorder_"+str(self.slot), self.valkkafsmanager.getFrameFilter()) # self.fork to ValkkaFSWriterThread
+        self.connect_to_stream("recorder_"+str(self.slot), self.valkkafsmanager.getInputFrameFilter()) # self.fork to ValkkaFSWriterThread
         self.valkkafsmanager.setInput(self.id_rec, self.slot)
         
         

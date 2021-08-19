@@ -167,7 +167,7 @@ class ClientProcess(RGB24Process):
             "n_ringbuffer" : self.server_n_ringbuffer,
             "width" : self.server_width,
             "height" : self.server_height,
-            "ipc_index" : eventFdToIndex(self.event_fd)
+            "ipc_index" : event_fd_group_1.asIndex(self.event_fd)
         }
         print("getRGB24ServerPars:", pars)
         return pars

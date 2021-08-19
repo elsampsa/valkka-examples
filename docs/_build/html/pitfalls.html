@@ -36,12 +36,19 @@
 <h1>Common problems<a class="headerlink" href="#common-problems" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="pitfalls">
 <span id="id1"></span><h2>Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h2>
-<p>Valkka has been designed for massive video streaming.  If your linux box, running a Valkka-based program starts to choke up and you get frame jittering, stuttering, video freezes, etc.  You should consider the following issues:</p>
+<p>Valkka has been designed for massive video streaming.
+If your linux box, running a Valkka-based program, starts to choke up and you get frame jittering, stuttering / video freezes, and typically, this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OpenGLThread</span><span class="p">:</span> <span class="n">handleFifo</span><span class="p">:</span> <span class="n">DISCARDING</span> <span class="n">late</span> <span class="n">frame</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>You should consider the following issues:</p>
 <p><strong>0. Are you using correct Valkka version?</strong></p>
 <p>Use the latest version.  When running the PyQt testsuite, remember to run <em>quicktest.py</em> to see if your installation is consistent.</p>
 <p><strong>1. Are you using sub-standard cameras?</strong></p>
-<p>Nowadays the image quality is impressive in all stock IP cameras, however, the rtsp server and/or timestamping of the cameras can be buggy (there might be problems when maintaining several connections to the same camera, or when re-connecting several times to the same camera).</p>
-<p>Before blaming us, <em>generate the same situation with a reference program</em>, say with ffplay, and see if it works or not.  The <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a> offers nice tools for benchmarking agains ffplay and vlc.</p>
+<p>Nowadays the image quality is impressive in all stock IP cameras, however, the rtsp server and/or timestamping of the cameras can be buggy
+(there might be problems when maintaining several connections to the same camera, or when re-connecting several times to the same camera).</p>
+<p>Before blaming us, <em>generate the same situation with a reference program</em>, say with ffplay, and see if it works or not.
+The <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a> offers nice tools for benchmarking agains ffplay and vlc.</p>
 <p><strong>2. Is your PC powerful enough to decode simultaneously 4+ full-hd videos?</strong></p>
 <p><em>Test against a reference program</em> (ffplay).  Launch KSysGuard to monitor your processor usage.  Read also <a class="reference internal" href="decoding.html#decoding"><span class="std std-ref">this</span></a>.</p>
 <p><strong>3. Have you told Valkka to reserve enough bitmap frames on the GPU?  Is your buffering time too large?</strong></p>
@@ -50,14 +57,18 @@
 <p>On MESA based X.org drivers (intel, nouveau, etc.), this can be achieved from command line with “export vblank_mode=0”.  With nvidia proprietary drivers, use the <em>nvidia-settings</em> program.</p>
 <p>Test if vsync is disabled with the “glxgears” command.  It should report 1000+ frames per second with vsync disabled.</p>
 <p><strong>5. Disable OpenGL composition.</strong></p>
-<p>In a KDE based system, go to <em>System Settings =&gt; Display and Monitor =&gt; Compositor</em> and uncheck “Enable compositor on startup”.  After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.  In Xcfe based desktop, do <em>Settings Manager -&gt; Window Manager Tweaks -&gt; Compositor -&gt; uncheck Enable Display Compositor</em>.</p>
+<p>In a KDE based system, go to <em>System Settings =&gt; Display and Monitor =&gt; Compositor</em> and uncheck “Enable compositor on startup”.
+After that, you still have to restart your X-server (i.e. do logout and login).  CTRL-ALT-F12 might also work.
+In Xcfe based desktop, do <em>Settings Manager -&gt; Window Manager Tweaks -&gt; Compositor -&gt; uncheck Enable Display Compositor</em>.</p>
 <p>Alternatively, you can user this command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dbus</span> <span class="n">org</span><span class="o">.</span><span class="n">kde</span><span class="o">.</span><span class="n">KWin</span> <span class="o">/</span><span class="n">Compositor</span> <span class="n">suspend</span>
 </pre></div>
 </div>
 <p><strong>6. Is your IP camera’s time set correctly?</strong></p>
-<p>Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are “almost” right (i.e. off by a second or so), there is no way to know if the frames are stamped incorrectly or if they really arrive late..!</p>
-<p>So, either set your IP camera’s clock really off (say, 5+ mins off) or exactly to the correct time.  In the latter case, you might want to sync both your IP camera and PC to the same NTP server.</p>
+<p>Valkka tries hard to correct the timestamps of arriving frames, but if the timestamps are “almost” right (i.e. off by a second or so),
+there is no way to know if the frames are stamped incorrectly or if they really arrive late..!</p>
+<p>So, either set your IP camera’s clock really off (say, 5+ mins off) or exactly to the correct time.
+In the latter case, you might want to sync both your IP camera and PC to the same NTP server.</p>
 <p><strong>7. Are you really using a gigabit nic?</strong></p>
 <p>How’s your network interface hardware?  Using an old usb dongle?  Check your nic’s capacity with this command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cat</span> <span class="o">/</span><span class="n">sys</span><span class="o">/</span><span class="n">class</span><span class="o">/</span><span class="n">net</span><span class="o">/&lt;</span><span class="n">device_name</span><span class="o">&gt;/</span><span class="n">speed</span>
@@ -76,20 +87,22 @@
 <li><p>If you observe broken frames, most likely your network interface is not keeping up.  What is the bandwith of your network and nic ? (as we just discussed.  See also “System tuning” below)</p></li>
 </ul>
 </div></blockquote>
-<p><strong>9. The AVThread(s) performing the decoding and uploading YUV bitmaps to GPU are taking too long</strong></p>
+<p><strong>9. The AVThread(s) performing the decoding and uploading to GPU are taking too long</strong></p>
 <blockquote>
 <div><ul class="simple">
-<li><p>This is, of course, to be expected if all your CPU(s) are screaming 100%</p></li>
+<li><p>This is to be expected if all your CPU(s) are screaming 100%, so check that.</p></li>
 </ul>
 </div></blockquote>
-<p><strong>10. OpenGLThread that queues YUV frames and does the YUV =&gt; RGB interpolation on the GPU is stalling</strong></p>
-<blockquote>
-<div><ul class="simple">
-<li><p>There might still be some problems with the queueing/presenting algorithm (please do inform us by creating a ticket in valkka-core’s GitHub page).</p></li>
-<li><p>Your GPU might not have enough muscle</p></li>
-</ul>
-</div></blockquote>
-<p>If you compile libValkka from source, there are many available debug options that can be enabled in <em>run_cmake.bash</em>.   A particularly useful one is <em>profile_timing</em>.  Enabling this debug switch allows you to trace the culprit for frame dropping to slow network, slow decoding or the OpenGL part.</p>
+<p><strong>10. OpenGLThread is stalling</strong></p>
+<p>If you have tried everything suggested on this page so far, but you’re still getting</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OpenGLThread</span><span class="p">:</span> <span class="n">handleFifo</span><span class="p">:</span> <span class="n">DISCARDING</span> <span class="n">late</span> <span class="n">frame</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Then the problem is in the last part of the pipeline: the OpenGLThread.</p>
+<p>It performs image interpolation and various other OpenGL calls, that, depending
+on your driver’s OpenGL implementation, might be efficient or not.  Generally, NVidia seems to perform better that Intel.</p>
+<p>If you compile libValkka from source, there are many available debug options that can be enabled in <em>run_cmake.bash</em>.
+A particularly useful ones are <em>profile_timing</em> and <em>opengl_timing</em>.  Enabling these debug switch allows you to trace the culprit for frame dropping to slow network, slow decoding or the OpenGL part.</p>
 <p>Some common fixes (that are frequently used in commercial video surveillance applications) include:</p>
 <ul class="simple">
 <li><p>Configure your cameras to a lower frame rate (say, 10 fps): unfortunately this sucks.</p></li>

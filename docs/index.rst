@@ -12,7 +12,7 @@ Valkka
 
 *Valkka is a python media streaming framework*
 
-You can use it to create video streaming and surveillance solutions purely in Python.  No need to go C++ ever again.
+Create video streaming and surveillance solutions purely in Python.  No need to go C++ ever again.
 
 *Some highlights of Valkka*
 
@@ -28,7 +28,9 @@ You can use it to create video streaming and surveillance solutions purely in Py
 Take also a look at `this presentation <https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ>`_
 to see some of the typical video streaming / machine vision problems libValkka can solve for you.
 
-This documentation is a quickstart for :ref:`installing <requirements>` and developing with Valkka using the Python3 API.  Consider this learning process:
+This documentation is a quickstart for :ref:`installing <requirements>` and developing with Valkka using the Python3 API.  
+
+This is the recommended learning process:
 
 - Start with the :ref:`tutorial <tutorial>`
 - Valkka streams video and images between python multiprocesses, so reading `this article <https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300>`_ is a must

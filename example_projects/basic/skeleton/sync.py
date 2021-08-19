@@ -200,6 +200,9 @@ class EventFdGroup:
         """
         return self.events[i]
 
+    def asIndex(self, eventfd: core.EventFd):
+        return self.events.index(eventfd)
+
 
 def main1():
     # raise(NotEnoughEvents)
