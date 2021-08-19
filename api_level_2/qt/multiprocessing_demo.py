@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    multiprocessing_demo.py
 @author  Sampsa Riikonen
 @date    2018
-@version 1.2.1 
+@version 1.2.2 
 @brief   Use Qt with python multiprocesses
 """
 
