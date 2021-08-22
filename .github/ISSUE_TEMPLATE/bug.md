@@ -35,7 +35,12 @@ Your bug report should include:
 6. Did you install with ``apt-get`` or did you compile yourself?
 
 7. Ascii art of the filterchain (like in the tutorial)
-8. A **minimal, single-file code that reproduces the issue**, as a github gist
+8. A **minimal, single-file code that reproduces the issue**:
+    - Use github gists
+    - Must be a stand-alone python executable, something that can be launched (by me) from the command line, i.e.:
+      ```
+      python3 your_python_file.py
+      ```
+    - Keep it _very_ brief
 
 Please remember that all ValkkaFS-related features are still pretty experimental.
-
