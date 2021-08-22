@@ -1,15 +1,15 @@
 ---
-name: Custom issue template
-about: Describe this issue template's purpose here.
+name: General Question
+about: A general question, observation or discussion
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-## A. General question / observation
+## General Question
 
-Like:
+Things like this:
 
 - "When feature X will be available in libValkka?"
 - "Can you explain why Z?"
@@ -17,4 +17,4 @@ Like:
 
 The idea in this kind of ticket is to have discussion.  However, due to the nature of the ticket, it's going to be rather vague.
 
-If you need something more exact, please file a bug report.
+If your problem/issue is more exact, please file a bug report.
