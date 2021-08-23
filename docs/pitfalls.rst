@@ -142,7 +142,7 @@ And running
 
 Turns off swap and sets maximum allowed read/write socket sizes to 2 MB.
 
-Receiving socket size can be adjusted for each live connection with the associated *LiveConnectionContext* (see the tutorial).  For an example how to do this, refer to **valkka.api2.basic.BasicFilterChain**
+Receiving socket size can be adjusted for each live connection with the associated *LiveConnectionContext* (see the tutorial).
 
 FAQ
 ---
