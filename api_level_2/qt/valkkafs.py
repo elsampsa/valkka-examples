@@ -53,14 +53,14 @@ class ValkkaFSLiveFilterchain:
                                                                   |                                                                     |
       (LiveThread:livethread) --> {ForkFrameFilterN:fork} --------+ request forked H264 stream                                          +--->> OpenGLThread (connected by user)
                                                                   |                                                                     |
-                                       ValkkaFSWriterThread <<----+                                                                     + request forked YUV
+                                   ((ValkkaFSWriterThread)) <<----+                                                                     + request forked YUV
 
     ValkkaFSFileFilterchain:
     
     
     ::
     
-      ValkkaFSReaderThread -->> FileCacherThread ------------->> {ForkFrameFilterN:fork} ------+
+      ((ValkkaFSReaderThread -->> FileCacherThread)) --------->> {ForkFrameFilterN:fork} ------+
                                                                                                |
                                   {ForkFrameFilterN:fork_yuv} <-- (AVThread:avthread) <<-------+
                                             |                                                  |
@@ -70,20 +70,19 @@ class ValkkaFSLiveFilterchain:
                                             + request forked YUV
 
 
-      ValkkaFSManager:
+        (( * )) = managed by ValkkaFSManager
 
-      - ValkkaFSWriterThread
-      - ValkkaFSReaderThread
-      - FileCacherThread
 
     """
 
     parameter_defs = {
         "livethread": LiveThread,
-        "valkkafsmanager": ValkkaFSManager,
+        # "valkkafsmanager": ValkkaFSManager,
+        "rec_framefilter": None, # framefilter for dumping recording
+
         "address": str,
         "slot": int,
-        "id_rec": int,
+        # "id_rec": int,
 
         # these are for the AVThread instance:
         "n_basic": (int, 20),  # number of payload frames in the stack
@@ -151,10 +150,10 @@ class ValkkaFSLiveFilterchain:
 
         # initial connections : live stream
         self.createLiveContext() # LiveThread writes to self.fork
-        self.connect_to_stream("live_decode_"+str(self.slot), self.avthread.getFrameFilter()) # self.fork to AVThread
-        self.connect_to_stream("recorder_"+str(self.slot), self.valkkafsmanager.getInputFrameFilter()) # self.fork to ValkkaFSWriterThread
-        self.valkkafsmanager.setInput(self.id_rec, self.slot)
-        
+        self.connect_to_stream("live_decode_"+str(self.slot), 
+            self.avthread.getFrameFilter()) # self.fork to AVThread
+        self.connect_to_stream("recorder_"+str(self.slot), 
+            self.rec_framefilter)
         
     def connect_to_stream(self, name, framefilter):
         return self.fork.connect(name, framefilter)
@@ -235,14 +234,14 @@ class ValkkaFSFileFilterchain:
                                                                   |                                                                     |
       (LiveThread:livethread) --> {ForkFrameFilterN:fork} --------+ request forked H264 stream                                          +--->> OpenGLThread (connected by user)
                                                                   |                                                                     |
-                                       ValkkaFSWriterThread <<----+                                                                     + request forked YUV
+                                   ((ValkkaFSWriterThread)) <<----+                                                                     + request forked YUV
 
     ValkkaFSFileFilterchain:
     
     
     ::
     
-      ValkkaFSReaderThread -->> FileCacherThread ------------->> {ForkFrameFilterN:fork} ------+
+      ((ValkkaFSReaderThread -->> FileCacherThread)) +--------->> {ForkFrameFilterN:fork} -----+
                                                                                                |
                                   {ForkFrameFilterN:fork_yuv} <-- (AVThread:avthread) <<-------+
                                             |                                                  |
@@ -252,18 +251,15 @@ class ValkkaFSFileFilterchain:
                                             + request forked YUV
 
 
-      ValkkaFSManager:
-
-      - ValkkaFSWriterThread
-      - ValkkaFSReaderThread
-      - FileCacherThread
+      
+        (( * )) = managed by ValkkaFSManager
 
     """
 
     parameter_defs = {
-        "valkkafsmanager": ValkkaFSManager,
+        # "valkkafsmanager": ValkkaFSManager,
         "slot": int,
-        "id_rec": int,
+        # "id_rec": int,
 
         # these are for the AVThread instance:
         "n_basic": (int, 20),  # number of payload frames in the stack
@@ -297,9 +293,12 @@ class ValkkaFSFileFilterchain:
             if (self.verbose):
                 print(self.pre, "Closing threads and contexes")
             self.decodingOff()
-            self.valkkafsmanager.clearOutput(self.ctx)
+            # self.valkkafsmanager.clearOutput(self.ctx)
             self.stopThreads()
             self.active = False
+
+    def getInputFilter(self):
+        return self.fork
 
     def makeChain(self):
         """Create the filterchains
@@ -326,10 +325,6 @@ class ValkkaFSFileFilterchain:
         
         self.connect_to_stream("rec_decode_"+str(self.slot), self.avthread.getBlockingFrameFilter()) # self.fork to AVThread
         # self.connect_to_stream("rec_decode_"+str(self.slot), self.info) # debug 
-        
-        # # self.valkkafs.setOutput(_id, slot, framefilter)
-        self.ctx = self.valkkafsmanager.setOutput(self.id_rec, self.slot, self.fork) # recorded stream to self.fork
-        
         # self.connect_to_yuv("debug", self.info) # debug
         
         

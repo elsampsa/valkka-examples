@@ -339,6 +339,8 @@ class TimeLineWidget(QtWidgets.QWidget):
         self.t0=self.mintime
         self.t1=self.maxtime
 
+        self.logger.debug("setDay t0=%s, t1=%s", self.t0, self.t1)
+
         self.mouse_press_x = 0
         self.mouse_press_y = 0
 
@@ -413,7 +415,7 @@ class TimeLineWidget(QtWidgets.QWidget):
         dt = self.t1 - self.t0
         t0 = t
         t1 = t0 + dt
-        self.logger.debug("panTO %i, %i, %i, %i", t0, t1, self.T0, self.T1)
+        self.logger.debug("panTo %i, %i, %i, %i", t0, t1, self.T0, self.T1)
         t0=max(self.mintime, t0)
         t1=min(self.maxtime, t1)
         self.t0=t0
@@ -881,9 +883,13 @@ class TimeLineWidget(QtWidgets.QWidget):
         if (self.mstime != None):
             qp.setPen(self.pen_timebar)
             qp.setBrush(self.color_timebar)
+            self.logger.debug("paintTimeBar: mstime=%s, t0=%s, lmx=%s",\
+                self.mstime, self.t0, self.lmx)
             x0=int(round((self.mstime - self.t0) * self.pixel_per_msec)) + self.lmx
             y0=0
             y1=self.h + self.lmy + self.umy
+            self.logger.debug("paintTimeBar: x0=%s, y0=%s, y1=%s",\
+                x0, y0, y1)
             qp.drawLine(QtCore.QLine(x0, y0, x0, y1))
 
 
@@ -1010,12 +1016,12 @@ class TimeLineWidget(QtWidgets.QWidget):
     def drawWidget(self, qp):
         self.paintCanvas(qp)
         self.paintBackground(qp)
-        if self.fstimelimits is not None:
+        if (self.fstimelimits is not None) and (self.fstimelimits != (0,0)):
             self.paintFSLimits(qp)
-        if self.seltimelimits is not None:
+        if (self.seltimelimits is not None) and (self.seltimelimits != (0,0)):
             self.paintSelectionLimits(qp)
-        if self.blocktimelimits is not None:
-            self.paintBlockLimits(qp)            
+        if self.blocktimelimits is not None and (self.blocktimelimits != (0,0)):
+            self.paintBlockLimits(qp)        
         self.paintEvents(qp)
         # self.paintDeviceNames(qp)
         self.paintTickMargin(qp)
@@ -1138,6 +1144,7 @@ class TimeLineWidget(QtWidgets.QWidget):
     def set_fs_time_limits_slot(self, limits: tuple):
         assert(isinstance(limits, tuple))
         self.setFSTimeLimits(limits)
+        self.logger.debug("set_fs_time_limits_slot : %s -> %s", formatMstimestamp(limits[0]), formatMstimestamp(limits[1]))
         self.repaint()
         
     def set_block_time_limits_slot(self, limits: tuple):
@@ -1160,7 +1167,16 @@ class TimeLineWidget(QtWidgets.QWidget):
                 self.logger.debug("postMouseRelease: click outside fs time limits")
         else:
         """
-        self.mstime = mstimestamp
+
+        """incoming mstimestamp = 0 means time not set
+
+        internally in this widget, time not set is indicated with
+        self.mstime = None
+        """
+        if mstimestamp <= 0:
+            self.mstime = None
+        else:
+            self.mstime = mstimestamp
         self.repaint()
 
 

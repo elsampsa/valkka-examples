@@ -24,7 +24,8 @@ from PySide2.QtGui import *
 
 import sys
 # from valkka.core import *
-from valkka.api2.valkkafs import findBlockDevices, ValkkaFS
+# from valkka.api2.valkkafs import findBlockDevices, ValkkaFS
+from valkka.fs import findBlockDevices, ValkkaMultiFS
 
 
 class ValkkaFSConfig:
@@ -50,7 +51,7 @@ class ValkkaFSConfig:
     
     def __init__(self, dirname, parent = None, blocksize_limits = (1, 1024*100), n_blocks_limits = (4, 999999)): # 1 MB -> 100 GB, -> 100 TB
         self.dirname = dirname
-        self.fs = ValkkaFS.loadFromDirectory(dirname = self.dirname)
+        self.fs = ValkkaMultiFS.loadFromDirectory(dirname = self.dirname)
         
         self.blocksize_limits = blocksize_limits
         self.n_blocks_limits = n_blocks_limits
@@ -222,7 +223,7 @@ class ValkkaFSConfig:
         print("partition", partition_uuid)
         # return
         
-        self.fs = ValkkaFS.newFromDirectory(
+        self.fs = ValkkaMultiFS.newFromDirectory(
             dirname         = self.dirname, 
             blocksize       = self.blocksize * 1024 * 1024, # back to bytes
             n_blocks        = self.n_blocks, 

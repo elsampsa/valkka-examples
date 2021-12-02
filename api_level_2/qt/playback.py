@@ -23,27 +23,52 @@ import datetime
 import logging
 import time
 
-# valkka
-from valkka.api2 import ValkkaFSManager
-
 # Qt
 from PySide2 import QtCore, QtWidgets, QtGui
 
 # from local directory
 from playwidget import TimeLineWidget, CalendarWidget
 from tools import parameterInitCheck
-
-from valkka.api2 import ValkkaFS, ValkkaFSManager, formatMstimestamp
-
+from valkka.fs import ValkkaFSManager, formatMstimestamp, formatMstimeTuple
+from valkka.api2.tools import getLogger, setLogger
 
 
 class PlaybackController:
     """
     - signals and slots that end with **_click** originate from interaction with user (i.e. from a click)
     
-    
+    Callback chains:
+
+    ::
+
+
+        custom callback carrying mstime: valkkafsmanager_set_time_cb(mstime): emits "set_time(mstime)" --> timeline widget
+            <--ValkkaFSManager.timeCallback(self, fsgroup, mstime) 
+                <--FSGroup.timeCallback__(self, mstime)
+                    <--core.FileCacherThread: callback with mstime
+
+        custom callback carrying timelimit tuple: valkkafsmanager_set_cached_time_limits_cb: emits "set_block_time_limits(tup)" --> timeline widget
+            <--ValkkaFSManager.timeLimitsCallback(self, fsgroup, tup)
+                <--FSGroup.timeLimitsCallback__(self, tup)
+                    <--core.FileCacherThread: callback with tuple (timelimits of currently cached frames)
+
+        custom callback (valkkafs=, timerange_local=, timerange_global=): valkkafsmanager_block_cb: emits "new_block" --> self.check_timelimits_slot__
+            <--ValkkaFSManager.new_block_cb__(self, fsgroup)
+                <--ValkkaMultiFS.new_block_cb__(self)
+                    <--core.ValkkaFS: callback when a new block is created
+
+    Important slots:
+
+    ::
+
+        self.check_timelimits_slot__:
+            --> ValkkaFSManager.getTimeRange()
+                --> ValkkaFSManager.updateTimeRange__()
+                    --> runs over all FSGroups
+            emits "set_fs_time_limits(timerange)" --> timeline widget
+
+
     """
-    
     parameter_defs = {
         "timeline_widget"   : None,
         # "valkkafs_manager"  : ValkkaFSManager,
@@ -58,32 +83,31 @@ class PlaybackController:
     class Signals(QtCore.QObject):
         set_time = QtCore.Signal(object)                # current time
         set_fs_time_limits = QtCore.Signal(object)      # filesystem time limits.   Carries a tuple
-        set_block_time_limits = QtCore.Signal(object)   # loaded frames time limits.  Carries a tuple
-        new_block = QtCore.Signal()                     # a new block has been created
+        set_cached_time_limits = QtCore.Signal(object)  # loaded frames time limits.  Carries a tuple
+        new_block = QtCore.Signal(object)               # a new block has been created
         
     
     def __init__(self, **kwargs):
         parameterInitCheck(PlaybackController.parameter_defs, kwargs, self)
         self.signals = PlaybackController.Signals()
-        
+        self.logger = getLogger(self.__class__.__name__)
+        setLogger(self.logger, logging.DEBUG)
         # this timer is currently disabled (see createConnections__)
         self.timelimit_check_timer = QtCore.QTimer() # timer for check timelimits
         self.timelimit_check_timer.setInterval(10000) # every ten seconds
         self.timelimit_check_timer.setSingleShot(False)
         
         self.createConnections__()
-        
-        self.check_timelimit_slot__() # fetch the initial time limits
+        # self.new_block_slot__() # fetch the initial time limits
         self.calendar_widget.reset_day_slot_click()
-    
         self.timeline_widget.zoomToFS()
     
     
     def createConnections__(self):
         """Connect signals to slots
         """
-        # internal
-        self.timelimit_check_timer.timeout.connect(self.check_timelimit_slot__)
+        # actively query for new timelimits or not?
+        # self.timelimit_check_timer.timeout.connect(self.check_timelimit_slot__)
     
         self.connectFSManager__()
         self.connectTimeLineWidget__()
@@ -98,10 +122,10 @@ class PlaybackController:
         """
         """
         self.valkkafs_manager.setTimeCallback(lambda mstime: self.signals.set_time.emit(mstime))
-        self.valkkafs_manager.setTimeLimitsCallback(lambda tup: self.signals.set_block_time_limits(tup))
+        self.valkkafs_manager.setTimeLimitsCallback(lambda tup: self.signals.set_cached_time_limits(tup))
         """
         self.valkkafs_manager.setTimeCallback(self.valkkafsmanager_set_time_cb)
-        self.valkkafs_manager.setTimeLimitsCallback(self.valkkafsmanager_set_block_time_limits_cb)
+        self.valkkafs_manager.setTimeLimitsCallback(self.valkkafsmanager_set_cached_time_limits_cb)
         self.valkkafs_manager.setBlockCallback(self.valkkafsmanager_block_cb)
         
     
@@ -111,17 +135,16 @@ class PlaybackController:
         ::
         
             PlaybackController.signals.set_fs_time_limits => TimeLineWidget.set_fs_time_limits_slot  [inform TimeLineWidget about filesystem time limits change] (1)
-            PlaybackController.signals.set_block_time_limits => TimeLineWidget.set_block_time_limits_slot  [inform TimeLineWidget about loaded block timel imits change] (2)
+            PlaybackController.signals.set_cached_time_limits => TimeLineWidget.set_block_time_limits_slot  [inform TimeLineWidget about loaded block timel imits change] (2)
             TimeLineWidget.signals.seek_click => PlaybackController.timeline_widget_seek_click_slot  [inform PlaybackController about a seek event]  (3)
             
         """
         self.signals.set_fs_time_limits.connect(self.timeline_widget.set_fs_time_limits_slot) # (1)
-        self.signals.set_block_time_limits.connect(self.timeline_widget.set_block_time_limits_slot) # (2)
+        self.signals.set_cached_time_limits.connect(self.timeline_widget.set_block_time_limits_slot) # (2)
         self.timeline_widget.signals.seek_click.connect(self.timeline_widget_seek_click_slot)  # (3)
         self.signals.set_time.connect(self.timeline_widget.set_time_slot)
-        self.signals.set_block_time_limits.connect(self.timeline_widget.set_block_time_limits_slot)
-        self.signals.new_block.connect(self.check_timelimit_slot__)
-        
+        # self.signals.set_cached_time_limits.connect(self.timeline_widget.set_block_time_limits_slot)
+        self.signals.new_block.connect(self.new_block_slot__)
         
     
     def connectButtons__(self):
@@ -163,59 +186,54 @@ class PlaybackController:
         """
         # self.valkkafs_manager.timeCallback__(t) # DEBUGGING
         # print("PlaybackController: user clicked seek to: %i == %s" % (t, formatMstimestamp(t))) # DEBUGGING
-        self.valkkafs_manager.smartSeek(t)
+        self.valkkafs_manager.seek(t)
         
     # *** ValkkaFSManager connects to these slots ***
-    def valkkafsmanager_set_time_cb(self, t):
+    def valkkafsmanager_set_time_cb(self, mstime = 0, valkkafs = None):
         """Time is progressing in playback
         
         - TODO: Inform calendar (the day might be changed)
         - Inform TimeLineWidget to move the time bar
         """
-        self.signals.set_time.emit(t)
+        self.signals.set_time.emit(mstime)
     
-    def valkkafsmanager_set_block_time_limits_cb(self, tup):
-        self.signals.set_block_time_limits.emit(tup)
+    def valkkafsmanager_set_cached_time_limits_cb(self, timerange = (0,0), valkkafs = None):
+        self.signals.set_cached_time_limits.emit(timerange)
         
-        
-    def valkkafsmanager_block_cb(self):
-        self.signals.new_block.emit()
+    def valkkafsmanager_block_cb(self, timerange = (0,0), valkkafs = None):
+        self.signals.new_block.emit(timerange)
         
     
     # *** Internal slots ***
     
-    def check_timelimit_slot__(self):
-        """It's time to check recording time limits
-        
-        - Call ValkkaFSManager.getTimeRange()
-        - That call makes a copy of the blocktable (from cpp => python) and checks the filesystem timelimits
-        - Emit timelimit signal with a tuple containing the time range
+    def new_block_slot__(self, timerange):
+        """Global timerange came with the signal
         """
-        timerange = self.valkkafs_manager.getTimeRange()
-        
-        if len(timerange) < 1: # empty tuple implies no frames
-            print("PlaybackController: check_timelimit_slot__ : WARNING! no timerange from ValkkaFS")
-            # fabricate a dummy time : this exact moment
+        # timerange = self.valkkafs_manager.getTimeRange()
+        if timerange == (0,0) or timerange is None:
+            self.logger.info("check_timelimit_slot__ : no timerange from ValkkaFS")
+            # fabricate a dummy time : this exact moment # TODO: why not None?
             current_time = int(time.time() * 1000)
             timerange = (
                 current_time,
                 current_time + 1
                 )
-        print("check_timelimits_slot__ : timerange =", timerange)
-        print("check_timelimits_slot__ : %s -> %s" % ( formatMstimestamp(timerange[0]), formatMstimestamp(timerange[1]) ) )
+        self.logger.debug("check_timelimits_slot__ : timerange = %s", 
+            formatMstimeTuple(timerange))
         self.signals.set_fs_time_limits.emit(timerange)
         
+
     def play_slot__(self):
         """Tell ValkkaFSManager to play
         """
-        print("play_slot__")
+        self.logger.debug("play_slot__")
         self.valkkafs_manager.play()
         
         
     def stop_slot__(self):
         """Tell ValkkaFSManager to stop
         """
-        print("stop_slot__")
+        self.logger.debug("stop_slot__")
         self.valkkafs_manager.stop()
         
         

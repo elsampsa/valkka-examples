@@ -19,3 +19,4 @@ __pycache__/
 docker/data/
 *.txt
 *.mkv
+fs_directory*/

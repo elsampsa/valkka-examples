@@ -65,6 +65,7 @@ import json
 import os
 import time
 import datetime
+import logging
 
 # https://stackoverflow.com/questions/47167251/pygilstate-ensure-causing-deadlock
 # https://stackoverflow.com/questions/37513957/does-python-gil-need-to-be-taken-care-when-work-with-multi-thread-c-extension
@@ -76,7 +77,8 @@ del t
 """
 
 # valkka
-from valkka.api2 import LiveThread, OpenGLThread, ValkkaFS, ValkkaFSManager
+from valkka.api2 import LiveThread, OpenGLThread # , ValkkaFS, ValkkaFSManager
+from valkka.fs import ValkkaFSManager, ValkkaMultiFS
 from valkka.api2.logging import setValkkaLogLevel, loglevel_silent, loglevel_crazy
 from valkka import core # for logging
 
@@ -87,7 +89,7 @@ from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 from playback import PlaybackController
 from playwidget import TimeLineWidget, CalendarWidget
 
-# # this is no controlled with the "no_rec" command line argument
+# # this is now controlled with the "no_rec" command line argument
 use_live = True
 # use_live = False
 
@@ -117,13 +119,13 @@ class MyConfigDialog(ConfigDialog):
         super().__init__(parent)
         if os.path.exists(valkka_fs_dirname):
             try:
-                ValkkaFS.checkDirectory(valkka_fs_dirname)
+                ValkkaMultiFS.checkDirectory(valkka_fs_dirname)
             except Exception as e:
                 print("Can't init ValkkaFileSystem.  Consider removing directory %s" % (valkka_fs_dirname))
                 raise(e)
         else:
             print("creating ValkkaFS for %i MBytes", blocksize_default/1024/1024)
-            ValkkaFS.newFromDirectory(dirname = valkka_fs_dirname, 
+            ValkkaMultiFS.newFromDirectory(dirname = valkka_fs_dirname, 
                                       blocksize = blocksize_default, 
                                       n_blocks =n_blocks_default,
                                       verbose = True)
@@ -213,7 +215,7 @@ class MyGui(QtWidgets.QMainWindow):
         
         # timeline
         self.timelinewidget = TimeLineWidget(datetime.date.today(), parent = self.rec_video_area)
-        # self.timelinewidget.setLogLevel(logging.DEBUG)
+        self.timelinewidget.setLogLevel(logging.DEBUG)
         self.rec_video_lay.addWidget(self.timelinewidget)
         
         # buttons
@@ -235,14 +237,19 @@ class MyGui(QtWidgets.QMainWindow):
         
     def openValkka(self):
         # this resides in valkka.api2 and is kinda complex..  :/
+        """
         self.valkkafsmanager = ValkkaFSManager(
             self.valkkafs,
             # read = False,   # debugging
             # cache = False,  # debugging
             # write = False   # debugging
             )
-        
-        
+        """
+        # revised API
+        self.valkkafsmanager = ValkkaFSManager(
+            [self.valkkafs]
+        )
+
         self.playback_controller = PlaybackController(
             calendar_widget     = self.calendarwidget,
             timeline_widget     = self.timelinewidget,
@@ -274,6 +281,9 @@ class MyGui(QtWidgets.QMainWindow):
             affinity=self.pardic["gl affinity"]
         )
 
+        # start writer, reader & cacher threads
+        self.valkkafsmanager.start()
+
         if (self.openglthread.hadVsync()):
             w = QtWidgets.QMessageBox.warning(
                 self,
@@ -294,9 +304,12 @@ class MyGui(QtWidgets.QMainWindow):
             print(pre, "openValkka: setting decoder thread on processor", a)
 
             if use_live:
+                # live filterchain needs a terminal
+                # to dump the frames: rec_framefilter
                 chain_live = ValkkaFSLiveFilterchain(       # decoding and branching the stream happens here
-                    valkkafsmanager = self.valkkafsmanager,
-                    id_rec = cs,    # identifies the stream in ValkkaFS
+                    rec_framefilter = self.valkkafsmanager.getInputFilter(
+                        valkkafs = self.valkkafs
+                    ),
                     livethread = self.livethread,
                     address = address,
                     slot = cs,
@@ -310,16 +323,22 @@ class MyGui(QtWidgets.QMainWindow):
                 )
                 
             rec_slot = cs + 100 # live and rec slot numbers must be kept separated ..
-            
+
             chain_rec = ValkkaFSFileFilterchain(       # decoding and branching the stream happens here
-                valkkafsmanager = self.valkkafsmanager,
-                id_rec = cs,    # identifies the stream in ValkkaFS
                 slot = rec_slot,
                 affinity = a,
                 # verbose     =True
                 verbose = False
             )
-            
+            # fs filterchain needs input/source
+            # where the frames are coming:
+            self.valkkafsmanager.map_(
+                valkkafs = self.valkkafs,
+                framefilter = chain_rec.getInputFilter(),
+                write_slot = cs,
+                read_slot = rec_slot,
+                _id = cs
+            )
             
             # send yuv to OpenGLThread
             if use_live: chain_live.connect_to_yuv("yuv_to_opengl_"+str(cs), self.openglthread.getInput())
@@ -336,7 +355,6 @@ class MyGui(QtWidgets.QMainWindow):
                 win_id_rec = self.openglthread.createWindow(show=True)
                 
             else:
-
                 # *** Choose one of the following sections ***
 
                 # (1) Let Valkka create the windows/widget # use this: we get a window with correct parametrization
@@ -385,7 +403,6 @@ class MyGui(QtWidgets.QMainWindow):
             print(pre, "setupUi: live:", cs, win_id)
             print(pre, "setupUi: rec :", rec_slot, win_id_rec)
             
-            
             token = self.openglthread.connect(slot = cs, window_id = win_id)
             tokens.append(token)
             token = self.openglthread.connect(slot = rec_slot, window_id = win_id_rec)
@@ -394,23 +411,21 @@ class MyGui(QtWidgets.QMainWindow):
             cw += 1
             cs += 1
 
-            if use_live: chain_live.decodingOn()  # tell the decoding thread to start its job
+            if use_live: chain_live.decodingOn()  
+            # ..tell the decoding thread to start its job
             chain_rec .decodingOn()
+
             a += 1
 
 
     def closeValkka(self):
         self.livethread.close()
-
         self.valkkafsmanager.close()
-
         for chain in self.chains:
             chain.close()
-
         self.chains = []
         self.widget_pairs = []
         self.videoframes = []
-                
         self.openglthread.close()
         
         # time.sleep(5)
