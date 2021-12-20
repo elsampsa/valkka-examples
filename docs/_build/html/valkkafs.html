@@ -34,22 +34,100 @@
             
   <div class="section" id="valkkafs">
 <span id="id1"></span><h1>ValkkaFS<a class="headerlink" href="#valkkafs" title="Permalink to this headline">¶</a></h1>
-<p>ValkkaFS is a custom filesystem for storing streaming media data.</p>
-<p>Video frames (typically H264) are dumped into a block device, which is a regular file or a disk partition.</p>
-<p>You can use a single ValkkaFS instance per camera, but typically you would be streaming live video from several cameras into the same ValkkaFS.</p>
-<p>How does this look like on the disk?  Let’s take cameras A, B, C and D.  Uppercase letters designate “seek-points” (i.e. sps, pps, intra-frame sequences), numbers designate timestamps</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">c1</span> <span class="n">c2</span> <span class="n">b4</span> <span class="n">C5</span> <span class="n">A8</span> <span class="n">a10</span> <span class="n">d11</span> <span class="n">D12</span> <span class="n">a15</span> <span class="n">B16</span> <span class="n">b17</span> <span class="n">c18</span> <span class="n">a20</span> <span class="o">..</span>
+<div class="section" id="vms-architecture">
+<h2>VMS Architecture<a class="headerlink" href="#vms-architecture" title="Permalink to this headline">¶</a></h2>
+<p>When creating a video management system capable of recording and playing simultaneously a large number of streams, here are <em>some</em> of the problems one encounters:</p>
+<ul class="simple">
+<li><p>Recorded video streams are played in sync, i.e. their timestamps are matched together</p></li>
+<li><p>There can be large temporal chunks of video missing from any of the streams (i.e. the video stream is not continuous)</p></li>
+<li><p>Video is recorded simultaneously while it is being played, to/from the same file</p></li>
+<li><p>Only a finite amount of frames can be stored/buffered into memory for playback</p></li>
+<li><p>Book-keeping of the key-frames and rewinding from these key-frames to target time instants as per user’s requests</p></li>
+</ul>
+<p>To overcome these challenges, we have developed several objects and thread classes.  Here is an overview of them:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">core.ValkkaFS2</span></code> book-keeping of the frames</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core.ValkkaFSReaderThread</span></code> reads frames from a file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core.ValkkaFSWriterThread</span></code> writes frames to a file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">core.FileCacherThread</span></code> caches frames into memory and passes them down the filterchain</p></li>
+<li><p>Reading (of recorded stream) and writing of (live stream) frames simultaneously from/to the same file</p></li>
+<li><p>Both <code class="docutils literal notranslate"><span class="pre">core.ValkkaFSReaderThread</span></code> and <code class="docutils literal notranslate"><span class="pre">core.ValkkaFSWriterThread</span></code> read/manipulate the book-keeping entity (<code class="docutils literal notranslate"><span class="pre">core.ValkkaFS2</span></code>) simultaneously</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">core.ValkkaFS2</span></code>, <code class="docutils literal notranslate"><span class="pre">core.ValkkaFSReaderThread</span></code> and <code class="docutils literal notranslate"><span class="pre">core.ValkkaFSWriterThread</span></code> can be used for simple
+dumping &amp; reading streams to/from disk.  Please see <a class="reference internal" href="lesson_11.html#valkkafs-tutorial"><span class="std std-ref">the tutorial</span></a>.</p>
+<p>For more complex solution, i.e. mentioned simultaneous reading, writing &amp; caching, the following filterchain (a) is used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">ValkkaFSWriterThread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="n">FILE</span> <span class="o">--&gt;</span> <span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">ValkkaFSReaderThread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">FileCacherThread</span><span class="p">)</span>
+                    <span class="n">slot</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="nb">id</span>      <span class="nb">id</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">slot</span>                                <span class="o">|</span>
+                                                                              <span class="o">|</span>
+                                               <span class="p">(</span><span class="n">DecoderThread</span><span class="p">)</span> <span class="o">&lt;--------------+</span>
 </pre></div>
 </div>
-<p>Frames from different cameras alternate, so do seek points, while all frames are written in the order of their arrival.</p>
-<p>Once limit of the file (or the partition) is reached, frames are written from the beginning of the partition, effectively overwriting oldest frames.</p>
-<p>This scheme discards automatically oldest data, while minimizes wear and tear on hard-disk arms in the long run (in the case you are using an entire disk or a partition). When using regular files with ValkkaFS, the underlying filesystem (say, ext4) is not required to manage and grow continuously the space required for streaming data.</p>
-<p>The written frame sequences are organized in blocks.  ValkkaFS maintains metadata about the minimum seek-point timestamp and maximum frame timestamp of each block.  The minimum requirement is, that for actively streaming cameras, there is at least one key-frame in each block.</p>
-<p>Frames are requested from ValkkaFS on a per-block basis.</p>
-<p>For concrete examples of the python API, please refer to the <a class="reference internal" href="lesson_11.html#valkkafs-tutorial"><span class="std std-ref">Tutorial</span></a>.  For more info on ValkkaFS, refer to the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/valkkafs.html">cpp documentation</a>.  For calculating disk space requirements, keep on reading.</p>
+<p>Typically, when recorded frames are played, the following takes place:</p>
+<ul class="simple">
+<li><p>Blocks of frames are requested from <code class="docutils literal notranslate"><span class="pre">core.ValkkaFSReaderThread</span></code></p></li>
+<li><p>Frames flow to <code class="docutils literal notranslate"><span class="pre">core.FileCacherThread</span></code></p></li>
+<li><p>Frames flow from <code class="docutils literal notranslate"><span class="pre">core.FileCacherThread</span></code> to a Decoder thread</p></li>
+<li><p>Play is requested from <code class="docutils literal notranslate"><span class="pre">core.FileCacherThread</span></code> which then starts passing the frames to the decoder at play speed</p></li>
+</ul>
+<p>To make matter simpler for the API user the filterchain in (a) is further encapsulated into an <code class="docutils literal notranslate"><span class="pre">fs.FSGroup</span></code> object.</p>
+<p>Several <code class="docutils literal notranslate"><span class="pre">FSGroup</span></code> objects are further encapsulated into a <code class="docutils literal notranslate"><span class="pre">fs.ValkkaFSManager</span></code> object, the final object encapsulation looking like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span><span class="o">.</span><span class="n">ValkkaFSManager</span>
+    <span class="n">fs</span><span class="o">.</span><span class="n">FSGroup</span>
+        <span class="n">fs</span><span class="o">.</span><span class="n">ValkkaSingleFS</span>
+            <span class="n">core</span><span class="o">.</span><span class="n">ValkkaFS2</span>
+        <span class="n">core</span><span class="o">.</span><span class="n">ValkkaFSWriterThread</span>
+        <span class="n">core</span><span class="o">.</span><span class="n">ValkkaFSReaderThread</span>
+        <span class="n">core</span><span class="o">.</span><span class="n">FileCacherThread</span>
+    <span class="n">fs</span><span class="o">.</span><span class="n">FSGroup</span>
+        <span class="n">fs</span><span class="o">.</span><span class="n">ValkkaSingleFS</span>
+            <span class="n">core</span><span class="o">.</span><span class="n">ValkkaFS2</span>
+        <span class="n">core</span><span class="o">.</span><span class="n">ValkkaFS2</span>
+        <span class="n">core</span><span class="o">.</span><span class="n">ValkkaFSWriterThread</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ValkkaFSManager</span></code> being the “end-point”, from where a user can request synchronized playing and seeking for a number of streams.  <code class="docutils literal notranslate"><span class="pre">ValkkaFSManager</span></code> would be typically connected
+to a GUI component for interactive playback.</p>
+<p>Please refer to the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a> on how to use <code class="docutils literal notranslate"><span class="pre">FSGroup</span></code> and <code class="docutils literal notranslate"><span class="pre">ValkkaFSManager</span></code>.</p>
+</div>
+<div class="section" id="filesystem">
+<h2>Filesystem<a class="headerlink" href="#filesystem" title="Permalink to this headline">¶</a></h2>
+<p>ValkkaSingleFS is a simple filesystem for storing streaming media data.  Video frames (H264) are organized in “blocks” and written into a “dumpfile”.
+The dumpfile can be a regular file or a dedicated disk partition.</p>
+<p>The size of a single block (S) and the number of blocks (N) are predefined by the user.  The total disk space for a recording is then N*S bytes.</p>
+<p>Once the last block is written, writing is “wrapped” and resumed from block number 1.  This way the oldest recorded stream is overwritten automatically.</p>
+<p>Per each ValkkaFS, a directory is created with the following files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">directory</span><span class="o">/</span>
+    <span class="n">blockfile</span>       <span class="c1"># book-keeping of the frames</span>
+    <span class="n">dumpfile</span>        <span class="c1"># recorded H264 stream</span>
+    <span class="n">valkkafs</span><span class="o">.</span><span class="n">json</span>   <span class="c1"># metadata</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">blockfile</span></code> is simple binary file that encapsulates a table with N (number of blocks) rows and two columns.  Each column represents a millisecond timestamp:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mstime1</span>     <span class="n">mstime2</span>
+<span class="o">...</span>         <span class="o">...</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">mstime1</span></code> indicates the first <em>key-frame</em> available in a block, while <code class="docutils literal notranslate"><span class="pre">mstime2</span></code> indicates the last frame available in that block.</p>
+<p><code class="docutils literal notranslate"><span class="pre">valkkafs.json</span></code> saves data about the current written block, number of blocks and the block size.</p>
+<p>For efficient recording and playback with ValkkaFS you should do the following things:</p>
+<ul class="simple">
+<li><p>For efficient seeking, we recommend that your ip camera emits <strong>one key-frame per second</strong></p></li>
+<li><p>Please, be aware of the bitrate of your camera and adjust the blocksize in ValkkaFS to that: ideally you wan’t <strong>1-2 key frames per block</strong></p></li>
+</ul>
+</div>
+<div class="section" id="multiple-streams-per-file">
+<h2>Multiple Streams per File<a class="headerlink" href="#multiple-streams-per-file" title="Permalink to this headline">¶</a></h2>
+<p>You can also dump multiple streams into a single <code class="docutils literal notranslate"><span class="pre">ValkkaFS</span></code>.  The variant for this is <code class="docutils literal notranslate"><span class="pre">valkka.fs.ValkkaMultiFS</span></code>.</p>
+<p>This requires that all cameras have approximately the same bitrate and key-frame interval.</p>
+<p>The advantage of this approach is, that all frames from all your cameras are streamed continuously into the same (large) file or a dedicated block device, minimizing the wear and tear on
+your device if you are using a hdd.</p>
+<p>The architecture is identical to <code class="docutils literal notranslate"><span class="pre">ValkkaSingleFS</span></code>, with a very small modification to the <code class="docutils literal notranslate"><span class="pre">blockfile</span></code> format: <code class="docutils literal notranslate"><span class="pre">mstime1</span></code> presents now the <em>last</em> key-frame among all keyframes of all the streams.</p>
+<p><em>WARNING: writing multiple streams to the same file / block device is at very experimental stage and not well tested</em></p>
+</div>
 <div class="section" id="using-an-entire-partition">
 <h2>Using an entire partition<a class="headerlink" href="#using-an-entire-partition" title="Permalink to this headline">¶</a></h2>
-<p><em>(and an example how to calculate the required disk-space)</em></p>
+<p><em>WARNING: this makes sense only if you are using ValkkaMultiFS, i.e. streaming several cameras into a same ValkkaFS</em></p>
 <p>An entire hard-drive/partition can be dedicated to ValkkaFS.  In the following example, we assume that your external hard-disk appears under <em>/dev/sdb</em></p>
 <p>To grant access to a linux user to read and write block devices directly, use the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">usermod</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">G</span> <span class="n">disk</span> <span class="n">username</span>
@@ -92,17 +170,6 @@
 </pre></div>
 </div>
 <p>Then “37c591e3-b33b-4548-a1eb-81add9da8a58” is what you are looking for.</p>
-<p>Next, suppose that we have:</p>
-<ul class="simple">
-<li><p>16 cameras</p></li>
-<li><p>Each camera having a target bitrate of 2048Kbits per second</p></li>
-<li><p>Each camera writing a key-frame every second.</p></li>
-</ul>
-<p>We’ll be scoring around <strong>4 MBytes per second</strong>.</p>
-<p>Next, let’s have a few seconds worth of video in each block (say, 5 secs) and we’ll get a <strong>blocksize of 20 MBytes</strong> (remember to double-check that the blocksize is a multiple of 512 Bytes).</p>
-<p>Finally, let’s leave out 2% of the disk space and we get <strong>23370 blocks</strong> for our ValkkaFS.</p>
-<p>That was 5 secs per block, so this disk is capable of storing <strong>32 hours</strong> of video.</p>
-<p>And that is in the worst case scenario where all the cameras are writing to the disk continuously (typically you would want to start recording at movement only).  Nice!  :)</p>
 </div>
 </div>
 
@@ -151,6 +218,9 @@
 <li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">ValkkaFS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#vms-architecture">VMS Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filesystem">Filesystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multiple-streams-per-file">Multiple Streams per File</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-an-entire-partition">Using an entire partition</a></li>
 </ul>
 </li>

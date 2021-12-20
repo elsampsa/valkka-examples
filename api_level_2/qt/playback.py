@@ -29,54 +29,108 @@ from PySide2 import QtCore, QtWidgets, QtGui
 # from local directory
 from playwidget import TimeLineWidget, CalendarWidget
 from tools import parameterInitCheck
+
+# valkka
 from valkka.fs import ValkkaFSManager, formatMstimestamp, formatMstimeTuple
 from valkka.api2.tools import getLogger, setLogger
 
 
-class PlaybackController:
+class WidgetSet:
+    """Set of control widgets
+
+    We might have many of these, all connected to the
+    same PlaybackController
     """
-    - signals and slots that end with **_click** originate from interaction with user (i.e. from a click)
-    
-    Callback chains:
 
-    ::
-
-
-        custom callback carrying mstime: valkkafsmanager_set_time_cb(mstime): emits "set_time(mstime)" --> timeline widget
-            <--ValkkaFSManager.timeCallback(self, fsgroup, mstime) 
-                <--FSGroup.timeCallback__(self, mstime)
-                    <--core.FileCacherThread: callback with mstime
-
-        custom callback carrying timelimit tuple: valkkafsmanager_set_cached_time_limits_cb: emits "set_block_time_limits(tup)" --> timeline widget
-            <--ValkkaFSManager.timeLimitsCallback(self, fsgroup, tup)
-                <--FSGroup.timeLimitsCallback__(self, tup)
-                    <--core.FileCacherThread: callback with tuple (timelimits of currently cached frames)
-
-        custom callback (valkkafs=, timerange_local=, timerange_global=): valkkafsmanager_block_cb: emits "new_block" --> self.check_timelimits_slot__
-            <--ValkkaFSManager.new_block_cb__(self, fsgroup)
-                <--ValkkaMultiFS.new_block_cb__(self)
-                    <--core.ValkkaFS: callback when a new block is created
-
-    Important slots:
-
-    ::
-
-        self.check_timelimits_slot__:
-            --> ValkkaFSManager.getTimeRange()
-                --> ValkkaFSManager.updateTimeRange__()
-                    --> runs over all FSGroups
-            emits "set_fs_time_limits(timerange)" --> timeline widget
-
-
-    """
-    parameter_defs = {
+    parameter_defs = { 
         "timeline_widget"   : None,
-        # "valkkafs_manager"  : ValkkaFSManager,
-        "valkkafs_manager"  : None,
         "play_button"       : None,
         "stop_button"       : None,
         "calendar_widget"   : None,
         "zoom_to_fs_button" : None
+        }
+    
+    def __init__(self, **kwargs):
+        parameterInitCheck(WidgetSet.parameter_defs, kwargs, self)
+
+
+
+class PlaybackController:
+    """ValkkaFSManager has several callbacks that can be continued 
+    here as qt signals
+
+    in connectFSManager__:
+
+    ::
+
+        ValkkaFSManager.setTimeCallback
+            valkkafsmanager_set_time_cb(self, mstime = 0, valkkafs = None)
+                Signals.set_time(mstime)
+        
+        ValkkaFSManager.setTimeLimitsCallback
+            valkkafsmanager_set_cached_time_limits_cb(self, timerange = (0,0), valkkafs = None)
+                Signals.set_cached_time_limits(timerange)
+
+        ValkkaFSManager.setBlockCallback
+            valkkafsmanager_block_cb(self, timerange = (0,0), valkkafs = None)
+                Signals.new_block(timerange)
+
+   Those signals are then connected to the TimeLineWidget in 
+   connectTimeLineWidget__:
+
+   ::
+
+        Signals.set_fs_time_limits
+            TimeLineWidget.set_fs_time_limits_slot(timerange)
+
+        Signals.set_cached_time_limits
+            TimeLineWidget.set_block_time_limits_slot(timerange)
+
+        TimeLineWidget.Signals.seek_click
+            self.timeline_widget_seek_click_slot(t)
+                ValkkaFSManager.seek(t)
+
+        Signals.set_time
+            TimeLineWidget.set_time_slot(mstime)
+
+
+    connectInternal__: translate from new_block signal
+    to filesystem timelimits signal:
+
+    ::
+
+        Signals.new_block
+            self.new_block_slot(timerange)
+                Signals.set_fs_time_limits(timerange)
+
+
+    connectCalendarWidget__:
+
+    ::
+
+        Signals.set_fs_time_limits
+            CalendarWidget.set_fs_time_limits_slot
+
+        CalendarWidget.Signals.set_day_click
+            TimeLineWidget.set_day_click_slot
+
+
+
+    TODO
+
+    use the register/deregister scheme from Valkka Live here
+
+
+
+
+    """
+    parameter_defs = {
+        #"timeline_widget"   : None,
+        "valkkafs_manager"  : None,
+        #"play_button"       : None,
+        #"stop_button"       : None,
+        #"calendar_widget"   : None,
+        #"zoom_to_fs_button" : None
         }
     
     
@@ -91,31 +145,59 @@ class PlaybackController:
         parameterInitCheck(PlaybackController.parameter_defs, kwargs, self)
         self.signals = PlaybackController.Signals()
         self.logger = getLogger(self.__class__.__name__)
-        setLogger(self.logger, logging.DEBUG)
+        # setLogger(self.logger, logging.DEBUG) # TODO: unify logging somehow
         # this timer is currently disabled (see createConnections__)
         self.timelimit_check_timer = QtCore.QTimer() # timer for check timelimits
         self.timelimit_check_timer.setInterval(10000) # every ten seconds
         self.timelimit_check_timer.setSingleShot(False)
         
+        self.widget_sets = []
         self.createConnections__()
+        """
         # self.new_block_slot__() # fetch the initial time limits
         self.calendar_widget.reset_day_slot_click()
         self.timeline_widget.zoomToFS()
-    
-    
+        """
+
+    def close(self):
+        for widget_set in self.widget_sets:
+            self.deregister__(widget_set)
+        self.widget_sets = []
+
+
+    def register(self, widget_set: WidgetSet):
+        self.connectTimeLineWidget__(widget_set)
+        self.connectButtons__(widget_set)
+        self.connectCalendarWidget__(widget_set)
+        widget_set.calendar_widget.reset_day_slot_click()
+        widget_set.calendar_widget.reset_day_slot_click()
+        self.widget_sets.append(widget_set)
+        self.valkkafs_manager.update() # propagates all info from callbacks to signals
+        widget_set.timeline_widget.zoom_fs_limits_slot()
+
+    def deregister__(self, widget_set: WidgetSet):
+        self.disconnectTimeLineWidget__(widget_set)
+        self.disconnectButtons__(widget_set)
+        self.disconnectCalendarWidget__(widget_set)
+
+    def deregister(self, widget_set: WidgetSet):
+        self.deregister__(widget_set)
+        self.widget_sets.remove(widget_set)
+        if len(self.widget_sets) < 1:
+            self.valkkafs_manager.clearTime()
+        # TODO: create a diagram of this mess!
+
     def createConnections__(self):
         """Connect signals to slots
         """
-        # actively query for new timelimits or not?
-        # self.timelimit_check_timer.timeout.connect(self.check_timelimit_slot__)
-    
         self.connectFSManager__()
-        self.connectTimeLineWidget__()
-        self.connectButtons__()
-        self.connectCalendarWidget__()
-    
-        # self.timelimit_check_timer.start() # let's update only when there's a new block instead of regular intervals
+        self.connectInternal__()
+        #self.connectTimeLineWidget__()
+        #self.connectButtons__()
+        #self.connectCalendarWidget__()
         
+    def connectInternal__(self):
+        self.signals.new_block.connect(self.new_block_slot__)
         
     def connectFSManager__(self):
         """cpp callbacks to qt signals
@@ -128,39 +210,49 @@ class PlaybackController:
         self.valkkafs_manager.setTimeLimitsCallback(self.valkkafsmanager_set_cached_time_limits_cb)
         self.valkkafs_manager.setBlockCallback(self.valkkafsmanager_block_cb)
         
-    
-    def connectTimeLineWidget__(self):
-        """Connections between PlaybackController and TimeLineWidget:
-        
-        ::
-        
-            PlaybackController.signals.set_fs_time_limits => TimeLineWidget.set_fs_time_limits_slot  [inform TimeLineWidget about filesystem time limits change] (1)
-            PlaybackController.signals.set_cached_time_limits => TimeLineWidget.set_block_time_limits_slot  [inform TimeLineWidget about loaded block timel imits change] (2)
-            TimeLineWidget.signals.seek_click => PlaybackController.timeline_widget_seek_click_slot  [inform PlaybackController about a seek event]  (3)
-            
+    def connectTimeLineWidget__(self, widget_set):
+        """Connections between PlaybackController and TimeLineWidget
         """
-        self.signals.set_fs_time_limits.connect(self.timeline_widget.set_fs_time_limits_slot) # (1)
-        self.signals.set_cached_time_limits.connect(self.timeline_widget.set_block_time_limits_slot) # (2)
-        self.timeline_widget.signals.seek_click.connect(self.timeline_widget_seek_click_slot)  # (3)
-        self.signals.set_time.connect(self.timeline_widget.set_time_slot)
-        # self.signals.set_cached_time_limits.connect(self.timeline_widget.set_block_time_limits_slot)
-        self.signals.new_block.connect(self.new_block_slot__)
+        timeline_widget = widget_set.timeline_widget
+        # from ValkkaFSManager to widgets
+        self.signals.set_fs_time_limits.connect(timeline_widget.set_fs_time_limits_slot) # (1)
+        self.signals.set_cached_time_limits.connect(timeline_widget.set_block_time_limits_slot) # (2)
+        self.signals.set_time.connect(timeline_widget.set_time_slot)
+        # from widgets to ValkkaFSManager
+        timeline_widget.signals.seek_click.connect(self.timeline_widget_seek_click_slot)  # WTF!?
         
+    def disconnectTimeLineWidget__(self, widget_set):
+        timeline_widget = widget_set.timeline_widget
+        # from ValkkaFSManager to widgets
+        self.signals.set_fs_time_limits.disconnect(timeline_widget.set_fs_time_limits_slot) # (1)
+        self.signals.set_cached_time_limits.disconnect(timeline_widget.set_block_time_limits_slot) # (2)
+        self.signals.set_time.disconnect(timeline_widget.set_time_slot)
+        # from widgets to ValkkaFSManager
+        timeline_widget.signals.seek_click.disconnect(self.timeline_widget_seek_click_slot)  # (3)
     
-    def connectButtons__(self):
+    def connectButtons__(self, widget_set):
         """Connect play and stop buttons
         
         ::
             play : QPushButton => PlaybackController.play_slot    (1)
             stop : QPushButton => PlaybackController.stop_slot    (2)
         """
-        self.play_button.clicked.connect(self.play_slot__)  # (1)
-        self.stop_button.clicked.connect(self.stop_slot__)  # (2)
-        if self.zoom_to_fs_button is not None:
-            self.zoom_to_fs_button.clicked.connect(self.zoom_to_fs_slot__)
-        
-        
-    def connectCalendarWidget__(self):
+        widget_set.play_button.clicked.connect(self.play_slot__)  # (1)
+        widget_set.stop_button.clicked.connect(self.stop_slot__)  # (2)
+        if widget_set.zoom_to_fs_button is not None:
+            widget_set.zoom_to_fs_button.clicked.connect(
+                widget_set.timeline_widget.zoom_fs_limits_slot
+            )
+
+    def disconnectButtons__(self, widget_set):
+        widget_set.play_button.clicked.disconnect(self.play_slot__)  # (1)
+        widget_set.stop_button.clicked.disconnect(self.stop_slot__)  # (2)
+        if widget_set.zoom_to_fs_button is not None:
+            widget_set.zoom_to_fs_button.clicked.disconnect(
+                widget_set.timeline_widget.zoom_fs_limits_slot
+            )
+
+    def connectCalendarWidget__(self, widget_set):
         """Connections between PlaybackController and the Calendar
         
         ::
@@ -168,9 +260,17 @@ class PlaybackController:
             PlaybackController.signals.timelimit => CalendarWidget.set_fs_time_limits_slot  [Inform CalendarWidget about time range so it can show active days]  (1)
             CalendarWidget.signals.set_day => TimeLineWidget.set_day_slot  [Inform TimeLineWidget about the maximum timerange of 24 hrs to be shown]   (2)
         """
-        self.signals.set_fs_time_limits.connect(self.calendar_widget.set_fs_time_limits_slot)  # (1)
-        self.calendar_widget.signals.set_day_click.connect(self.timeline_widget.set_day_click_slot)  # (2)
+        self.signals.set_fs_time_limits.connect(
+            widget_set.calendar_widget.set_fs_time_limits_slot)  # (1)
+        widget_set.calendar_widget.signals.set_day_click.connect(
+            widget_set.timeline_widget.set_day_click_slot)  # (2)
         
+    def disconnectCalendarWidget__(self, widget_set):
+        self.signals.set_fs_time_limits.disconnect(
+            widget_set.calendar_widget.set_fs_time_limits_slot)  # (1)
+        widget_set.calendar_widget.signals.set_day_click.disconnect(
+            widget_set.timeline_widget.set_day_click_slot)  # (2)
+
         
     # *** TimeLineWidget connects to these slots ***
     def timeline_widget_seek_click_slot(self, t):
@@ -207,18 +307,18 @@ class PlaybackController:
     # *** Internal slots ***
     
     def new_block_slot__(self, timerange):
-        """Global timerange came with the signal
+        """Global timerange comes with the signal
         """
         # timerange = self.valkkafs_manager.getTimeRange()
         if timerange == (0,0) or timerange is None:
-            self.logger.info("check_timelimit_slot__ : no timerange from ValkkaFS")
+            self.logger.info("new_block_slot__ : no timerange from ValkkaFS")
             # fabricate a dummy time : this exact moment # TODO: why not None?
             current_time = int(time.time() * 1000)
             timerange = (
                 current_time,
                 current_time + 1
                 )
-        self.logger.debug("check_timelimits_slot__ : timerange = %s", 
+        self.logger.debug("new_block_slot__ : timerange = %s", 
             formatMstimeTuple(timerange))
         self.signals.set_fs_time_limits.emit(timerange)
         
@@ -252,6 +352,8 @@ class MyGui(QtWidgets.QMainWindow):
     
 
     def setupUi(self):
+        from valkka.fs import ValkkaSingleFS
+
         self.setGeometry(QtCore.QRect(100,100,800,800))
         self.w=QtWidgets.QWidget(self)
         self.setCentralWidget(self.w)
@@ -267,24 +369,47 @@ class MyGui(QtWidgets.QMainWindow):
         self.buttons_lay = QtWidgets.QHBoxLayout(self.buttons)
         self.play_button = QtWidgets.QPushButton("play", self.buttons)
         self.stop_button = QtWidgets.QPushButton("stop", self.buttons)
+        self.zoom_button = QtWidgets.QPushButton("zoom", self.buttons)
         self.buttons_lay.addWidget(self.play_button)
         self.buttons_lay.addWidget(self.stop_button)
+        self.buttons_lay.addWidget(self.zoom_button)
         
         self.lay.addWidget(self.buttons)
         self.lay.addWidget(self.calendarwidget)
         
-        self.valkkafs = ValkkaFS.loadFromDirectory(dirname="/home/sampsa/tmp/testvalkkafs")
-        self.manager = ValkkaFSManager(self.valkkafs)
+        self.valkkafs = ValkkaSingleFS.newFromDirectory(
+            dirname         = "/home/sampsa/tmp/testvalkkafs",
+            blocksize       = 1 * 1024 * 1024, # back to bytes
+            n_blocks        = 3, 
+            device_size     = None, # calculate from blocksize and n_blocks
+            partition_uuid  = None,
+            # verbose         = True
+            verbose         = False
+        )
 
-        self.manager.setOutput_(925412, 1) # id => slot
+        self.manager = ValkkaFSManager([self.valkkafs])
+
+        # self.manager.setOutput_(925412, 1) # id => slot
         
         self.playback_controller = PlaybackController(
-            calendar_widget     = self.calendarwidget,
-            timeline_widget     = self.timelinewidget,
+            #calendar_widget     = self.calendarwidget,
+            #timeline_widget     = self.timelinewidget,
             valkkafs_manager    = self.manager,
-            play_button         = self.play_button,
-            stop_button         = self.stop_button
+            #play_button         = self.play_button,
+            #stop_button         = self.stop_button
             )
+
+        self.widget_set = WidgetSet(
+            timeline_widget     = self.timelinewidget,
+            play_button         = self.play_button,
+            stop_button         = self.stop_button,
+            calendar_widget     = self.calendarwidget,
+            zoom_to_fs_button   = self.zoom_button
+        )
+
+        self.playback_controller.register(
+            self.widget_set
+        )
         
         """
         t = int(time.mktime(datetime.date.today().timetuple())*1000)    

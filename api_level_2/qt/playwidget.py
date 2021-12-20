@@ -240,7 +240,7 @@ class CalendarWidget(QtWidgets.QCalendarWidget):
         """
         self.day_min = datetime.date.fromtimestamp(limits[0]/1000)
         self.day_max = datetime.date.fromtimestamp(limits[1]/1000)
-        print("CalendarWidget: set_fs_time_limits_slot %s -> %s" %(str(self.day_min), str(self.day_max)))
+        # print("CalendarWidget: set_fs_time_limits_slot %s -> %s" %(str(self.day_min), str(self.day_max))) # TODO: proper logging
         
         self.setDateRange(
             QtCore.QDate(self.day_min.year, self.day_min.month, self.day_min.day),
@@ -1141,6 +1141,12 @@ class TimeLineWidget(QtWidgets.QWidget):
     """
 
     # ***** SLOTS ******
+
+    def zoom_fs_limits_slot(self):
+        self.logger.debug("zoom_fs_limits_slot")
+        self.zoomToFS()
+
+
     def set_fs_time_limits_slot(self, limits: tuple):
         assert(isinstance(limits, tuple))
         self.setFSTimeLimits(limits)
