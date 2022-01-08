@@ -23,6 +23,8 @@ import time, datetime
 import logging
 from tools import getLogger
 from PySide2 import QtWidgets, QtCore, QtGui
+# from valkka.live.qimport import QtWidgets, QtCore, QtGui, Signal, Slot  # Qt5
+
 
 
 def formatMstimestamp(mstime):

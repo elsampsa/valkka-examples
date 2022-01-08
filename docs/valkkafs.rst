@@ -102,7 +102,7 @@ where ``mstime1`` indicates the first *key-frame* available in a block, while ``
 For efficient recording and playback with ValkkaFS you should do the following things:
 
 - For efficient seeking, we recommend that your ip camera emits **one key-frame per second**
-- Please, be aware of the bitrate of your camera and adjust the blocksize in ValkkaFS to that: ideally you wan't **1-2 key frames per block**
+- Please, be aware of the bitrate of your camera and adjust the blocksize in ValkkaFS to that: ideally you'd want **1-2 key frames per block**
 
 Multiple Streams per File
 -------------------------

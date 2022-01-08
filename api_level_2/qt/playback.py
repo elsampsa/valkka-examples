@@ -25,6 +25,7 @@ import time
 
 # Qt
 from PySide2 import QtCore, QtWidgets, QtGui
+# from valkka.live.qimport import QtWidgets, QtCore, QtGui, Signal, Slot  # Qt5
 
 # from local directory
 from playwidget import TimeLineWidget, CalendarWidget
@@ -114,15 +115,6 @@ class PlaybackController:
         CalendarWidget.Signals.set_day_click
             TimeLineWidget.set_day_click_slot
 
-
-
-    TODO
-
-    use the register/deregister scheme from Valkka Live here
-
-
-
-
     """
     parameter_defs = {
         #"timeline_widget"   : None,
@@ -183,9 +175,6 @@ class PlaybackController:
     def deregister(self, widget_set: WidgetSet):
         self.deregister__(widget_set)
         self.widget_sets.remove(widget_set)
-        if len(self.widget_sets) < 1:
-            self.valkkafs_manager.clearTime()
-        # TODO: create a diagram of this mess!
 
     def createConnections__(self):
         """Connect signals to slots
