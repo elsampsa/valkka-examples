@@ -9,20 +9,20 @@ filtergraph:
 """<rtf>
 Same imports as before:
 <rtf>"""
-import time
+import time, sys
 from valkka.core import *
-from valkka.api2 import ValkkaFS
+from valkka.fs import ValkkaSingleFS
 
 """<rtf>
 Load ValkkaFS metadata:
 <rtf>"""
-valkkafs = ValkkaFS.loadFromDirectory(dirname="/home/sampsa/tmp/testvalkkafs")
+valkkafs = ValkkaSingleFS.loadFromDirectory(dirname="/tmp/testvalkkafs")
 
 """<rtf>
 Let's take a look at the blocktable:
 <rtf>"""
 a = valkkafs.getBlockTable()
-print(a[:,0:10])
+print(a)
 
 """<rtf>
 Construct the filterchain: write from the reader thread into the verbose InfoFrameFilter
@@ -51,4 +51,3 @@ Exit the thread:
 <rtf>"""
 readerthread.stopCall()
 print("bye")
-

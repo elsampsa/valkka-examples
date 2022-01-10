@@ -52,8 +52,8 @@
 <p>Currently the testsuite consists of the following programs:</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 25%" />
-<col style="width: 75%" />
+<col style="width: 22%" />
+<col style="width: 78%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>File</p></th>
@@ -157,10 +157,23 @@
 </tr>
 <tr class="row-even"><td><p>test_studio_5.py</p></td>
 <td><div class="line-block">
+<div class="line"><strong>Very experimental</strong></div>
+<div class="line">- Prefer test_studio_6.py over this one</div>
+<div class="line">- Continuous recording to <a class="reference internal" href="valkkafs.html#valkkafs"><span class="std std-ref">ValkkaFS</span></a></div>
+<div class="line">- Dumps all streams to a single file (uses <code class="docutils literal notranslate"><span class="pre">ValkkaMultiFS</span></code>)</div>
+<div class="line">- Simultaneous, interactive playback : use mouse clicks &amp; wheel to navigate the timeline</div>
+<div class="line">- remove directory <code class="docutils literal notranslate"><span class="pre">fs_directory/</span></code> if the program refuses to start</div>
+<div class="line"><br /></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p>test_studio_6.py</p></td>
+<td><div class="line-block">
 <div class="line"><strong>Experimental</strong></div>
 <div class="line">- Continuous recording to <a class="reference internal" href="valkkafs.html#valkkafs"><span class="std std-ref">ValkkaFS</span></a></div>
-<div class="line">- and simultaneous, interactive playback</div>
-<div class="line">- remove directory <code class="docutils literal notranslate"><span class="pre">fs_directory/</span></code> if the program refuses to start</div>
+<div class="line">- One file per stream (uses <code class="docutils literal notranslate"><span class="pre">ValkkaSingleFS</span></code>)</div>
+<div class="line">- Simultaneous, interactive playback : use mouse clicks &amp; wheel to navigate the timeline</div>
+<div class="line">- remove directory <code class="docutils literal notranslate"><span class="pre">fs_directory_*/</span></code> if the program refuses to start</div>
 </div>
 </td>
 </tr>

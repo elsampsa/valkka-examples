@@ -1,16 +1,16 @@
 
 :: 
 
-    import time
+    import time, sys
     from valkka.core import *
-    from valkka.api2 import ValkkaFS
+    from valkka.fs import ValkkaSingleFS
     
 
 Load ValkkaFS metadata:
 
 :: 
 
-    valkkafs = ValkkaFS.loadFromDirectory(dirname="/home/sampsa/tmp/testvalkkafs")
+    valkkafs = ValkkaSingleFS.loadFromDirectory(dirname="/tmp/testvalkkafs")
     
 
 Let's take a look at the blocktable:
@@ -18,7 +18,7 @@ Let's take a look at the blocktable:
 :: 
 
     a = valkkafs.getBlockTable()
-    print(a[:,0:10])
+    print(a)
     
 
 Instantiate ValkkaFSTool that allows us to peek into the written data

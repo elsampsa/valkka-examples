@@ -34,8 +34,8 @@ else:
 
     # this is modified automatically by setver.bash - don't touch!
     VERSION_MAJOR=1
-    VERSION_MINOR=2
-    VERSION_PATCH=2
+    VERSION_MINOR=3
+    VERSION_PATCH=0
 
     print("Checking Valkka python examples")
     print("   version:",str(VERSION_MAJOR)+"."+str(VERSION_MINOR)+"."+str(VERSION_PATCH))

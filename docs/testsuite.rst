@@ -76,13 +76,13 @@ test_studio_5.py           | **Very experimental**
                            | - Prefer test_studio_6.py over this one
                            | - Continuous recording to :ref:`ValkkaFS <valkkafs>`
                            | - Dumps all streams to a single file (uses ``ValkkaMultiFS``)
-                           | - Simultaneous, interactive playback
+                           | - Simultaneous, interactive playback : use mouse clicks & wheel to navigate the timeline
                            | - remove directory ``fs_directory/`` if the program refuses to start
                            |
 test_studio_6.py           | **Experimental**
                            | - Continuous recording to :ref:`ValkkaFS <valkkafs>`
                            | - One file per stream (uses ``ValkkaSingleFS``)
-                           | - Simultaneous, interactive playback
+                           | - Simultaneous, interactive playback : use mouse clicks & wheel to navigate the timeline
                            | - remove directory ``fs_directory_*/`` if the program refuses to start
 ========================== ================================================================================
 

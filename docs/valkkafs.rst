@@ -9,25 +9,25 @@ VMS Architecture
 
 When creating a video management system capable of recording and playing simultaneously a large number of streams, here are *some* of the problems one encounters:
 
-- Recorded video streams are played in sync, i.e. their timestamps are matched together
+- Recorded video streams are playbacked in sync, i.e. their timestamps are matched together
 - There can be large temporal chunks of video missing from any of the streams (i.e. the video stream is not continuous)
 - Video is recorded simultaneously while it is being played, to/from the same file
 - Only a finite amount of frames can be stored/buffered into memory for playback
 - Book-keeping of the key-frames and rewinding from these key-frames to target time instants as per user's requests
 
-To overcome these challenges, we have developed several objects and thread classes.  Here is an overview of them:
+In order to solve this (surprisingly nasty) problem, 
+we have developed several objects and thread classes.  Here is an overview of them:
 
 - ``core.ValkkaFS2`` book-keeping of the frames
 - ``core.ValkkaFSReaderThread`` reads frames from a file
 - ``core.ValkkaFSWriterThread`` writes frames to a file
 - ``core.FileCacherThread`` caches frames into memory and passes them down the filterchain
-- Reading (of recorded stream) and writing of (live stream) frames simultaneously from/to the same file
 - Both ``core.ValkkaFSReaderThread`` and ``core.ValkkaFSWriterThread`` read/manipulate the book-keeping entity (``core.ValkkaFS2``) simultaneously
 
 ``core.ValkkaFS2``, ``core.ValkkaFSReaderThread`` and ``core.ValkkaFSWriterThread`` can be used for simple 
 dumping & reading streams to/from disk.  Please see :ref:`the tutorial <valkkafs_tutorial>`.
 
-For more complex solution, i.e. mentioned simultaneous reading, writing & caching, the following filterchain (a) is used:
+For more complex solution, i.e. the mentioned simultaneous reading, writing & caching, the following filterchain (a) is used:
 
 ::
 
@@ -38,14 +38,13 @@ For more complex solution, i.e. mentioned simultaneous reading, writing & cachin
 
 Typically, when recorded frames are played, the following takes place:
 
-- Blocks of frames are requested from ``core.ValkkaFSReaderThread``
-- Frames flow to ``core.FileCacherThread``
-- Frames flow from ``core.FileCacherThread`` to a Decoder thread
-- Play is requested from ``core.FileCacherThread`` which then starts passing the frames to the decoder at play speed
+- Blocks of frames are requested from ``core.ValkkaFSReaderThread``.  From there they flow to ``core.FileCacherThread``
+- When play is requested from ``core.FileCacherThread`` it passes frames to the decoder at play speed
 
 To make matter simpler for the API user the filterchain in (a) is further encapsulated into an ``fs.FSGroup`` object.
 
-Several ``FSGroup`` objects are further encapsulated into a ``fs.ValkkaFSManager`` object, the final object encapsulation looking like this:
+Several ``FSGroup`` objects are further encapsulated into a ``fs.ValkkaFSManager`` object, the final hierarchical object encapsulation 
+looking like this:
 
 ::
 
@@ -71,8 +70,10 @@ Please refer to the :ref:`PyQt testsuite <testsuite>` on how to use ``FSGroup`` 
 Filesystem
 ----------
 
-ValkkaSingleFS is a simple filesystem for storing streaming media data.  Video frames (H264) are organized in "blocks" and written into a "dumpfile".  
+ValkkaSingleFS is a simple filesystem for storing streaming media data.  Video frames (H264) are organized in "blocks" and written into a "dumpfile".
 The dumpfile can be a regular file or a dedicated disk partition.
+
+Dumpfile is *pre-reserved*, which makes the life easier for the underlying filesystem and avoids fragmentation (in contrast to creating a huge amount of small, timestamped video segment files).
 
 The size of a single block (S) and the number of blocks (N) are predefined by the user.  The total disk space for a recording is then N*S bytes.
 
@@ -99,22 +100,25 @@ where ``mstime1`` indicates the first *key-frame* available in a block, while ``
 
 ``valkkafs.json`` saves data about the current written block, number of blocks and the block size.
 
-For efficient recording and playback with ValkkaFS you should do the following things:
+For efficient recording and playback with ValkkaFS (or with *any* VMS system), consider this:
 
-- For efficient seeking, we recommend that your ip camera emits **one key-frame per second**
-- Please, be aware of the bitrate of your camera and adjust the blocksize in ValkkaFS to that: ideally you'd want **1-2 key frames per block**
+- For efficient seeking, set your camera to emit **one key-frame per second** (or even two)
+- Be aware of the bitrate of your camera and adjust the blocksize in ValkkaFS to that: ideally you'd want **1-2 key frames per block**
+
+Consult :ref:`the tutorial <valkkafs_tutorial>` for more details.
 
 Multiple Streams per File
 -------------------------
 
 You can also dump multiple streams into a single ``ValkkaFS``.  The variant for this is ``valkka.fs.ValkkaMultiFS``.
 
-This requires that all cameras have approximately the same bitrate and key-frame interval.
+This requires that all cameras have the same bitrate and key-frame interval!
 
-The advantage of this approach is, that all frames from all your cameras are streamed continuously into the same (large) file or a dedicated block device, minimizing the wear and tear on
-your device if you are using a hdd.
+The advantage of this approach is, that all frames from all your cameras are streamed continuously into the same (large) file or a dedicated block device, 
+minimizing the wear and tear on your device if you are using a hdd.
 
-The architecture is identical to ``ValkkaSingleFS``, with a very small modification to the ``blockfile`` format: ``mstime1`` presents now the *last* key-frame among all keyframes of all the streams.
+The architecture is identical to ``ValkkaSingleFS``, with a very small modification to the ``blockfile`` format: ``mstime1`` presents 
+now the *last* key-frame among all keyframes of all the streams.
 
 *WARNING: writing multiple streams to the same file / block device is at very experimental stage and not well tested*
 
@@ -191,3 +195,13 @@ Suppose you get:
     /dev/sdb1: UUID="db572185-2ac1-4ef5-b8af-c2763e639a67" TYPE="swap" PARTUUID="37c591e3-b33b-4548-a1eb-81add9da8a58"
 
 Then "37c591e3-b33b-4548-a1eb-81add9da8a58" is what you are looking for.
+
+In this example case, you would instantiate the ValkkaFS like this:
+
+::
+
+    valkkafs = ValkkaMultiFS.newFromDirectory(
+        dirname="/home/sampsa/tmp/testvalkkafs", 
+        partition_uuid="37c591e3-b33b-4548-a1eb-81add9da8a58", 
+        blocksize=YOUR_BLOCKSIZE,
+        device_size=1024*1024*1024*465) # 465 GB

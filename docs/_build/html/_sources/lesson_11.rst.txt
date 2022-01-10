@@ -7,11 +7,12 @@ As you learned from earlier lessons, you can redirect video streams to matroska 
 
 Here we'll be streaming video to the custom ValkkaFS filesystem.
 
-ValkkaFS dumps video to a dedicated file, or to an entire partition or disk.  Arriving H264 frames from all cameras are written in their arriving time order, into the same (large) file that is organized in blocks.  For more details, consult the :ref:`ValkkaFS section <valkkafs>` and the cpp documentation.
+ValkkaFS dumps video to a dedicated file, or to an entire partition or disk.  Arriving H264 frames are written in their arriving time order, into the same (large) file that is organized in blocks. 
+For more details, consult the :ref:`ValkkaFS section <valkkafs>` and the cpp documentation.
 
 Here we provide several examples for writing to and reading from ValkkaFS.  These include importing video from ValkkaFS to matroska, and caching frames from ValkkaFS and passing them downstream at play speed. 
 
-In a typical application, writing and reading run concurrently: writing thread dumps frames continuously and reading thread evoked only at users request.
+In a typical VMS application, writing and reading run concurrently: writing thread dumps frames continuously to the disk, while reading thread is evoked only at user's request.
 
 
 Writing
@@ -45,7 +46,8 @@ Reading 2
 Matroska export
 ---------------
 
-Let's start by recalling :ref:`the very first lesson <lesson_1_a>`.  There we saw how LiveThread sends **Setup Frames** at streaming initialization.  Setup frames are used all over the libValkka infrastructure, to carry information about the video stream, to signal the stream start and to initialize decoders, muxers, etc.
+Let's start by recalling :ref:`the very first lesson <lesson_1_a>`.  There we saw how LiveThread sends **Setup Frames** at streaming initialization.  
+Setup frames are used all over the libValkka infrastructure, to carry information about the video stream, to signal the stream start and to initialize decoders, muxers, etc.
 
 On the other hand, ValkkaFSReaderThread is designed to be a simple beast: it does not have any notion of stream initialization.  It simply provides frames on a per-block basis.
 
@@ -54,7 +56,6 @@ We must use a special FrameFilter called **InitStreamFrameFilter**, in order to 
 **Download lesson** :download:`[here]<snippets/lesson_11_d.py>`
 
 .. include:: snippets/lesson_11_d.py_
-
 
 Playing frames
 --------------
@@ -65,7 +66,8 @@ However, we also need something that passes recorded frames downstream (say, for
 
 This is achieved with **FrameCacherThread**, which caches, seeks and passes frames downstream at play speed.  
 
-In detail, ValkkaFSReaderThread passes frames to FrameCacherThread which caches them into memory.  After this, *seek*, *play* and *stop* can be requested from FrameCacherThread, which then passes the frames downstream from a seek point and at the original play speed at which the frames were recorded into ValkkaFS. 
+In detail, ValkkaFSReaderThread passes frames to FrameCacherThread which caches them into memory.  After this, *seek*, *play* and *stop* can be requested from FrameCacherThread, 
+which then passes the frames downstream from a seek point and at the original play speed at which the frames were recorded into ValkkaFS. 
 
 FrameCacherThread can be given special python callback functions that are being called when the min and max time of cached frames changes and when frame presentation time goes forward.
 
@@ -79,25 +81,15 @@ FrameCacherThread is very similar to other threads that send stream (like LiveTh
 ValkkaFSManager
 ---------------
 
-In the previous example, two callback functions which define the application's behaviour with respect to recorded and cached frames were written.
+In the previous example, two callback functions which define the application's behaviour with respect to recorded and cached frames were used.
 
-How you define the callback functions, depends completely on your application.
+How you define the callback functions, depends completely on your application, say, if you're creating an application that does playback of recorded stream, 
+you might want to request new blocks at your *current_time_callback*, once the time goes over limits of currently cached frames.
 
-If you're creating an application that does playback of recorded stream, you might want to request new blocks at your *current_time_callback*, once the time goes over limits of currently cached frames.
+We are starting to get some idea on the challenges that arise when doing *simultaneous reading, writing, caching and playing* of a large number
+of (non-continuous) video streams.  For a more discussions on this, please see the :ref:`ValkkaFS section <valkkafs>`.
 
-If your application send same video stream in a loop for an RTSP server, you might want to rewind to the beginning of cached frames, when the time goes over limits of available frames.
+To make things easier, ``valkka.fs`` namespace has a special class ``ValkkaFSManager`` that handles the simultaneous & synchronous writing and playing of multiple video streams.
 
-*etc.*
-
-LibValkka's API level 2 provides a class that implements a correct behaviour for the playback of continuously recorded streams, like this:
-
-- Instantiates ValkkaFSWriter, ValkkaFSReader and FileCacheThread, based on a ValkkaFS instance
-- Queries the blocktable frequently for changes
-- Requests new blocks from ValkkaFSReaderThread, when there are no more frames available in FrameCacherThread's cache
-- etc.
-
-.. TODO: comment on blocktable reading
-
-For an example on how to use ValkkaFSManager, please see ``test_studio_5.py`` at the :ref:`PyQt testsuite <testsuite>`
-
+For an example on how to use ValkkaFSManager, please see ``test_studio_6.py`` at the :ref:`PyQt testsuite <testsuite>`.
 

@@ -72,10 +72,18 @@ test_studio_rtsp.py        | - Like *test_studio_1.py*
                            |
                            |   (where *N* is the number of the camera)
                            | 
-test_studio_5.py           | **Experimental**
+test_studio_5.py           | **Very experimental**
+                           | - Prefer test_studio_6.py over this one
                            | - Continuous recording to :ref:`ValkkaFS <valkkafs>`
-                           | - and simultaneous, interactive playback
+                           | - Dumps all streams to a single file (uses ``ValkkaMultiFS``)
+                           | - Simultaneous, interactive playback : use mouse clicks & wheel to navigate the timeline
                            | - remove directory ``fs_directory/`` if the program refuses to start
+                           |
+test_studio_6.py           | **Experimental**
+                           | - Continuous recording to :ref:`ValkkaFS <valkkafs>`
+                           | - One file per stream (uses ``ValkkaSingleFS``)
+                           | - Simultaneous, interactive playback : use mouse clicks & wheel to navigate the timeline
+                           | - remove directory ``fs_directory_*/`` if the program refuses to start
 ========================== ================================================================================
 
 Before launching any of the testsuite programs you should be aware of the :ref:`common problems<pitfalls>` of linux video streaming.

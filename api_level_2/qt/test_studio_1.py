@@ -14,7 +14,7 @@ See the MIT License for more details.
 @file    test_studio_1.py
 @author  Sampsa Riikonen
 @date    2018
-@version 1.2.2 
+@version 1.3.0 
 @brief   Test live streaming with Qt
 
 

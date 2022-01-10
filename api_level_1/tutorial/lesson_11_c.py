@@ -1,17 +1,17 @@
-import time
+import time, sys
 from valkka.core import *
-from valkka.api2 import ValkkaFS
+from valkka.fs import ValkkaSingleFS
 
 """<rtf>
 Load ValkkaFS metadata:
 <rtf>"""
-valkkafs = ValkkaFS.loadFromDirectory(dirname="/home/sampsa/tmp/testvalkkafs")
+valkkafs = ValkkaSingleFS.loadFromDirectory(dirname="/tmp/testvalkkafs")
 
 """<rtf>
 Let's take a look at the blocktable:
 <rtf>"""
 a = valkkafs.getBlockTable()
-print(a[:,0:10])
+print(a)
 
 """<rtf>
 Instantiate ValkkaFSTool that allows us to peek into the written data
