@@ -88,6 +88,7 @@ from valkkafs2 import ValkkaFSConfig
 from demo_base import ConfigDialog, TestWidget0, getForeignWidget, WidgetPair
 from playback import PlaybackController
 from playwidget import TimeLineWidget, CalendarWidget
+from playback import WidgetSet as PlayBackWidgetSet
 
 # # this is now controlled with the "no_rec" command line argument
 use_live = True
@@ -215,7 +216,7 @@ class MyGui(QtWidgets.QMainWindow):
         
         # timeline
         self.timelinewidget = TimeLineWidget(datetime.date.today(), parent = self.rec_video_area)
-        self.timelinewidget.setLogLevel(logging.DEBUG)
+        # self.timelinewidget.setLogLevel(logging.DEBUG)
         self.rec_video_lay.addWidget(self.timelinewidget)
         
         # buttons
@@ -251,13 +252,18 @@ class MyGui(QtWidgets.QMainWindow):
         )
 
         self.playback_controller = PlaybackController(
-            calendar_widget     = self.calendarwidget,
-            timeline_widget     = self.timelinewidget,
             valkkafs_manager    = self.valkkafsmanager,
+            )
+
+        self.widget_set = PlayBackWidgetSet(
+            timeline_widget     = self.timelinewidget,
             play_button         = self.play_button,
             stop_button         = self.stop_button,
+            calendar_widget     = self.calendarwidget,
             zoom_to_fs_button   = self.zoom_to_fs_button
-            )
+        )
+
+        self.playback_controller.register(self.widget_set)
 
     
         self.livethread = LiveThread(         # starts live stream services (using live555)
