@@ -25,7 +25,11 @@ Create video streaming and surveillance solutions purely in Python.  No need to 
 - Recast the IP camera video streams to either multicast or unicast
 - Build graphical user interfaces with PyQt, interact machine vision with Qt's signal/slot system and build highly customized GUIs
 
-Take also a look at `this presentation <https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ>`_
+If you are not a developer and wonder why all this is supposed to be cool and the economic benefits of it 
+(an investor perhaps), please take a look at the Valkka VMS `whitepaper <https://drive.google.com/file/d/1bKCEqo3-30fiYNIbxkbD_OsgUcW1ycH_/view?usp=sharing>`_
+
+Devs already involved knee-deep in the video streaming / machine vision business, might want to take a look 
+at `this presentation <https://drive.google.com/file/d/19VXmhTYi19EKDlSorv-Tmd0gholeD9SJ>`_
 to see some of the typical video streaming / machine vision problems libValkka can solve for you.
 
 This documentation is a quickstart for :ref:`installing <requirements>` and developing with Valkka using the Python3 API.  
