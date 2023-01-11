@@ -2,6 +2,8 @@ FROM ubuntu:18.04
 
 USER root
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 ENV TZ=Europe/Helsinki
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -27,7 +29,7 @@ RUN apt-get install -y yasm cmake pkg-config swig libglew-dev \
 RUN mkdir /valkka
 WORKDIR /valkka
 ## download a specific version
-ENV ver="1.2.1"
+ENV ver=""
 RUN wget "https://github.com/elsampsa/valkka-core/archive/"${ver}".zip"
 RUN unzip ${ver}".zip"
 WORKDIR "/valkka/valkka-core-"${ver}

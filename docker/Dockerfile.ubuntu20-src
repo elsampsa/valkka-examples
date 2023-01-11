@@ -1,0 +1,51 @@
+FROM ubuntu:20.04
+
+USER root
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV TZ=Europe/Helsinki
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get update
+RUN apt-get install -y build-essential
+RUN apt-get install -y python3 mesa-utils glew-utils python3-numpy python3-pil v4l-utils python3-pip openssl zip wget
+RUN apt-get install -y python3-opencv
+
+## prepare build environment
+RUN apt-get install -y yasm cmake pkg-config swig libglew-dev \ 
+    mesa-common-dev python3-dev python3-numpy libasound2-dev libssl-dev coreutils valgrind pkg-config
+
+## if we would like to use the latest official deb package releases: see Dockerfile.ubuntu18-src for more details
+
+## download, build & install libValkka
+RUN mkdir /valkka
+WORKDIR /valkka
+## download a specific version
+ENV ver="1.3.4"
+RUN wget "https://github.com/elsampsa/valkka-core/archive/"${ver}".zip"
+RUN unzip ${ver}".zip"
+WORKDIR "/valkka/valkka-core-"${ver}
+## build
+## first, download ffmpeg:
+RUN ./prepare_build.bash
+RUN ./easy_build.bash
+WORKDIR "/valkka/valkka-core-"${ver}"/build_dir"
+RUN make package
+## install
+RUN dpkg -i Valkka-*.deb
+## in case we forgot some libValkka dependencies:
+RUN apt-get install -fy
+## finally, get some additional tools to test with:
+
+## download, build & install darknet python API
+## eh.. let's no do that.  See Dockerfile.ubuntu18-src if you're interested
+
+## some more tools
+RUN apt-get install -y net-tools emacs iputils-ping
+## video players to test against with
+RUN apt-get install -y ffmpeg vlc
+
+WORKDIR /root
+RUN wget https://raw.githubusercontent.com/elsampsa/valkka-examples/master/quicktest.py
+RUN python3 quicktest.py
