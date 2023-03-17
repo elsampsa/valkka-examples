@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_detector.py
 @author  Sampsa Riikonen
 @date    2018
-@version 1.3.4 
+@version 1.3.5 
 @brief   Test live streaming with Qt.  Send copies of streams to OpenCV movement detector processes.  There is one OpenCV detector & multiprocess for each stream.
 
 In the main text field, write live video sources, one to each line, e.g.

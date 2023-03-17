@@ -65,7 +65,7 @@ where "win_id" is the window_id returned by Valkka, "parent" is the parent widge
 However, "foreign_widget" created this way does not catch mouse gestures.  This can be solved by placing a "dummy" QWidget on top of the "foreign_widget" (using a layout).  
 An example of this can be found in
 
-::
+.. code::bash
 
   valkka_examples/api_level_1/qt/
   
@@ -77,19 +77,20 @@ Python multiprocessing
 
 In :ref:`lesson 4<opencv_client>` of the tutorial, we launched a separate python interpreter running a client program that was using decoded and shared frames.  
 
-That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with python3's `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ library.
+That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with 
+Python3's `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ library.
 
 Using python multiprocesses with Qt complicates things a bit: we need a way to map messages from the multiprocess into signals at the main Qt program.  
 This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.  
 
 Let's state that graphically:
 
-::
+.. code:: text
 
   Qt main loop running with signals and slots                                           
       |                                                                                  
       +--- QThread receiving/sending signals --- writing/reading communication pipes
-           ==> use an instance of QValkkaThread                        |
+                                                                       |
                                                          +-------------+------+----------------+
                                                          |                    |                |
                                                         multiprocess_1   multiprocess_2  multiprocess_3
@@ -103,7 +104,7 @@ Note that we only need a single QThread to control several multiprocesses.
                                                          
 Let's dig deeper into our strategy for interprocess communication with the Qt signal/slot system:
 
-::
+.. code:: text
 
    +--------------------------------------+
    |                                      |
@@ -137,15 +138,15 @@ Let's dig deeper into our strategy for interprocess communication with the Qt si
           
           
 The class **valkka.multiprocess.MessageProcess** provides a model class that has been derived from python's **multiprocessing.Process** class.  
-In MessageProcess, the class has both "frontend" and "backend" methods.  
+In MessageProcess, the class has both "frontend" and "backend" methods.
 
-Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed), 
-while backend methods are called only from within the processes "run" method - i.e. at the "other side" of the fork, where the forked process lives in its own virtual memory space.
+The ``MessageProcess`` class comes with the main libValkka package, but you can also install it separately.  
 
-**WARNING** : it is important to understand what you are doing here: what is running in the "background" and what in your main python (Qt) process.
+It is documented in detail in `valkka-multiprocess package documentation  <https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html>`_.
 
-Including libValkka threads and QThreads into the mix can easily result in the classical "fork-combined-with-threading" pitfall, 
-so it's highly recommendable that you read and understand `this medium article <https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300>`_.
+We highly recommend that you read that documentation as it is important to understand what you are doing here - what is running in the "background" 
+and what in your main python (Qt) process as including libValkka threads and QThreads into the same mix can easily result in the classical 
+"fork-combined-with-threading" pitfall, leading to a leaky-crashy program.
 
 Please refer also to :ref:`the PyQt testsuite<testsuite>` how to do things correctly.
 

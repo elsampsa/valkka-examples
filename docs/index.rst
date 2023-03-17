@@ -60,7 +60,6 @@ For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github
    pitfalls
    repos
    license
-   benchmarking
    authors
    knowledge
    

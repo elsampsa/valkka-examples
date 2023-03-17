@@ -78,72 +78,68 @@ Concrete examples are provided only for Qt.</p>
 <p>where “win_id” is the window_id returned by Valkka, “parent” is the parent widget of the widget we’re creating here and “foreign_widget” is the resulting widget we’re going to use in Qt.</p>
 <p>However, “foreign_widget” created this way does not catch mouse gestures.  This can be solved by placing a “dummy” QWidget on top of the “foreign_widget” (using a layout).
 An example of this can be found in</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka_examples</span><span class="o">/</span><span class="n">api_level_1</span><span class="o">/</span><span class="n">qt</span><span class="o">/</span>
-
-  <span class="n">single_stream_rtsp_1</span><span class="o">.</span><span class="n">py</span>
-</pre></div>
-</div>
 </div>
 <div class="section" id="python-multiprocessing">
 <h2>Python multiprocessing<a class="headerlink" href="#python-multiprocessing" title="Permalink to this headline">¶</a></h2>
 <p>In <a class="reference internal" href="lesson_4.html#opencv-client"><span class="std std-ref">lesson 4</span></a> of the tutorial, we launched a separate python interpreter running a client program that was using decoded and shared frames.</p>
-<p>That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with python3’s <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a> library.</p>
+<p>That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with
+Python3’s <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html">multiprocessing</a> library.</p>
 <p>Using python multiprocesses with Qt complicates things a bit: we need a way to map messages from the multiprocess into signals at the main Qt program.
 This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.</p>
 <p>Let’s state that graphically:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Qt</span> <span class="n">main</span> <span class="n">loop</span> <span class="n">running</span> <span class="k">with</span> <span class="n">signals</span> <span class="ow">and</span> <span class="n">slots</span>
-    <span class="o">|</span>
-    <span class="o">+---</span> <span class="n">QThread</span> <span class="n">receiving</span><span class="o">/</span><span class="n">sending</span> <span class="n">signals</span> <span class="o">---</span> <span class="n">writing</span><span class="o">/</span><span class="n">reading</span> <span class="n">communication</span> <span class="n">pipes</span>
-         <span class="o">==&gt;</span> <span class="n">use</span> <span class="n">an</span> <span class="n">instance</span> <span class="n">of</span> <span class="n">QValkkaThread</span>                        <span class="o">|</span>
-                                                       <span class="o">+-------------+------+----------------+</span>
-                                                       <span class="o">|</span>                    <span class="o">|</span>                <span class="o">|</span>
-                                                      <span class="n">multiprocess_1</span>   <span class="n">multiprocess_2</span>  <span class="n">multiprocess_3</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Qt main loop running with signals and slots
+    |
+    +--- QThread receiving/sending signals --- writing/reading communication pipes
+                                                                     |
+                                                       +-------------+------+----------------+
+                                                       |                    |                |
+                                                      multiprocess_1   multiprocess_2  multiprocess_3
 
-                                                       <span class="n">python</span> <span class="n">multiprocesses</span> <span class="n">doing</span> <span class="n">their</span> <span class="n">thing</span>
-                                                       <span class="ow">and</span> <span class="n">writing</span><span class="o">/</span><span class="n">reading</span> <span class="n">their</span> <span class="n">communication</span> <span class="n">pipes</span>
-                                                       <span class="o">==&gt;</span> <span class="n">subclass</span> <span class="kn">from</span> <span class="nn">valkka.multiprocess.MessageProcess</span>
+                                                       python multiprocesses doing their thing
+                                                       and writing/reading their communication pipes
+                                                       ==&gt; subclass from valkka.multiprocess.MessageProcess
 </pre></div>
 </div>
 <p>Note that we only need a single QThread to control several multiprocesses.</p>
 <p>Let’s dig deeper into our strategy for interprocess communication with the Qt signal/slot system:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+--------------------------------------+</span>
-<span class="o">|</span>                                      <span class="o">|</span>
-<span class="o">|</span> <span class="n">QThread</span>                              <span class="o">|</span>
-<span class="o">|</span>  <span class="n">watching</span> <span class="n">the</span> <span class="n">communication</span> <span class="n">pipe</span>     <span class="o">|</span>
-<span class="o">|</span>                   <span class="o">+-----</span> <span class="n">reads</span> <span class="s2">&quot;ping&quot;</span><span class="o">|</span>
-<span class="o">|</span>                   <span class="o">|</span>               <span class="o">|</span>  <span class="o">|</span>
-<span class="o">+-------------------|------------------+</span>
-                    <span class="o">|</span>               <span class="o">|</span>
- <span class="o">+------------------|-------+</span>       <span class="o">|</span>        <span class="o">...</span>
- <span class="o">|</span> <span class="n">Frontend</span> <span class="n">methods</span> <span class="o">|</span>       <span class="o">|</span>       <span class="o">^</span>          <span class="p">:</span>
- <span class="o">|</span>                  <span class="o">|</span>       <span class="o">|</span>      <span class="n">pipe</span>        <span class="p">:</span>
- <span class="o">|</span> <span class="k">def</span> <span class="nf">ping</span><span class="p">():</span>  <span class="o">&lt;---+</span>       <span class="o">|</span>       <span class="o">|</span>          <span class="p">:</span>
- <span class="o">|</span>   <span class="n">do</span> <span class="n">something</span>           <span class="o">|</span>       <span class="o">|</span>          <span class="p">:</span>
- <span class="o">|</span>   <span class="p">(</span><span class="n">say</span><span class="p">,</span> <span class="n">send</span> <span class="n">a</span> <span class="n">qt</span> <span class="n">signal</span><span class="p">)</span><span class="o">|</span>       <span class="o">|</span>          <span class="p">:</span>
- <span class="o">|</span>                          <span class="o">|</span>       <span class="o">|</span>          <span class="p">:</span>
- <span class="o">|</span> <span class="k">def</span> <span class="nf">pong</span><span class="p">():</span> <span class="c1"># qt slot    |       |          :</span>
- <span class="o">|</span>   <span class="n">sendSignal</span><span class="p">(</span><span class="s2">&quot;pong&quot;</span><span class="p">)</span> <span class="o">---------+</span>  <span class="o">|</span>          <span class="p">:</span>
- <span class="o">|</span>                          <span class="o">|</span>    <span class="o">|</span>  <span class="o">|</span>          <span class="p">:</span>    <span class="n">valkka</span><span class="o">.</span><span class="n">multiprocess</span><span class="o">.</span><span class="n">MessageProcess</span>
- <span class="o">+--------------------------+</span>    <span class="o">|</span>  <span class="o">|</span>          <span class="p">:</span>
- <span class="o">|</span> <span class="n">Backend</span> <span class="n">methods</span>          <span class="o">|</span>    <span class="o">|</span>  <span class="o">|</span>          <span class="p">:</span>    <span class="n">Backend</span> <span class="ow">is</span> <span class="n">running</span> <span class="ow">in</span> <span class="n">the</span> <span class="s2">&quot;background&quot;</span> <span class="ow">in</span> <span class="n">its</span> <span class="n">own</span> <span class="n">virtual</span> <span class="n">memory</span> <span class="n">space</span>
- <span class="o">|</span>                          <span class="o">|</span>    <span class="o">|</span>  <span class="o">|</span>          <span class="p">:</span>
- <span class="o">|</span> <span class="n">sendSignal__</span><span class="p">(</span><span class="s2">&quot;ping&quot;</span><span class="p">)</span> <span class="o">-------&gt;----+</span>          <span class="p">:</span>
- <span class="o">|</span>                          <span class="o">|</span>    <span class="o">|</span>             <span class="p">:</span>
- <span class="o">|</span> <span class="n">watching</span> <span class="n">childpipe</span> <span class="o">&lt;-------</span> <span class="n">childpipe</span>       <span class="p">:</span>
- <span class="o">|</span>                 <span class="o">|</span>        <span class="o">|</span>                  <span class="p">:</span>
- <span class="o">|</span> <span class="k">def</span> <span class="nf">pong__</span><span class="p">():</span> <span class="o">&lt;-+</span>        <span class="o">|</span>                  <span class="p">:</span>
- <span class="o">|</span>  <span class="n">do</span> <span class="n">something</span>            <span class="o">|</span>                  <span class="p">:</span>
- <span class="o">|</span>                          <span class="o">|</span>                  <span class="p">:</span>
- <span class="o">+--------------------------+</span>                <span class="o">..</span><span class="p">:</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>+--------------------------------------+
+|                                      |
+| QThread                              |
+|  watching the communication pipe     |
+|                   +----- reads &quot;ping&quot;|
+|                   |               |  |
++-------------------|------------------+
+                    |               |
+ +------------------|-------+       |        ...
+ | Frontend methods |       |       ^          :
+ |                  |       |      pipe        :
+ | def ping():  &lt;---+       |       |          :
+ |   do something           |       |          :
+ |   (say, send a qt signal)|       |          :
+ |                          |       |          :
+ | def pong(): # qt slot    |       |          :
+ |   sendSignal(&quot;pong&quot;) ---------+  |          :
+ |                          |    |  |          :    valkka.multiprocess.MessageProcess
+ +--------------------------+    |  |          :
+ | Backend methods          |    |  |          :    Backend is running in the &quot;background&quot; in its own virtual memory space
+ |                          |    |  |          :
+ | sendSignal__(&quot;ping&quot;) -------&gt;----+          :
+ |                          |    |             :
+ | watching childpipe &lt;------- childpipe       :
+ |                 |        |                  :
+ | def pong__(): &lt;-+        |                  :
+ |  do something            |                  :
+ |                          |                  :
+ +--------------------------+                ..:
 </pre></div>
 </div>
 <p>The class <strong>valkka.multiprocess.MessageProcess</strong> provides a model class that has been derived from python’s <strong>multiprocessing.Process</strong> class.
 In MessageProcess, the class has both “frontend” and “backend” methods.</p>
-<p>Frontend methods can be called after the process has been started (e.g. after the .start() method has been called and fork has been performed),
-while backend methods are called only from within the processes “run” method - i.e. at the “other side” of the fork, where the forked process lives in its own virtual memory space.</p>
-<p><strong>WARNING</strong> : it is important to understand what you are doing here: what is running in the “background” and what in your main python (Qt) process.</p>
-<p>Including libValkka threads and QThreads into the mix can easily result in the classical “fork-combined-with-threading” pitfall,
-so it’s highly recommendable that you read and understand <a class="reference external" href="https://medium.com/&#64;sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300">this medium article</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">MessageProcess</span></code> class comes with the main libValkka package, but you can also install it separately.</p>
+<p>It is documented in detail in <a class="reference external" href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html">valkka-multiprocess package documentation</a>.</p>
+<p>We highly recommend that you read that documentation as it is important to understand what you are doing here - what is running in the “background”
+and what in your main python (Qt) process as including libValkka threads and QThreads into the same mix can easily result in the classical
+“fork-combined-with-threading” pitfall, leading to a leaky-crashy program.</p>
 <p>Please refer also to <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">the PyQt testsuite</span></a> how to do things correctly.</p>
 <p>A stand-alone python multiprocessing/Qt sample program is provided here (without any libValkka components):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka_examples</span><span class="o">/</span><span class="n">api_level_2</span><span class="o">/</span><span class="n">qt</span><span class="o">/</span>
@@ -235,9 +231,7 @@ so it’s highly recommendable that you read and understand <a class="reference 
 <li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Licensing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarking.html#debugging">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licence &amp; Copyright</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
 <li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
 </ul>
