@@ -2,6 +2,20 @@
 
 How to manage a collection of IP cameras connected to your laptop via a switch - nice for testing and development!
 
+
+First install the dhcpd server and arp-scan with:
+```
+sudo apt install isc-dhcp-server arp-scan
+```
+Check & disable any competing dhcp servers:
+```
+sudo systemctl status udhcpd
+```
+Check that dhcpd is not running as a daemon:
+```
+sudo systemctl status dhcpd
+```
+
 ### Hardware
 
 You need:
@@ -30,7 +44,7 @@ Create a dedicated wired connection in your network manager:
 
 Start [dhcp.bash](dhcp.bash) and keep it running - now your have a dhcp server that serves the cameras connected to the PoE switch
 
-Run [findsome.bash](findsome.bash) - this discovers the IP addresses of the cameras connected to the PoE switch
+Edit and run [findsome.bash](findsome.bash) - this discovers the IP addresses of the cameras connected to the PoE switch
 
 You can also edit [dhcpd.conf](dhcpd.conf) for setting fixed IP addresses for your cameras (after this you need to restart ``dhcp.bash``).
 
