@@ -12,7 +12,7 @@ For more details about libValkka, please go [here](https://elsampsa.github.io/va
 Sampsa Riikonen
 
 ## Copyright
-(C) 2017, 2018 Sampsa Riikonen
+(C) 2017-2023 Sampsa Riikonen
 
 ## License
 MIT License

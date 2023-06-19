@@ -31,15 +31,17 @@ If you're not using a recent Ubuntu distro and need to build libValkka and it's 
 
 The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
 
+.. note:: LibValkka comes precompiled and packaged for a certain ubuntu distribution version. This means that the compilation and it's dependencies assume the default
+          python version of that distribution.  Using custom-installed python versions, anacondas and whatnot might cause dependency problems.
 
 Numpy
 -----
 
-Valkka-core binaries has been compiled with the numpy version that comes with the corresponding Ubuntu distro, i.e. the numpy you would install with ```sudo apt-get install python3-numpy```.
+Valkka-core binaries has been compiled with the numpy version that comes with the corresponding Ubuntu distro, i.e. the numpy you would install with ``sudo apt-get install python3-numpy``.
 
-That version is automatically installed when you install valkka core with ```sudo apt-get```, but it might be "shadowed" by your *locally* installed numpy.
+That version is automatically installed when you install valkka core with ``sudo apt-get``, but it might be "shadowed" by your *locally* installed numpy.
 
-If you get errors about numpy import, try removing your locally installed numpy (i.e. the version you installed with ```pip install --user```).
+If you get errors about numpy import, try removing your locally installed numpy (i.e. the version you installed with ``pip install --user``).
 
 
 Install the testsuite
