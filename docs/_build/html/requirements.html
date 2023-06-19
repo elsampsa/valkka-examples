@@ -52,12 +52,17 @@
 </div>
 <p>If you’re not using a recent Ubuntu distro and need to build libValkka and it’s python bindings yourself, please refer to the <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github page</a>.</p>
 <p>The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed “globally” into <em>/usr/lib/python3/dist-packages/</em></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>LibValkka comes precompiled and packaged for a certain ubuntu distribution version. This means that the compilation and it’s dependencies assume the default
+python version of that distribution.  Using custom-installed python versions, anacondas and whatnot might cause dependency problems.</p>
+</div>
 </div>
 <div class="section" id="numpy">
 <h2>Numpy<a class="headerlink" href="#numpy" title="Permalink to this headline">¶</a></h2>
-<p>Valkka-core binaries has been compiled with the numpy version that comes with the corresponding Ubuntu distro, i.e. the numpy you would install with <code class="docutils literal notranslate"><span class="pre">`sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-numpy`</span></code>.</p>
-<p>That version is automatically installed when you install valkka core with <code class="docutils literal notranslate"><span class="pre">`sudo</span> <span class="pre">apt-get`</span></code>, but it might be “shadowed” by your <em>locally</em> installed numpy.</p>
-<p>If you get errors about numpy import, try removing your locally installed numpy (i.e. the version you installed with <code class="docutils literal notranslate"><span class="pre">`pip</span> <span class="pre">install</span> <span class="pre">--user`</span></code>).</p>
+<p>Valkka-core binaries has been compiled with the numpy version that comes with the corresponding Ubuntu distro, i.e. the numpy you would install with <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">python3-numpy</span></code>.</p>
+<p>That version is automatically installed when you install valkka core with <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt-get</span></code>, but it might be “shadowed” by your <em>locally</em> installed numpy.</p>
+<p>If you get errors about numpy import, try removing your locally installed numpy (i.e. the version you installed with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--user</span></code>).</p>
 </div>
 <div class="section" id="install-the-testsuite">
 <h2>Install the testsuite<a class="headerlink" href="#install-the-testsuite" title="Permalink to this headline">¶</a></h2>
@@ -177,8 +182,15 @@
   <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
   <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>
   <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
-  <li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li>
+  <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
 </ul>
+
+<script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
+    new Crate({
+        server: '1116100310574837812', // ElSampsa's kindergarden
+        channel: '1116101208797609994' // #valkka
+    })
+</script>
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>

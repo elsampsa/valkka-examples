@@ -14,7 +14,7 @@ See the MIT License for more details.
 @file    test_studio_2.py
 @author  Sampsa Riikonen
 @date    2018
-@version 1.3.5 
+@version 1.3.6 
 @brief   Test live streaming with Qt with floating instead of grouped widgets
 
 
