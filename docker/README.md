@@ -2,23 +2,35 @@
 
 ## Synopsis
 
-Python media streaming framework [libValkka](https://elsampsa.github.io/valkka-examples/_build/html/index.html) for Ubuntu.  Includes a cpu version of [darknet python bindings](https://github.com/elsampsa/darknet-python).  
+Python media streaming framework [libValkka](https://elsampsa.github.io/valkka-examples/_build/html/index.html) for Ubuntu.
+
+The only actively maintained docker images are the the ``-ppa`` versions (see below) of two latest long-term ubuntu distros
 
 ## Build
 
 Build docker images with:
 ```
-./build_image.bash TAG
+./build_image.bash TAG MAJOR.MINOR.PATCH
 ```
 
 TAGs are:
 ```
-ubuntu18-armv8-src      from github latest source code
 ubuntu18-dev            from locally created .deb package (personal hacky builds)
+
+ubuntu18-armv8-src      from github latest source code
 ubuntu18-src            from github source code, certain version number
                         give version number "MAJOR.MINOR.PATCH" as second argument to the script
+
 ubuntu20-src            like previous, but for ubuntu20
+ubuntu22-src            like previous, but for ubuntu22
+
+USE THESE:
+
+ubuntu20-ppa            from the ppa repository: no build environment needed, so this image is much smaller than the "-src" ones
+ubuntu22-ppa            like previous, but for ubuntu22
 ```
+
+NOTE: only the two latest ubuntu LTS ``-ppa``docker images are actively maintained
 
 NOTE: The final docker image TAG is, for example: valkka:ubuntu18-src-MAJOR.MINOR.PATCH
 
@@ -45,4 +57,5 @@ docker run -it --shm-size=2gb ETC
 
 ## TODO
 
-Would make more sense to have one docker image for building and another with just the package installed (without the build env installs)
+Most sense would make to create autobuilds (artifacts) into the libValkka main git repo always upon a merge into the main branch
+

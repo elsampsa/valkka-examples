@@ -1,0 +1,14 @@
+streams:
+  - name: mummocamera
+    address: rtsp://admin:vittuhikki@192.168.1.100
+    use: true
+    bind: 1
+  - name: mummocamera
+    address: rtsp://admin:vittuhikki@192.168.1.100
+    use: true
+    bind: 2
+interpolate: [300,300]
+interval: 5
+duration: 30
+verbose: false
+bind: 0
