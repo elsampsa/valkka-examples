@@ -30,7 +30,7 @@ class Filterchain:
 
     def __init__(self, livethread = None, address = None, 
             slot = 1, interval = 10, sws = None, verbose = False, n_stack = None,
-            affinity = None
+            affinity = None, n_threads = None
             ):
         self.livethread = livethread
         self.interval = int(interval*1000) # sec to msec
@@ -73,6 +73,10 @@ class Filterchain:
             "avthread-" + str(self.slot),
             self.fork2) # feeds the bitmap fork & decoding branch
             # self.framefifo_ctx)
+
+        if n_threads:
+            print("setting", n_threads,"threads per libav decoder")
+            self.avthread.setNumberOfThreads(n_threads)
 
         if affinity is not None:
             print("binding stream at slot", slot, "to core", affinity)
@@ -128,6 +132,7 @@ def makeChains():
         n_stack_live: 50 # optional
         # n_stack_decoder: 20 # not used
         bind: 0 # bind livethread to a core # optional
+        decoder_threads: 2 # how many libav(ffmpeg) threads per decoder
 
     If the top-level "interpolate" is present, then all YUVs are interpolated into that
     RGB dimensions
@@ -185,6 +190,8 @@ def makeChains():
         n_stack_decoder = None
     # not used
 
+    n_threads = dic.get("decoder_threads", None)
+
     chains = []
     cc = 1
     for stream in dic["streams"]:
@@ -199,7 +206,7 @@ def makeChains():
            continue  
 
         bind = stream.get("bind", None)
-
+        
         fc = Filterchain(
             livethread = livethread, 
             address = stream["address"],
@@ -208,7 +215,8 @@ def makeChains():
             sws = itp_,
             verbose = verbose, 
             n_stack = n_stack_decoder,
-            affinity = bind
+            affinity = bind,
+            n_threads = n_threads
         )
         chains.append(fc)
         cc+=1

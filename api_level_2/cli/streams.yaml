@@ -12,3 +12,4 @@ interval: 5
 duration: 30
 verbose: false
 bind: 0
+decoder_threads: 2
