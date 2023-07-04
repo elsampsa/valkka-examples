@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Helsinki
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get update
+RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install -y python3 mesa-utils glew-utils python3-numpy v4l-utils python3-pip openssl
 RUN apt-get install -y python3-opencv python3-pil
 ## some additional tools

@@ -20,3 +20,4 @@ docker/data/
 *.txt
 *.mkv
 fs_directory*/
+api_level_2/cli/out.yaml

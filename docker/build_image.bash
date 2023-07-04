@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $# -lt 1 ]; then
-  echo "Give TAG name (pls see README.md)"
+  echo "Give TAG MAJOR.MINOR.PATH (pls see README.md)"
   exit
 fi
 
@@ -18,24 +18,24 @@ then
     cp -f /home/sampsa/C/valkka_builds/build_dev/Valkka-*-Linux.deb .
     name=$1
     extra=$2
-elif [ "$1" == "ubuntu18-src" ]
+elif [ "$1" == "ubuntu18-src" ] || [ "$1" == "ubuntu20-src" ] || [ "$1" == "ubuntu22-src" ]
 then
     if [ $# -lt 2 ]; then
         echo "needs MAJOR.MINOR.PATCH"
         exit 2
     fi
     ver=$2
-    name=$1"-"$2 # final image name will be ubuntu18-src-MAJOR.MINOR.PATCH
+    name=$1"-"$2 # final image name will be ubuntuXX-src-MAJOR.MINOR.PATCH
     extra=$3
     sed -r -i "s/ENV ver\=.*/ENV ver\=\"$ver\"/g" Dockerfile.$1
-elif [ "$1" == "ubuntu20-src" ]
+elif [ "$1" == "ubuntu20-ppa" ] || [ "$1" == "ubuntu22-ppa" ]
 then
     if [ $# -lt 2 ]; then
         echo "needs MAJOR.MINOR.PATCH"
         exit 2
     fi
     ver=$2
-    name=$1"-"$2 # final image name will be ubuntu20-src-MAJOR.MINOR.PATCH
+    name=$1"-"$2 # final image name will be ubuntuXX-src-MAJOR.MINOR.PATCH
     extra=$3
     sed -r -i "s/ENV ver\=.*/ENV ver\=\"$ver\"/g" Dockerfile.$1
 else

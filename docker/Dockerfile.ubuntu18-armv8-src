@@ -9,7 +9,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # COPY qemu-arm-static /usr/bin/qemu-arm-static 
 
-RUN apt-get update
+RUN apt-get update -y && apt-get upgrade -y
 RUN apt-get install -y build-essential
 RUN apt-get install -y python3 mesa-utils glew-utils python3-numpy python3-pil v4l-utils python3-pip openssl zip wget
 RUN apt-get install -y python3-opencv
