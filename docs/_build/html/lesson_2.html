@@ -77,7 +77,10 @@
 <span class="n">avthread</span>        <span class="o">=</span><span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span><span class="n">info_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We need a framefilter to feed the frames into AVThread.  This framefilter is requested from the AVThread itself:</p>
+<p><cite>AVThread</cite> is a thread that does all the heavy-lifting of decoding from H264
+to bitmap images.  It decodes on the CPU.  If you fancy to use a <a class="reference internal" href="hardware.html#hwaccel"><span class="std std-ref">hardware accelerator</span></a>,
+then you could substitute <cite>AVThread</cite> with <cite>VAAPIThread</cite> instead.</p>
+<p>Next, we need a framefilter to feed the frames into AVThread.  This framefilter is requested from the AVThread itself:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># streaming part</span>
 <span class="n">av_in_filter</span>    <span class="o">=</span><span class="n">avthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 <span class="n">livethread</span>      <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>

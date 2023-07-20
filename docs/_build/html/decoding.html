@@ -51,9 +51,11 @@
 </div>
 <p>That will dedicate four cores to the decoder.  Remember to call <em>setNumberOfThreads</em> before starting the AVThread instance.</p>
 </div>
-<div class="section" id="gpu">
-<h2>GPU<a class="headerlink" href="#gpu" title="Permalink to this headline">¶</a></h2>
-<p>(Nvidia) GPU accelerated decoding is available as a separated extension module, please see <a class="reference external" href="https://github.com/xiaxoxin2/valkka-nv">here</a></p>
+<div class="section" id="gpu-accelerated">
+<h2>GPU Accelerated<a class="headerlink" href="#gpu-accelerated" title="Permalink to this headline">¶</a></h2>
+<p>Hardware accelerated decoders are available in libValkka.  For more details, please see <a class="reference internal" href="hardware.html#hwaccel"><span class="std std-ref">here</span></a>.  However, before using them,
+you should ask yourself if you really need them.  Maybe it is better to save all GPU muscle for deep learning inference instead?</p>
+<p>If you have a PC, dedicated solely for streaming and with decent CPU(s), just do normal CPU decoding!</p>
 </div>
 <div class="section" id="queueing-frames">
 <span id="buffering"></span><h2>Queueing frames<a class="headerlink" href="#queueing-frames" title="Permalink to this headline">¶</a></h2>
@@ -147,7 +149,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Decoding</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#single-thread">Single thread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#multithread">Multithread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#gpu">GPU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gpu-accelerated">GPU Accelerated</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#queueing-frames">Queueing frames</a></li>
 </ul>
 </li>

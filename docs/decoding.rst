@@ -31,10 +31,13 @@ If you really, really have to use several threads per decoder, modify tutorial's
     
 That will dedicate four cores to the decoder.  Remember to call *setNumberOfThreads* before starting the AVThread instance.
     
-GPU
----
+GPU Accelerated
+---------------
 
-(Nvidia) GPU accelerated decoding is available as a separated extension module, please see `here <https://github.com/xiaxoxin2/valkka-nv>`__
+Hardware accelerated decoders are available in libValkka.  For more details, please see :ref:`here <hwaccel>`.  However, before using them, 
+you should ask yourself if you really need them.  Maybe it is better to save all GPU muscle for deep learning inference instead?
+
+If you have a PC, dedicated solely for streaming and with decent CPU(s), just do normal CPU decoding!
 
 .. _buffering:
 

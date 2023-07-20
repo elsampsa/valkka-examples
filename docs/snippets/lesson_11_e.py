@@ -104,7 +104,7 @@ Typically, they should use only the following methods of the libValkka API:
 
 ::
 
-    valkka.api2.ValkkaFS
+    valkka.fs.ValkkaSingleFS
                         .getBlockTable
                         .getTimeRange
                         

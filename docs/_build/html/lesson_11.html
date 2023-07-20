@@ -420,7 +420,7 @@ which then passes the frames downstream from a seek point and at the original pl
 </div>
 <p>The callbacks should be kept ASAP (as-simple-as-possible) and return immediately.  You also might wan’t them to send a Qt signal in your GUI application.</p>
 <p>Typically, they should use only the following methods of the libValkka API:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka</span><span class="o">.</span><span class="n">api2</span><span class="o">.</span><span class="n">ValkkaFS</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">ValkkaSingleFS</span>
                     <span class="o">.</span><span class="n">getBlockTable</span>
                     <span class="o">.</span><span class="n">getTimeRange</span>
 
