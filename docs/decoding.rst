@@ -31,13 +31,21 @@ If you really, really have to use several threads per decoder, modify tutorial's
     
 That will dedicate four cores to the decoder.  Remember to call *setNumberOfThreads* before starting the AVThread instance.
     
+.. _gpuaccel:
+
 GPU Accelerated
 ---------------
 
-Hardware accelerated decoders are available in libValkka.  For more details, please see :ref:`here <hwaccel>`.  However, before using them, 
+Hardware (hw) accelerated decoders are available in libValkka.  For more details, please see :ref:`here <hwaccel>`.  However, before using them, 
 you should ask yourself if you really need them.  Maybe it is better to save all GPU muscle for deep learning inference instead?
 
-If you have a PC, dedicated solely for streaming and with decent CPU(s), just do normal CPU decoding!
+Video hw acceleration libraries are typically closed-source implementations, and the underlying "black-box" can be poorly implemented and suffer from
+memory leaks.  Read for example `this thread <https://ffmpeg.org/pipermail/ffmpeg-user/2017-May/036232.html>`_.  Slowly accumulating memleaks are poison
+for live video streaming applications which are supposed to stream continuously for days, weeks and even forever.
+
+Sometimes the proprietary libraries may also restrict how many simultaneous hw video decoders you can have, while there are no such restrictions on CPU decoding.
+
+So, if you have a linux box, dedicated solely for streaming and with decent CPU(s), don't be over-obsessed with hw decoding.
 
 .. _buffering:
 

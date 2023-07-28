@@ -50,6 +50,8 @@ OpenGL version 3 or greater is required.  You can check your OpenGL version with
 Hardware Acceleration
 ---------------------
 
+Please first read this :ref:`word of warning <gpuaccel>`.
+
 *VAAPI*
 
 Comes in the basic libValkka installation (and uses ffmpeg/libav infrastructure) - no additional packages needed.
@@ -66,7 +68,28 @@ use this:
 
     avthread = VAAPIThread("avthread", target_filter)
     
-For more details about VAAPI, please read `this article <https://wiki.archlinux.org/title/Hardware_video_acceleration>`_
+For more details about VAAPI, `this article <https://wiki.archlinux.org/title/Hardware_video_acceleration>`_ is a good reference.
+
+*WARNING:* VAAPI, especially the intel implementation, comes with a memory leak, which seems
+to be feature, not a bug - see discussions in `here <https://ffmpeg.org/pipermail/ffmpeg-user/2017-May/036232.html>`_ and
+`here <https://github.com/mpv-player/mpv/issues/4383>`_.  I have confirmed this memory leak myself with libva 2.6.0.
+
+The opensource Mesa implementation ("i965") is (surprise!) more stable and libValkka enforces i965 internally by setting the
+environment variable `LIBVA_DRIVER_NAME` to `i965` (this happens when you do `from valkka.core import *`).
+
+If you *really* want to use other `libva` implementation, you can set
+
+.. code:: bash
+
+    export VALKKA_LIBVA_DRIVER_NAME=your-driver-name
+
+If you wish to use VAAPI in a docker environment, you should start docker with
+
+.. code:: bash
+
+    --device=/dev/dri:/dev/dri
+
+And be sure that the host machine has all required vaapi-related libraries installed (the easiest way: install libValkka on the host as well).
 
 *NVidia / CUDA*
 

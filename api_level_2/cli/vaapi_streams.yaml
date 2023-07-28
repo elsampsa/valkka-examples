@@ -1,0 +1,7 @@
+address: rtsp://admin:12345@10.0.0.7
+# interpolate: [300,300] # optional
+interval: 3 # in secs
+replicate: 30 # replicate stream this many times
+duration: 20
+verbose: false # optional
+# decoder_threads: 2 # optional # how many libav(ffmpeg) threads per decoder
