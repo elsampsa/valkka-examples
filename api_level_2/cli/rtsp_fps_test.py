@@ -23,14 +23,15 @@ from valkka.core import *
     DECODE-BRANCH
         (AVThread:avthread) 
             {ForkFrameFilterN: fork2}
-                {SwSScaleFrameFilter: sws_filter (optional)}
-                    {FPSCountFrameFilter: count_filter}
+                {TimeIntervalFrameFilter: interval_filter (optional)}
+                    {SwSScaleFrameFilter: sws_filter (optional)}
+                        {FPSCountFrameFilter: count_filter}
 """
 class Filterchain:
 
     def __init__(self, livethread = None, address = None, 
             slot = 1, interval = 10, sws = None, verbose = False, n_stack = None,
-            affinity = None
+            affinity = None, n_threads = None, ms_pass = None
             ):
         self.livethread = livethread
         self.interval = int(interval*1000) # sec to msec
@@ -51,19 +52,25 @@ class Filterchain:
             self.counter = FPSCountFrameFilter(name, self.interval, self.info)
         else:
             self.counter = FPSCountFrameFilter(name, self.interval)
+
+        next_ff = self.counter # chain this further or passs to ForkFrameFilterN
+
         if self.sws:
             # Create the SwScaleFrameFilter (optional)
             width, height = self.sws
-            sws_opt = SwScaleFrameFilter("sws-"+str(self.slot), 
-                width, height, self.counter)
-            self.fork2_in = sws_opt
+            self.sws_opt = SwScaleFrameFilter("sws-"+str(self.slot), 
+                width, height, next_ff)
+            next_ff = self.sws_opt
             print("slot", self.slot,"interpolating to", width, height)
-        else:
-            self.fork2_in = self.counter
-
+        
+        if ms_pass:
+            print("WARNING: will pass frames only each", ms_pass, "milliseconds after decoding to YUV")
+            self.time_filter=TimeIntervalFrameFilter("interval-"+str(self.slot), ms_pass, next_ff)
+            next_ff = self.time_filter
+        
         # Bitmap fork
         self.fork2 = ForkFrameFilterN("fork2")
-        self.fork2.connect("bitmap-"+str(self.slot), self.fork2_in)
+        self.fork2.connect("bitmap-"+str(self.slot), next_ff)
 
         #ffc=core.FrameFifoContext() 
         #if self.n_stack is not None:
@@ -73,6 +80,10 @@ class Filterchain:
             "avthread-" + str(self.slot),
             self.fork2) # feeds the bitmap fork & decoding branch
             # self.framefifo_ctx)
+
+        if n_threads:
+            print("setting", n_threads,"threads per libav decoder")
+            self.avthread.setNumberOfThreads(n_threads)
 
         if affinity is not None:
             print("binding stream at slot", slot, "to core", affinity)
@@ -117,6 +128,7 @@ def makeChains():
               interpolate: [300,300] # optional
               use: true # optional
               bind: 1 # optional
+              ms_pass: 100 # optional (see below)
             - name: that other camera
               address: rtsp://user:passwd@192.168.1.13
               interpolate: [300,300] # optional
@@ -128,6 +140,8 @@ def makeChains():
         n_stack_live: 50 # optional
         # n_stack_decoder: 20 # not used
         bind: 0 # bind livethread to a core # optional
+        decoder_threads: 2 # how many libav(ffmpeg) threads per decoder
+        ms_pass: 100 # after decoding to YUV, pass each frame only every 100 ms # optional
 
     If the top-level "interpolate" is present, then all YUVs are interpolated into that
     RGB dimensions
@@ -143,11 +157,15 @@ def makeChains():
     If verbose is found and true, info about each and every frame that comes out of the
     pipeline is printed to the terminal (only for debugging this program)
 
-    "use" is an optional attribute: it it is present AND false, then the camera is omitted
+    use: an optional attribute: it it is present AND false, then the camera is omitted
 
-    "bind" : (int) optional, bind to a certain core
+    bind: (int) optional, bind to a certain core
 
-    TODO: possible test:
+    ms_pass: (int) optional: decoder needs to decode each and every frame from H264 to YUV.  But that doesn't
+    mean we need to interpolate to RGB each and every YUV frame.  Interpolate frame at max. every ms_pass
+    milliseconds
+
+    TODO: possible additional tests:
 
     - mux & push H264 somewhere --> does this affect overall framerate?
     - same for pushing into shmem rgb server
@@ -157,11 +175,7 @@ def makeChains():
     with open('streams.yaml','r') as f:
         dic=yaml.safe_load(f)
 
-    if "interpolate" in dic:
-        itp = dic["interpolate"]
-    else:
-        itp = None
-
+    itp = dic.get("interpolate", None)
     verbose = False
     if ("verbose" in dic) and (dic["verbose"]):
         verbose = True
@@ -179,26 +193,23 @@ def makeChains():
         print("binding livethread to", dic["bind"])
         livethread.setAffinity(dic["bind"])
 
-    if "n_stack_decoder" in dic:
-        n_stack_decoder = dic["n_stack_decoder"]
-    else:
-        n_stack_decoder = None
-    # not used
+    n_stack_decoder = dic.get("n_stack_decoder", None)
+    # --> not used
+    n_threads = dic.get("decoder_threads", None)
+    ms_pass = dic.get("ms_pass", None)
 
     chains = []
     cc = 1
     for stream in dic["streams"]:
-        assert "name" in stream
-        assert "address" in stream
-        if "interpolate" in stream:
-            itp_ = stream["interpolate"]
-        else:
-            itp_ = itp
+        assert "name" in stream, "needs stream name"
+        assert "address" in stream, "needs stream rtsp address"
+        itp_ = stream.get("interpolate", itp)
 
         if "use" in stream and (not stream["use"]):
            continue  
 
         bind = stream.get("bind", None)
+        ms_pass_ = stream.get("ms_pass", ms_pass)
 
         fc = Filterchain(
             livethread = livethread, 
@@ -208,7 +219,9 @@ def makeChains():
             sws = itp_,
             verbose = verbose, 
             n_stack = n_stack_decoder,
-            affinity = bind
+            affinity = bind,
+            n_threads = n_threads,
+            ms_pass = ms_pass_
         )
         chains.append(fc)
         cc+=1

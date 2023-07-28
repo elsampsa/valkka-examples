@@ -3,6 +3,7 @@ streams:
     address: rtsp://admin:vittuhikki@192.168.1.100
     use: true
     bind: 1
+    ms_pass: 100
   - name: mummocamera
     address: rtsp://admin:vittuhikki@192.168.1.100
     use: true
@@ -12,3 +13,5 @@ interval: 5
 duration: 30
 verbose: false
 bind: 0
+decoder_threads: 2
+# ms_pass: 100

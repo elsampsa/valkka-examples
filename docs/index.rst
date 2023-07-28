@@ -58,6 +58,7 @@ For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github
    cloud
    onvif
    pitfalls
+   debugging
    repos
    license
    authors

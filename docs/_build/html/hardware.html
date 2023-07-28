@@ -67,11 +67,43 @@
 <p>OpenGL version 3 or greater is required.  You can check your OpenGL version with the command <em>glxinfo</em>.</p>
 </div>
 <div class="section" id="hardware-acceleration">
-<h2>Hardware Acceleration<a class="headerlink" href="#hardware-acceleration" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/xiaxoxin2/valkka-nv">Nvidia’s celebrated CUDA</a></p></li>
-<li><p><a class="reference external" href="https://gitee.com/ElSampsa/valkka_cann">Huawei’s CANN</a> (kinda experimental)</p></li>
-</ul>
+<span id="hwaccel"></span><h2>Hardware Acceleration<a class="headerlink" href="#hardware-acceleration" title="Permalink to this headline">¶</a></h2>
+<p>Please first read this <a class="reference internal" href="decoding.html#gpuaccel"><span class="std std-ref">word of warning</span></a>.</p>
+<p><em>VAAPI</em></p>
+<p>Comes in the basic libValkka installation (and uses ffmpeg/libav infrastructure) - no additional packages needed.</p>
+<p>In order to use the VAAPI acceleration, just replace <cite>AVThread</cite> with <cite>VAAPIThread</cite>, i.e. instead of</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">avthread</span> <span class="o">=</span> <span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span> <span class="n">target_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>use this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">avthread</span> <span class="o">=</span> <span class="n">VAAPIThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span> <span class="n">target_filter</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more details about VAAPI, <a class="reference external" href="https://wiki.archlinux.org/title/Hardware_video_acceleration">this article</a> is a good reference.</p>
+<p><em>WARNING:</em> VAAPI, especially the intel implementation, comes with a memory leak, which seems
+to be feature, not a bug - see discussions in <a class="reference external" href="https://ffmpeg.org/pipermail/ffmpeg-user/2017-May/036232.html">here</a> and
+<a class="reference external" href="https://github.com/mpv-player/mpv/issues/4383">here</a>.  I have confirmed this memory leak myself with libva 2.6.0.</p>
+<p>The opensource Mesa implementation (“i965”) is (surprise!) more stable and libValkka enforces i965 internally by setting the
+environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this happens when you do <cite>from valkka.core import *</cite>).</p>
+<p>If you <em>really</em> want to use other <cite>libva</cite> implementation, you can set</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">VALKKA_LIBVA_DRIVER_NAME</span><span class="o">=</span>your-driver-name
+</pre></div>
+</div>
+<p>If you wish to use VAAPI in a docker environment, you should start docker with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>--device<span class="o">=</span>/dev/dri:/dev/dri
+</pre></div>
+</div>
+<p>And be sure that the host machine has all required vaapi-related libraries installed (the easiest way: install libValkka on the host as well).</p>
+<p><em>NVidia / CUDA</em></p>
+<p>Provided as a separate package that installs into the <cite>valkka.nv</cite> namespace and is used like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.nv</span> <span class="kn">import</span> <span class="n">NVThread</span>
+<span class="n">avthread</span> <span class="o">=</span> <span class="n">NVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span> <span class="n">target_filter</span><span class="p">,</span> <span class="n">gpu_index</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Available <a class="reference external" href="https://github.com/xiaxoxin2/valkka-nv">here</a></p>
+<p><em>Huawei / CANN</em></p>
+<p>Provided as a separate package.  <em>Very</em> experimental and not guaranteed to work.</p>
+<p>Available <a class="reference external" href="https://gitee.com/ElSampsa/valkka_cann">here</a></p>
 </div>
 </div>
 
@@ -137,6 +169,7 @@
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licence &amp; Copyright</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>

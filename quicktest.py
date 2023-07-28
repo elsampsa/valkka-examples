@@ -1,3 +1,5 @@
+from subprocess import Popen, PIPE
+
 print()
 print("Loading Valkka")
 
@@ -37,7 +39,7 @@ else:
 
     # this is modified automatically by setver.bash - don't touch!
     VERSION_MAJOR=1
-    VERSION_MINOR=4
+    VERSION_MINOR=5
     VERSION_PATCH=0
 
     print("Checking Valkka python examples")
@@ -93,7 +95,6 @@ else:
     print("OpenCV loaded ok")
     print("   Version      ",cv2.__version__)
     print("   Loaded from  ",cv2.__file__)
-    print()
 
 print()
 print("Loading PySide2")
@@ -104,7 +105,6 @@ except Exception as e:
 else:
     print("   Version      ",PySide2.__version__)
     print("   Loaded from  ",PySide2.__file__)
-    print()
 
 print()
 print("Checking Shapely")
@@ -118,7 +118,6 @@ else:
         print("    with newer shapely versions, prepare for segfaults")
     else:
         print("   shapely ok")
-print()
 
 print()
 print("Loading setproctitle")
@@ -128,4 +127,30 @@ except Exception as e:
     print("    setproctitle not installed")
 else:
     print("    setproctitle ok")
+
+print()
+print("Checking for VAAPI hardware acceleration")
+
+p=Popen("vainfo", stdout=PIPE, stderr=PIPE)
+out, err = p.communicate()
+if p.returncode != 0:
+    print("    WARNING: command vainfo failed!  check that you have installed VAAPI drivers correctly")
+if "H264" not in out.decode("utf-8"):
+    print("    WARNING: your VAAPI drivers seems to be missing H264 decoding capabilities.  Please run vainfo.")
+
+try:
+    from valkka.core import VAAPIThread
+except Exception as e:
+    print("    could not import VAAPIThread from valkka.core")
+else:
+    print("    VAAPI acceleration available: you can use valkka.core.VAAPIThread instead of valkka.core.AVThread")
+
+print()
+print("Checking for NVIDIA/CUDA hardware acceleration")
+try:
+    from valkka.nv import NVThread
+except Exception as e:
+    print("    could not import NVThread from valkka.nv namespace : please install from https://github.com/xiaxoxin2/valkka-nv")
+else:
+    print("    CUDA acceleration available: you can use valkka.nv.NVThread instead of AVThread")
 print()

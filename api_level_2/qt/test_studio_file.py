@@ -13,7 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_file.py
 @author  Sampsa Riikonen
 @date    2018
-@version 1.4.0 
+@version 1.5.0 
 @brief   An example GUI for reading matroska (mkv) files, playing and sending them to an analyzer
 """
 

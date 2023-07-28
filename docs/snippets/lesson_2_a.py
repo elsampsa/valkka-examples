@@ -42,7 +42,11 @@ info_filter     =InfoFrameFilter("info_filter")
 avthread        =AVThread("avthread",info_filter)
 
 """<rtf>
-We need a framefilter to feed the frames into AVThread.  This framefilter is requested from the AVThread itself:
+`AVThread` is a thread that does all the heavy-lifting of decoding from H264
+to bitmap images.  It decodes on the CPU.  If you fancy to use a :ref:`hardware accelerator <hwaccel>`,
+then you could substitute `AVThread` with `VAAPIThread` instead.
+
+Next, we need a framefilter to feed the frames into AVThread.  This framefilter is requested from the AVThread itself:
 <rtf>"""
 # streaming part
 av_in_filter    =avthread.getFrameFilter()

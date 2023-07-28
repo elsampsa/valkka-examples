@@ -190,51 +190,7 @@ Laptop</p></td>
 </tr>
 </tbody>
 </table>
-<div class="line-block">
-<div class="line"><br /></div>
 </div>
-</div>
-</div>
-<div class="section" id="debugging">
-<h1>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h1>
-<p>LibValkka is rigorously “valgrinded” to remove any memory leaks at the cpp level.  However, combining cpp and python (with swig) and throwing into the mix multithreading, multiprocessing and
-sharing memory between processes, can (and will) give surprises.</p>
-<p><strong>1. Check that you are not pulling frames from the same shared-memory channel using more than one client</strong></p>
-<p><strong>2. Run Python + libValkka using gdb</strong></p>
-<p>First, install python3 debugging symbols:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gdb</span> <span class="n">python3</span><span class="o">-</span><span class="n">dbg</span>
-</pre></div>
-</div>
-<p>Then, create a custom build of libValkka with debug symbols enabled.</p>
-<p>Finally, run your application’s entry point with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gdb</span> <span class="o">--</span><span class="n">args</span> <span class="n">python3</span> <span class="n">python_program</span><span class="o">.</span><span class="n">py</span>
-<span class="n">run</span>
-</pre></div>
-</div>
-<p>See backtrace with</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bt</span>
-</pre></div>
-</div>
-<p>If the trace point into <code class="docutils literal notranslate"><span class="pre">Objects/obmalloc.c</span></code>, then the cpp extensions have messed up python object reference counting.  See also <a class="reference external" href="https://stackoverflow.com/questions/26330621/python-segfaults-in-pyobject-malloc">here</a></p>
-<p><strong>3. Clear semaphores and shared memory every now and then by removing these files</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">shm</span><span class="o">/*</span><span class="n">valkka</span><span class="o">*</span>
-</pre></div>
-</div>
-<p><strong>4. Follow python process memory consumption</strong></p>
-<p>Use the <a class="reference external" href="https://github.com/dvarrazzo/py-setproctitle">setproctitle python module</a> to name your python multiprocesses.  This way you can find them easily using standard
-linux monitoring tools, such as htop and smem.</p>
-<p>Setting the name of the process should, of course, happen after the multiprocessing fork.</p>
-<p>Install smem and htop:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">smem</span> <span class="n">htop</span>
-</pre></div>
-</div>
-<p>After that, run for example the script memwatch.bash in the aux/ directory.  Or just launch htop.  In htop, remember to go to setup =&gt; display options and enable “Hide userland process threads” to make
-the output more readable.</p>
-<p>Valkka-live, for example, names all multiprocesses adequately, so you can easily see if a process is
-leaking memory.</p>
-<p><strong>5. Prefer PyQt5 over PySide2</strong></p>
-<p>You have the option of using PyQt5 instead of PySide2.  The former is significantly more stable and handles the tricky
-cpp Qt vs. Python reference counting correctly.  Especially if you get that thing mention in (2), consider switching to PyQt5.</p>
 </div>
 
 
@@ -292,6 +248,7 @@ cpp Qt vs. Python reference counting correctly.  Especially if you get that thin
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Licence &amp; Copyright</a></li>
 <li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
