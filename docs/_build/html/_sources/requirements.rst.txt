@@ -25,7 +25,7 @@ When you need to update valkka, do:
 ::
 
     sudo apt-get update
-    sudo apt-get upgrade valkka
+    sudo apt-get install --only-upgrade valkka
     
 If you're not using a recent Ubuntu distro and need to build libValkka and it's python bindings yourself, please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
 
@@ -118,71 +118,22 @@ If you wan't to use `GTK <https://www.gtk.org/>`_ as your graphical user interfa
 OpenCV
 ------
   
-**Ubuntu 18**
-
-Simply:
+Install with:
 
 ::
 
+    pip3 uninstall opencv-python
     sudo apt-get install python3-opencv
 
-Remember that if you prefer to install with ```pip```, OpenCV's high-gui environment won't probably work for you.
+The first one deinstall anything you may have installed with pip, while the second one installs the (good) opencv that
+comes with your linux distro's default python opencv installation.
 
 Development version
 -------------------
 
 As described above, for the current stable version of *valkka-core*, just use the repository. 
 
-For the development version (with experimental and unstable features) you have to compile from source.  Both *valkka-core* and *valkka-examples* must be in the development version.  You should also remove (with apt-get remove) the current stable version.
+For the development version (with experimental and unstable features) you have to compile from source.  You might need to do this also for
+architectures other than `x86`.
 
-For building, some extra packages are needed:
-
-::
-
-  sudo apt-get install build-essential libc6-dev yasm cmake pkg-config swig libglew-dev mesa-common-dev libstdc++-5-dev python3-dev python3-numpy libasound2-dev
-
-Getting and preparing the *valkka-core* development build (do this only once):
-
-::
-
-    git clone https://github.com/elsampsa/valkka-core
-    git checkout dev
-    ./prepare_build.bash
-    
-Updating and compiling the development build:
-    
-::
-
-    git pull
-    ./easy_build.bash
-    
-Before using the development build, run (sets your LD_LIBRARY_PATH and PYTHONPATH):
-
-::
-
-    ./use_build.bash
-    
-    
-Now you have a terminal that has correct environmental variables.  Programs launched from the terminal will find the *valkka-core* development version.
-    
-For the *valkka-examples* testsuite, just do:
-
-::
-
-    git checkout dev
-    
-Updating the testsuite development version:
-
-::
-
-    git pull
-    
-
-Reverting testsuite back to the stable branch (for which you have debian packages from the repository):
-
-::
-
-    git checkout master
-
-    
-  
+Follow instructions in `here <https://github.com/elsampsa/valkka-core#compile-yourself>`_.

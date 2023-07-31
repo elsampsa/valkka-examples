@@ -67,8 +67,9 @@ use this:
 .. code:: python
 
     avthread = VAAPIThread("avthread", target_filter)
-    
-For more details about VAAPI, `this article <https://wiki.archlinux.org/title/Hardware_video_acceleration>`_ is a good reference.
+
+For more details about VAAPI, you can read `this <https://wiki.archlinux.org/title/Hardware_video_acceleration>`_,
+`this <https://wiki.debian.org/HardwareVideoAcceleration>`_ and `this <https://en.wikipedia.org/wiki/Video_Acceleration_API#Supported_hardware_and_drivers>`_.
 
 *WARNING:* VAAPI, especially the intel implementation, comes with a memory leak, which seems
 to be feature, not a bug - see discussions in `here <https://ffmpeg.org/pipermail/ffmpeg-user/2017-May/036232.html>`_ and

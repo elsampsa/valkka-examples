@@ -79,7 +79,8 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">avthread</span> <span class="o">=</span> <span class="n">VAAPIThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span> <span class="n">target_filter</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For more details about VAAPI, <a class="reference external" href="https://wiki.archlinux.org/title/Hardware_video_acceleration">this article</a> is a good reference.</p>
+<p>For more details about VAAPI, you can read <a class="reference external" href="https://wiki.archlinux.org/title/Hardware_video_acceleration">this</a>,
+<a class="reference external" href="https://wiki.debian.org/HardwareVideoAcceleration">this</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Video_Acceleration_API#Supported_hardware_and_drivers">this</a>.</p>
 <p><em>WARNING:</em> VAAPI, especially the intel implementation, comes with a memory leak, which seems
 to be feature, not a bug - see discussions in <a class="reference external" href="https://ffmpeg.org/pipermail/ffmpeg-user/2017-May/036232.html">here</a> and
 <a class="reference external" href="https://github.com/mpv-player/mpv/issues/4383">here</a>.  I have confirmed this memory leak myself with libva 2.6.0.</p>
