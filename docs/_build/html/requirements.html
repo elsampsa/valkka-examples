@@ -47,7 +47,7 @@
 </div>
 <p>When you need to update valkka, do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
-<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">upgrade</span> <span class="n">valkka</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">--</span><span class="n">only</span><span class="o">-</span><span class="n">upgrade</span> <span class="n">valkka</span>
 </pre></div>
 </div>
 <p>If you’re not using a recent Ubuntu distro and need to build libValkka and it’s python bindings yourself, please refer to the <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github page</a>.</p>
@@ -104,49 +104,20 @@ python version of that distribution.  Using custom-installed python versions, an
 </div>
 <div class="section" id="opencv">
 <span id="install-opencv"></span><h2>OpenCV<a class="headerlink" href="#opencv" title="Permalink to this headline">¶</a></h2>
-<p><strong>Ubuntu 18</strong></p>
-<p>Simply:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python3</span><span class="o">-</span><span class="n">opencv</span>
+<p>Install with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">uninstall</span> <span class="n">opencv</span><span class="o">-</span><span class="n">python</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python3</span><span class="o">-</span><span class="n">opencv</span>
 </pre></div>
 </div>
-<p>Remember that if you prefer to install with <code class="docutils literal notranslate"><span class="pre">`pip`</span></code>, OpenCV’s high-gui environment won’t probably work for you.</p>
+<p>The first one deinstall anything you may have installed with pip, while the second one installs the (good) opencv that
+comes with your linux distro’s default python opencv installation.</p>
 </div>
 <div class="section" id="development-version">
 <h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
 <p>As described above, for the current stable version of <em>valkka-core</em>, just use the repository.</p>
-<p>For the development version (with experimental and unstable features) you have to compile from source.  Both <em>valkka-core</em> and <em>valkka-examples</em> must be in the development version.  You should also remove (with apt-get remove) the current stable version.</p>
-<p>For building, some extra packages are needed:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">build</span><span class="o">-</span><span class="n">essential</span> <span class="n">libc6</span><span class="o">-</span><span class="n">dev</span> <span class="n">yasm</span> <span class="n">cmake</span> <span class="n">pkg</span><span class="o">-</span><span class="n">config</span> <span class="n">swig</span> <span class="n">libglew</span><span class="o">-</span><span class="n">dev</span> <span class="n">mesa</span><span class="o">-</span><span class="n">common</span><span class="o">-</span><span class="n">dev</span> <span class="n">libstdc</span><span class="o">++-</span><span class="mi">5</span><span class="o">-</span><span class="n">dev</span> <span class="n">python3</span><span class="o">-</span><span class="n">dev</span> <span class="n">python3</span><span class="o">-</span><span class="n">numpy</span> <span class="n">libasound2</span><span class="o">-</span><span class="n">dev</span>
-</pre></div>
-</div>
-<p>Getting and preparing the <em>valkka-core</em> development build (do this only once):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">elsampsa</span><span class="o">/</span><span class="n">valkka</span><span class="o">-</span><span class="n">core</span>
-<span class="n">git</span> <span class="n">checkout</span> <span class="n">dev</span>
-<span class="o">./</span><span class="n">prepare_build</span><span class="o">.</span><span class="n">bash</span>
-</pre></div>
-</div>
-<p>Updating and compiling the development build:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span>
-<span class="o">./</span><span class="n">easy_build</span><span class="o">.</span><span class="n">bash</span>
-</pre></div>
-</div>
-<p>Before using the development build, run (sets your LD_LIBRARY_PATH and PYTHONPATH):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">use_build</span><span class="o">.</span><span class="n">bash</span>
-</pre></div>
-</div>
-<p>Now you have a terminal that has correct environmental variables.  Programs launched from the terminal will find the <em>valkka-core</em> development version.</p>
-<p>For the <em>valkka-examples</em> testsuite, just do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">dev</span>
-</pre></div>
-</div>
-<p>Updating the testsuite development version:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span>
-</pre></div>
-</div>
-<p>Reverting testsuite back to the stable branch (for which you have debian packages from the repository):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">master</span>
-</pre></div>
-</div>
+<p>For the development version (with experimental and unstable features) you have to compile from source.  You might need to do this also for
+architectures other than <cite>x86</cite>.</p>
+<p>Follow instructions in <a class="reference external" href="https://github.com/elsampsa/valkka-core#compile-yourself">here</a>.</p>
 </div>
 </div>
 
