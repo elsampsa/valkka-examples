@@ -3,7 +3,7 @@
 Cloud Streaming
 ***************
 
-Here we describe how to stream live, low latency video from your IP cameras to cloud and how to visualize the live video in a web browser.
+*Here we describe how to stream live, low latency video from your IP cameras to cloud and how to visualize the live video in a web browser.*
 
 A good video container format for this is "fragmented MP4" (frag-MP4 aka FMP4).  This is basically the same
 format you have in those .mp4 files of yours, but it is fragmented into smaller chunks (aka "boxes"), so that it can be sent, chunk-by-chunk,

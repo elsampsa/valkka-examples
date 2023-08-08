@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    test_studio_2.py
 @author  Sampsa Riikonen
 @date    2018
-@version 1.5.1 
+@version 1.5.2 
 @brief   Jump video from one x-screen (and gpu) to another
 
 

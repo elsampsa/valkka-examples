@@ -1,7 +1,7 @@
 Knowledge Base
 **************
 
-Tips, instructions, etc. for compiling libValkka, Qt & Yolo on out-of-the-ordinary hardware
+*Tips, instructions, etc. for compiling libValkka, Qt & Yolo on out-of-the-ordinary hardware*
 
 
 General
