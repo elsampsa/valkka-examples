@@ -1,4 +1,5 @@
 from subprocess import Popen, PIPE
+import os
 
 print()
 print("Loading Valkka")
@@ -40,7 +41,7 @@ else:
     # this is modified automatically by setver.bash - don't touch!
     VERSION_MAJOR=1
     VERSION_MINOR=5
-    VERSION_PATCH=1
+    VERSION_PATCH=2
 
     print("Checking Valkka python examples")
     print("   version:",str(VERSION_MAJOR)+"."+str(VERSION_MINOR)+"."+str(VERSION_PATCH))
@@ -96,6 +97,13 @@ else:
     print("   Version      ",cv2.__version__)
     print("   Loaded from  ",cv2.__file__)
 
+if "/usr/lib/" not in cv2.__file__:
+    print("   WARNING       your opencv is not installed into the standard /usr/lib/ location")
+    print("                 consider using these commands:")
+    print("                 pip3 uninstall opencv-python")
+    print("                 sudo pip3 uninstall opencv-python")
+    print("                 sudo apt-get install python3-opencv")
+
 print()
 print("Loading PySide2")
 try:
@@ -137,6 +145,9 @@ if p.returncode != 0:
     print("    WARNING: command vainfo failed!  check that you have installed VAAPI drivers correctly")
 if "H264" not in out.decode("utf-8"):
     print("    WARNING: your VAAPI drivers seems to be missing H264 decoding capabilities.  Please run vainfo.")
+if "Intel iHD driver" in out.decode("utf-8"):
+    print("    FATAL: libValkka tries to enforce the i965 for VAAPI, but you seem to use intel iHD")
+    print("           --> prepare for memleaks!")
 
 try:
     from valkka.core import VAAPIThread
@@ -153,4 +164,15 @@ except Exception as e:
     print("    could not import NVThread from valkka.nv namespace : please install from https://github.com/xiaxoxin2/valkka-nv")
 else:
     print("    CUDA acceleration available: you can use valkka.nv.NVThread instead of AVThread")
+print()
+
+print("Taking a look at your X11 DISPLAY variable")
+if "DISPLAY" not in os.environ:
+    print("    No DISPLAY env variable found - please check your X11 config")
+else:
+    if os.environ["DISPLAY"] not in [":0.0", ":.0", ":0"]:
+        print(f"    Weird X11 DISPLAY env variable {os.environ['DISPLAY']}")
+        print("    WARNING: Some valkka example / test programs assume :0.0 (aka :0 or :.0)")
+    else:
+        print("    All good")
 print()

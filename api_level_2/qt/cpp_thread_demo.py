@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    cpp_thread_demo.py
 @author  Sampsa Riikonen
 @date    2017
-@version 1.5.1 
+@version 1.5.2 
 @brief   Launch a cpp thread in python.  That thread uses a callback to send a signal to PyQt's signal/slot system
 """
 

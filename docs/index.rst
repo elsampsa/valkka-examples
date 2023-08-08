@@ -20,7 +20,7 @@ Create video streaming and surveillance solutions purely in Python.  No need to 
 - Works with stock OnVif compliant IP cameras
 - Create complex filtergraphs for your streams - send stream to screen, to disk or to your module of choice via shared memory
 - Share decoded video with python processes across your Linux system
-- Plug in your python-based machine vision modules
+- Plug in your python-based machine vision modules : libValkka is framework agnostic, so everything goes - pytorch, tensorflow, you name it!
 - Designed for massive video streaming : view and analyze simultaneously a large number of IP cameras
 - Recast the IP camera video streams to either multicast or unicast
 - Build graphical user interfaces with PyQt, interact machine vision with Qt's signal/slot system and build highly customized GUIs

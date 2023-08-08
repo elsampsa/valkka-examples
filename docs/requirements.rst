@@ -19,15 +19,23 @@ Install with:
 
     sudo apt-get update
     sudo apt-get install valkka
-  
+
+Test the installation with:
+
+::
+
+    curl https://raw.githubusercontent.com/elsampsa/valkka-examples/master/quicktest.py
+    python3 quicktest.py
+
 When you need to update valkka, do:
   
 ::
 
     sudo apt-get update
     sudo apt-get install --only-upgrade valkka
-    
-If you're not using a recent Ubuntu distro and need to build libValkka and it's python bindings yourself, please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core>`_.
+
+If you're not using a recent Ubuntu distro and need to build libValkka and it's python bindings yourself, 
+please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core#compile-yourself>`_.
 
 The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
 
@@ -123,6 +131,7 @@ Install with:
 ::
 
     pip3 uninstall opencv-python
+    sudo pip3 uninstall opencv-python # just in case!
     sudo apt-get install python3-opencv
 
 The first one deinstall anything you may have installed with pip, while the second one installs the (good) opencv that

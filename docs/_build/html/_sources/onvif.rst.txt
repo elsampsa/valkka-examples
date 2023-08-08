@@ -160,5 +160,5 @@ If you want arp-scan to work, you must permit normal users to run the executable
 
 ::
 
-    sudo chmod a+x /usr/sbin/arp-scan
-
+    sudo apt-get install arp-scan
+    sudo chmod u+s /usr/sbin/arp-scan

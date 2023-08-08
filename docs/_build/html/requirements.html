@@ -45,12 +45,18 @@
 <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">valkka</span>
 </pre></div>
 </div>
+<p>Test the installation with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">elsampsa</span><span class="o">/</span><span class="n">valkka</span><span class="o">-</span><span class="n">examples</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">quicktest</span><span class="o">.</span><span class="n">py</span>
+<span class="n">python3</span> <span class="n">quicktest</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
 <p>When you need to update valkka, do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
 <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">--</span><span class="n">only</span><span class="o">-</span><span class="n">upgrade</span> <span class="n">valkka</span>
 </pre></div>
 </div>
-<p>If you’re not using a recent Ubuntu distro and need to build libValkka and it’s python bindings yourself, please refer to the <a class="reference external" href="https://github.com/elsampsa/valkka-core">valkka-core github page</a>.</p>
+<p>If you’re not using a recent Ubuntu distro and need to build libValkka and it’s python bindings yourself,
+please refer to the <a class="reference external" href="https://github.com/elsampsa/valkka-core#compile-yourself">valkka-core github page</a>.</p>
 <p>The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed “globally” into <em>/usr/lib/python3/dist-packages/</em></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -106,6 +112,7 @@ python version of that distribution.  Using custom-installed python versions, an
 <span id="install-opencv"></span><h2>OpenCV<a class="headerlink" href="#opencv" title="Permalink to this headline">¶</a></h2>
 <p>Install with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">uninstall</span> <span class="n">opencv</span><span class="o">-</span><span class="n">python</span>
+<span class="n">sudo</span> <span class="n">pip3</span> <span class="n">uninstall</span> <span class="n">opencv</span><span class="o">-</span><span class="n">python</span> <span class="c1"># just in case!</span>
 <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python3</span><span class="o">-</span><span class="n">opencv</span>
 </pre></div>
 </div>

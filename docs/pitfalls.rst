@@ -160,3 +160,42 @@ Modify your LiveConnectionContext like this:
     ctx.request_tcp = True
 
 (for more information, see `here <https://elsampsa.github.io/valkka-core/html/structLiveConnectionContext.html>`_)
+
+*Could not load the Qt platform plugin "xcb"*
+
+If you get this error:
+
+::
+
+    qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+
+Then you are *not* running valkka-live directly in a desktop, but from remote etc. connection (or in docker, etc. "headless" environment).
+
+It has really nothing to do with libValkka or valkka-live.  In fact, *none* of your Qt and KDE-based desktop programs would work at all.  Check with this command:
+
+::
+
+    echo $XDG_SESSION_TYPE
+
+and make sure that it reports the value `x11`.
+
+If the error persists, you're desktop environment might have missing or broken Qt/KDE dependencies.  Install the whole KDE and Qt stack with:
+
+::
+
+    sudo apt-get install kate
+
+(this pulls a minimal KDE + Qt installation as dependencies of the Kate editor)
+
+If this error *still* persists and is reported by python's cv2 module, you have a broken cv2 version, so uninstall cv2 with:
+
+::
+
+    pip3 uninstall opencv-python
+    sudo pip3 uninstall opencv-python # just in case!
+
+And install your linux distro's default opencv instead with:
+
+::
+
+    sudo apt-get install python3-opencv
