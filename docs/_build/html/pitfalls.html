@@ -116,6 +116,11 @@ A particularly useful ones are <em>profile_timing</em> and <em>opengl_timing</em
 </li>
 </ul>
 <p>Valkka provides (or will provide) API methods and FrameFilter(s) to implement each one of these strategies.</p>
+<p><strong>11. Packet drop</strong></p>
+<p>Maybe might have saturated your NIC (see also above (7))?  Check in your camera’s web-interface/config the bandwith it is using.  Typical values
+are (which you can adjust): 2048 kbps (~2 mbps), 4096kbps (~4 mbps), etc. so do the math.</p>
+<p>You can try to use TCP streaming instead of the default UDP streaming -
+see FAQ (a) below (valkka-live tip: you can choose TCP streaming in the camera configuration)</p>
 </div>
 <div class="section" id="system-tuning">
 <h2>System tuning<a class="headerlink" href="#system-tuning" title="Permalink to this headline">¶</a></h2>
@@ -134,7 +139,7 @@ A particularly useful ones are <em>profile_timing</em> and <em>opengl_timing</em
 </div>
 <div class="section" id="faq">
 <h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h2>
-<p><em>How can I stream over internet, instead of just LAN?</em></p>
+<p><em>(a) How can I stream over internet, instead of just LAN?</em></p>
 <p>By default, stream is transported through UDP sockets.  When streaming over internet, most of the ports are closed due to firewalls, etc., so you have to stream through the same TCP port
 that is used for the RTSP negotiation (typically port 554).</p>
 <p>Modify your LiveConnectionContext like this:</p>
@@ -143,7 +148,7 @@ that is used for the RTSP negotiation (typically port 554).</p>
 </pre></div>
 </div>
 <p>(for more information, see <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/structLiveConnectionContext.html">here</a>)</p>
-<p><em>Could not load the Qt platform plugin “xcb”</em></p>
+<p><em>(b) Could not load the Qt platform plugin “xcb”</em></p>
 <p>If you get this error:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qt</span><span class="o">.</span><span class="n">qpa</span><span class="o">.</span><span class="n">plugin</span><span class="p">:</span> <span class="n">Could</span> <span class="ow">not</span> <span class="n">load</span> <span class="n">the</span> <span class="n">Qt</span> <span class="n">platform</span> <span class="n">plugin</span> <span class="s2">&quot;xcb&quot;</span> <span class="ow">in</span> <span class="s2">&quot;&quot;</span> <span class="n">even</span> <span class="n">though</span> <span class="n">it</span> <span class="n">was</span> <span class="n">found</span><span class="o">.</span>
 </pre></div>
@@ -196,9 +201,11 @@ that is used for the RTSP negotiation (typically port 554).</p>
 
 <h3>Links</h3>
 <ul>
-  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core @ GitHub</a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples @ GitHub</a></li>
-  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-multiprocess"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-streamer"><i class="fab fa-github"></i> valkka-streamer </a></li>
+  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li>
   <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
   <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
   <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>

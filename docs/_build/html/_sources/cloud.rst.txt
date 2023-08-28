@@ -31,3 +31,10 @@ and `this github repository <https://github.com/elsampsa/websocket-mse-demo>`_.
 
 MP4 is described extensively in `this document <https://www.iso.org/standard/68960.html>`_.
 
+Remember that not all codec + container format combinations are supported by the major browser.  Most typical combination for video is H264 + MP4.
+For a list of supported codec + container formats, please see `this link <https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs#codec_details>`_.
+Note that H265 support is still lacking behind.
+
+For some more references on the subject, see in 
+`here <https://developer.mozilla.org/en-US/docs/Web/API/MediaSource#examples>`_ and 
+`here <https://developer.mozilla.org/en-US/docs/Web/API/Media_Source_Extensions_API>`_.

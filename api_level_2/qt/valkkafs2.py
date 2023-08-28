@@ -13,7 +13,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @author  Sampsa Riikonen
 @author  Petri Eränkö
 @date    2019
-@version 1.5.2 
+@version 1.5.3 
 @brief   
 """
 

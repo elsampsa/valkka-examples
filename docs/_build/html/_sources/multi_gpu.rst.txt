@@ -2,7 +2,7 @@
 Multi-GPU systems
 =================
 
-(If you just have monitors connected to a single graphics card, no need to be here)
+*(If you just have monitors connected to a single graphics card, no need to be here)*
 
 Introduction
 ------------
@@ -84,5 +84,17 @@ We've been succesful in setting up multi-gpu systems with the following setup:
 
 Finally, test the configuration with the PyQt testsuite's "test_studio_3.py"
 
+
+Note on $DISPLAY
+----------------
+
+The environmental variable `DISPLAY` defines the "display" (aka X-server) and "screen"
+(logical screen that can span multiple monitors) with the following format
+
+::
+
+    [host]:display[.screen]
+
+where `[]` is something optional (see also in `here <https://www.x.org/archive/X11R6.8.1/doc/X.7.html>`_).
 
 
