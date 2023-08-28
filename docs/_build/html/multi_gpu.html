@@ -34,7 +34,7 @@
             
   <div class="section" id="multi-gpu-systems">
 <h1>Multi-GPU systems<a class="headerlink" href="#multi-gpu-systems" title="Permalink to this headline">¶</a></h1>
-<p>(If you just have monitors connected to a single graphics card, no need to be here)</p>
+<p><em>(If you just have monitors connected to a single graphics card, no need to be here)</em></p>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Consider the following setup:</p>
@@ -102,6 +102,15 @@
 </ul>
 <p>Finally, test the configuration with the PyQt testsuite’s “test_studio_3.py”</p>
 </div>
+<div class="section" id="note-on-display">
+<h2>Note on $DISPLAY<a class="headerlink" href="#note-on-display" title="Permalink to this headline">¶</a></h2>
+<p>The environmental variable <cite>DISPLAY</cite> defines the “display” (aka X-server) and “screen”
+(logical screen that can span multiple monitors) with the following format</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">host</span><span class="p">]:</span><span class="n">display</span><span class="p">[</span><span class="o">.</span><span class="n">screen</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where <cite>[]</cite> is something optional (see also in <a class="reference external" href="https://www.x.org/archive/X11R6.8.1/doc/X.7.html">here</a>).</p>
+</div>
 </div>
 
 
@@ -129,9 +138,11 @@
 
 <h3>Links</h3>
 <ul>
-  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core @ GitHub</a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples @ GitHub</a></li>
-  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python @ GitHub</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-multiprocess"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-streamer"><i class="fab fa-github"></i> valkka-streamer </a></li>
+  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li>
   <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
   <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
   <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>
@@ -158,6 +169,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#our-approach">Our approach</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#note-on-display">Note on $DISPLAY</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>

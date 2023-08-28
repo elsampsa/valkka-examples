@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    single_stream_rtsp.py
 @author  Sampsa Riikonen
 @date    2017
-@version 1.5.2 
+@version 1.5.3 
 @brief   Send N copies of an rtsp stream to the screen, using level 2 api
 """
 
@@ -37,7 +37,8 @@ def main():
 
     chain = BasicFilterchain(
         livethread=livethread, openglthread=openglthread, address=address, slot=1,
-        vaapi = True
+        # vaapi = True
+        vaapi = False
     )
 
     chain.decodingOn()  # tell the decoding thread to start its job

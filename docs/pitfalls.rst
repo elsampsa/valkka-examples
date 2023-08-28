@@ -122,6 +122,14 @@ Some common fixes (that are frequently used in commercial video surveillance app
   
 Valkka provides (or will provide) API methods and FrameFilter(s) to implement each one of these strategies.
 
+**11\. Packet drop**
+
+Maybe might have saturated your NIC (see also above (7))?  Check in your camera's web-interface/config the bandwith it is using.  Typical values
+are (which you can adjust): 2048 kbps (~2 mbps), 4096kbps (~4 mbps), etc. so do the math.
+
+You can try to use TCP streaming instead of the default UDP streaming - 
+see FAQ (a) below (valkka-live tip: you can choose TCP streaming in the camera configuration)
+
 System tuning
 -------------
 
@@ -147,7 +155,7 @@ Receiving socket size can be adjusted for each live connection with the associat
 FAQ
 ---
 
-*How can I stream over internet, instead of just LAN?*
+*(a) How can I stream over internet, instead of just LAN?*
 
 By default, stream is transported through UDP sockets.  When streaming over internet, most of the ports are closed due to firewalls, etc., so you have to stream through the same TCP port
 that is used for the RTSP negotiation (typically port 554).
@@ -161,7 +169,7 @@ Modify your LiveConnectionContext like this:
 
 (for more information, see `here <https://elsampsa.github.io/valkka-core/html/structLiveConnectionContext.html>`_)
 
-*Could not load the Qt platform plugin "xcb"*
+*(b) Could not load the Qt platform plugin "xcb"*
 
 If you get this error:
 

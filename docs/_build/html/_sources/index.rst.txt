@@ -39,9 +39,9 @@ This is the recommended learning process:
 - Start with the :ref:`tutorial <tutorial>`
 - Valkka streams video and images between python multiprocesses, so reading `this article <https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300>`_ is a must
 - If you're into creating PyQt/PySide2 applications, take a look at :ref:`the PyQt testsuite<testsuite>`
-- If you're more into cloud apps, check out `this example python project/package <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_
+- If you're more into cloud apps, check out `valkka-streamer <https://github.com/elsampsa/valkka-streamer>`_
 
-For a demo program using Valkka, check out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_
+For a desktop demo program using Valkka, check out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_
 
 .. toctree::
    :maxdepth: 2
