@@ -145,11 +145,12 @@ p=Popen("vainfo", stdout=PIPE, stderr=PIPE)
 out, err = p.communicate()
 if p.returncode != 0:
     print("    WARNING: command vainfo failed!  check that you have installed VAAPI drivers correctly")
-if "H264" not in out.decode("utf-8"):
-    print("    WARNING: your VAAPI drivers seems to be missing H264 decoding capabilities.  Please run vainfo.")
-if "Intel iHD driver" in out.decode("utf-8"):
-    print("    FATAL: libValkka tries to enforce the i965 for VAAPI, but you seem to use intel iHD")
-    print("           --> prepare for memleaks!")
+else:
+    if "H264" not in out.decode("utf-8"):
+        print("    WARNING: your VAAPI drivers seems to be missing H264 decoding capabilities.  Please run vainfo.")
+    if "Intel iHD driver" in out.decode("utf-8"):
+        print("    FATAL: libValkka tries to enforce the i965 for VAAPI, but you seem to use intel iHD")
+        print("           --> prepare for memleaks!")
 
 try:
     from valkka.core import VAAPIThread
@@ -183,25 +184,35 @@ print()
 
 
 print("Taking a look at current user's groups")
-p=Popen(f"groups {os.environ['USER']}".split(), stdout=PIPE, stderr=PIPE)
-out, err = p.communicate()
-if p.returncode != 0:
-    print("    WARNING: command groups failed - something is VERY WRONG in your system")
-res = out.decode("utf-8")
-user, groups = res.split(":")
-# print(groups)
-if "video" not in groups:
-    print(f"    WARNING: user not in the 'video' group: VAAPI hw acceleration will not work - please run:")
-    print(f"             sudo usermod -a -G video {os.environ['USER']}")
-    print(f"             after that you still need to logout & login")
-if "render" not in groups:
-    print(f"    WARNING: user not in the 'render' group - consider running:")
-    print(f"             sudo usermod -a -G render {os.environ['USER']}")
-    print(f"             after that you still need to logout & login")
-if "docker" not in groups:
-    print(f"    WARNING: user not in the 'docker' group - if you want to use docker, do:")
-    print(f"             sudo usermod -a -G docker {os.environ['USER']}")
-    print(f"             after that you still need to logout & login")
-print()
+if "USER" not in os.environ:
+    print("    WARNING: $USER doesn't exist")
+else:
+    p=Popen(f"groups {os.environ['USER']}".split(), stdout=PIPE, stderr=PIPE)
+    out, err = p.communicate()
+    if p.returncode != 0:
+        print("    WARNING: command groups failed - something is VERY WRONG in your system")
+        print()
+    else:
+        try:
+            res = out.decode("utf-8")
+            user, groups = res.split(":")
+        except Exception as e:
+            print("    WARNING: can't resolve command 'groups' output, please try manually 'groups $USER'")
+            print()
+        else:
+            # print(groups)
+            if "video" not in groups:
+                print(f"    WARNING: user not in the 'video' group: VAAPI hw acceleration will not work - please run:")
+                print(f"             sudo usermod -a -G video {os.environ['USER']}")
+                print(f"             after that you still need to logout & login")
+            if "render" not in groups:
+                print(f"    WARNING: user not in the 'render' group - consider running:")
+                print(f"             sudo usermod -a -G render {os.environ['USER']}")
+                print(f"             after that you still need to logout & login")
+            if "docker" not in groups:
+                print(f"    WARNING: user not in the 'docker' group - if you want to use docker, do:")
+                print(f"             sudo usermod -a -G docker {os.environ['USER']}")
+                print(f"             after that you still need to logout & login")
+            print()
 
 
