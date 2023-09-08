@@ -1,5 +1,5 @@
 from subprocess import Popen, PIPE
-import os
+import os, sys
 
 print()
 print("Loading Valkka")
@@ -10,7 +10,10 @@ try:
     import valkka
     from valkka import core
 except Exception as e:
-    print("Loading Valkka failed with", e)
+    print("FATAL: Loading Valkka failed with", e)
+    print("       Have you installed libValkka at all?")
+    print()
+    sys.exit(2)
 else:
     valkka_ok = True
     print("Valkka loaded ok")
@@ -23,8 +26,8 @@ else:
     live =core.LiveThread("live")
     # inp  =core.FrameFifo("fifo") # in the API no more
     # ff   =core.FifoFrameFilter("fifo",inp)
-    out  =core.DummyFrameFilter("dummy")
-    av   =core.AVThread("av",out)
+    out_filter  =core.DummyFrameFilter("dummy")
+    av   =core.AVThread("av",out_filter)
     gl   =core.OpenGLThread("gl")
 
     av_in =av.getFrameFilter();
@@ -34,7 +37,7 @@ else:
     ctx.slot=1
     ctx.connection_type=core.LiveConnectionType_rtsp
     ctx.address="rtsp://admin:12345@192.168.0.157"
-    ctx2=core.LiveConnectionContext(core.LiveConnectionType_rtsp, "rtsp://admin:12345@192.168.0.157", 1, out)
+    ctx2=core.LiveConnectionContext(core.LiveConnectionType_rtsp, "rtsp://admin:12345@192.168.0.157", 1, out_filter)
     print("   Valkka classes ok")
     print()
 
@@ -96,13 +99,12 @@ else:
     print("OpenCV loaded ok")
     print("   Version      ",cv2.__version__)
     print("   Loaded from  ",cv2.__file__)
-
-if "/usr/lib/" not in cv2.__file__:
-    print("   WARNING       your opencv is not installed into the standard /usr/lib/ location")
-    print("                 consider using these commands:")
-    print("                 pip3 uninstall opencv-python")
-    print("                 sudo pip3 uninstall opencv-python")
-    print("                 sudo apt-get install python3-opencv")
+    if "/usr/lib/" not in cv2.__file__:
+        print("   WARNING       your opencv is not installed into the standard /usr/lib/ location")
+        print("                 consider using these commands:")
+        print("                 pip3 uninstall opencv-python")
+        print("                 sudo pip3 uninstall opencv-python")
+        print("                 sudo apt-get install python3-opencv")
 
 print()
 print("Loading PySide2")
@@ -151,8 +153,10 @@ if "Intel iHD driver" in out.decode("utf-8"):
 
 try:
     from valkka.core import VAAPIThread
+    avthread=VAAPIThread("decoder", out_filter)
 except Exception as e:
     print("    could not import VAAPIThread from valkka.core")
+    print(e)
 else:
     print("    VAAPI acceleration available: you can use valkka.core.VAAPIThread instead of valkka.core.AVThread")
 
@@ -176,3 +180,28 @@ else:
     else:
         print("    All good")
 print()
+
+
+print("Taking a look at current user's groups")
+p=Popen(f"groups {os.environ['USER']}".split(), stdout=PIPE, stderr=PIPE)
+out, err = p.communicate()
+if p.returncode != 0:
+    print("    WARNING: command groups failed - something is VERY WRONG in your system")
+res = out.decode("utf-8")
+user, groups = res.split(":")
+# print(groups)
+if "video" not in groups:
+    print(f"    WARNING: user not in the 'video' group: VAAPI hw acceleration will not work - please run:")
+    print(f"             sudo usermod -a -G video {os.environ['USER']}")
+    print(f"             after that you still need to logout & login")
+if "render" not in groups:
+    print(f"    WARNING: user not in the 'render' group - consider running:")
+    print(f"             sudo usermod -a -G render {os.environ['USER']}")
+    print(f"             after that you still need to logout & login")
+if "docker" not in groups:
+    print(f"    WARNING: user not in the 'docker' group - if you want to use docker, do:")
+    print(f"             sudo usermod -a -G docker {os.environ['USER']}")
+    print(f"             after that you still need to logout & login")
+print()
+
+
