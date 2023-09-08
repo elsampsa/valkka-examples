@@ -8,8 +8,9 @@ see how it affects your fps.
 For the exact format of the .yaml file, please see below
 """
 
-import os, yaml, time
+import os, yaml, time, sys
 from valkka.core import *
+from valkka.api2.logging import setFFmpegLogLevel, setValkkaLogLevel
 """We can express a filterchain as a hierarchical list as well!  (no need for ascii art):
 
 ::
@@ -31,7 +32,7 @@ class Filterchain:
 
     def __init__(self, livethread = None, address = None, 
             slot = 1, interval = 10, sws = None, verbose = False, n_stack = None,
-            affinity = None, n_threads = None, ms_pass = None
+            affinity = None, n_threads = None, ms_pass = None, vaapi = False, tcp = False
             ):
         self.livethread = livethread
         self.interval = int(interval*1000) # sec to msec
@@ -40,6 +41,8 @@ class Filterchain:
         self.sws = sws # None or tuple: (width, height)
         self.verbose = verbose
         self.n_stack = n_stack # not used
+        self.vaapi = vaapi
+        self.tcp = tcp
 
         # *** DECODE BRANCH ***
         # Create the FPSCountFrameFilter
@@ -76,10 +79,17 @@ class Filterchain:
         #if self.n_stack is not None:
         #    ffc.n_basic = dic["n_stack_live"]        
     
-        self.avthread = AVThread(
-            "avthread-" + str(self.slot),
-            self.fork2) # feeds the bitmap fork & decoding branch
-            # self.framefifo_ctx)
+        if self.vaapi:
+            print("using vaapi for stream", address)
+            self.avthread = VAAPIThread(
+                "avthread-" + str(self.slot),
+                self.fork2) # feeds the bitmap fork & decoding branch
+                # self.framefifo_ctx)
+        else:
+            self.avthread = AVThread(
+                "avthread-" + str(self.slot),
+                self.fork2) # feeds the bitmap fork & decoding branch
+                # self.framefifo_ctx)
 
         if n_threads:
             print("setting", n_threads,"threads per libav decoder")
@@ -95,7 +105,11 @@ class Filterchain:
         self.ctx =\
             LiveConnectionContext(LiveConnectionType_rtsp, 
                 self.address, self.slot, self.fork1)
-
+        if self.tcp:
+            print("USING TCP")
+            self.ctx.request_tcp = True
+        else:
+            print("USING UDP")
 
     def __call__(self):
         # start decoding thread
@@ -117,7 +131,7 @@ class Filterchain:
         self.avthread.waitStopCall()
 
 
-def makeChains():
+def makeChains(yaml_file = "streams.yaml"):
     """Create filterchains based on a yaml file that looks like this:
 
     ::
@@ -129,6 +143,7 @@ def makeChains():
               use: true # optional
               bind: 1 # optional
               ms_pass: 100 # optional (see below)
+              vaapi: true # optional
             - name: that other camera
               address: rtsp://user:passwd@192.168.1.13
               interpolate: [300,300] # optional
@@ -142,6 +157,7 @@ def makeChains():
         bind: 0 # bind livethread to a core # optional
         decoder_threads: 2 # how many libav(ffmpeg) threads per decoder
         ms_pass: 100 # after decoding to YUV, pass each frame only every 100 ms # optional
+        vaapi: true # use vaapi for streams # optional
 
     If the top-level "interpolate" is present, then all YUVs are interpolated into that
     RGB dimensions
@@ -172,13 +188,16 @@ def makeChains():
 
     ..can just use buffers that overflow (& should shut up the overflow warning)
     """
-    with open('streams.yaml','r') as f:
+    with open(yaml_file,'r') as f:
         dic=yaml.safe_load(f)
 
     itp = dic.get("interpolate", None)
-    verbose = False
-    if ("verbose" in dic) and (dic["verbose"]):
-        verbose = True
+    verbose = dic.get("verbose", False)
+    core_verbose = dic.get("core-verbose", False)
+    
+    if core_verbose:
+        setFFmpegLogLevel(3)
+        setValkkaLogLevel(4)
 
     assert "streams" in dic, "needs streams"
     assert "duration" in dic, "needs test duration"
@@ -193,10 +212,11 @@ def makeChains():
         print("binding livethread to", dic["bind"])
         livethread.setAffinity(dic["bind"])
 
-    n_stack_decoder = dic.get("n_stack_decoder", None)
-    # --> not used
+    n_stack_decoder = dic.get("n_stack_decoder", None) #  not used
     n_threads = dic.get("decoder_threads", None)
     ms_pass = dic.get("ms_pass", None)
+    vaapi = dic.get("vaapi", False)
+    tcp = dic.get("tcp", False)
 
     chains = []
     cc = 1
@@ -210,6 +230,8 @@ def makeChains():
 
         bind = stream.get("bind", None)
         ms_pass_ = stream.get("ms_pass", ms_pass)
+        vaapi_ = stream.get("vaapi", vaapi)
+        tcp_ = stream.get("tcp", tcp)
 
         fc = Filterchain(
             livethread = livethread, 
@@ -221,7 +243,9 @@ def makeChains():
             n_stack = n_stack_decoder,
             affinity = bind,
             n_threads = n_threads,
-            ms_pass = ms_pass_
+            ms_pass = ms_pass_,
+            vaapi = vaapi_,
+            tcp = tcp_
         )
         chains.append(fc)
         cc+=1
@@ -231,8 +255,13 @@ def makeChains():
 
     # start live connections and decoders
     print("USING", len(chains), "STREAM(S)")
+    print("all addresses:")
+    for i, chain in enumerate(chains):
+        print(i+1, chain.address)
+    print("")
     for chain in chains:
         chain()
+        # time.sleep(0.1)
 
     print("all cams started, running test for", dic["duration"], "seconds")
     time.sleep(dic["duration"])
@@ -248,6 +277,8 @@ def makeChains():
 
 
 if __name__ == "__main__":
-    from valkka.api2.logging import setFFmpegLogLevel
-    setFFmpegLogLevel(0)
-    makeChains()
+    if len(sys.argv) < 2:
+        makeChains()
+    else:
+        print("using input file", sys.argv[1])
+        makeChains(sys.argv[1])

@@ -1,19 +1,19 @@
 streams:
   - name: mummocamera
-    # address: rtsp://admin:vittuhikki@192.168.1.100
-    address: rtsp://admin:12345@10.0.0.7
+    address: rtsp://admin:123456@10.0.0.4
     use: true
     bind: 1
     ms_pass: 100
   - name: mummocamera
-    # address: rtsp://admin:vittuhikki@192.168.1.100
-    address: rtsp://admin:12345@10.0.0.7
+    address: rtsp://admin:123456@10.0.0.4
     use: false
     bind: 2
 interpolate: [300,300]
 interval: 5
-duration: 20
-verbose: true
+duration: 10
+# verbose: true
+verbose: false
 bind: 0
 decoder_threads: 2
 # ms_pass: 100
+vaapi: true

@@ -37,8 +37,8 @@ def main():
 
     chain = BasicFilterchain(
         livethread=livethread, openglthread=openglthread, address=address, slot=1,
-        # vaapi = True
-        vaapi = False
+        vaapi = True
+        # vaapi = False
     )
 
     chain.decodingOn()  # tell the decoding thread to start its job

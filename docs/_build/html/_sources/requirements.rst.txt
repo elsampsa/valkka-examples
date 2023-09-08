@@ -4,8 +4,15 @@
 Installing
 ==========
 
-Install valkka-core
--------------------
+The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
+
+.. note:: LibValkka comes precompiled and packaged for a certain ubuntu distribution version. This means that the compilation and it's dependencies assume the default
+          python version of that distribution.  Using custom-installed python versions, anacondas and whatnot might cause dependency problems.
+
+A. Install using PPA
+--------------------
+
+*the preferred way*
 
 For recent ubuntu distributions, the core library binary packages and python bindings are provided by a PPA repository.  Subscribe to the PPA repo (do this only once) with:
 
@@ -20,13 +27,6 @@ Install with:
     sudo apt-get update
     sudo apt-get install valkka
 
-Test the installation with:
-
-::
-
-    curl https://raw.githubusercontent.com/elsampsa/valkka-examples/master/quicktest.py
-    python3 quicktest.py
-
 When you need to update valkka, do:
   
 ::
@@ -34,13 +34,43 @@ When you need to update valkka, do:
     sudo apt-get update
     sudo apt-get install --only-upgrade valkka
 
+
+B. Install using releases
+-------------------------
+
+*if you don't like PPAs*
+
+You can download and install the required .deb packages "manually" from the 
+`releases page <https://github.com/elsampsa/valkka-core/releases>`_
+
+::
+
+    sudo dpkg -i Valkka-*.deb
+    sudo apt-get install -fy 
+
+The last line pulls the dependencies.
+
+Repeat the process when you need to update.
+
+C. Compile yourself
+-------------------
+
+*the last resort*
+
 If you're not using a recent Ubuntu distro and need to build libValkka and it's python bindings yourself, 
 please refer to the `valkka-core github page <https://github.com/elsampsa/valkka-core#compile-yourself>`_.
 
-The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed "globally" into */usr/lib/python3/dist-packages/*
 
-.. note:: LibValkka comes precompiled and packaged for a certain ubuntu distribution version. This means that the compilation and it's dependencies assume the default
-          python version of that distribution.  Using custom-installed python versions, anacondas and whatnot might cause dependency problems.
+Test your installation
+----------------------
+
+Test the installation with:
+
+::
+
+    curl https://raw.githubusercontent.com/elsampsa/valkka-examples/master/quicktest.py -o quicktest.py
+    python3 quicktest.py
+
 
 Numpy
 -----

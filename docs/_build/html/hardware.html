@@ -71,6 +71,13 @@
 <p>Please first read this <a class="reference internal" href="decoding.html#gpuaccel"><span class="std std-ref">word of warning</span></a>.</p>
 <p><em>VAAPI</em></p>
 <p>Comes in the basic libValkka installation (and uses ffmpeg/libav infrastructure) - no additional packages needed.</p>
+<p>First of all, the user using VAAPI, must belong to the “video” user group:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>groups <span class="nv">$USER</span>
+<span class="c1"># run the following command if the user does not appear in the video group</span>
+sudo usermod -a -G video <span class="nv">$USER</span>
+<span class="c1"># after that you still need to logout &amp; login</span>
+</pre></div>
+</div>
 <p>In order to use the VAAPI acceleration, just replace <cite>AVThread</cite> with <cite>VAAPIThread</cite>, i.e. instead of</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">avthread</span> <span class="o">=</span> <span class="n">AVThread</span><span class="p">(</span><span class="s2">&quot;avthread&quot;</span><span class="p">,</span> <span class="n">target_filter</span><span class="p">)</span>
 </pre></div>
@@ -95,6 +102,10 @@ environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this h
 </pre></div>
 </div>
 <p>And be sure that the host machine has all required vaapi-related libraries installed (the easiest way: install libValkka on the host as well).</p>
+<p>Finally, you can follow the GPU usage in realtime with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo intel_gpu_top
+</pre></div>
+</div>
 <p><em>NVidia / CUDA</em></p>
 <p>Provided as a separate package that installs into the <cite>valkka.nv</cite> namespace and is used like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.nv</span> <span class="kn">import</span> <span class="n">NVThread</span>

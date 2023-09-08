@@ -56,6 +56,15 @@ Please first read this :ref:`word of warning <gpuaccel>`.
 
 Comes in the basic libValkka installation (and uses ffmpeg/libav infrastructure) - no additional packages needed.
 
+First of all, the user using VAAPI, must belong to the "video" user group:
+
+.. code:: bash
+
+    groups $USER
+    # run the following command if the user does not appear in the video group
+    sudo usermod -a -G video $USER
+    # after that you still need to logout & login
+
 In order to use the VAAPI acceleration, just replace `AVThread` with `VAAPIThread`, i.e. instead of
 
 .. code:: python
@@ -67,6 +76,7 @@ use this:
 .. code:: python
 
     avthread = VAAPIThread("avthread", target_filter)
+
 
 For more details about VAAPI, you can read `this <https://wiki.archlinux.org/title/Hardware_video_acceleration>`_,
 `this <https://wiki.debian.org/HardwareVideoAcceleration>`_ and `this <https://en.wikipedia.org/wiki/Video_Acceleration_API#Supported_hardware_and_drivers>`_.
@@ -91,6 +101,13 @@ If you wish to use VAAPI in a docker environment, you should start docker with
     --device=/dev/dri:/dev/dri
 
 And be sure that the host machine has all required vaapi-related libraries installed (the easiest way: install libValkka on the host as well).
+
+Finally, you can follow the GPU usage in realtime with:
+
+.. code:: bash
+
+    sudo intel_gpu_top
+
 
 *NVidia / CUDA*
 

@@ -34,8 +34,15 @@
             
   <div class="section" id="installing">
 <span id="requirements"></span><h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="install-valkka-core">
-<h2>Install valkka-core<a class="headerlink" href="#install-valkka-core" title="Permalink to this headline">¶</a></h2>
+<p>The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed “globally” into <em>/usr/lib/python3/dist-packages/</em></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>LibValkka comes precompiled and packaged for a certain ubuntu distribution version. This means that the compilation and it’s dependencies assume the default
+python version of that distribution.  Using custom-installed python versions, anacondas and whatnot might cause dependency problems.</p>
+</div>
+<div class="section" id="a-install-using-ppa">
+<h2>A. Install using PPA<a class="headerlink" href="#a-install-using-ppa" title="Permalink to this headline">¶</a></h2>
+<p><em>the preferred way</em></p>
 <p>For recent ubuntu distributions, the core library binary packages and python bindings are provided by a PPA repository.  Subscribe to the PPA repo (do this only once) with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">add</span><span class="o">-</span><span class="n">repository</span> <span class="n">ppa</span><span class="p">:</span><span class="n">sampsa</span><span class="o">-</span><span class="n">riikonen</span><span class="o">/</span><span class="n">valkka</span>
 </pre></div>
@@ -45,23 +52,36 @@
 <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">valkka</span>
 </pre></div>
 </div>
-<p>Test the installation with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">elsampsa</span><span class="o">/</span><span class="n">valkka</span><span class="o">-</span><span class="n">examples</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">quicktest</span><span class="o">.</span><span class="n">py</span>
-<span class="n">python3</span> <span class="n">quicktest</span><span class="o">.</span><span class="n">py</span>
-</pre></div>
-</div>
 <p>When you need to update valkka, do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span>
 <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">--</span><span class="n">only</span><span class="o">-</span><span class="n">upgrade</span> <span class="n">valkka</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="b-install-using-releases">
+<h2>B. Install using releases<a class="headerlink" href="#b-install-using-releases" title="Permalink to this headline">¶</a></h2>
+<p><em>if you don’t like PPAs</em></p>
+<p>You can download and install the required .deb packages “manually” from the
+<a class="reference external" href="https://github.com/elsampsa/valkka-core/releases">releases page</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">dpkg</span> <span class="o">-</span><span class="n">i</span> <span class="n">Valkka</span><span class="o">-*.</span><span class="n">deb</span>
+<span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="o">-</span><span class="n">fy</span>
+</pre></div>
+</div>
+<p>The last line pulls the dependencies.</p>
+<p>Repeat the process when you need to update.</p>
+</div>
+<div class="section" id="c-compile-yourself">
+<h2>C. Compile yourself<a class="headerlink" href="#c-compile-yourself" title="Permalink to this headline">¶</a></h2>
+<p><em>the last resort</em></p>
 <p>If you’re not using a recent Ubuntu distro and need to build libValkka and it’s python bindings yourself,
 please refer to the <a class="reference external" href="https://github.com/elsampsa/valkka-core#compile-yourself">valkka-core github page</a>.</p>
-<p>The debian package includes the core library, its python bindings and some API level 2 python code.  The python part is installed “globally” into <em>/usr/lib/python3/dist-packages/</em></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>LibValkka comes precompiled and packaged for a certain ubuntu distribution version. This means that the compilation and it’s dependencies assume the default
-python version of that distribution.  Using custom-installed python versions, anacondas and whatnot might cause dependency problems.</p>
+</div>
+<div class="section" id="test-your-installation">
+<h2>Test your installation<a class="headerlink" href="#test-your-installation" title="Permalink to this headline">¶</a></h2>
+<p>Test the installation with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">elsampsa</span><span class="o">/</span><span class="n">valkka</span><span class="o">-</span><span class="n">examples</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">quicktest</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">o</span> <span class="n">quicktest</span><span class="o">.</span><span class="n">py</span>
+<span class="n">python3</span> <span class="n">quicktest</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="numpy">
@@ -176,7 +196,10 @@ architectures other than <cite>x86</cite>.</p>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#install-valkka-core">Install valkka-core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-install-using-ppa">A. Install using PPA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#b-install-using-releases">B. Install using releases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#c-compile-yourself">C. Compile yourself</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#test-your-installation">Test your installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#numpy">Numpy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#install-the-testsuite">Install the testsuite</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gtk">GTK</a></li>
