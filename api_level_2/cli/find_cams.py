@@ -27,11 +27,14 @@ def process_cl_args():
     return parsed
 
 p = process_cl_args()
-ips = runWSDiscovery()
+ips = [item[0] for item in runWSDiscovery()] # list of (ip, port) 
+# -> pick up the ip addresses only
 # print(ips)
 ips2 = []
 if p.arp:
-    ips2 = runARPScan(exclude_list = ips)
+    ips2 = [item[0] for item in runARPScan(exclude_list = ips)]
+    # list of (ip, port) values, where port is the rtsp port
+    # pick up the ip only
 ips = ips + ips2
 
 """Let's produce the following format:

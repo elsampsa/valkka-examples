@@ -12,7 +12,7 @@ Valkka Python3 examples library is free software: you can redistribute it and/or
 @file    analyzer.py
 @author  Sampsa Riikonen
 @date    2018
-@version 1.5.4 
+@version 1.6.1 
 @brief   A base class for analyzing image streams using OpenCV and an example movement detector.
 """
 
