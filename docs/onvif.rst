@@ -4,6 +4,16 @@ OnVif & Discovery
 
 *(Your short primer to SOAP and OnVif)*
 
+Installing
+----------
+
+Onvif and discovery come in a `separate python package <https://github.com/elsampsa/valkka-onvif>`_ which you need to install with:
+
+::
+
+    pip install valkka-onvif
+
+
 Intro
 -----
 
@@ -11,33 +21,15 @@ OnVif is a remote-control protocol for manipulating IP cameras, developed by `Ax
 
 You can use it to PTZ (pan-tilt-zoom) the camera, for setting camera's credentials and resolution, and for almost anything else you can imagine.
 
-OnVif is based on `SOAP <https://en.wikipedia.org/wiki/SOAP>`_, i.e. on sending rather complex XML messages between your client computer and the IP camera.  The messages (remote protocol calls), the responses and the parameters, are defined by **WSDL files**, which (when visualized nicely) look like `this <http://www.onvif.org/ver20/ptz/wsdl>`_.
+OnVif is based on `SOAP <https://en.wikipedia.org/wiki/SOAP>`_, i.e. on sending rather complex XML messages between your client computer and the IP camera.  
+The messages (remote protocol calls), their responses and the parameters, are defined by **WSDL files**, 
+which (when visualized nicely) look like `this <http://www.onvif.org/ver20/ptz/wsdl>`_.
 
-Python OnVif
-------------
+Python OnVif with Zeep
+----------------------
 
-In Python, the main bottleneck was in finding a decent open source SOAP library that would do the trick.  Recently, things have got better with the arrival of `Zeep <https://github.com/mvantellingen/python-zeep>`_.
-
-Before Zeep existed, people used `Suds <https://github.com/suds-community/suds>`_, which has become a bit obsolete by now.  A library called `python-onvif <https://github.com/quatanium/python-onvif>`_ was based on Suds.
-
-That python-onvif module has since then been forked and modded `to work with Zeep <https://github.com/FalkTannhaeuser/python-onvif-zeep>`_.
-
-However, we don't need any of that, since it's a better idea to
-
-**use Zeep directly**
-
-with minimum extra code bloat on top of it.
-
-So, use Zeep as your SOAP client, give it the WSDL file and that's about it.
-
-OnVif with Zeep
----------------
-
-Rather than giving you an obscure OnVif client implementation, you'll learn to do this by yourself using Zeep.  Let's begin with:
-
-::
-
-    pip3 install zeep
+We use the `Zeep <https://github.com/mvantellingen/python-zeep>`_ opensource SOAP library to communicate with the cameras, with minimum 
+extra code on top of Zeep.
 
 You also need this table to get started:
 
@@ -45,7 +37,7 @@ You also need this table to get started:
 WSDL Declaration                            Camera http sub address  Wsdl file                Subclass
 =========================================== ======================== ======================== =================
 http://www.onvif.org/ver10/device/wsdl      device_service           devicemgmt.wsdl          DeviceManagement
-http://www.onvif.org/ver10/device/wsdl      Media                    media.wsdl               Media
+http://www.onvif.org/ver10/media/wsdl       Media                    media.wsdl               Media
 http://www.onvif.org/ver10/events/wsdl      Events                   events.wsdl              Events
 http://www.onvif.org/ver20/ptz/wsdl         PTZ                      ptz.wsdl                 PTZ
 http://www.onvif.org/ver20/imaging/wsdl     Imaging                  imaging.wsdl             Imaging
@@ -55,28 +47,28 @@ http://www.onvif.org/ver20/analytics/wsdl   Analytics                analytics.w
 
 Here is an example on how to create your own class for an OnVif device service, based on the class ``OnVif``:
 
-
 .. include:: snippets/onvif_test.py_
 
-(the implementation of the base class ``OnVif`` is only a few lines long)
+The implementation of the base class ``OnVif`` is only a few lines long 
+(take a look `here <https://github.com/elsampsa/valkka-onvif/blob/master/valkka/onvif/base.py#L81>`_)
+and it is based on Zeep.
 
-The things you need for (1) subclassing an OnVif service are:
+The things you need for subclassing an OnVif service are:
     
 - The remote control protocol is declared / visualized in the link at the first column.  Go to ``http://www.onvif.org/ver10/device/wsdl`` to see the detailed specifications.
 - In that specification, we see that the WSDL "port" is ``DeviceBinding``.
 - Each SOAP remote control protocol comes with a certain namespace.  This is the same as that address in the first column, so we set ``namespace`` to ``http://www.onvif.org/ver10/device/wsdl``.
-- We use a local modified version of the wsdl file.  This can be found in the third column, i.e. set ``wsdl_file`` to ``devicemgmt.wsdl`` (these files come included in libValkka).
+- We use a local modified version of the wsdl file.  This can be found in the third column, i.e. set ``wsdl_file`` to ``devicemgmt.wsdl`` (these files come included in ``valkka-onvif``).
 - Camera's local http subaddress ``sub_xaddr`` is ``device_service`` (the second column of the table)
 
-When you (2) instantiate the class into the ``device_service`` object, you just give the camera's local IP address and credentials
-
+Check out for an example subclass in `here <https://github.com/elsampsa/valkka-onvif/blob/master/valkka/onvif/base.py#L135>`_.
 
 Service classes
 ---------------
 
 You can create your own OnVif subclass as described above.
 
-However, we have done some of the work for you.  Take a look at the column "Subclass" in the table, and you'll find them:
+However, we have done some of the work for you.  Take a look at the column "Subclass" in the table above, and you'll find them:
 
 ::
 
@@ -98,13 +90,21 @@ Let's try a remote protocol call.
 If you look at that specification in ``http://www.onvif.org/ver10/device/wsdl``, there is a remote protocol call name ``GetCapabilities``.  Let's call it:
 
 ::
+    
+    from valkka.onvif import DeviceManagement
+
+    device_service = DeviceManagement(
+            ip          = "192.168.0.24",
+            port        = 80,
+            user        = "admin",
+            password    = "12345"
+            )
 
     cap = device_service.ws_client.GetCapabilities()
     print(cap)
 
-We can also pass a variable to that ``GetCapabilities`` call.  
-
-Variables are nested objects, that must be constructed separately.  Like this: 
+We can also pass a variable to that ``GetCapabilities`` call - variables 
+are nested objects, that must be constructed separately.  Like this: 
     
 ::
     
@@ -119,7 +119,6 @@ The namespace ``http://www.onvif.org/ver10/schema`` declares all basic variables
 
     category = device_service.getVariable("Device")
 
-
 That's about it.  Now you are able to remote control your camera.  
 
 One extra bonus: to open the specifications directly with Firefox, try this
@@ -129,8 +128,18 @@ One extra bonus: to open the specifications directly with Firefox, try this
     device_service.openSpecs()
 
 
-Notes
------
+Onvif Pitfalls
+--------------
+
+*Axis cameras*
+
+Although Axis is *the* brand that created OnVif, their cameras are extremely picky on the onvif calls: if your client machine's walltime 
+differs even slightly on the camera's time, axis cameras (at least the model I have), reject the call (you'll get "Sender not Authorized").
+
+You need to set (manually) your camera's time equal to your client linux machine's time - up to a second.  One option
+is to establish an NTP server on your linux machine and then tell the camera to use that NTP server to synchronize it's time.
+
+*Time durations*
 
 When specifying durations with Zeep, you must use the ``isodate`` module, like this:
 
@@ -140,21 +149,26 @@ When specifying durations with Zeep, you must use the ``isodate`` module, like t
     import isodate
     timeout = isodate.Duration(seconds = 2)
 
-Now that variable ``timeout`` can be used with OnVif calls
+Now that variable ``timeout`` can be used with OnVif calls.
 
-    
-    
 Discovery
 ---------
 
-In libValkka, cameras can be discovered like this:
+An short example on how to use the discovery module:
 
 ::
 
     from valkka.discovery import runWSDiscovery, runARPScan
-    ips = runWSDiscovery()
-    ips2 = runARPScan(exclude_list = ips) # run this if you want to use arp-scan
+    ips = runWSDiscovery() # list of (ip, port) values, where port is the onvif port
+    ips_exc = [item[0] for item in ips] # pick up the ip addresses only
+    # run this if you want to use arp-scan:
+    ips2 = runARPScan(exclude_list = ips_exc) # list of (ip, port) values, where port is the rtsp port
 
+The list of ``(ip, port)`` values from ``runWSDiscovery`` can be used to connect to the cameras via OnVif.
+After that, one would typically query using Onvif, what is the exact rtsp address (and port).  Or try your luck
+and assume it's the default port ``554`` instead.  Or just use ``runARPScan`` only, instead of ``runWSDiscovery``.
+
+The list of ``(ip, port)`` values from ``runARPScan`` can be used directly to establish an rtsp connection.
 
 If you want arp-scan to work, you must permit normal users to run the executable, with:
 

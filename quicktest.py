@@ -43,8 +43,8 @@ else:
 
     # this is modified automatically by setver.bash - don't touch!
     VERSION_MAJOR=1
-    VERSION_MINOR=5
-    VERSION_PATCH=4
+    VERSION_MINOR=6
+    VERSION_PATCH=1
 
     print("Checking Valkka python examples")
     print("   version:",str(VERSION_MAJOR)+"."+str(VERSION_MINOR)+"."+str(VERSION_PATCH))
@@ -55,6 +55,19 @@ else:
         print("   You probably need to update your valkka-core module (say, 'sudo apt-get update' and 'sudo apt-get upgrade valkka')")
         print("   .. or update valkka-examples by running 'git pull' in this directory")
         print()
+
+print()
+print("Checking valkka.onvif and valkka.discovery")
+try:
+    from valkka.onvif import base as base_onvif
+    from valkka.discovery import base as base_discovery
+except Exception as e:
+    print("WARNING: loading valkka.onvif and valkka.discovery failed with", e)
+    print("have you installed valkka-onvif?")
+else:
+    print("onvif & discovery loaded ok")
+    print("   onvif loaded from          : ",base_onvif.__file__)
+    print("   discovery loaded from      : ",base_discovery.__file__)
 
 print()
 print("Loading numerical python")
