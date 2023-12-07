@@ -207,3 +207,31 @@ And install your linux distro's default opencv instead with:
 ::
 
     sudo apt-get install python3-opencv
+
+*(c) VAAPI decoder always defaults to software decoder*
+
+If your :ref:`VAAPI hw decoding <hwaccel>` doesn't work and libValkka
+always reports that it reverts to software decoding, then you should run
+on your terminal
+
+.. code:: bash
+
+    LIBVA_DRIVER_NAME=i965 vainfo
+
+If it reports problems, then you probably have a drm (direct-rendering management)
+rights issue.  These appear typically if you use some weirdo windows program to
+login to a remote machine (instead of standard SSH shell).
+
+So don't use weirdo windows terminal programs for remote access, please.
+
+In docker, you need to enable docker to access the drivers.  Please see the information
+in valkka dockerhub pages.
+
+
+
+
+
+
+
+
+

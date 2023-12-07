@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Lesson 4 : Receiving Frames at Python &#8212; Python Media Streaming Framework for Linux  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1c8f121f" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 5 : Transmitting stream" href="lesson_5.html" />
@@ -32,14 +31,14 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="lesson-4-receiving-frames-at-python">
-<h1>Lesson 4 : Receiving Frames at Python<a class="headerlink" href="#lesson-4-receiving-frames-at-python" title="Permalink to this headline">¶</a></h1>
+  <section id="lesson-4-receiving-frames-at-python">
+<h1>Lesson 4 : Receiving Frames at Python<a class="headerlink" href="#lesson-4-receiving-frames-at-python" title="Link to this heading">¶</a></h1>
 <p>Here we start with two separate python programs: (1) a server that reads RTSP cameras and writes RGB frames into shared memory
 and (2) a client that reads those RGB frames from memory.  For the client program, two versions are provided, the API level 2 being the most compact one.</p>
 <p>Such scheme is only for demo/tutorial purposes.  Normally you would start both the server and client from within the same
 python program.  We give an example of that as well.</p>
-<div class="section" id="server-side">
-<h2>Server side<a class="headerlink" href="#server-side" title="Permalink to this headline">¶</a></h2>
+<section id="server-side">
+<h2>Server side<a class="headerlink" href="#server-side" title="Link to this heading">¶</a></h2>
 <p><strong>Download server side</strong> <a class="reference download internal" download="" href="_downloads/738c6677ef608ca9799fad3351e7b156/lesson_4_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>By now, we have learned how to receive, decode and send streams to the x window system.  In this chapter, we do all that, but at the same time, also send copies of the decoded frames to another python process.</p>
 <p>The filtergraph looks like this:</p>
@@ -138,9 +137,9 @@ Here we are starting to use posix shared memory and semaphores in order to share
 to share them with machine vision processes.  However, if you need very high-resolution and high fps solutions, you might want to implement the sharing
 of frames and your machine vision routines directly at the cpp level.</p>
 </div>
-</div>
-<div class="section" id="client-side-api-level-2">
-<h2>Client side: API level 2<a class="headerlink" href="#client-side-api-level-2" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="client-side-api-level-2">
+<h2>Client side: API level 2<a class="headerlink" href="#client-side-api-level-2" title="Link to this heading">¶</a></h2>
 <p><strong>Download client side API level 2</strong> <a class="reference download internal" download="" href="_downloads/4d209a445656b551399dd423340a8a12/lesson_4_a_client_api2.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>This is a <em>separate</em> python program for reading the frames that are written by Valkka to the shared memory.</p>
 <p>The parameters used both in the server side (above) and on the client side (below) <strong>must be exactly the same</strong> and the client program should be started <em>after</em> the server program (and while the server is running).  Otherwise undefined behaviour will occur.</p>
@@ -176,9 +175,9 @@ of frames and your machine vision routines directly at the cpp level.</p>
 </pre></div>
 </div>
 <p>The <em>client.shmem_list</em> is a list of numpy arrays, while <em>isize</em> defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.</p>
-</div>
-<div class="section" id="client-side-opencv">
-<h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="client-side-opencv">
+<h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Link to this heading">¶</a></h2>
 <p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" download="" href="_downloads/981a3decc198653c1940a8e577a3ea36/lesson_4_a_client_opencv.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>OpenCV is a popular machine vision library.  We modify the previous example to make it work with openCV like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
@@ -224,9 +223,9 @@ of frames and your machine vision routines directly at the cpp level.</p>
 <p>After receiving the RGB frame, some gaussian blur is applied to the image.  Then it is visualized using openCV’s own “high-gui” infrastructure.
 If everything went ok, you should see a blurred image of your video once in a second.</p>
 <p>Start this script <em>after</em> starting the server side script (server side must also be running).</p>
-</div>
-<div class="section" id="client-side-api-level-1">
-<h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="client-side-api-level-1">
+<h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Link to this heading">¶</a></h2>
 <p><strong>Download client side example</strong> <a class="reference download internal" download="" href="_downloads/2874db4374884d7afc83d4ebc3e7c010/lesson_4_a_client.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>API level 2 provides extra wrapping.  Let’s see what goes on at the lowest level (plain, cpp wrapped python code).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
@@ -272,9 +271,9 @@ index and metadata.</p>
 </pre></div>
 </div>
 <p>Cpp documentation for Valkka shared memory classes be found <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html">here.</a></p>
-</div>
-<div class="section" id="server-client">
-<h2>Server + Client<a class="headerlink" href="#server-client" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="server-client">
+<h2>Server + Client<a class="headerlink" href="#server-client" title="Link to this heading">¶</a></h2>
 <p><strong>Download server + client example</strong> <a class="reference download internal" download="" href="_downloads/70a10ba3fb755997055f76662af6b20d/lesson_4_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Here we have a complete example running both server &amp; client within the same python file.</p>
 <p>You could wrap the client part further into a python thread, releasing your main python process
@@ -406,9 +405,9 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="receiving-frag-mp4-at-python">
-<span id="fragmp4"></span><h2>Receiving frag-MP4 at Python<a class="headerlink" href="#receiving-frag-mp4-at-python" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="receiving-frag-mp4-at-python">
+<span id="fragmp4"></span><h2>Receiving frag-MP4 at Python<a class="headerlink" href="#receiving-frag-mp4-at-python" title="Link to this heading">¶</a></h2>
 <p><strong>Download frag-MP4 example</strong> <a class="reference download internal" download="" href="_downloads/809879b6893b71bfa91393646ed0ebe4/lesson_4_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Fragmented MP4 (frag-MP4) is a container format suitable for live streaming and playing the video in most web browsers.
 For more information about this, see <a class="reference internal" href="cloud.html#cloud"><span class="std std-ref">here</span></a>.</p>
@@ -526,9 +525,9 @@ python process.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bye&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="advanced-topics">
-<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="advanced-topics">
+<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Link to this heading">¶</a></h2>
 <p>By now you have learned how to pass frames from the libValkka infrastructure into python.</p>
 <p>When creating more serious solutions, you can use a single python program to span multiprocesses (using Python’s multiprocessing module) into servers and clients.</p>
 <p>In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication between them, so that the multiprocesses
@@ -544,8 +543,8 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
 </ol>
 <p>Number (1) works at the cpp side.  (2) Is a separate multiprocess running OpenCV-based analysis.  (3) Is a common Yolo object detector for all the clients.</p>
 <p>For an example of a more serious multiprocessing project, please take a look <a class="reference external" href="https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic">here</a>.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -553,7 +552,9 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <div class="sphinxsidebarwrapper"><!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"-->
+
+<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -572,24 +573,27 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
 
 <h3>Links</h3>
 <ul>
-  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-multiprocess"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-streamer"><i class="fab fa-github"></i> valkka-streamer </a></li>
-  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
-  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
-  <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>
-  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
+  <li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
+  <!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
+  <li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
   <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
 </ul>
 
-<script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
+<!-- stupid widgetbot stopped working: let's not use it -->
+<!--script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
     new Crate({
         server: '1116100310574837812', // ElSampsa's kindergarden
         channel: '1116101208797609994' // #valkka
     })
-</script>
+</script-->
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
@@ -620,12 +624,12 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -634,8 +638,8 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
       &copy;2017-2020 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/lesson_4.rst.txt"

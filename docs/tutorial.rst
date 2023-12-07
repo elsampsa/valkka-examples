@@ -19,7 +19,7 @@ Prerequisites
 
 Before starting with the tutorial, you need at least:
 
-- A decent desktop/laptop linux box with Ubuntu 16 installed
+- A decent desktop/laptop linux box with fairly recent Ubuntu installed (prefer LTS distros)
 - At least 4 GB of total memory (as modern linux distros take around 2 GB out of that)
 - Valkka and its python bindings installed (instructions :ref:`here<requirements>`)
 - OpenCV installed (instructions :ref:`here<requirements>`)
@@ -27,6 +27,7 @@ Before starting with the tutorial, you need at least:
 
   - Valkka uses standard protocols (RTSP, RTP, etc.), so it works with most of the cameras on the market
   - If your camera is "OnVif compliant", then it support RTSP and RTP
+  - Your camera should provide H264 stream (H265 not supported at the moment)
 
 - For the USB camera example, a H264 streaming USB camera is required
 - Basic knowledge of media streaming in linux:

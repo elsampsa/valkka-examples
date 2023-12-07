@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Multi-GPU systems &#8212; Python Media Streaming Framework for Linux  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1c8f121f" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ValkkaFS" href="valkkafs.html" />
@@ -32,11 +31,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="multi-gpu-systems">
-<h1>Multi-GPU systems<a class="headerlink" href="#multi-gpu-systems" title="Permalink to this headline">¶</a></h1>
+  <section id="multi-gpu-systems">
+<h1>Multi-GPU systems<a class="headerlink" href="#multi-gpu-systems" title="Link to this heading">¶</a></h1>
 <p><em>(If you just have monitors connected to a single graphics card, no need to be here)</em></p>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
 <p>Consider the following setup:</p>
 <ul class="simple">
 <li><p>You have 2 graphic cards (GPUs)</p></li>
@@ -67,9 +66,9 @@
 <p>The advantage of this setup is, that the different GPUs don’t have to communicate or cross-over data between them.  In OpenGL, they do not have to share contexes.  The disadvantage is that one can’t move a program window from GPU1 to GPU2, just the mouse pointer.</p>
 <p>On the contrary, if you form a “macro” desktop (with a single X-Screen), spanning all 8 monitors, prepare yourself for performance bottlenecks.  A nice demo is to run “glxgears” and observe what happens to the framerate when you move the glxgears window from one GPU to another.  For a deeper discussion on the subject, see for example <a class="reference external" href="https://nouveau.freedesktop.org/wiki/MultiMonitorDesktop/">this page.</a></p>
 <p>Unfortunately, many Linux desktop environments (KDE for example) have deprecated their ability to handle several X-Screens: do check out <a class="reference external" href="https://bugs.kde.org/show_bug.cgi?id=256242#c60">this</a> rather frustrating discussion thread / bug report on the subject.</p>
-</div>
-<div class="section" id="our-approach">
-<h2>Our approach<a class="headerlink" href="#our-approach" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="our-approach">
+<h2>Our approach<a class="headerlink" href="#our-approach" title="Link to this heading">¶</a></h2>
 <p>As you learned from the tutorials and from the PyQt testsuite, Valkka uses a dedicated thread (OpenGLThread) to pre-reserve resources from the GPU and to communicate with it.</p>
 <p>In a multi-gpu case, one simply launches an OpenGLThread for each GPU: OpenGLThread takes as a parameter a string defining the connection to the X-server (e.g. “:0.0”, “:0.1”, .. “:0.n”, where n is the GPU number).</p>
 <p>It is up to the API user to send the decoded frames to the correct OpenGLThread (and GPU).  A simple example, where all decoded frames are sent to all GPUs in the system can be found in</p>
@@ -78,9 +77,9 @@
   <span class="n">test_studio_3</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">¶</a></h2>
 <p>We’ve been succesful in setting up multi-gpu systems with the following setup:</p>
 <ul class="simple">
 <li><p>Use identical Nvidia graphic cards</p></li>
@@ -101,17 +100,17 @@
 <li><p>Use Pyside2 or PyQt5 version 5.11.2 or greater (you probably have to install with <em>pip3 install</em>)</p></li>
 </ul>
 <p>Finally, test the configuration with the PyQt testsuite’s “test_studio_3.py”</p>
-</div>
-<div class="section" id="note-on-display">
-<h2>Note on $DISPLAY<a class="headerlink" href="#note-on-display" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="note-on-display">
+<h2>Note on $DISPLAY<a class="headerlink" href="#note-on-display" title="Link to this heading">¶</a></h2>
 <p>The environmental variable <cite>DISPLAY</cite> defines the “display” (aka X-server) and “screen”
 (logical screen that can span multiple monitors) with the following format</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">host</span><span class="p">]:</span><span class="n">display</span><span class="p">[</span><span class="o">.</span><span class="n">screen</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>where <cite>[]</cite> is something optional (see also in <a class="reference external" href="https://www.x.org/archive/X11R6.8.1/doc/X.7.html">here</a>).</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -119,7 +118,9 @@
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <div class="sphinxsidebarwrapper"><!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"-->
+
+<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -138,24 +139,27 @@
 
 <h3>Links</h3>
 <ul>
-  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-multiprocess"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-streamer"><i class="fab fa-github"></i> valkka-streamer </a></li>
-  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
-  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
-  <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>
-  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
+  <li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
+  <!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
+  <li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
   <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
 </ul>
 
-<script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
+<!-- stupid widgetbot stopped working: let's not use it -->
+<!--script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
     new Crate({
         server: '1116100310574837812', // ElSampsa's kindergarden
         channel: '1116101208797609994' // #valkka
     })
-</script>
+</script-->
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
@@ -187,12 +191,12 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -201,8 +205,8 @@
       &copy;2017-2020 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/multi_gpu.rst.txt"

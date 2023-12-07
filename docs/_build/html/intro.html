@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>About Valkka &#8212; Python Media Streaming Framework for Linux  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1c8f121f" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Supported hardware" href="hardware.html" />
@@ -32,10 +31,10 @@
 
           <div class="body" role="main">
             
-  <span class="target" id="intro"></span><div class="section" id="about-valkka">
-<h1>About Valkka<a class="headerlink" href="#about-valkka" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="why-this-library">
-<h2>Why this library?<a class="headerlink" href="#why-this-library" title="Permalink to this headline">¶</a></h2>
+  <span class="target" id="intro"></span><section id="about-valkka">
+<h1>About Valkka<a class="headerlink" href="#about-valkka" title="Link to this heading">¶</a></h1>
+<section id="why-this-library">
+<h2>Why this library?<a class="headerlink" href="#why-this-library" title="Link to this heading">¶</a></h2>
 <p><em>So, yet another media player?  I need to stream video from my IP camera into my python/Qt program and I want something that can be developed fast and is easy to integrate into my code.
 What’s here for me?</em></p>
 <p>If you just need to stream video from your IP cameras, decode it and show it on the screen, we recommend a standard media player,
@@ -48,9 +47,9 @@ Demand for them is growing rapidly due to continuous decline in IP camera prices
 And try to scale that only to, say, 20+ cameras.  In order avoid too many connections to your IP cameras (this is typically limited by the camera),
 you might desperately try your luck even with the multicast loopback.  We’ve been there and it’s not a good idea.
 And how about pluggin in your favorite machine vision/learning module, written with OpenCV or TensorFlow?</p>
-</div>
-<div class="section" id="valkka-api">
-<h2>Valkka API<a class="headerlink" href="#valkka-api" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="valkka-api">
+<h2>Valkka API<a class="headerlink" href="#valkka-api" title="Link to this heading">¶</a></h2>
 <p>Valkka will solve the problem for you; It is a programming library and an API to do just that - large scale video surveillance, management and analysis programs, from the comfort of python3.</p>
 <p>With Valkka, you can create complex pipings (“filtergraphs”) of media streams from the camera, to screen, machine vision subroutines, to disk, to the net, etc.  The code runs at the cpp level with threads, thread-safe queues, mutexes, semaphores, etc.  All those gory details are hidden from the API user that programs filtergraphs at the python level only.  Valkka can also share frames between python processes (and from there, with OpenCV, TensorFlow, etc.)</p>
 <p>If you got interested, we recommend that you do the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a>, and use it together with the <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">PyQt testsuite</span></a>,
@@ -71,9 +70,9 @@ and <a class="reference external" href="https://github.com/elsampsa/valkka-examp
                                                                                               <span class="n">To</span> <span class="n">OpenCV</span>  <span class="o">&lt;--------+</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="the-project">
-<h2>The Project<a class="headerlink" href="#the-project" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="the-project">
+<h2>The Project<a class="headerlink" href="#the-project" title="Link to this heading">¶</a></h2>
 <p>In Valkka, the “streaming pipeline” from IP cameras to decoders and to the GPU has been completely re-thinked and written from scratch:</p>
 <ul class="simple">
 <li><p>No dependencies on external libraries or x window extensions (we use only glx)</p></li>
@@ -110,8 +109,8 @@ and <a class="reference external" href="https://github.com/elsampsa/valkka-examp
     <img class="logo" height=100 src="_static/svg/opengl.svg.png"></a>
     </br> OpenGL
   </div>
-</div></div>
-</div>
+</div></section>
+</section>
 
 
           </div>
@@ -119,7 +118,9 @@ and <a class="reference external" href="https://github.com/elsampsa/valkka-examp
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <div class="sphinxsidebarwrapper"><!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"-->
+
+<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -138,24 +139,27 @@ and <a class="reference external" href="https://github.com/elsampsa/valkka-examp
 
 <h3>Links</h3>
 <ul>
-  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-multiprocess"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-streamer"><i class="fab fa-github"></i> valkka-streamer </a></li>
-  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
-  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
-  <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>
-  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
+  <li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
+  <!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
+  <li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
   <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
 </ul>
 
-<script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
+<!-- stupid widgetbot stopped working: let's not use it -->
+<!--script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
     new Crate({
         server: '1116100310574837812', // ElSampsa's kindergarden
         channel: '1116101208797609994' // #valkka
     })
-</script>
+</script-->
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">About Valkka</a><ul>
@@ -186,12 +190,12 @@ and <a class="reference external" href="https://github.com/elsampsa/valkka-examp
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -200,8 +204,8 @@ and <a class="reference external" href="https://github.com/elsampsa/valkka-examp
       &copy;2017-2020 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/intro.rst.txt"

@@ -30,8 +30,8 @@ else:
     av   =core.AVThread("av",out_filter)
     gl   =core.OpenGLThread("gl")
 
-    av_in =av.getFrameFilter();
-    gl_in =gl.getFrameFilter();
+    av_in =av.getFrameFilter()
+    gl_in =gl.getFrameFilter()
 
     ctx=core.LiveConnectionContext()
     ctx.slot=1
@@ -68,6 +68,15 @@ else:
     print("onvif & discovery loaded ok")
     print("   onvif loaded from          : ",base_onvif.__file__)
     print("   discovery loaded from      : ",base_discovery.__file__)
+
+print()
+print("Checking valkka.multiprocess")
+try:
+    from valkka.multiprocess import base
+except Exception as e:
+    print("WARNING: loading valkka.multiprocess failed with", e)
+else:
+    print("   loaded from                : ",base.__file__)
 
 print()
 print("Loading numerical python")
@@ -157,7 +166,9 @@ print("Checking for VAAPI hardware acceleration")
 p=Popen("vainfo", stdout=PIPE, stderr=PIPE)
 out, err = p.communicate()
 if p.returncode != 0:
-    print("    WARNING: command vainfo failed!  check that you have installed VAAPI drivers correctly")
+    print("    WARNING: Command vainfo failed!  check that you have installed VAAPI drivers correctly")
+    print("             Please run: LIBVA_DRIVER_NAME=i965 vainfo")
+
 else:
     if "H264" not in out.decode("utf-8"):
         print("    WARNING: your VAAPI drivers seems to be missing H264 decoding capabilities.  Please run vainfo.")
@@ -190,9 +201,9 @@ if "DISPLAY" not in os.environ:
 else:
     if os.environ["DISPLAY"] not in [":0.0", ":.0", ":0"]:
         print(f"    Weird X11 DISPLAY env variable {os.environ['DISPLAY']}")
-        print("    WARNING: Some valkka example / test programs assume :0.0 (aka :0 or :.0)")
+        print(f"    WARNING: Some valkka example / test programs assume :0.0 (aka :0 or :.0)")
     else:
-        print("    All good")
+        print(f"    All good")
 print()
 
 
