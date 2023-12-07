@@ -154,23 +154,12 @@ Now that variable ``timeout`` can be used with OnVif calls.
 Discovery
 ---------
 
-An short example on how to use the discovery module:
+Discovery module uses arp-scan and/or the WSDiscovery protocol.
 
-::
+The API is subject to change and is explained in detail at the `valkka-onvif main readme <https://github.com/elsampsa/valkka-onvif>`_
 
-    from valkka.discovery import runWSDiscovery, runARPScan
-    ips = runWSDiscovery() # list of (ip, port) values, where port is the onvif port
-    ips_exc = [item[0] for item in ips] # pick up the ip addresses only
-    # run this if you want to use arp-scan:
-    ips2 = runARPScan(exclude_list = ips_exc) # list of (ip, port) values, where port is the rtsp port
-
-The list of ``(ip, port)`` values from ``runWSDiscovery`` can be used to connect to the cameras via OnVif.
-After that, one would typically query using Onvif, what is the exact rtsp address (and port).  Or try your luck
-and assume it's the default port ``554`` instead.  Or just use ``runARPScan`` only, instead of ``runWSDiscovery``.
-
-The list of ``(ip, port)`` values from ``runARPScan`` can be used directly to establish an rtsp connection.
-
-If you want arp-scan to work, you must permit normal users to run the executable, with:
+Most importantly, you need to give normal users the ability to perform arp-scans, so before using discovery tools,
+do this:
 
 ::
 

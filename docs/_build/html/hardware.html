@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Supported hardware &#8212; Python Media Streaming Framework for Linux  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1c8f121f" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installing" href="requirements.html" />
@@ -32,10 +31,10 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="supported-hardware">
-<h1>Supported hardware<a class="headerlink" href="#supported-hardware" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="ip-cameras">
-<h2>IP Cameras<a class="headerlink" href="#ip-cameras" title="Permalink to this headline">¶</a></h2>
+  <section id="supported-hardware">
+<h1>Supported hardware<a class="headerlink" href="#supported-hardware" title="Link to this heading">¶</a></h1>
+<section id="ip-cameras">
+<h2>IP Cameras<a class="headerlink" href="#ip-cameras" title="Link to this heading">¶</a></h2>
 <p><em>OnVif compliant IP cameras (supporting the RTSP protocol)</em></p>
 <p>Initial configuration of IP cameras can be a hurdle:</p>
 <p>Many IP cameras typically require a half-broken Active-X (!) web-extension you have to download
@@ -46,18 +45,18 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ffmpeg</span> <span class="n">rtsp</span><span class="p">:</span><span class="o">//</span><span class="n">user</span><span class="p">:</span><span class="n">password</span><span class="nd">@ip</span><span class="o">-</span><span class="n">address</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="usb-cameras">
-<h2>USB Cameras<a class="headerlink" href="#usb-cameras" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="usb-cameras">
+<h2>USB Cameras<a class="headerlink" href="#usb-cameras" title="Link to this heading">¶</a></h2>
 <p><em>USB Cameras capable of streaming H264</em></p>
 <p>We have tested against <em>Logitech HD Pro Webcam C920</em></p>
-</div>
-<div class="section" id="codecs">
-<h2>Codecs<a class="headerlink" href="#codecs" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="codecs">
+<h2>Codecs<a class="headerlink" href="#codecs" title="Link to this heading">¶</a></h2>
 <p>For the moment, the only supported codec is H264</p>
-</div>
-<div class="section" id="linux-clients">
-<h2>Linux clients<a class="headerlink" href="#linux-clients" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="linux-clients">
+<h2>Linux clients<a class="headerlink" href="#linux-clients" title="Link to this heading">¶</a></h2>
 <p>libValkka uses OpenGL and OpenGL texture streaming, so it needs a robust OpenGL implementation.  The current situation is:</p>
 <ul class="simple">
 <li><p>Intel: the stock <strong>i915</strong> driver is OK</p></li>
@@ -65,16 +64,16 @@
 <li><p>ATI: <strong>not tested</strong></p></li>
 </ul>
 <p>OpenGL version 3 or greater is required.  You can check your OpenGL version with the command <em>glxinfo</em>.</p>
-</div>
-<div class="section" id="hardware-acceleration">
-<span id="hwaccel"></span><h2>Hardware Acceleration<a class="headerlink" href="#hardware-acceleration" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="hardware-acceleration">
+<span id="hwaccel"></span><h2>Hardware Acceleration<a class="headerlink" href="#hardware-acceleration" title="Link to this heading">¶</a></h2>
 <p>Please first read this <a class="reference internal" href="decoding.html#gpuaccel"><span class="std std-ref">word of warning</span></a>.</p>
 <p><em>VAAPI</em></p>
 <p>Comes in the basic libValkka installation (and uses ffmpeg/libav infrastructure) - no additional packages needed.</p>
 <p>First of all, the user using VAAPI, must belong to the “video” user group:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>groups <span class="nv">$USER</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>groups<span class="w"> </span><span class="nv">$USER</span>
 <span class="c1"># run the following command if the user does not appear in the video group</span>
-sudo usermod -a -G video <span class="nv">$USER</span>
+sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </span>-G<span class="w"> </span>video<span class="w"> </span><span class="nv">$USER</span>
 <span class="c1"># after that you still need to logout &amp; login</span>
 </pre></div>
 </div>
@@ -88,13 +87,19 @@ sudo usermod -a -G video <span class="nv">$USER</span>
 </div>
 <p>For more details about VAAPI, you can read <a class="reference external" href="https://wiki.archlinux.org/title/Hardware_video_acceleration">this</a>,
 <a class="reference external" href="https://wiki.debian.org/HardwareVideoAcceleration">this</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/Video_Acceleration_API#Supported_hardware_and_drivers">this</a>.</p>
+<p>Oftentimes it happens that with the latest ubuntu distribution, VAAPI is broken to begin with (the driver itself, driver talking with the kernel, whatever).
+A minimal test is to try to run VAAPI acceleration with the ffmpeg that came with the distro, i.e.:
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">LIBVA_DRIVER_NAME=i965</span> <span class="pre">ffmpeg</span> <span class="pre">-hwaccel</span> <span class="pre">vaapi</span> <span class="pre">-i</span> <span class="pre">rtsp://user:passwd&#64;ip</span> <span class="pre">-c:v</span> <span class="pre">rawvideo</span> <span class="pre">-pix_fmt</span> <span class="pre">yuv420p</span> <span class="pre">-f</span> <span class="pre">sdl</span> <span class="pre">&quot;Video&quot;</span>
+<span class="pre">`</span></code>
+If that busts, then you should not try to use VAAPI with your ubuntu distro.</p>
 <p><em>WARNING:</em> VAAPI, especially the intel implementation, comes with a memory leak, which seems
 to be feature, not a bug - see discussions in <a class="reference external" href="https://ffmpeg.org/pipermail/ffmpeg-user/2017-May/036232.html">here</a> and
 <a class="reference external" href="https://github.com/mpv-player/mpv/issues/4383">here</a>.  I have confirmed this memory leak myself with libva 2.6.0.</p>
 <p>The opensource Mesa implementation (“i965”) is (surprise!) more stable and libValkka enforces i965 internally by setting the
 environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this happens when you do <cite>from valkka.core import *</cite>).</p>
 <p>If you <em>really</em> want to use other <cite>libva</cite> implementation, you can set</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">VALKKA_LIBVA_DRIVER_NAME</span><span class="o">=</span>your-driver-name
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">VALKKA_LIBVA_DRIVER_NAME</span><span class="o">=</span>your-driver-name
 </pre></div>
 </div>
 <p>If you wish to use VAAPI in a docker environment, you should start docker with</p>
@@ -103,7 +108,7 @@ environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this h
 </div>
 <p>And be sure that the host machine has all required vaapi-related libraries installed (the easiest way: install libValkka on the host as well).</p>
 <p>Finally, you can follow the GPU usage in realtime with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo intel_gpu_top
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>intel_gpu_top
 </pre></div>
 </div>
 <p><em>NVidia / CUDA</em></p>
@@ -116,8 +121,8 @@ environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this h
 <p><em>Huawei / CANN</em></p>
 <p>Provided as a separate package.  <em>Very</em> experimental and not guaranteed to work.</p>
 <p>Available <a class="reference external" href="https://gitee.com/ElSampsa/valkka_cann">here</a></p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
@@ -125,7 +130,9 @@ environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this h
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <div class="sphinxsidebarwrapper"><!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"-->
+
+<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -144,24 +151,27 @@ environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this h
 
 <h3>Links</h3>
 <ul>
-  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-multiprocess"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-streamer"><i class="fab fa-github"></i> valkka-streamer </a></li>
-  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
-  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
-  <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>
-  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
+  <li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
+  <!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
+  <li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
   <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
 </ul>
 
-<script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
+<!-- stupid widgetbot stopped working: let's not use it -->
+<!--script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
     new Crate({
         server: '1116100310574837812', // ElSampsa's kindergarden
         channel: '1116101208797609994' // #valkka
     })
-</script>
+</script-->
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
@@ -194,12 +204,12 @@ environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this h
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -208,8 +218,8 @@ environment variable <cite>LIBVA_DRIVER_NAME</cite> to <cite>i965</cite> (this h
       &copy;2017-2020 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/hardware.rst.txt"

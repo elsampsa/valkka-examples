@@ -1,17 +1,16 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Common problems &#8212; Python Media Streaming Framework for Linux  documentation</title>
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1c8f121f" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Debugging" href="debugging.html" />
@@ -32,10 +31,10 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="common-problems">
-<h1>Common problems<a class="headerlink" href="#common-problems" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="pitfalls">
-<span id="id1"></span><h2>Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h2>
+  <section id="common-problems">
+<h1>Common problems<a class="headerlink" href="#common-problems" title="Link to this heading">¶</a></h1>
+<section id="pitfalls">
+<span id="id1"></span><h2>Pitfalls<a class="headerlink" href="#pitfalls" title="Link to this heading">¶</a></h2>
 <p>Valkka has been designed for massive video streaming.
 If your linux box, running a Valkka-based program, starts to choke up and you get frame jittering, stuttering / video freezes, and typically, this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OpenGLThread</span><span class="p">:</span> <span class="n">handleFifo</span><span class="p">:</span> <span class="n">DISCARDING</span> <span class="n">late</span> <span class="n">frame</span> <span class="o">...</span>
@@ -75,9 +74,9 @@ In the latter case, you might want to sync both your IP camera and PC to the sam
 </pre></div>
 </div>
 <p>It should say at least “100”, preferably “1000”</p>
-</div>
-<div class="section" id="bottlenecks">
-<h2>Bottlenecks<a class="headerlink" href="#bottlenecks" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="bottlenecks">
+<h2>Bottlenecks<a class="headerlink" href="#bottlenecks" title="Link to this heading">¶</a></h2>
 <p>Once you ramp up the number of streams, you might start to experience some <em>real</em> performance issues.  Some typical problems include:</p>
 <p><strong>8. Your LAN and/or the LiveThread process sending frames in bursts</strong></p>
 <blockquote>
@@ -121,9 +120,9 @@ A particularly useful ones are <em>profile_timing</em> and <em>opengl_timing</em
 are (which you can adjust): 2048 kbps (~2 mbps), 4096kbps (~4 mbps), etc. so do the math.</p>
 <p>You can try to use TCP streaming instead of the default UDP streaming -
 see FAQ (a) below (valkka-live tip: you can choose TCP streaming in the camera configuration)</p>
-</div>
-<div class="section" id="system-tuning">
-<h2>System tuning<a class="headerlink" href="#system-tuning" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="system-tuning">
+<h2>System tuning<a class="headerlink" href="#system-tuning" title="Link to this heading">¶</a></h2>
 <p>Adding the following lines into <em>/etc/syscntl.conf</em></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vm</span><span class="o">.</span><span class="n">swappiness</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">net</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">wmem_max</span><span class="o">=</span><span class="mi">2097152</span>
@@ -136,9 +135,9 @@ see FAQ (a) below (valkka-live tip: you can choose TCP streaming in the camera c
 </div>
 <p>Turns off swap and sets maximum allowed read/write socket sizes to 2 MB.</p>
 <p>Receiving socket size can be adjusted for each live connection with the associated <em>LiveConnectionContext</em> (see the tutorial).</p>
-</div>
-<div class="section" id="faq">
-<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Link to this heading">¶</a></h2>
 <p><em>(a) How can I stream over internet, instead of just LAN?</em></p>
 <p>By default, stream is transported through UDP sockets.  When streaming over internet, most of the ports are closed due to firewalls, etc., so you have to stream through the same TCP port
 that is used for the RTSP negotiation (typically port 554).</p>
@@ -173,8 +172,21 @@ that is used for the RTSP negotiation (typically port 554).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python3</span><span class="o">-</span><span class="n">opencv</span>
 </pre></div>
 </div>
+<p><em>(c) VAAPI decoder always defaults to software decoder</em></p>
+<p>If your <a class="reference internal" href="hardware.html#hwaccel"><span class="std std-ref">VAAPI hw decoding</span></a> doesn’t work and libValkka
+always reports that it reverts to software decoding, then you should run
+on your terminal</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">LIBVA_DRIVER_NAME</span><span class="o">=</span>i965<span class="w"> </span>vainfo
+</pre></div>
 </div>
-</div>
+<p>If it reports problems, then you probably have a drm (direct-rendering management)
+rights issue.  These appear typically if you use some weirdo windows program to
+login to a remote machine (instead of standard SSH shell).</p>
+<p>So don’t use weirdo windows terminal programs for remote access, please.</p>
+<p>In docker, you need to enable docker to access the drivers.  Please see the information
+in valkka dockerhub pages.</p>
+</section>
+</section>
 
 
           </div>
@@ -182,7 +194,9 @@ that is used for the RTSP negotiation (typically port 554).</p>
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+        <div class="sphinxsidebarwrapper"><!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"-->
+
+<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
 
 <!-- Place this tag in your head or just before your close body tag. -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -201,24 +215,27 @@ that is used for the RTSP negotiation (typically port 554).</p>
 
 <h3>Links</h3>
 <ul>
-  <li><a href="https://github.com/elsampsa/valkka-core"><i class="fab fa-github"></i> valkka-core </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples"><i class="fab fa-github"></i> valkka-examples </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-multiprocess"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-streamer"><i class="fab fa-github"></i> valkka-streamer </a></li>
-  <li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-core/issues"><i class="fas fa-bug"></i> Issue Tracker</a></li>
-  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages"><i class="fas fa-archive"></i> Package Repository</a></li>
-  <li><a href="https://hub.docker.com/r/elsampsa/valkka"><i class="fab fa-docker"></i> Dockerhub</a></li>
-  <li><a href="https://elsampsa.github.io/valkka-live/"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
+  <li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+  <li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
+  <!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
+  <li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
+  <li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
+  <li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
+  <li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
   <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
 </ul>
 
-<script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
+<!-- stupid widgetbot stopped working: let's not use it -->
+<!--script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
     new Crate({
         server: '1116100310574837812', // ElSampsa's kindergarden
         channel: '1116101208797609994' // #valkka
     })
-</script>
+</script-->
 <h3><a href="index.html">Table of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
@@ -250,12 +267,12 @@ that is used for the RTSP negotiation (typically port 554).</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -264,8 +281,8 @@ that is used for the RTSP negotiation (typically port 554).</p>
       &copy;2017-2020 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/pitfalls.rst.txt"

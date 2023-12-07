@@ -81,6 +81,13 @@ use this:
 For more details about VAAPI, you can read `this <https://wiki.archlinux.org/title/Hardware_video_acceleration>`_,
 `this <https://wiki.debian.org/HardwareVideoAcceleration>`_ and `this <https://en.wikipedia.org/wiki/Video_Acceleration_API#Supported_hardware_and_drivers>`_.
 
+Oftentimes it happens that with the latest ubuntu distribution, VAAPI is broken to begin with (the driver itself, driver talking with the kernel, whatever).
+A minimal test is to try to run VAAPI acceleration with the ffmpeg that came with the distro, i.e.:
+```
+LIBVA_DRIVER_NAME=i965 ffmpeg -hwaccel vaapi -i rtsp://user:passwd@ip -c:v rawvideo -pix_fmt yuv420p -f sdl "Video"
+```
+If that busts, then you should not try to use VAAPI with your ubuntu distro.
+
 *WARNING:* VAAPI, especially the intel implementation, comes with a memory leak, which seems
 to be feature, not a bug - see discussions in `here <https://ffmpeg.org/pipermail/ffmpeg-user/2017-May/036232.html>`_ and
 `here <https://github.com/mpv-player/mpv/issues/4383>`_.  I have confirmed this memory leak myself with libva 2.6.0.
