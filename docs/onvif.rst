@@ -25,6 +25,8 @@ OnVif is based on `SOAP <https://en.wikipedia.org/wiki/SOAP>`_, i.e. on sending 
 The messages (remote protocol calls), their responses and the parameters, are defined by **WSDL files**, 
 which (when visualized nicely) look like `this <http://www.onvif.org/ver20/ptz/wsdl>`_.
 
+For a list of the up-to-date official WSDL files, visit `here <https://www.onvif.org/profiles/specifications/>`_.
+
 Python OnVif with Zeep
 ----------------------
 
@@ -58,7 +60,7 @@ The things you need for subclassing an OnVif service are:
 - The remote control protocol is declared / visualized in the link at the first column.  Go to ``http://www.onvif.org/ver10/device/wsdl`` to see the detailed specifications.
 - In that specification, we see that the WSDL "port" is ``DeviceBinding``.
 - Each SOAP remote control protocol comes with a certain namespace.  This is the same as that address in the first column, so we set ``namespace`` to ``http://www.onvif.org/ver10/device/wsdl``.
-- We use a local modified version of the wsdl file.  This can be found in the third column, i.e. set ``wsdl_file`` to ``devicemgmt.wsdl`` (these files come included in ``valkka-onvif``).
+- We use *local modified versions of the wsdl files.*  This can be found in the third column, i.e. set ``wsdl_file`` to ``devicemgmt.wsdl`` (these files are included in `valkka-onvif <https://github.com/elsampsa/valkka-onvif/tree/master/valkka/onvif/wsdl>`_).
 - Camera's local http subaddress ``sub_xaddr`` is ``device_service`` (the second column of the table)
 
 Check out for an example subclass in `here <https://github.com/elsampsa/valkka-onvif/blob/master/valkka/onvif/base.py#L135>`_.

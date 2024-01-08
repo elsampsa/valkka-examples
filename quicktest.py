@@ -163,18 +163,24 @@ else:
 print()
 print("Checking for VAAPI hardware acceleration")
 
-p=Popen("vainfo", stdout=PIPE, stderr=PIPE)
-out, err = p.communicate()
-if p.returncode != 0:
-    print("    WARNING: Command vainfo failed!  check that you have installed VAAPI drivers correctly")
-    print("             Please run: LIBVA_DRIVER_NAME=i965 vainfo")
-
+try:
+    p=Popen("vainfo", stdout=PIPE, stderr=PIPE)
+except FileNotFoundError:
+    print("    WARNING: vainfo not installed: install with 'sudo apt-get install vainfo'")
 else:
-    if "H264" not in out.decode("utf-8"):
-        print("    WARNING: your VAAPI drivers seems to be missing H264 decoding capabilities.  Please run vainfo.")
-    if "Intel iHD driver" in out.decode("utf-8"):
-        print("    FATAL: libValkka tries to enforce the i965 for VAAPI, but you seem to use intel iHD")
-        print("           --> prepare for memleaks!")
+    out, err = p.communicate()
+    if p.returncode <= 3:
+        print(f"    WARNING: Command vainfo returned returncode {p.returncode} - check that you have installed VAAPI drivers correctly")
+        print(f"             Please run: LIBVA_DRIVER_NAME=i965 vainfo")
+    else:
+        try:
+            if "H264" not in out.decode("utf-8"):
+                print("    WARNING: your VAAPI drivers seems to be missing H264 decoding capabilities.  Please run vainfo.")
+            if "Intel iHD driver" in out.decode("utf-8"):
+                print("    FATAL: libValkka tries to enforce the i965 for VAAPI, but you seem to use intel iHD")
+                print("           --> prepare for memleaks!")
+        except Exception as e:
+            print("    WARNING: could not parse vainfo output")
 
 try:
     from valkka.core import VAAPIThread
