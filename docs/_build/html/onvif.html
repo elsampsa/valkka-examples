@@ -7,7 +7,7 @@
 
     <title>OnVif &amp; Discovery &#8212; Python Media Streaming Framework for Linux  documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=1c8f121f" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=e785833e" />
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
@@ -18,8 +18,9 @@
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
+
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  
 
   </head><body>
   
@@ -37,7 +38,7 @@
 <section id="installing">
 <h2>Installing<a class="headerlink" href="#installing" title="Link to this heading">¶</a></h2>
 <p>Onvif and discovery come in a <a class="reference external" href="https://github.com/elsampsa/valkka-onvif">separate python package</a> which you need to install with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">valkka</span><span class="o">-</span><span class="n">onvif</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">valkka</span><span class="o">-</span><span class="n">onvif</span>
 </pre></div>
 </div>
 </section>
@@ -66,37 +67,37 @@ extra code on top of Zeep.</p>
 <tbody>
 <tr class="row-even"><td><p><a class="reference external" href="http://www.onvif.org/ver10/device/wsdl">http://www.onvif.org/ver10/device/wsdl</a></p></td>
 <td><p>device_service</p></td>
-<td><p>devicemgmt.wsdl</p></td>
+<td><p>devicemgmt-10.wsdl</p></td>
 <td><p>DeviceManagement</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference external" href="http://www.onvif.org/ver10/media/wsdl">http://www.onvif.org/ver10/media/wsdl</a></p></td>
 <td><p>Media</p></td>
-<td><p>media.wsdl</p></td>
+<td><p>media-10.wsdl</p></td>
 <td><p>Media</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference external" href="http://www.onvif.org/ver10/events/wsdl">http://www.onvif.org/ver10/events/wsdl</a></p></td>
 <td><p>Events</p></td>
-<td><p>events.wsdl</p></td>
+<td><p>events-10.wsdl</p></td>
 <td><p>Events</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference external" href="http://www.onvif.org/ver20/ptz/wsdl">http://www.onvif.org/ver20/ptz/wsdl</a></p></td>
 <td><p>PTZ</p></td>
-<td><p>ptz.wsdl</p></td>
+<td><p>ptz-20.wsdl</p></td>
 <td><p>PTZ</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference external" href="http://www.onvif.org/ver20/imaging/wsdl">http://www.onvif.org/ver20/imaging/wsdl</a></p></td>
 <td><p>Imaging</p></td>
-<td><p>imaging.wsdl</p></td>
+<td><p>imaging-20.wsdl</p></td>
 <td><p>Imaging</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference external" href="http://www.onvif.org/ver10/deviceIO/wsdl">http://www.onvif.org/ver10/deviceIO/wsdl</a></p></td>
 <td><p>DeviceIO</p></td>
-<td><p>deviceio.wsdl</p></td>
+<td><p>deviceio-10.wsdl</p></td>
 <td><p>DeviceIO</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference external" href="http://www.onvif.org/ver20/analytics/wsdl">http://www.onvif.org/ver20/analytics/wsdl</a></p></td>
 <td><p>Analytics</p></td>
-<td><p>analytics.wsdl</p></td>
+<td><p>analytics-20.wsdl</p></td>
 <td><p>Analytics</p></td>
 </tr>
 </tbody>
@@ -108,7 +109,7 @@ extra code on top of Zeep.</p>
 
 <span class="k">class</span> <span class="nc">DeviceManagement</span><span class="p">(</span><span class="n">OnVif</span><span class="p">):</span>
     <span class="n">namespace</span> <span class="o">=</span> <span class="s2">&quot;http://www.onvif.org/ver10/device/wsdl&quot;</span>
-    <span class="n">wsdl_file</span> <span class="o">=</span> <span class="n">getWSDLPath</span><span class="p">(</span><span class="s2">&quot;devicemgmt.wsdl&quot;</span><span class="p">)</span>
+    <span class="n">wsdl_file</span> <span class="o">=</span> <span class="n">getWSDLPath</span><span class="p">(</span><span class="s2">&quot;devicemgmt-10.wsdl&quot;</span><span class="p">)</span>
     <span class="n">sub_xaddr</span> <span class="o">=</span> <span class="s2">&quot;device_service&quot;</span>
     <span class="n">port</span>      <span class="o">=</span> <span class="s2">&quot;DeviceBinding&quot;</span>
 
@@ -131,7 +132,7 @@ and it is based on Zeep.</p>
 <li><p>The remote control protocol is declared / visualized in the link at the first column.  Go to <code class="docutils literal notranslate"><span class="pre">http://www.onvif.org/ver10/device/wsdl</span></code> to see the detailed specifications.</p></li>
 <li><p>In that specification, we see that the WSDL “port” is <code class="docutils literal notranslate"><span class="pre">DeviceBinding</span></code>.</p></li>
 <li><p>Each SOAP remote control protocol comes with a certain namespace.  This is the same as that address in the first column, so we set <code class="docutils literal notranslate"><span class="pre">namespace</span></code> to <code class="docutils literal notranslate"><span class="pre">http://www.onvif.org/ver10/device/wsdl</span></code>.</p></li>
-<li><p>We use <em>local modified versions of the wsdl files.</em>  This can be found in the third column, i.e. set <code class="docutils literal notranslate"><span class="pre">wsdl_file</span></code> to <code class="docutils literal notranslate"><span class="pre">devicemgmt.wsdl</span></code> (these files are included in <a class="reference external" href="https://github.com/elsampsa/valkka-onvif/tree/master/valkka/onvif/wsdl">valkka-onvif</a>).</p></li>
+<li><p>We use <em>local modified versions of the wsdl files.</em>  This can be found in the third column, i.e. set <code class="docutils literal notranslate"><span class="pre">wsdl_file</span></code> to <code class="docutils literal notranslate"><span class="pre">devicemgmt-10.wsdl</span></code> (these files are included in <a class="reference external" href="https://github.com/elsampsa/valkka-onvif/tree/master/valkka/onvif/wsdl">valkka-onvif</a>).</p></li>
 <li><p>Camera’s local http subaddress <code class="docutils literal notranslate"><span class="pre">sub_xaddr</span></code> is <code class="docutils literal notranslate"><span class="pre">device_service</span></code> (the second column of the table)</p></li>
 </ul>
 <p>Check out for an example subclass in <a class="reference external" href="https://github.com/elsampsa/valkka-onvif/blob/master/valkka/onvif/base.py#L135">here</a>.</p>
@@ -307,11 +308,11 @@ do this:</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2017-2020 Sampsa Riikonen.
+      &#169;2017-2020 Sampsa Riikonen.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
       
       |
       <a href="_sources/onvif.rst.txt"
@@ -321,7 +322,7 @@ do this:</p>
     
 
     
-    <script type="text/javascript">
+    <script>
 
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-123031237-1']);
@@ -330,8 +331,8 @@ do this:</p>
       _gaq.push(['_trackPageview']);
 
       (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var ga = document.createElement('script'); ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
 

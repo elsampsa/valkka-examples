@@ -4,7 +4,7 @@ from valkka.onvif import OnVif, getWSDLPath
 
 class DeviceManagement(OnVif):
     namespace = "http://www.onvif.org/ver10/device/wsdl"
-    wsdl_file = getWSDLPath("devicemgmt.wsdl")
+    wsdl_file = getWSDLPath("devicemgmt-10.wsdl")
     sub_xaddr = "device_service"
     port      = "DeviceBinding"
 
@@ -17,4 +17,3 @@ device_service = DeviceManagement(
     user        = "admin",
     password    = "12345"
     )
-

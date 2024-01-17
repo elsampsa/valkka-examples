@@ -70,6 +70,15 @@ else:
     print("   discovery loaded from      : ",base_discovery.__file__)
 
 print()
+print("Checking arp-scan")
+i=os.system("arp-scan 1.1.1.1-1.1.1.2 1>/dev/null 2>/dev/null") # dummy command
+if (i>0):
+    print("    arp-scan failed!")
+    print("    arp-based discovery tools in valkka-onvif won't work")
+    print("    either it's not installed and/or you need to give it execution rights with:")
+    print("    sudo chmod u+s /usr/sbin/arp-scan")
+
+print()
 print("Checking valkka.multiprocess")
 try:
     from valkka.multiprocess import base

@@ -7,7 +7,7 @@
     
     class DeviceManagement(OnVif):
         namespace = "http://www.onvif.org/ver10/device/wsdl"
-        wsdl_file = getWSDLPath("devicemgmt.wsdl")
+        wsdl_file = getWSDLPath("devicemgmt-10.wsdl")
         sub_xaddr = "device_service"
         port      = "DeviceBinding"
     
@@ -20,4 +20,3 @@
         user        = "admin",
         password    = "12345"
         )
-    

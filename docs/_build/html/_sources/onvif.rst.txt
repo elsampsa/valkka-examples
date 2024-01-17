@@ -11,7 +11,7 @@ Onvif and discovery come in a `separate python package <https://github.com/elsam
 
 ::
 
-    pip install valkka-onvif
+    pip install -U valkka-onvif
 
 
 Intro
@@ -38,13 +38,13 @@ You also need this table to get started:
 =========================================== ======================== ======================== =================
 WSDL Declaration                            Camera http sub address  Wsdl file                Subclass
 =========================================== ======================== ======================== =================
-http://www.onvif.org/ver10/device/wsdl      device_service           devicemgmt.wsdl          DeviceManagement
-http://www.onvif.org/ver10/media/wsdl       Media                    media.wsdl               Media
-http://www.onvif.org/ver10/events/wsdl      Events                   events.wsdl              Events
-http://www.onvif.org/ver20/ptz/wsdl         PTZ                      ptz.wsdl                 PTZ
-http://www.onvif.org/ver20/imaging/wsdl     Imaging                  imaging.wsdl             Imaging
-http://www.onvif.org/ver10/deviceIO/wsdl    DeviceIO                 deviceio.wsdl            DeviceIO
-http://www.onvif.org/ver20/analytics/wsdl   Analytics                analytics.wsdl           Analytics
+http://www.onvif.org/ver10/device/wsdl      device_service           devicemgmt-10.wsdl       DeviceManagement
+http://www.onvif.org/ver10/media/wsdl       Media                    media-10.wsdl            Media
+http://www.onvif.org/ver10/events/wsdl      Events                   events-10.wsdl           Events
+http://www.onvif.org/ver20/ptz/wsdl         PTZ                      ptz-20.wsdl              PTZ
+http://www.onvif.org/ver20/imaging/wsdl     Imaging                  imaging-20.wsdl          Imaging
+http://www.onvif.org/ver10/deviceIO/wsdl    DeviceIO                 deviceio-10.wsdl         DeviceIO
+http://www.onvif.org/ver20/analytics/wsdl   Analytics                analytics-20.wsdl        Analytics
 =========================================== ======================== ======================== =================
 
 Here is an example on how to create your own class for an OnVif device service, based on the class ``OnVif``:
@@ -60,7 +60,7 @@ The things you need for subclassing an OnVif service are:
 - The remote control protocol is declared / visualized in the link at the first column.  Go to ``http://www.onvif.org/ver10/device/wsdl`` to see the detailed specifications.
 - In that specification, we see that the WSDL "port" is ``DeviceBinding``.
 - Each SOAP remote control protocol comes with a certain namespace.  This is the same as that address in the first column, so we set ``namespace`` to ``http://www.onvif.org/ver10/device/wsdl``.
-- We use *local modified versions of the wsdl files.*  This can be found in the third column, i.e. set ``wsdl_file`` to ``devicemgmt.wsdl`` (these files are included in `valkka-onvif <https://github.com/elsampsa/valkka-onvif/tree/master/valkka/onvif/wsdl>`_).
+- We use *local modified versions of the wsdl files.*  This can be found in the third column, i.e. set ``wsdl_file`` to ``devicemgmt-10.wsdl`` (these files are included in `valkka-onvif <https://github.com/elsampsa/valkka-onvif/tree/master/valkka/onvif/wsdl>`_).
 - Camera's local http subaddress ``sub_xaddr`` is ``device_service`` (the second column of the table)
 
 Check out for an example subclass in `here <https://github.com/elsampsa/valkka-onvif/blob/master/valkka/onvif/base.py#L135>`_.
