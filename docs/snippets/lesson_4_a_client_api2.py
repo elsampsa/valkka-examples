@@ -37,4 +37,4 @@ while True:
 
 """<rtf>
 The *client.shmem_list* is a list of numpy arrays, while *isize* defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.
-</rtf>"""
+<rtf>"""

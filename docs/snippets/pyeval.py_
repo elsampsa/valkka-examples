@@ -19,11 +19,11 @@
         newlines = []
         for line in f.readlines():
             st = line[:-1] # remove newline
-            if st.strip().lower() in ["#<HIDE", "#</hide>"]:
+            if st.strip().lower() in ["#<hide", "#</hide>"]:
                 hide = False
                 c+=1
                 continue
-            elif st.strip().lower() in ["#HIDE>", "#<hide>"]:
+            elif st.strip().lower() in ["#hide>", "#<hide>"]:
                 hide = True
             if hide:
                 c+=1
