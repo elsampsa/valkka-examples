@@ -1,5 +1,5 @@
 
-:: 
+.. code:: python
 
     from valkka.core import *
     
@@ -12,7 +12,7 @@
 
 The wrapped cpp class is *SharedMemRingBufferRGB* (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):
 
-:: 
+.. code:: python
 
     shmem = SharedMemRingBufferRGB(shmem_name, shmem_buffers, width, height,
                                    1000, False)  # shmem id, buffers, w, h, timeout, False=this is a client
@@ -20,7 +20,7 @@ The wrapped cpp class is *SharedMemRingBufferRGB* (at the server side, RGBShmemF
 
 We are using integer pointers from python:
 
-:: 
+.. code:: python
 
     index_p = new_intp()  # shmem index
     isize_p = new_intp()  # size of data
@@ -28,7 +28,7 @@ We are using integer pointers from python:
 
 Next, get handles to the shared memory as numpy arrays:
 
-:: 
+.. code:: python
 
     shmem_list = []
     for i in range(shmem_buffers):
@@ -43,7 +43,7 @@ shmem.clientPullPy() returns a tuple with the shared memory ringbuffer
 index and metadata.
 
 
-:: 
+.. code:: python
 
     while True:
         tup = shmem.clientPullPy()

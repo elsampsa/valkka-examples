@@ -19,7 +19,7 @@ Compared to the previous lesson, we're continuying the filterchain from AVThread
     
 Start constructing the filterchain from end-to-beginning:
 
-:: 
+.. code:: python
 
     # presentation part
     glthread        =OpenGLThread ("glthread")
@@ -29,7 +29,7 @@ Start constructing the filterchain from end-to-beginning:
 
 We requested a framefilter from the OpenGLThread.  It is passed to the AVThread:
 
-:: 
+.. code:: python
 
     # decoding part
     avthread        =AVThread("avthread",gl_in_filter)
@@ -43,7 +43,7 @@ Define the connection to the IP camera as usual, with **slot number** "1":
 
 .. _connection:
 
-:: 
+.. code:: python
 
     # ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
     ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:12345@192.168.0.157", 1, av_in_filter)
@@ -51,7 +51,7 @@ Define the connection to the IP camera as usual, with **slot number** "1":
 
 Start all threads, start decoding, and register the live stream.  Starting the threads should be done in end-to-beginning order (in the same order we constructed the filterchain).
 
-:: 
+.. code:: python
 
     glthread.startCall()
     avthread.startCall()
@@ -66,7 +66,7 @@ Start all threads, start decoding, and register the live stream.  Starting the t
 
 Now comes the new bit.  First, we create a new X window on the screen:
 
-:: 
+.. code:: python
 
     window_id =glthread.createWindow()
     
@@ -75,14 +75,14 @@ We could also use the window id of an existing X window.
   
 Next, we create a new "render group" to the OpenGLThread.  Render group is a place where we can render bitmaps - in this case it's just the X window.
 
-:: 
+.. code:: python
 
     glthread.newRenderGroupCall(window_id)
     
 
 We still need a "render context".  Render context is a mapping from a frame source (in this case, the IP camera) to a certain render group (X window) on the screen:
 
-:: 
+.. code:: python
 
     context_id=glthread.newRenderContextCall(1,window_id,0) # slot, render group, z
     
@@ -93,7 +93,7 @@ Now, each time a frame with slot number "1" arrives to OpenGLThread it will be r
 
 Stream for a while, and finally, close all threads:
 
-:: 
+.. code:: python
 
     time.sleep(10)
     
@@ -106,7 +106,7 @@ Stream for a while, and finally, close all threads:
 
 Close threads.  Stop threads in beginning-to-end order (i.e., following the filtergraph from left to right).
 
-:: 
+.. code:: python
 
     livethread.stopCall()
     avthread.stopCall()

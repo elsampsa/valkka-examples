@@ -15,7 +15,7 @@ Next, let's chain some FrameFilters like this:
     
 That chain can be created in python like this:
 
-:: 
+.. code:: python
 
     filter_3        =InfoFrameFilter("filter_3")
     filter_2        =InfoFrameFilter("filter_2",filter_3)
@@ -41,6 +41,3 @@ The output when running the python code looks like this:
 So, live_out_filter gets frame from livethread.  It prints out info about the frame.  Then it passes it to filter_2 that again prints information about the frame.  filter_2 passes the frame onto filter_3, etc.
 
 .. note:: LiveThread has an internal FrameFilter chain that is used to correct the timestamps given by your IP camera 
-
-:: 
-

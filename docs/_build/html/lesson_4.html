@@ -1,45 +1,201 @@
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 4 : Receiving Frames at Python &mdash; Python Media Streaming Framework for Linux  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
-    <title>Lesson 4 : Receiving Frames at Python &#8212; Python Media Streaming Framework for Linux  documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=e785833e" />
-    <script src="_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 5 : Transmitting stream" href="lesson_5.html" />
     <link rel="prev" title="Lesson 3 : Streaming to the X-window system" href="lesson_3.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
+<!-- as per https://stackoverflow.com/questions/23211695/modifying-content-width-of-the-sphinx-theme-read-the-docs -->
+<link href="_static/rtd_override.css" rel="stylesheet" type="text/css">
+<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
 
-  
-  
+<style>
+    .list-container {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    .list-container ul {
+        list-style: none; /* Remove bullets */
+        padding: 0; /* Remove default padding */
+    }
+    .list-container ul li {
+        margin-bottom: 8px;
+        text-align: left; /* Align text to the left */
+        color: white; /* Set text color to white */
+        margin-left: 20px; /* Add margin to the left */
+    }
+    /* Style hyperlinks within .list-container */
+    .list-container a {
+        color: white; /* Default color */
+        text-decoration: none; /* Remove underline */
+    }
 
-  </head><body>
-  
+    /* Change hyperlink color on hover within .list-container */
+    .list-container a:hover {
+        color: grey; /* Color when hovered over */
+    }
+</style>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
 
-          <div class="body" role="main">
-            
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+<!--
+  <a href="index.html" class="icon icon-home"> Python Media Streaming Framework for Linux
+-->
+
+<!--
+
+NO LOGO
+-->
+
+<!--
+NOTE: we are starting to have "version creep" here..  at the moment, with Sphinx==7.2.6 and sphinx-rtd-theme==1.3.0 the only thing that
+works is this:
+-->
+<a href="index.html">
+<img src="_static/logo.png" class="logo" style="width: 200px; height: auto; border-radius: 0px 6px 6px 0px;" alt="Logo"/>
+</a>
+    <div class="version">
+      1.6.1
+    </div>
+
+<!-- font awesome comes with the rtd package.. use like this:-->
+
+<div class="list-container">
+<ul>
+<li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
+<li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
+<li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
+<li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+<li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
+<!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
+<li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+<li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
+<li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
+<li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
+<li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
+<!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
+</ul>
+</div>
+<!-- don't even think about subclassing searchbox.html .. will never work!-->
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-tutorial">Using the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="lesson_1.html">Lesson 1 : Receiving frames from an IP camera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_2.html">Lesson 2 : Decoding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_3.html">Lesson 3 : Streaming to the X-window system</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Lesson 4 : Receiving Frames at Python</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#server-side">Server side</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#client-side-api-level-2">Client side: API level 2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#client-side-opencv">Client side: openCV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#client-side-api-level-1">Client side: API level 1</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#server-client">Server + Client</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#receiving-frag-mp4-at-python">Receiving frag-MP4 at Python</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advanced-topics">Advanced topics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_5.html">Lesson 5 : Transmitting stream</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_6.html">Lesson 6 : Writing / reading stream</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_7.html">Lesson 7 : Decode, save, visualize, analyze and re-transmit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_8.html">Lesson 8: API level 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_9.html">Lesson 9 : Drawing Bounding Boxes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_10.html">Lesson 10 : USB Cameras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_11.html">Lesson 11 : ValkkaFS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licence &amp; Copyright</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python Media Streaming Framework for Linux</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorial.html">Tutorial</a></li>
+      <li class="breadcrumb-item active">Lesson 4 : Receiving Frames at Python</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lesson_4.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="lesson-4-receiving-frames-at-python">
-<h1>Lesson 4 : Receiving Frames at Python<a class="headerlink" href="#lesson-4-receiving-frames-at-python" title="Link to this heading">¶</a></h1>
+<h1>Lesson 4 : Receiving Frames at Python<a class="headerlink" href="#lesson-4-receiving-frames-at-python" title="Link to this heading"></a></h1>
 <p>Here we start with two separate python programs: (1) a server that reads RTSP cameras and writes RGB frames into shared memory
 and (2) a client that reads those RGB frames from memory.  For the client program, two versions are provided, the API level 2 being the most compact one.</p>
 <p>Such scheme is only for demo/tutorial purposes.  Normally you would start both the server and client from within the same
 python program.  We give an example of that as well.</p>
 <section id="server-side">
-<h2>Server side<a class="headerlink" href="#server-side" title="Link to this heading">¶</a></h2>
+<h2>Server side<a class="headerlink" href="#server-side" title="Link to this heading"></a></h2>
 <p><strong>Download server side</strong> <a class="reference download internal" download="" href="_downloads/738c6677ef608ca9799fad3351e7b156/lesson_4_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>By now, we have learned how to receive, decode and send streams to the x window system.  In this chapter, we do all that, but at the same time, also send copies of the decoded frames to another python process.</p>
 <p>The filtergraph looks like this:</p>
@@ -58,7 +214,7 @@ python program.  We give an example of that as well.</p>
 <p>(Remember that branch 1 does YUV =&gt; RGB interpolation as well, but on the GPU (and at 25 fps rate))</p>
 <p>To summarize, branch 1 interpolates once a second a frame to RGB and passes it to shared memory.  The size of the frame can be adjusted.</p>
 <p>Let’s start the construction of the filtergraph by defining some parameters.  Frames are passed to SwScaleFrameFilter at 1000 millisecond intervals.  The image dimensions of the frame passed into shared memory, will be one quarter of a full-hd frame:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
 <span class="n">image_interval</span><span class="o">=</span><span class="mi">1000</span>  <span class="c1"># YUV =&gt; RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer</span>
 
 <span class="c1"># define rgb image dimensions</span>
@@ -67,13 +223,13 @@ python program.  We give an example of that as well.</p>
 </pre></div>
 </div>
 <p>RGBSharedMemFrameFilter needs also a unique name and the size of the shared memory ring-buffer:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># posix shared memory</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># posix shared memory</span>
 <span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 </pre></div>
 </div>
 <p>Next, we construct the filterchain as usual, from end-to-beginning:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
 <span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
 <span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 
@@ -93,12 +249,12 @@ python program.  We give an example of that as well.</p>
 </pre></div>
 </div>
 <p>Define connection to camera: frames from 192.168.1.41 are written to live_out_filter and tagged with slot number 1:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, av_in_filter)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, av_in_filter)</span>
 <span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.134&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start processes, stream for 60 seconds and exit:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 
@@ -140,12 +296,12 @@ of frames and your machine vision routines directly at the cpp level.</p>
 </div>
 </section>
 <section id="client-side-api-level-2">
-<h2>Client side: API level 2<a class="headerlink" href="#client-side-api-level-2" title="Link to this heading">¶</a></h2>
+<h2>Client side: API level 2<a class="headerlink" href="#client-side-api-level-2" title="Link to this heading"></a></h2>
 <p><strong>Download client side API level 2</strong> <a class="reference download internal" download="" href="_downloads/4d209a445656b551399dd423340a8a12/lesson_4_a_client_api2.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>This is a <em>separate</em> python program for reading the frames that are written by Valkka to the shared memory.</p>
 <p>The parameters used both in the server side (above) and on the client side (below) <strong>must be exactly the same</strong> and the client program should be started <em>after</em> the server program (and while the server is running).  Otherwise undefined behaviour will occur.</p>
 <p>The used shmem_name(s) should be same in both server and client, but different for another server/client pair.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span> <span class="o">=</span> <span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span> <span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -165,7 +321,7 @@ of frames and your machine vision routines directly at the cpp level.</p>
 </pre></div>
 </div>
 <p>The <em>mstimeout</em> defines the semaphore timeout in milliseconds, i.e. the time when the client returns even if no frame was received:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
     <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;timeout&quot;</span><span class="p">)</span>
@@ -175,13 +331,14 @@ of frames and your machine vision routines directly at the cpp level.</p>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;got data: &quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <em>client.shmem_list</em> is a list of numpy arrays, while <em>isize</em> defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.</p>
+<p>The <em>client.shmem_list</em> is a list of numpy arrays, while <em>isize</em> defines the extent of data in the array.  This example simply prints out the first ten bytes of the RGB image.
+&lt;/rtf&gt;”””</p>
 </section>
 <section id="client-side-opencv">
-<h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Link to this heading">¶</a></h2>
+<h2>Client side: openCV<a class="headerlink" href="#client-side-opencv" title="Link to this heading"></a></h2>
 <p id="opencv-client"><strong>Download client side openCV example</strong> <a class="reference download internal" download="" href="_downloads/981a3decc198653c1940a8e577a3ea36/lesson_4_a_client_opencv.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>OpenCV is a popular machine vision library.  We modify the previous example to make it work with openCV like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 
 <span class="n">width</span> <span class="o">=</span> <span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
@@ -226,10 +383,10 @@ If everything went ok, you should see a blurred image of your video once in a se
 <p>Start this script <em>after</em> starting the server side script (server side must also be running).</p>
 </section>
 <section id="client-side-api-level-1">
-<h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Link to this heading">¶</a></h2>
+<h2>Client side: API level 1<a class="headerlink" href="#client-side-api-level-1" title="Link to this heading"></a></h2>
 <p><strong>Download client side example</strong> <a class="reference download internal" download="" href="_downloads/2874db4374884d7afc83d4ebc3e7c010/lesson_4_a_client.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>API level 2 provides extra wrapping.  Let’s see what goes on at the lowest level (plain, cpp wrapped python code).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">width</span> <span class="o">=</span> <span class="mi">1920</span><span class="o">//</span><span class="mi">4</span>
 <span class="n">height</span> <span class="o">=</span> <span class="mi">1080</span><span class="o">//</span><span class="mi">4</span>
@@ -239,12 +396,12 @@ If everything went ok, you should see a blurred image of your video once in a se
 </pre></div>
 </div>
 <p>The wrapped cpp class is <em>SharedMemRingBufferRGB</em> (at the server side, RGBShmemFrameFilter is using SharedMemRingBufferRGB):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem</span> <span class="o">=</span> <span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shmem</span> <span class="o">=</span> <span class="n">SharedMemRingBufferRGB</span><span class="p">(</span><span class="n">shmem_name</span><span class="p">,</span> <span class="n">shmem_buffers</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span>
                                <span class="mi">1000</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># shmem id, buffers, w, h, timeout, False=this is a client</span>
 </pre></div>
 </div>
 <p>Next, get handles to the shared memory as numpy arrays:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_list</span> <span class="o">=</span> <span class="p">[]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shmem_buffers</span><span class="p">):</span>
     <span class="c1"># getNumpyShmem defined in the swig interface file</span>
     <span class="n">shmem_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">getNumpyShmem</span><span class="p">(</span><span class="n">shmem</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
@@ -254,7 +411,7 @@ If everything went ok, you should see a blurred image of your video once in a se
 <p>Finally, start reading frames.</p>
 <p>shmem.clientPullPy() returns a tuple with the shared memory ringbuffer
 index and metadata.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
     <span class="n">tup</span> <span class="o">=</span> <span class="n">shmem</span><span class="o">.</span><span class="n">clientPullPy</span><span class="p">()</span>
     <span class="n">index</span> <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -274,7 +431,7 @@ index and metadata.</p>
 <p>Cpp documentation for Valkka shared memory classes be found <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__shmem__tag.html">here.</a></p>
 </section>
 <section id="server-client">
-<h2>Server + Client<a class="headerlink" href="#server-client" title="Link to this heading">¶</a></h2>
+<h2>Server + Client<a class="headerlink" href="#server-client" title="Link to this heading"></a></h2>
 <p><strong>Download server + client example</strong> <a class="reference download internal" download="" href="_downloads/70a10ba3fb755997055f76662af6b20d/lesson_4_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Here we have a complete example running both server &amp; client within the same python file.</p>
 <p>You could wrap the client part further into a python thread, releasing your main python process
@@ -284,7 +441,7 @@ In this case one must be extra carefull to spawn the multiprocesses <em>before</
 since libValkka relies heavily on multithreading (this is the well-known “fork must go before threading” problem).</p>
 <p>These problems have been addressed/resolved more deeply in the valkka-live video surveillance client.</p>
 <p>But let’s turn back to the complete server + client example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">ShmemRGBClient</span>
 </pre></div>
@@ -299,7 +456,7 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
       <span class="n">branch</span> <span class="mi">2</span> <span class="o">+--&gt;</span> <span class="p">{</span><span class="n">IntervalFrameFilter</span><span class="p">:</span> <span class="n">interval_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">SwScaleFrameFilter</span><span class="p">:</span> <span class="n">sws_filter</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">RGBSharedMemFrameFilter</span><span class="p">:</span> <span class="n">shmem_filter</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># define yuv=&gt;rgb interpolation interval</span>
 <span class="n">image_interval</span><span class="o">=</span><span class="mi">1000</span>  <span class="c1"># YUV =&gt; RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer</span>
 
 <span class="c1"># define rgb image dimensions</span>
@@ -308,13 +465,13 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
 </pre></div>
 </div>
 <p>RGBSharedMemFrameFilter needs unique name and the size of the shared memory ring-buffer:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># posix shared memory</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># posix shared memory</span>
 <span class="n">shmem_name</span>    <span class="o">=</span><span class="s2">&quot;lesson_4&quot;</span>      <span class="c1"># This identifies posix shared memory - must be unique</span>
 <span class="n">shmem_buffers</span> <span class="o">=</span><span class="mi">10</span>              <span class="c1"># Size of the shmem ringbuffer</span>
 </pre></div>
 </div>
 <p>Next, we construct the filterchain as usual, from end-to-beginning:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
 <span class="n">glthread</span>        <span class="o">=</span><span class="n">OpenGLThread</span><span class="p">(</span><span class="s2">&quot;glthread&quot;</span><span class="p">)</span>
 <span class="n">gl_in_filter</span>    <span class="o">=</span><span class="n">glthread</span><span class="o">.</span><span class="n">getFrameFilter</span><span class="p">()</span>
 
@@ -334,12 +491,12 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
 </pre></div>
 </div>
 <p>Define connection to camera: frames from the IP camera are written to live_out_filter and tagged with slot number 1:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, av_in_filter)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, av_in_filter)</span>
 <span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.134&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">av_in_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start threads:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 
@@ -357,7 +514,7 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
 </pre></div>
 </div>
 <p>Ok, the server is alive and running.  Let’s do the client part for receiving frames.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">ShmemRGBClient</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">ShmemRGBClient</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
     <span class="n">n_ringbuffer</span><span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
     <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
@@ -368,11 +525,11 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
 </pre></div>
 </div>
 <p>The client is ready to go.  Before starting to receive frames, start playing the RTSP camera</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Read 10 frames &amp; exit</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;client starting&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;client starting&quot;</span><span class="p">)</span>
 <span class="n">cc</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
     <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
@@ -390,7 +547,7 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
 </pre></div>
 </div>
 <p>Clear the server</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
 
 <span class="c1"># stop decoding</span>
@@ -408,7 +565,7 @@ since libValkka relies heavily on multithreading (this is the well-known “fork
 </div>
 </section>
 <section id="receiving-frag-mp4-at-python">
-<span id="fragmp4"></span><h2>Receiving frag-MP4 at Python<a class="headerlink" href="#receiving-frag-mp4-at-python" title="Link to this heading">¶</a></h2>
+<span id="fragmp4"></span><h2>Receiving frag-MP4 at Python<a class="headerlink" href="#receiving-frag-mp4-at-python" title="Link to this heading"></a></h2>
 <p><strong>Download frag-MP4 example</strong> <a class="reference download internal" download="" href="_downloads/809879b6893b71bfa91393646ed0ebe4/lesson_4_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Fragmented MP4 (frag-MP4) is a container format suitable for live streaming and playing the video in most web browsers.
 For more information about this, see <a class="reference internal" href="cloud.html#cloud"><span class="std std-ref">here</span></a>.</p>
@@ -417,7 +574,7 @@ For more information about this, see <a class="reference internal" href="cloud.h
 <p>And, of course, we could do all the following things simultaneously: decode, show on screen, push RGB24 frames for video analysis, push
 frag-MP4 to your browser, etc. However, for clarity, here we just show the video on screen &amp; receive frag-MP4 frames in our
 python process.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">valkka.api2</span> <span class="kn">import</span> <span class="n">FragMP4ShmemClient</span>
 </pre></div>
@@ -432,7 +589,7 @@ python process.</p>
      <span class="o">+--&gt;</span> <span class="p">{</span><span class="n">FragMP4MuxFrameFilter</span><span class="p">:</span><span class="n">fragmp4muxer</span><span class="p">}</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">FragMP4ShmemFrameFilter</span><span class="p">:</span><span class="n">fragmp4shmem</span><span class="p">}</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_buffers</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 10 element in the ring-buffer</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">shmem_buffers</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 10 element in the ring-buffer</span>
 <span class="n">shmem_name</span> <span class="o">=</span> <span class="s2">&quot;lesson_4_c&quot;</span> <span class="c1"># unique name identifying the shared memory</span>
 <span class="n">cellsize</span> <span class="o">=</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="o">*</span><span class="mi">3</span> <span class="c1"># max size for each MP4 fragment</span>
 <span class="n">timeout</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># in ms</span>
@@ -456,12 +613,12 @@ python process.</p>
 </pre></div>
 </div>
 <p>Define connection to camera: frames from the IP camera are written to live_out_filter and tagged with slot number 1:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, fork_filter)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ctx =LiveConnectionContext(LiveConnectionType_rtsp, &quot;rtsp://admin:nordic12345@192.168.1.41&quot;, 1, fork_filter)</span>
 <span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:123456@192.168.0.134&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fork_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Start threads:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">avthread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 
@@ -479,7 +636,7 @@ python process.</p>
 </pre></div>
 </div>
 <p>Ok, the server is alive and running.  Let’s do the client part for receiving frames.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">FragMP4ShmemClient</span><span class="p">(</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">FragMP4ShmemClient</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="n">shmem_name</span><span class="p">,</span>
     <span class="n">n_ringbuffer</span><span class="o">=</span><span class="n">shmem_buffers</span><span class="p">,</span>
     <span class="n">n_size</span><span class="o">=</span><span class="n">cellsize</span><span class="p">,</span>
@@ -489,11 +646,11 @@ python process.</p>
 </pre></div>
 </div>
 <p>The client is ready to go.  Before starting to receive frames, start playing the RTSP camera</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Read 10 frames &amp; exit</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;client starting&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;client starting&quot;</span><span class="p">)</span>
 <span class="n">cc</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
     <span class="n">index</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">pullFrame</span><span class="p">()</span>
@@ -512,7 +669,7 @@ python process.</p>
 </pre></div>
 </div>
 <p>Clear the server</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">glthread</span><span class="o">.</span><span class="n">delRenderContextCall</span><span class="p">(</span><span class="n">context_id</span><span class="p">)</span>
 <span class="n">glthread</span><span class="o">.</span><span class="n">delRenderGroupCall</span><span class="p">(</span><span class="n">window_id</span><span class="p">)</span>
 
 <span class="c1"># stop decoding</span>
@@ -528,7 +685,7 @@ python process.</p>
 </div>
 </section>
 <section id="advanced-topics">
-<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Link to this heading">¶</a></h2>
+<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Link to this heading"></a></h2>
 <p>By now you have learned how to pass frames from the libValkka infrastructure into python.</p>
 <p>When creating more serious solutions, you can use a single python program to span multiprocesses (using Python’s multiprocessing module) into servers and clients.</p>
 <p>In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication between them, so that the multiprocesses
@@ -548,123 +705,34 @@ and you want to do the i/o efficiently: you can use python’s “select” modu
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="lesson_3.html" class="btn btn-neutral float-left" title="Lesson 3 : Streaming to the X-window system" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lesson_5.html" class="btn btn-neutral float-right" title="Lesson 5 : Transmitting stream" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017-2020 Sampsa Riikonen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"-->
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
-
-<!-- Place this tag in your head or just before your close body tag. -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-
-<a href="index.html">
-    <img class="logo" src="_static/valkka.png">
-</a>
-
-<p>Python Media Streaming Framework for Linux</p>
-<a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
-<!--
-<p>
-  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
--->
-
-<h3>Links</h3>
-<ul>
-  <li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
-  <li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
-  <!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
-  <li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
-  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
-  <li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
-  <li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
-  <li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
-  <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
-</ul>
-
-<!-- stupid widgetbot stopped working: let's not use it -->
-<!--script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
-    new Crate({
-        server: '1116100310574837812', // ElSampsa's kindergarden
-        channel: '1116101208797609994' // #valkka
-    })
-</script-->
-<h3><a href="index.html">Table of Contents</a></h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-tutorial">Using the tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
-<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Licence &amp; Copyright</a></li>
-<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
-</ul>
-
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2017-2020 Sampsa Riikonen.
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
-      
-      |
-      <a href="_sources/lesson_4.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-    <script>
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-123031237-1']);
-      _gaq.push(['_setDomainName', 'none']);
-      _gaq.push(['_setAllowLinker', true]);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
-    
-  </body>
+</body>
 </html>

@@ -1,5 +1,5 @@
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -20,7 +20,7 @@ The filtergraph for simultaneous video viewing and frag-MP4 muxing looks like th
        +--> {FragMP4MuxFrameFilter:fragmp4muxer} --> {FragMP4ShmemFrameFilter:fragmp4shmem}         
         
 
-:: 
+.. code:: python
 
     
     shmem_buffers = 10 # 10 element in the ring-buffer
@@ -48,14 +48,14 @@ The filtergraph for simultaneous video viewing and frag-MP4 muxing looks like th
 
 Define connection to camera: frames from the IP camera are written to live_out_filter and tagged with slot number 1:
 
-:: 
+.. code:: python
 
     # ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, fork_filter)
     ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:123456@192.168.0.134", 1, fork_filter)
 
 Start threads:
 
-:: 
+.. code:: python
 
     glthread.startCall()
     avthread.startCall()
@@ -76,7 +76,7 @@ Start threads:
 
 Ok, the server is alive and running.  Let's do the client part for receiving frames.
 
-:: 
+.. code:: python
 
     client = FragMP4ShmemClient(
         name=shmem_name,
@@ -89,14 +89,14 @@ Ok, the server is alive and running.  Let's do the client part for receiving fra
 
 The client is ready to go.  Before starting to receive frames, start playing the RTSP camera
 
-:: 
+.. code:: python
 
     livethread.playStreamCall(ctx)
     
 
 Read 10 frames & exit
 
-:: 
+.. code:: python
 
     print("client starting")
     cc = 0
@@ -117,7 +117,7 @@ Read 10 frames & exit
 
 Clear the server
 
-:: 
+.. code:: python
 
     glthread.delRenderContextCall(context_id)
     glthread.delRenderGroupCall(window_id)

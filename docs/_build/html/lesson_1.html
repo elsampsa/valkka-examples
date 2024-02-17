@@ -1,65 +1,219 @@
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="./">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 1 : Receiving frames from an IP camera &mdash; Python Media Streaming Framework for Linux  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
-    <title>Lesson 1 : Receiving frames from an IP camera &#8212; Python Media Streaming Framework for Linux  documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=e785833e" />
-    <script src="_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Lesson 2 : Decoding" href="lesson_2.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" />
-   
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
+<!-- as per https://stackoverflow.com/questions/23211695/modifying-content-width-of-the-sphinx-theme-read-the-docs -->
+<link href="_static/rtd_override.css" rel="stylesheet" type="text/css">
+<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
 
-  
-  
+<style>
+    .list-container {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #333;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    .list-container ul {
+        list-style: none; /* Remove bullets */
+        padding: 0; /* Remove default padding */
+    }
+    .list-container ul li {
+        margin-bottom: 8px;
+        text-align: left; /* Align text to the left */
+        color: white; /* Set text color to white */
+        margin-left: 20px; /* Add margin to the left */
+    }
+    /* Style hyperlinks within .list-container */
+    .list-container a {
+        color: white; /* Default color */
+        text-decoration: none; /* Remove underline */
+    }
 
-  </head><body>
-  
+    /* Change hyperlink color on hover within .list-container */
+    .list-container a:hover {
+        color: grey; /* Color when hovered over */
+    }
+</style>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          
 
-          <div class="body" role="main">
-            
+</head>
+
+<body class="wy-body-for-nav">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+<!--
+  <a href="index.html" class="icon icon-home"> Python Media Streaming Framework for Linux
+-->
+
+<!--
+
+NO LOGO
+-->
+
+<!--
+NOTE: we are starting to have "version creep" here..  at the moment, with Sphinx==7.2.6 and sphinx-rtd-theme==1.3.0 the only thing that
+works is this:
+-->
+<a href="index.html">
+<img src="_static/logo.png" class="logo" style="width: 200px; height: auto; border-radius: 0px 6px 6px 0px;" alt="Logo"/>
+</a>
+    <div class="version">
+      1.6.1
+    </div>
+
+<!-- font awesome comes with the rtd package.. use like this:-->
+
+<div class="list-container">
+<ul>
+<li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
+<li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
+<li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
+<li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
+<li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
+<!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
+<li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
+<li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
+<li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
+<li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
+<li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
+<!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
+</ul>
+</div>
+<!-- don't even think about subclassing searchbox.html .. will never work!-->
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-tutorial">Using the tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Lesson 1 : Receiving frames from an IP camera</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#a-single-framefilter">A single FrameFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaining-framefilters">Chaining FrameFilters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#forking-framefilters">Forking FrameFilters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#framefilter-reference">FrameFilter reference</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#controlling-verbosity">Controlling verbosity</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_2.html">Lesson 2 : Decoding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_3.html">Lesson 3 : Streaming to the X-window system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_4.html">Lesson 4 : Receiving Frames at Python</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_5.html">Lesson 5 : Transmitting stream</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_6.html">Lesson 6 : Writing / reading stream</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_7.html">Lesson 7 : Decode, save, visualize, analyze and re-transmit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_8.html">Lesson 8: API level 2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_9.html">Lesson 9 : Drawing Bounding Boxes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_10.html">Lesson 10 : USB Cameras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lesson_11.html">Lesson 11 : ValkkaFS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Licence &amp; Copyright</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python Media Streaming Framework for Linux</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="tutorial.html">Tutorial</a></li>
+      <li class="breadcrumb-item active">Lesson 1 : Receiving frames from an IP camera</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lesson_1.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="lesson-1-receiving-frames-from-an-ip-camera">
-<h1>Lesson 1 : Receiving frames from an IP camera<a class="headerlink" href="#lesson-1-receiving-frames-from-an-ip-camera" title="Link to this heading">¶</a></h1>
+<h1>Lesson 1 : Receiving frames from an IP camera<a class="headerlink" href="#lesson-1-receiving-frames-from-an-ip-camera" title="Link to this heading"></a></h1>
 <section id="a-single-framefilter">
-<span id="lesson-1-a"></span><h2>A single FrameFilter<a class="headerlink" href="#a-single-framefilter" title="Link to this heading">¶</a></h2>
+<span id="lesson-1-a"></span><h2>A single FrameFilter<a class="headerlink" href="#a-single-framefilter" title="Link to this heading"></a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/e0fcf60de5aa0eefaf95531ef9b8638a/lesson_1_a.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>Import the valkka level 1 API:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">valkka.core</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
 <p>Create a starting point for a FrameFilter chain:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">live_out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">live_out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This is the “entry point” where we receive all the frames.</p>
 <p>InfoFrameFilter does nothing fancy - it just prints out the frames it receives.</p>
 <p>However, as you will learn during this tutorial, FrameFilters can do a lot of stuff.  You can chain them together.  They can be used to fork and copy the stream into complex graphs,  etc.</p>
 <p>Next we need a thread that feeds the frames into our FrameFilter, so we instantiate a LiveThread:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span> <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span> <span class="o">=</span><span class="n">LiveThread</span><span class="p">(</span><span class="s2">&quot;livethread&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We also need a context describing the connection to an IP camera:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ctx</span> <span class="o">=</span><span class="n">LiveConnectionContext</span><span class="p">(</span><span class="n">LiveConnectionType_rtsp</span><span class="p">,</span> <span class="s2">&quot;rtsp://admin:nordic12345@192.168.1.41&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">live_out_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The first parameter defines the device type, which in this case is an IP camera using the rtsp protocol.  Note that we include the “entry point” live_out_filter.  The integer parameter “1” is the slot number - it will be discussed in detail later on in this tutorial.</p>
 <p>Finally, we can start streaming frames from the IP camera:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">registerStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">livethread</span><span class="o">.</span><span class="n">playStreamCall</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
@@ -93,12 +247,9 @@
 <p class="admonition-title">Note</p>
 <p>The code itself (LiveThread, InfoFrameFilter) runs in c++, while the connections are programmed here, at the python level</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">end</span> <span class="n">of</span> <span class="n">inclusion</span> <span class="kn">from</span> <span class="s2">&quot;snippets/lesson_1_a.py_&quot;</span>
-</pre></div>
-</div>
 </section>
 <section id="chaining-framefilters">
-<h2>Chaining FrameFilters<a class="headerlink" href="#chaining-framefilters" title="Link to this heading">¶</a></h2>
+<h2>Chaining FrameFilters<a class="headerlink" href="#chaining-framefilters" title="Link to this heading"></a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/9645de37eacfea49cfeeb99b1dcee8b7/lesson_1_b.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>In the previous example, we had a thread (LiveThread), feeding a single FrameFilter (InfoFrameFilter).  The “filtergraph” for this case looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">LiveThread</span><span class="p">:</span><span class="n">livethread</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">{</span><span class="n">InfoFrameFilter</span><span class="p">:</span><span class="n">live_out_filter</span><span class="p">}</span>
@@ -110,7 +261,7 @@
 </pre></div>
 </div>
 <p>That chain can be created in python like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">filter_3</span>        <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;filter_3&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">filter_3</span>        <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;filter_3&quot;</span><span class="p">)</span>
 <span class="n">filter_2</span>        <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;filter_2&quot;</span><span class="p">,</span><span class="n">filter_3</span><span class="p">)</span>
 <span class="n">live_out_filter</span> <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;live_out_filter&quot;</span><span class="p">,</span><span class="n">filter_2</span><span class="p">)</span>
 </pre></div>
@@ -133,12 +284,9 @@
 <p class="admonition-title">Note</p>
 <p>LiveThread has an internal FrameFilter chain that is used to correct the timestamps given by your IP camera</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">end</span> <span class="n">of</span> <span class="n">inclusion</span> <span class="kn">from</span> <span class="s2">&quot;snippets/lesson_1_b.py_&quot;</span>
-</pre></div>
-</div>
 </section>
 <section id="forking-framefilters">
-<h2>Forking FrameFilters<a class="headerlink" href="#forking-framefilters" title="Link to this heading">¶</a></h2>
+<h2>Forking FrameFilters<a class="headerlink" href="#forking-framefilters" title="Link to this heading"></a></h2>
 <p><strong>Download lesson</strong> <a class="reference download internal" download="" href="_downloads/9168bc0a8596dc0738a383f4e13b592e/lesson_1_c.py"><code class="xref download docutils literal notranslate"><span class="pre">[here]</span></code></a></p>
 <p>As a final trivial example for this lesson, we fork the FrameFilter chain into two:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">filtergraph</span><span class="p">:</span>
@@ -155,7 +303,7 @@
 <p>At branch 1, there is an on/off gate.  When the gate is on, the frames are passed further on to the verbose InfoFrameFilter.</p>
 <p>At branch 2, frames are written to a file</p>
 <p>The filtergraph can be implemented in python like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># branch 1</span>
 <span class="n">info_filter</span>     <span class="o">=</span><span class="n">InfoFrameFilter</span><span class="p">(</span><span class="s2">&quot;info_filter&quot;</span><span class="p">)</span>
 <span class="n">gate_filter</span>     <span class="o">=</span><span class="n">GateFrameFilter</span><span class="p">(</span><span class="s2">&quot;gate_filter&quot;</span><span class="p">,</span><span class="n">info_filter</span><span class="p">)</span>
 
@@ -169,7 +317,7 @@
 </div>
 <p>Like in the previous example, when constructing programmatically the framefilter chain, we start from the outer leafs of the tree (in this case, from “info_filter”, etc.) and move from the outer edge towards the main branch.</p>
 <p>Let’s run it like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># close the gate before streaming</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># close the gate before streaming</span>
 <span class="n">gate_filter</span><span class="o">.</span><span class="n">unSet</span><span class="p">()</span>
 
 <span class="n">livethread</span><span class="o">.</span><span class="n">startCall</span><span class="p">()</span>
@@ -199,12 +347,9 @@
 <p class="admonition-title">Note</p>
 <p>Valkka is <em>not</em> a mediaplayer that understands thousands of codecs and container formats.  Emphasis is on an internally consistent (for that a single or a few codec/container formats are enough, i.e. what we write we can also read) video management library.  At the moment only H264 video is accepted.  Container format is matroska (mkv).</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">end</span> <span class="n">of</span> <span class="n">inclusion</span> <span class="kn">from</span> <span class="s2">&quot;snippets/lesson_1_c.py_&quot;</span>
-</pre></div>
-</div>
 </section>
 <section id="framefilter-reference">
-<h2>FrameFilter reference<a class="headerlink" href="#framefilter-reference" title="Link to this heading">¶</a></h2>
+<h2>FrameFilter reference<a class="headerlink" href="#framefilter-reference" title="Link to this heading"></a></h2>
 <p>API level 1 considered in this lesson, is nothing but cpp code wrapped to python.</p>
 <p>To see all available FrameFilters, refer to the <a class="reference external" href="https://elsampsa.github.io/valkka-core/html/group__filters__tag.html">cpp documentation</a>.</p>
 <p>In the cpp docs, only a small part of the member methods are wrapped and visible from python (these are marked with the “pyapi” tag)</p>
@@ -214,7 +359,7 @@
 </div>
 </section>
 <section id="controlling-verbosity">
-<h2>Controlling verbosity<a class="headerlink" href="#controlling-verbosity" title="Link to this heading">¶</a></h2>
+<h2>Controlling verbosity<a class="headerlink" href="#controlling-verbosity" title="Link to this heading"></a></h2>
 <p>If libValkka dumps too much to your terminal, you can shut if off by using <code class="docutils literal notranslate"><span class="pre">loglevel_silent</span></code>.</p>
 <p>Verbosity can be controlled like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">valkka.api2.logging</span> <span class="kn">import</span> <span class="n">setValkkaLogLevel</span><span class="p">,</span> <span class="n">setLogLevel_livelogger</span><span class="p">,</span> <span class="n">loglevel_silent</span><span class="p">,</span> <span class="n">loglevel_normal</span>
@@ -227,123 +372,34 @@
 </section>
 
 
+           </div>
           </div>
-          
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="lesson_2.html" class="btn btn-neutral float-right" title="Lesson 2 : Decoding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017-2020 Sampsa Riikonen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"-->
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-<script src="https://kit.fontawesome.com/1f90d3565b.js" crossorigin="anonymous"></script>
-
-<!-- Place this tag in your head or just before your close body tag. -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-
-<a href="index.html">
-    <img class="logo" src="_static/valkka.png">
-</a>
-
-<p>Python Media Streaming Framework for Linux</p>
-<a class="github-button" href="https://github.com/elsampsa/valkka-core" data-size="large" data-show-count="true" aria-label="Star elsampsa/valkka-core on GitHub">Star</a>
-<!--
-<p>
-  <iframe src="http://ghbtns.com/github-btn.html?user=elsampsa&repo=valkka-core&type=watch&count=true&size=large" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
--->
-
-<h3>Links</h3>
-<ul>
-  <li><a href="https://github.com/elsampsa/valkka-core" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-core </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-examples" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-examples </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-onvif" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-onvif </a></li>
-  <li><a href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> valkka-multiprocess </a></li>
-  <li><a href="https://github.com/elsampsa/valkka-streamer"target="_blank" rel="noopener noreferrer" ><i class="fab fa-github" ></i> valkka-streamer </a></li>
-  <!-- li><a href="https://github.com/elsampsa/darknet-python"><i class="fab fa-github"></i> darknet-python </a></li -->
-  <li><a href="https://github.com/elsampsa/valkka-core/issues" target="_blank" rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker</a></li>
-  <li><a href="https://launchpad.net/~sampsa-riikonen/+archive/ubuntu/valkka/+packages" target="_blank" rel="noopener noreferrer"><i class="fas fa-archive"></i> Package Repository</a></li>
-  <li><a href="https://hub.docker.com/r/elsampsa/valkka" target="_blank" rel="noopener noreferrer"><i class="fab fa-docker"></i> Dockerhub</a></li>
-  <li><a href="https://elsampsa.github.io/valkka-live/" target="_blank" rel="noopener noreferrer"><i class="fas fa-video"></i> Valkka Live</a></li>
-  <li><a href="https://discord.com/channels/1116100310574837812/1116101208797609994" target="_blank" rel="noopener noreferrer"> <i class="fa-brands fa-discord"></i> Discord </a> </li>
-  <!-- li><a href="http://www.dasys.fi"><i class="fas fa-building"></i> Dasys Ltd.</a></li -->
-</ul>
-
-<!-- stupid widgetbot stopped working: let's not use it -->
-<!--script src='https://cdn.jsdelivr.net/npm/@widgetbot/crate@3' async defer>
-    new Crate({
-        server: '1116100310574837812', // ElSampsa's kindergarden
-        channel: '1116101208797609994' // #valkka
-    })
-</script-->
-<h3><a href="index.html">Table of Contents</a></h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hardware.html">Supported hardware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements.html">Installing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="tutorial.html">Tutorial</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-tutorial">Using the tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="tutorial.html#lessons">Lessons</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
-<li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pitfalls.html">Common problems</a></li>
-<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="repos.html">Repository Index</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Licence &amp; Copyright</a></li>
-<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
-<li class="toctree-l1"><a class="reference internal" href="knowledge.html">Knowledge Base</a></li>
-</ul>
-
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2017-2020 Sampsa Riikonen.
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.15</a>
-      
-      |
-      <a href="_sources/lesson_1.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-    <script>
-
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-123031237-1']);
-      _gaq.push(['_setDomainName', 'none']);
-      _gaq.push(['_setAllowLinker', true]);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-
-    </script>
-    
-  </body>
+</body>
 </html>

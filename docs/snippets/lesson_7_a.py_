@@ -35,7 +35,7 @@ There is a new naming convention: the names of filters, threads and fifos are ta
 
 Programming the filtergraph tree is started as usual, from the outer leaves, moving towards the main branch:
 
-:: 
+.. code:: python
 
     # *** branch 1 ***
     livethread2_1    =LiveThread("livethread2_1")

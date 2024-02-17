@@ -10,5 +10,5 @@ codes="*.py"
 for i in $codes
 do
     echo $i
-    $exe pyeval.py -f $i > $i"_"
+    $exe pyeval.py $i > $i"_"
 done

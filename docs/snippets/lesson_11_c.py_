@@ -1,5 +1,5 @@
 
-:: 
+.. code:: python
 
     import time, sys
     from valkka.core import *
@@ -8,14 +8,14 @@
 
 Load ValkkaFS metadata:
 
-:: 
+.. code:: python
 
     valkkafs = ValkkaSingleFS.loadFromDirectory(dirname="/tmp/testvalkkafs")
     
 
 Let's take a look at the blocktable:
 
-:: 
+.. code:: python
 
     a = valkkafs.getBlockTable()
     print(a)
@@ -23,14 +23,14 @@ Let's take a look at the blocktable:
 
 Instantiate ValkkaFSTool that allows us to peek into the written data
 
-:: 
+.. code:: python
 
     tool = ValkkaFSTool(valkkafs.core)
     
 
 Contents of individual blocks can now be inspected like this:
 
-:: 
+.. code:: python
 
     tool.dumpBlock(0)
     tool.dumpBlock(1)
@@ -55,13 +55,9 @@ You'll get output like this:
 
 Frame id number is indicated in the first column.  Asterix (*) marks the seek points.  In the final rows, first few bytes of the actual payload are shown.
 
-:: 
-
-    
-
 Let's see the min and max time of frames written in this ValkkaFS
 
-:: 
+.. code:: python
 
     (t0, t1) = valkkafs.getTimeRange()
     print("Min and Max time in milliseconds:", t0, t1)
@@ -69,7 +65,7 @@ Let's see the min and max time of frames written in this ValkkaFS
 
 These are milliseconds, so to get *struct_time* object we need to do this:
 
-:: 
+.. code:: python
 
     print("Min time:", time.gmtime(t0/1000))
     print("Max time:", time.gmtime(t1/1000))
@@ -77,7 +73,7 @@ These are milliseconds, so to get *struct_time* object we need to do this:
 
 Block numbers corresponding to a certain time range can be searched like this:
 
-:: 
+.. code:: python
 
     req = (t0, t1)
     block_indices = valkkafs.getInd(req)
@@ -88,7 +84,7 @@ Now you could pass to indices to the ValkkaFSReaderThread method **pullBlocksPyC
 
 Another usefull method is *getIndNeigh*.  It returns blocks from the neighborhood of a certain target time:
 
-:: 
+.. code:: python
 
     req = (t1+t0)//2
     block_indices = valkkafs.getIndNeigh(n=2, time=req)
@@ -98,6 +94,3 @@ Another usefull method is *getIndNeigh*.  It returns blocks from the neighborhoo
 That will return the target block plus two blocks surrounding it.  
 
 You would call this method when a user requests a seek to a certain time and you want to be sure that there are enough frames surrounding that time instant
-
-:: 
-

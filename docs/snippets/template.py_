@@ -1,5 +1,5 @@
 
-:: 
+.. code:: python
 
     import time
     from valkka.api2.threads import LiveThread, OpenGLThread

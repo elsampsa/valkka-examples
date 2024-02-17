@@ -45,7 +45,8 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'sphinx_copybutton'
 ]
 
 autodoc_default_flags = ['members']
@@ -135,29 +136,25 @@ todo_include_todos = True
 # """
 # html_theme_path = ["themes"]
 # html_theme = 'alabaster_'
-html_theme = 'alabaster'
+# html_theme = 'alabaster' # sucks
+html_theme="sphinx_rtd_theme" # you might need to install with pip3
 
-"""
-html_sidebars = {
-    '**': [
-        'about.html',
-        'navigation.html',
-        'relations.html',
-        'searchbox.html',
-        'donate.html',
-    ]
-}
-"""
+## WARNING: choose overriding as per correct style
+
+templates_path = ['_templates/rtd']
+# templates_path = ['_templates/alabaster']
+# templates_path = ['_templates/nada'] # keep empty.. :)
     
 html_sidebars = {
     '**': [
         'sidebar-intro.html', 'globaltoc.html', # 'sourcelink.html',
-        'searchbox.html'
+        # 'searchbox.html'
         # 'sidebar-bottom.html',
     ]
 }
-    
 
+"""
+# alabaster
 html_theme_options = {
   'github_user'  : 'elsampsa',
   'github_repo'  : 'valkka-core',
@@ -165,7 +162,13 @@ html_theme_options = {
   'page_width'   : '60%',
   'body_max_width': '100%'
 }
-  
+"""
+
+html_theme_options = {
+  "logo_only": True, # style: RTD
+}
+
+
 # """
 
 """

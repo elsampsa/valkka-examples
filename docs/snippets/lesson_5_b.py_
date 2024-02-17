@@ -10,7 +10,7 @@ Stream is read from an IP camera and then re-streamed (shared) to a local RTSP s
 
 Let's start by importing Valkka:
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -18,14 +18,14 @@ Let's start by importing Valkka:
 
 Live555's default output packet buffer size might be too small, so let's make it bigger before instantiating any LiveThreads:
 
-:: 
+.. code:: python
 
     setLiveOutPacketBuffermaxSize(95000)
     
 
 Construct the filtergraph from end-to-beginning:
 
-:: 
+.. code:: python
 
     livethread2    =LiveThread("livethread2")
     live_in_filter =livethread2.getFrameFilter()
@@ -35,14 +35,14 @@ Construct the filtergraph from end-to-beginning:
 
 *Before* starting the threads, establish an RTSP server on livethread2 at port 8554:
 
-:: 
+.. code:: python
 
     livethread2.setRTSPServer(8554);
     
 
 Start threads
 
-:: 
+.. code:: python
 
     livethread2.startCall()
     livethread. startCall()
@@ -50,21 +50,21 @@ Start threads
 
 Define stream source: incoming frames from IP camera 192.168.1.41 are tagged with slot number "2" and they are written to "info_filter":
 
-:: 
+.. code:: python
 
     ctx     =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 2, info_filter)
     
 
 Define stream sink: all outgoing frames with slot number "2" are sent to the RTSP server, with substream id "stream1":
 
-:: 
+.. code:: python
 
     out_ctx =LiveOutboundContext(LiveConnectionType_rtsp, "stream1", 2, 0)
     
 
 Start playing:
 
-:: 
+.. code:: python
 
     livethread2.registerOutboundCall(out_ctx)
     livethread. registerStreamCall(ctx)
@@ -73,7 +73,7 @@ Start playing:
 
 Stream and recast to the RTSP server for a while:
 
-:: 
+.. code:: python
 
     time.sleep(60)
     
@@ -84,7 +84,7 @@ Stream and recast to the RTSP server for a while:
 
 Stop threads in beginning-to-end order
 
-:: 
+.. code:: python
 
     livethread. stopCall();
     livethread2.stopCall();

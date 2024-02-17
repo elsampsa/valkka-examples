@@ -23,7 +23,7 @@ Note that live and file streams are treated on an equal basis and with a similar
 
 Let's start by importing Valkka:
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -33,7 +33,7 @@ Let's start by importing Valkka:
 
 Writing is done by piping the stream into a FileFrameFilter:
 
-:: 
+.. code:: python
 
     file_filter  =FileFrameFilter("file_filter")
     livethread   =LiveThread("livethread")
@@ -41,7 +41,7 @@ Writing is done by piping the stream into a FileFrameFilter:
 
 For reading, decoding and presenting, we construct the filtergraph as usual, from end-to-beginning:
 
-:: 
+.. code:: python
 
     # presentation part
     glthread      =OpenGLThread ("glthread")
@@ -50,7 +50,7 @@ For reading, decoding and presenting, we construct the filtergraph as usual, fro
 
 For file streams, the execution should block for frame bursts, so we request a blocking input FrameFilter from the AVThread:
 
-:: 
+.. code:: python
 
     avthread      =AVThread("avthread",gl_in_filter)
     av_in_filter  =avthread.getBlockingFrameFilter()  
@@ -61,7 +61,7 @@ For file streams, the execution should block for frame bursts, so we request a b
 
 Starting LiveThread will stream the frames to FileFrameFilter:
 
-:: 
+.. code:: python
 
     livethread .startCall()
     
@@ -74,7 +74,7 @@ Starting LiveThread will stream the frames to FileFrameFilter:
 
 In order to start writing to disk, FileFrameFilter's "activate" method must be called with the filename.  Only matroska (.mkv) files are supported:
 
-:: 
+.. code:: python
 
     print("writing to file during 30 secs")
     file_filter.activate("kokkelis.mkv")
@@ -91,7 +91,7 @@ In order to start writing to disk, FileFrameFilter's "activate" method must be c
 
 File "kokkelis.mkv" has been created.  Next, let's setup stream decoding, presenting, etc. as usual and read the file:
 
-:: 
+.. code:: python
 
     print("reading file")
     glthread   .startCall()
@@ -111,7 +111,7 @@ File "kokkelis.mkv" has been created.  Next, let's setup stream decoding, presen
 
 Open the file by sending it a call with the FileContext (file_ctx) identifying the file stream:
 
-:: 
+.. code:: python
 
     print("open file")
     file_ctx =FileContext("kokkelis.mkv", 1, av_in_filter) # read from file "kokkelis.mkv", tag frames with slot number 1 and write to av_in_filter
@@ -120,7 +120,7 @@ Open the file by sending it a call with the FileContext (file_ctx) identifying t
 
 Playing, seeking and stopping is done as follows:
 
-:: 
+.. code:: python
 
     print("play file")
     filethread.playFileStreamCall(file_ctx)
@@ -146,7 +146,7 @@ Playing, seeking and stopping is done as follows:
 
 Finally, exit:
 
-:: 
+.. code:: python
 
     glthread.delRenderContextCall(context_id)
     glthread.delRenderGroupCall(window_id)

@@ -2,7 +2,7 @@
 
 Streaming the same camera to several X windows is trivial; we just need to add more render groups (aka x windows) and render contexes (mappings):
 
-:: 
+.. code:: python
 
     id_list=[]
     

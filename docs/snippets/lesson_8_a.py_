@@ -1,7 +1,7 @@
 
 First, import API level 2:
 
-:: 
+.. code:: python
 
     import time
     from valkka.api2 import LiveThread, OpenGLThread
@@ -10,7 +10,7 @@ First, import API level 2:
 
 Instantiating the API level 2 LiveThread starts running the underlying cpp thread:
 
-:: 
+.. code:: python
 
     livethread=LiveThread( # starts live stream services (using live555)
       name   ="live_thread",
@@ -21,7 +21,7 @@ Instantiating the API level 2 LiveThread starts running the underlying cpp threa
 
 Same goes for OpenGLThread:
 
-:: 
+.. code:: python
 
     openglthread=OpenGLThread(
       name    ="glthread",
@@ -38,7 +38,7 @@ Same goes for OpenGLThread:
 
 The filterchain and decoder (AVThread) are encapsulated into a single class.  Instantiating starts the AVThread (decoding is off by default):
 
-:: 
+.. code:: python
 
     chain=BasicFilterchain( # decoding and branching the stream happens here
       livethread  =livethread, 
@@ -55,7 +55,7 @@ BasicFilterchain takes as an argument the LiveThread and OpenGLThread instances.
 
 Next, create an x-window, map stream to the screen, and start decoding:
 
-:: 
+.. code:: python
 
     # create a window
     win_id =openglthread.createWindow()
@@ -71,7 +71,7 @@ Next, create an x-window, map stream to the screen, and start decoding:
 
 Close threads in beginning-to-end order
 
-:: 
+.. code:: python
 
     livethread.close()
     chain.close()

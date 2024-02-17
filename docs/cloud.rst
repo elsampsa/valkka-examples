@@ -12,7 +12,7 @@ for low-latency live video streaming over your LAN or WAN.
 LibValkka is able produce the fragmented MP4 "boxes" for you, while you can read them one-by-one, in your python code.  How to do this, please refer to
 the :ref:`tutorial <fragmp4>`.
 
-After obtaining the MP4 boxes, just use your imagination.  You can send them over the internet using websockets, `gRRP <https://grpc.io/>`_, or any protocol of your choice.
+After obtaining the MP4 boxes, just use your imagination.  You can send them over the internet using websockets, `gRPC <https://grpc.io/>`_, or any protocol of your choice.
 You can also dump them into an .mp4 file, and that file is understood by all media clients (just remember to cache and write the ftyp and moov packets in the beginning of the file).
 For creating a pipelines like that, please take a look `here <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_.
 

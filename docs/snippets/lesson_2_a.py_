@@ -24,7 +24,7 @@ That's all you need to create complex filtergraphs with Valkka.
 
 We start as usual, by constructing the filterchain from end-to-beginning:
 
-:: 
+.. code:: python
 
     # decoding part
     info_filter     =InfoFrameFilter("info_filter")
@@ -37,7 +37,7 @@ then you could substitute `AVThread` with `VAAPIThread` instead.
 
 Next, we need a framefilter to feed the frames into AVThread.  This framefilter is requested from the AVThread itself:
 
-:: 
+.. code:: python
 
     # streaming part
     av_in_filter    =avthread.getFrameFilter()
@@ -46,14 +46,14 @@ Next, we need a framefilter to feed the frames into AVThread.  This framefilter 
 
 Finally, proceed as before: pass *av_in_filter* as a parameter to the connection context, start threads, etc.
 
-:: 
+.. code:: python
 
     ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
     
 
 Start threads.  Starting the threads should be done in end-to-beginning order (in the same order we constructed the filterchain).
 
-:: 
+.. code:: python
 
     avthread.startCall()
     livethread.startCall()
@@ -71,7 +71,7 @@ Start threads.  Starting the threads should be done in end-to-beginning order (i
 
 Stop threads.  Stop threads in beginning-to-end order (i.e., following the filtergraph from left to right).
 
-:: 
+.. code:: python
 
     livethread.stopCall()
     avthread.stopCall()
@@ -101,7 +101,3 @@ You will see output like this:
 So, instead of H264 packets, we have decoded bitmap frames here.
 
 In the next lesson, we'll dump them on the screen.
-
-:: 
-
-    

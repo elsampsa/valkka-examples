@@ -1,7 +1,7 @@
 
 Import the valkka level 1 API:
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -9,7 +9,7 @@ Import the valkka level 1 API:
 
 Create a starting point for a FrameFilter chain:
 
-:: 
+.. code:: python
 
     live_out_filter =InfoFrameFilter("live_out_filter")
     
@@ -22,14 +22,14 @@ However, as you will learn during this tutorial, FrameFilters can do a lot of st
   
 Next we need a thread that feeds the frames into our FrameFilter, so we instantiate a LiveThread:
 
-:: 
+.. code:: python
 
     livethread =LiveThread("livethread")
     
 
 We also need a context describing the connection to an IP camera:
 
-:: 
+.. code:: python
 
     ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, live_out_filter)
     
@@ -38,7 +38,7 @@ The first parameter defines the device type, which in this case is an IP camera 
 
 Finally, we can start streaming frames from the IP camera:
 
-:: 
+.. code:: python
 
     livethread.startCall()
     livethread.registerStreamCall(ctx)
@@ -75,6 +75,3 @@ InfoFrameFilter simply prints the frame type and first few bytes of it's payload
 The first frame we get is a setup frame.  This is a key feature of Valkka: the stream of frames that flows from source to the final sink, consists, not only of payload (say, H264 or PCMU), but of frames that are used to inform the system about the stream type, codec, etc.
 
 .. note:: The code itself (LiveThread, InfoFrameFilter) runs in c++, while the connections are programmed here, at the python level
-
-:: 
-

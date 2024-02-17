@@ -1,5 +1,5 @@
 
-:: 
+.. code:: python
 
     import cv2
     from valkka.api2 import ShmemRGBClient

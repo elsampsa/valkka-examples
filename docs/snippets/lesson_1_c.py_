@@ -20,7 +20,7 @@ At branch 2, frames are written to a file
 
 The filtergraph can be implemented in python like this:
 
-:: 
+.. code:: python
 
     # branch 1
     info_filter     =InfoFrameFilter("info_filter")
@@ -38,7 +38,7 @@ Like in the previous example, when constructing programmatically the framefilter
     
 Let's run it like this:
 
-:: 
+.. code:: python
 
     
     # close the gate before streaming
@@ -70,6 +70,3 @@ Here we first close the gate, so no information about the frames is printed to t
 You can play the resulting "stream.mkv" with your favorite media player.
 
 .. note:: Valkka is *not* a mediaplayer that understands thousands of codecs and container formats.  Emphasis is on an internally consistent (for that a single or a few codec/container formats are enough, i.e. what we write we can also read) video management library.  At the moment only H264 video is accepted.  Container format is matroska (mkv).
-
-:: 
-

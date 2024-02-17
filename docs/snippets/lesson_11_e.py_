@@ -2,7 +2,7 @@
 
 Same imports as before:
 
-:: 
+.. code:: python
 
     import time, sys
     from valkka.core import *
@@ -14,14 +14,14 @@ Same imports as before:
 
 Load ValkkaFS metadata:
 
-:: 
+.. code:: python
 
     valkkafs = ValkkaSingleFS.loadFromDirectory(dirname="/tmp/testvalkkafs")
     
 
 Let's take a look at the blocktable:
 
-:: 
+.. code:: python
 
     a = valkkafs.getBlockTable()
     print(a)
@@ -46,7 +46,7 @@ Next, we proceed in constructing the filterchain in end-to-beginning order.
 
 ValkkaFSReaderThread will write all it's frames into FileCacheThread's input FrameFilter.
 
-:: 
+.. code:: python
 
     out_filter   = InfoFrameFilter("out_filter") # will be registered later with cacherthread
     cacherthread = FileCacheThread("cacher")
@@ -57,14 +57,14 @@ Next, define callbacks for FileCacheThread
 
 Define a global variable: a tuple that holds the min and max millisecond timestamps of cached frames:
 
-:: 
+.. code:: python
 
     current_time_limits = None
     
 
 This following function will be called frequently by FileCacheThread to inform us about the current millisecond timestamp:
 
-:: 
+.. code:: python
 
     def current_time_callback(mstime: int):
         global current_time_limits
@@ -88,7 +88,7 @@ This following function will be called frequently by FileCacheThread to inform u
 
 The next callback is evoked when FileCacheThread receives new frames for caching.  It informs us about the minimum and maximum millisecond timestamps:
 
-:: 
+.. code:: python
 
     def time_limits_callback(times: tuple):
         global current_time_limits
@@ -117,7 +117,7 @@ Typically, they should use only the following methods of the libValkka API:
 
 Register the callbacks into the FileCacheThread
 
-:: 
+.. code:: python
 
     cacherthread.setPyCallback(current_time_callback)
     cacherthread.setPyCallback2(time_limits_callback)
@@ -125,7 +125,7 @@ Register the callbacks into the FileCacheThread
 
 Start the threads
 
-:: 
+.. code:: python
 
     cacherthread.startCall()
     readerthread.startCall()
@@ -133,14 +133,14 @@ Start the threads
 
 Frames saved with id number 925412 to ValkkaFS are mapped into slot number 1:
 
-:: 
+.. code:: python
 
     readerthread.setSlotIdCall(1, 925412)
     
 
 FileCacheThread will write frames with slot number 1 into InfoFrameFilter:
 
-:: 
+.. code:: python
 
     ctx = FileStreamContext(1, out_filter)
     cacherthread.registerStreamCall(ctx)
@@ -148,14 +148,14 @@ FileCacheThread will write frames with slot number 1 into InfoFrameFilter:
 
 Request blocks 0-4 from the reader thread.  The frames will be cached by FileCacheThread.
 
-:: 
+.. code:: python
 
     readerthread.pullBlocksPyCall([0,1,3,4])
     
 
 Before frames can be played, a seek must be performed to set a time reference.
 
-:: 
+.. code:: python
 
     mstimestamp = int(a[1,0]) # take the first timestamp from the blocktable.  Use int() to convert to normal python integer.
     print("seeking to", mstimestamp)
@@ -166,7 +166,7 @@ It's up to the API user to assure that the used mstimestamp is within the correc
 
 Next, let the stream play for 10 seconds
 
-:: 
+.. code:: python
 
     cacherthread.playStreamsCall()
     time.sleep(10)
@@ -174,7 +174,7 @@ Next, let the stream play for 10 seconds
 
 Stop threads
 
-:: 
+.. code:: python
 
     cacherthread.stopCall()
     readerthread.stopCall()

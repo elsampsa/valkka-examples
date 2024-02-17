@@ -17,7 +17,7 @@ LiveThread and OpenGLThread can deal with several simultaneous media streams, wh
 
 It's a good idea to encapsulate the decoding part into its own class.  This class takes as an input, the framefilter where it writes the decoded frames and as an input, the stream rtsp address:
 
-:: 
+.. code:: python
 
     class LiveStream:
       
@@ -46,7 +46,7 @@ It's a good idea to encapsulate the decoding part into its own class.  This clas
 
 Construct the filtergraph from end-to-beginning:
 
-:: 
+.. code:: python
 
     # presentation part
     glthread        =OpenGLThread ("glthread")
@@ -62,7 +62,7 @@ Construct the filtergraph from end-to-beginning:
 
 Instantiate LiveStreams.  This will also start the AVThreads.  Frames from the first camera are tagged with slot number 1, while frames from the second camera are tagged with slot number 2:
 
-:: 
+.. code:: python
 
     stream1 = LiveStream(gl_in_filter, "rtsp://admin:nordic12345@192.168.1.41", 1) # slot 1  
     stream2 = LiveStream(gl_in_filter, "rtsp://admin:nordic12345@192.168.1.42", 2) # slot 2
@@ -70,7 +70,7 @@ Instantiate LiveStreams.  This will also start the AVThreads.  Frames from the f
 
 Register streams to LiveThread and start playing them:
 
-:: 
+.. code:: python
 
     livethread.registerStreamCall(stream1.ctx)
     livethread.playStreamCall(stream1.ctx)
@@ -81,7 +81,7 @@ Register streams to LiveThread and start playing them:
 
 Create x windows, and map slot numbers to certain x windows:
 
-:: 
+.. code:: python
 
     # stream1 uses slot 1
     window_id1 =glthread.createWindow()
@@ -96,7 +96,7 @@ Create x windows, and map slot numbers to certain x windows:
 
 Render video for a while, stop threads and exit:
 
-:: 
+.. code:: python
 
     time.sleep(10)
     
@@ -120,6 +120,3 @@ There are many ways to organize threads, render contexes (slot to x window mappi
 One could even opt for an architecture, where there is a LiveThread and OpenGLThread for each individual stream (however, this is not recommended).
 
 The level 2 API provides ready-made filtergraph classes for different purposes (similar to class LiveStream constructed here).
-
-:: 
-

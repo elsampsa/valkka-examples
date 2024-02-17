@@ -26,7 +26,7 @@ To summarize, branch 1 interpolates once a second a frame to RGB and passes it t
 
 Let's start the construction of the filtergraph by defining some parameters.  Frames are passed to SwScaleFrameFilter at 1000 millisecond intervals.  The image dimensions of the frame passed into shared memory, will be one quarter of a full-hd frame:
 
-:: 
+.. code:: python
 
     # define yuv=>rgb interpolation interval
     image_interval=1000  # YUV => RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer
@@ -38,7 +38,7 @@ Let's start the construction of the filtergraph by defining some parameters.  Fr
 
 RGBSharedMemFrameFilter needs also a unique name and the size of the shared memory ring-buffer:
 
-:: 
+.. code:: python
 
     # posix shared memory
     shmem_name    ="lesson_4"      # This identifies posix shared memory - must be unique
@@ -47,7 +47,7 @@ RGBSharedMemFrameFilter needs also a unique name and the size of the shared memo
 
 Next, we construct the filterchain as usual, from end-to-beginning:
 
-:: 
+.. code:: python
 
     # branch 1
     glthread        =OpenGLThread("glthread")
@@ -70,14 +70,14 @@ Next, we construct the filterchain as usual, from end-to-beginning:
 
 Define connection to camera: frames from 192.168.1.41 are written to live_out_filter and tagged with slot number 1:
 
-:: 
+.. code:: python
 
     # ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
     ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:123456@192.168.0.134", 1, av_in_filter)
 
 Start processes, stream for 60 seconds and exit:
 
-:: 
+.. code:: python
 
     glthread.startCall()
     avthread.startCall()

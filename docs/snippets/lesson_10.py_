@@ -1,5 +1,5 @@
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -12,14 +12,14 @@
 
 USBDeviceThread reads and multiplexes all USB cameras
 
-:: 
+.. code:: python
 
     usbthread       =USBDeviceThread("usbthread")
     
 
 Define the usb camera (/dev/video2) and where it is going to be streamed (to av_in_filter with slot number 1):
 
-:: 
+.. code:: python
 
     ctx = USBCameraConnectionContext("/dev/video2", 1, av_in_filter)
     # The default resolution is 720p 
@@ -45,7 +45,7 @@ Define the usb camera (/dev/video2) and where it is going to be streamed (to av_
 
 Stream for a minute.  Patience.  At least the HD Pro Webcam C920 does not send keyframes too often ..
 
-:: 
+.. code:: python
 
     time.sleep(60)
     

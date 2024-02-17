@@ -9,7 +9,7 @@ This will be our filtergraph:
 
 Let's import valkka level 1 API, and ValkkaSingleFS from level 2 API:
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -19,7 +19,7 @@ Let's import valkka level 1 API, and ValkkaSingleFS from level 2 API:
 
 Let's set our IP camera's address:
 
-:: 
+.. code:: python
 
     rtsp_address="rtsp://admin:12345@192.168.0.157"
     
@@ -27,7 +27,7 @@ Let's set our IP camera's address:
 If you want to see the filesystem writing each frame, enable
 these debugging loggers:
 
-:: 
+.. code:: python
 
     #setLogLevel_filelogger(loglevel_crazy)
     #setLogLevel_valkkafslogger(loglevel_crazy)
@@ -41,7 +41,7 @@ file.
 The ValkkaSingleFS instance handles the metadata of the filesystem.  
 Let's create a new filesystem and save the metadata into directory */tmp/testvalkkafs*
 
-:: 
+.. code:: python
 
     valkkafs = ValkkaSingleFS.newFromDirectory(
         dirname = "/tmp/testvalkkafs", 
@@ -73,7 +73,7 @@ Now the directory has the following files:
     
 Next, we create and start (1) the thread responsible for writing the frames into ValkkaFS and (2) LiveThread that is reading the cameras:
 
-:: 
+.. code:: python
 
     writerthread = ValkkaFSWriterThread("writer", valkkafs.core)
     livethread = LiveThread("livethread")
@@ -81,21 +81,21 @@ Next, we create and start (1) the thread responsible for writing the frames into
 
 All cameras write to the same FrameFilter, handled by the writing thread:
 
-:: 
+.. code:: python
 
     file_input_framefilter = writerthread.getFrameFilter()
     
 
 Read camera and designate it with slot number 1
 
-:: 
+.. code:: python
 
     ctx = LiveConnectionContext(LiveConnectionType_rtsp, rtsp_address, 1, file_input_framefilter)
     
 
 Next, start threads
 
-:: 
+.. code:: python
 
     writerthread.startCall()
     livethread.startCall()
@@ -103,7 +103,7 @@ Next, start threads
 
 Frames with slot number 1 are identified in the filesystem with id number 925412 (which we just invented):
 
-:: 
+.. code:: python
 
     writerthread.setSlotIdCall(1, 925412)
     
@@ -113,7 +113,7 @@ Frames with slot number 1 are identified in the filesystem with id number 925412
 
 Idle for some secs while the threads run in the background
 
-:: 
+.. code:: python
 
     print("recording!")
     time.sleep(3)
@@ -121,7 +121,7 @@ Idle for some secs while the threads run in the background
 
 At this moment, let's take a look at the blocktable
 
-:: 
+.. code:: python
 
     a=valkkafs.getBlockTable()
     print(a)
@@ -141,7 +141,7 @@ In the code above, we force a block write even if the block has not filled up.
 
 Let's continue & let the threads do their stuff for some more time
 
-:: 
+.. code:: python
 
     print("recording some more")
     time.sleep(30)
@@ -152,7 +152,7 @@ Let's continue & let the threads do their stuff for some more time
 
 Let's take a look at the blocktable again:
 
-:: 
+.. code:: python
 
     print(a)
     

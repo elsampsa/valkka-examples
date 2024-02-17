@@ -2,7 +2,7 @@
 
 Same imports as before:
 
-:: 
+.. code:: python
 
     import time, sys
     from valkka.core import *
@@ -11,14 +11,14 @@ Same imports as before:
 
 Load ValkkaFS metadata:
 
-:: 
+.. code:: python
 
     valkkafs = ValkkaSingleFS.loadFromDirectory(dirname="/tmp/testvalkkafs")
     
 
 Let's take a look at the blocktable:
 
-:: 
+.. code:: python
 
     a = valkkafs.getBlockTable()
     print(a)
@@ -26,7 +26,7 @@ Let's take a look at the blocktable:
 
 Construct the filterchain: write from the reader thread into the verbose InfoFrameFilter
 
-:: 
+.. code:: python
 
     out_filter =InfoFrameFilter("reader_out_filter")
     readerthread = ValkkaFSReaderThread("reader", valkkafs.core, out_filter)
@@ -34,21 +34,21 @@ Construct the filterchain: write from the reader thread into the verbose InfoFra
 
 Start the reader thread:
 
-:: 
+.. code:: python
 
     readerthread.startCall()
     
 
 Frames with id number 925412 are mapped into slot 1:
 
-:: 
+.. code:: python
 
     readerthread.setSlotIdCall(1, 925412)
     
 
 Request blocks 0, 1 from the reader thread.  Information of frames from these blocks are dumped on the terminal
 
-:: 
+.. code:: python
 
     readerthread.pullBlocksPyCall([0,1])
     time.sleep(1)
@@ -56,7 +56,7 @@ Request blocks 0, 1 from the reader thread.  Information of frames from these bl
 
 Exit the thread:
 
-:: 
+.. code:: python
 
     readerthread.stopCall()
     print("bye")

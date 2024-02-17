@@ -1,7 +1,7 @@
 
 First, business as usual (and like in tutorial example 3)
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -37,7 +37,7 @@ Let's add a bounding box, overlaying the video.  Parameteres for bounding box (l
 
 Coordinates are relative coordinates from 0 to 1.
 
-:: 
+.. code:: python
 
     bbox=(0.25, 0.75, 0.75, 0.25) # left, right, top, bottom
     
@@ -48,7 +48,7 @@ You could add more bounding boxes with consecutive calls to **glthread.addRectan
 
 Let's play video for 10 seconds
 
-:: 
+.. code:: python
 
     
     time.sleep(10)
@@ -56,7 +56,7 @@ Let's play video for 10 seconds
 
 Finally, clear the bounding boxes and exit
 
-:: 
+.. code:: python
 
     glthread.clearObjectsCall(context_id)
     

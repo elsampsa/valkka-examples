@@ -1,5 +1,5 @@
 
-:: 
+.. code:: python
 
     import time
     from valkka.core import *
@@ -20,7 +20,7 @@ The filtergraph, once again:
         branch 2 +--> {IntervalFrameFilter: interval_filter} --> {SwScaleFrameFilter: sws_filter} --> {RGBSharedMemFrameFilter: shmem_filter}
 
 
-:: 
+.. code:: python
 
     # define yuv=>rgb interpolation interval
     image_interval=1000  # YUV => RGB interpolation to the small size is done each 1000 milliseconds and passed on to the shmem ringbuffer
@@ -32,7 +32,7 @@ The filtergraph, once again:
 
 RGBSharedMemFrameFilter needs unique name and the size of the shared memory ring-buffer:
 
-:: 
+.. code:: python
 
     # posix shared memory
     shmem_name    ="lesson_4"      # This identifies posix shared memory - must be unique
@@ -41,7 +41,7 @@ RGBSharedMemFrameFilter needs unique name and the size of the shared memory ring
 
 Next, we construct the filterchain as usual, from end-to-beginning:
 
-:: 
+.. code:: python
 
     # branch 1
     glthread        =OpenGLThread("glthread")
@@ -64,14 +64,14 @@ Next, we construct the filterchain as usual, from end-to-beginning:
 
 Define connection to camera: frames from the IP camera are written to live_out_filter and tagged with slot number 1:
 
-:: 
+.. code:: python
 
     # ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:nordic12345@192.168.1.41", 1, av_in_filter)
     ctx =LiveConnectionContext(LiveConnectionType_rtsp, "rtsp://admin:123456@192.168.0.134", 1, av_in_filter)
 
 Start threads:
 
-:: 
+.. code:: python
 
     glthread.startCall()
     avthread.startCall()
@@ -92,7 +92,7 @@ Start threads:
 
 Ok, the server is alive and running.  Let's do the client part for receiving frames.
 
-:: 
+.. code:: python
 
     client = ShmemRGBClient(
         name=shmem_name,
@@ -106,14 +106,14 @@ Ok, the server is alive and running.  Let's do the client part for receiving fra
 
 The client is ready to go.  Before starting to receive frames, start playing the RTSP camera
 
-:: 
+.. code:: python
 
     livethread.playStreamCall(ctx)
     
 
 Read 10 frames & exit
 
-:: 
+.. code:: python
 
     print("client starting")
     cc = 0
@@ -134,7 +134,7 @@ Read 10 frames & exit
 
 Clear the server
 
-:: 
+.. code:: python
 
     glthread.delRenderContextCall(context_id)
     glthread.delRenderGroupCall(window_id)
