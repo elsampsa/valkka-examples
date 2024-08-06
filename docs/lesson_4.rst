@@ -96,32 +96,34 @@ python process.
 
 .. include:: snippets/lesson_4_c.py_
 
-Advanced topics
+Multiprocessing
 ---------------
 
-By now you have learned how to pass frames from the libValkka infrastructure into python.
+By now you have learned the basics of passing frames from the libValkka infrastructure into python.
 
-When creating more serious solutions, you can use a single python program to span multiprocesses (using Python's multiprocessing module) into servers and clients.
+When creating more serious solutions, you typically create several python multiprocesses in a single python program, using
+python multiprocessing and the `valkka-multiprocess <https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html>`_ module.
 
-In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication between them, so that the multiprocesses
-will instantiate the server and client in the correct order.
+In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication 
+between them, so that the multiprocesses will instantiate the server and client in the correct order.
 
 You can also create shared memory servers, where you can feed frames from the python side (vs. at the cpp side)
 
 LibValkka shared memory server and client also features a posix file-descriptor API. It is convenient in cases, where a single process is listening simultaneously to several shared memory servers,
 and you want to do the i/o efficiently: you can use python's "select" module to do efficient "multiplexing" of pulling frames from several shmem clients.
 
-For example, the Valkka Live program takes advantage of these features.  It performs the following joggling of the frames through the shared memory:
+Here are some possibilities:
 
 1. Several shared memory servers, each one sending video from one camera.
-2. Several client processes, each one receiving video from a shared memory server.  Each client process establish it's own shared memory server for further sharing of the frames.
+2. Several client processes, each one receiving video from a shared memory server.  Each client process establishes it's own shared memory server for further sharing of the frames.
 3. A master process that listens to multiple clients at the same time.
 
-Number (1) works at the cpp side.  (2) Is a separate multiprocess running OpenCV-based analysis.  (3) Is a common Yolo object detector for all the clients.
+So (1) works at the cpp side, then, for example (2) is a separate multiprocess running OpenCV-based analysis and (3) is a common Yolo object detector for all the clients.
 
-For an example of a more serious multiprocessing project, please take a look `here <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_.
+That was a lot to take in!  Fortunately we provide simplified examples of all the topics mentioned above: 
+please see `the multiprocessing examples <https://github.com/elsampsa/valkka-examples/tree/master/multiprocess>`_.
 
-
-
+For full-blown programs (however, these are maybe too complex and not always up-to-date), please see 
+`valkka-live <https://elsampsa.github.io/valkka-live/>`_ and `valkka-streamer <https://github.com/elsampsa/valkka-streamer>`_.
 
 

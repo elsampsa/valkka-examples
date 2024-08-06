@@ -26,8 +26,10 @@ device where this approach doesn't work.
 In that case, you should use dynamically generated `HLS playlists <https://developer.apple.com/documentation/http_live_streaming/example_playlists_for_http_live_streaming>`_, while
 in this approach it is again convenient to use frag-MP4.
 
-For more information about the frag-MP4 structure, see  `this stack overflow post <https://stackoverflow.com/questions/54186634/sending-periodic-metadata-in-fragmented-live-mp4-stream>`_
-and `this github repository <https://github.com/elsampsa/websocket-mse-demo>`_.
+For more information about the frag-MP4 structure, see  
+`this stack overflow post <https://stackoverflow.com/questions/54186634/sending-periodic-metadata-in-fragmented-live-mp4-stream>`_.
+
+For a full-blown streaming example with libValkka, see `valkka-streamer <https://github.com/elsampsa/valkka-streamer>`_.
 
 MP4 is described extensively in `this document <https://www.iso.org/standard/68960.html>`_.
 

@@ -123,12 +123,13 @@ works is this:
 <li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">OnVif &amp; Discovery</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#discovery-quickstart">Discovery Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#intro">Intro</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-onvif-with-zeep">Python OnVif with Zeep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#service-classes">Service classes</a></li>
@@ -171,13 +172,28 @@ works is this:
              
   <section id="onvif-discovery">
 <h1>OnVif &amp; Discovery<a class="headerlink" href="#onvif-discovery" title="Link to this heading"></a></h1>
-<p><em>(Your short primer to SOAP and OnVif)</em></p>
+<p><em>(And your short primer to SOAP and OnVif)</em></p>
 <section id="installing">
 <h2>Installing<a class="headerlink" href="#installing" title="Link to this heading"></a></h2>
 <p>Onvif and discovery come in a <a class="reference external" href="https://github.com/elsampsa/valkka-onvif">separate python package</a> which you need to install with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">valkka</span><span class="o">-</span><span class="n">onvif</span>
 </pre></div>
 </div>
+<p>Some of the discovery tools in that package employ <cite>arp-scan</cite>, so do also this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">arp</span><span class="o">-</span><span class="n">scan</span>
+<span class="n">sudo</span> <span class="n">chmod</span> <span class="n">u</span><span class="o">+</span><span class="n">s</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">arp</span><span class="o">-</span><span class="n">scan</span>
+</pre></div>
+</div>
+</section>
+<section id="discovery-quickstart">
+<h2>Discovery Quickstart<a class="headerlink" href="#discovery-quickstart" title="Link to this heading"></a></h2>
+<p>After installing, you can start discovering cameras with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">valkka</span><span class="o">-</span><span class="n">camsearch</span>
+</pre></div>
+</div>
+<p>which combines several discovery strategies (wsdiscovery, rtsp scan, arp-scan) and tries to connect
+to the cameras using onvif.</p>
+<p>Use the <cite>–help</cite> argument for more options</p>
 </section>
 <section id="intro">
 <h2>Intro<a class="headerlink" href="#intro" title="Link to this heading"></a></h2>

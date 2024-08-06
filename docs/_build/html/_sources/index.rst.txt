@@ -37,11 +37,15 @@ This documentation is a quickstart for :ref:`installing <requirements>` and deve
 This is the recommended learning process:
 
 - Start with the :ref:`tutorial <tutorial>`
-- Valkka streams video and images between python multiprocesses, so reading `this article <https://medium.com/@sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300>`_ is a must
-- If you're into creating PyQt/PySide2 applications, take a look at :ref:`the PyQt testsuite<testsuite>`
-- If you're more into cloud apps, check out `valkka-streamer <https://github.com/elsampsa/valkka-streamer>`_
+- Proceed with `valkka-multiprocessing  <https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html>`_ and the `multiprocessing
+  examples <https://github.com/elsampsa/valkka-examples/tree/master/multiprocess>`_
 
-For a desktop demo program using Valkka, check out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_
+After that, if you're
+
+- into creating PyQt/PySide2 applications, take a look at :ref:`the PyQt testsuite<testsuite>`
+- more into cloud apps, check out `valkka-streamer <https://github.com/elsampsa/valkka-streamer>`_
+
+For a desktop proof-of-concept program using Valkka, check out `Valkka Live <https://elsampsa.github.io/valkka-live/>`_
 
 .. toctree::
    :maxdepth: 2

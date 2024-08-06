@@ -1,9 +1,9 @@
 
-Integrating with Qt and multiprocessing
-=======================================
+Integrating with Qt
+===================
 
-Qt integration
---------------
+Basic organization
+------------------
 
 Valkka can be used with any GUI framework, say, with GTK or Qt.  Here we have an emphasis on Qt, but the general guidelines discussed here, apply to any other GUI framework as well.  
 Concrete examples are provided only for Qt.
@@ -72,13 +72,8 @@ An example of this can be found in
     single_stream_rtsp_1.py
 
 
-Python multiprocessing
-----------------------
-
-In :ref:`lesson 4<opencv_client>` of the tutorial, we launched a separate python interpreter running a client program that was using decoded and shared frames.  
-
-That approach works for Qt programs as well, but it is more convenient to use multiprocesses constructed with 
-Python3's `multiprocessing <https://docs.python.org/3/library/multiprocessing.html>`_ library.
+Qt with multiprocessing
+-----------------------
 
 Using python multiprocesses with Qt complicates things a bit: we need a way to map messages from the multiprocess into signals at the main Qt program.  
 This can be done by communicating with the python multiprocess via pipes and converting the pipe messages into incoming and outgoing Qt signals.  
@@ -101,8 +96,9 @@ Let's state that graphically:
 
   
 Note that we only need a single QThread to control several multiprocesses.
-                                                         
-Let's dig deeper into our strategy for interprocess communication with the Qt signal/slot system:
+
+We will employ the `valkka-multiprocess <https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html>`_ module
+to couple Qt signals and slots with multiprocesses:
 
 .. code:: text
 
@@ -142,15 +138,13 @@ In MessageProcess, the class has both "frontend" and "backend" methods.
 
 The ``MessageProcess`` class comes with the main libValkka package, but you can also install it separately.  
 
-It is documented in detail in `valkka-multiprocess package documentation  <https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html>`_.
-
-We highly recommend that you read that documentation as it is important to understand what you are doing here - what is running in the "background" 
+I recommend that you read that valkka-multiprocess documentation as it is important to understand what you are doing here - what is running in the "background" 
 and what in your main python (Qt) process as including libValkka threads and QThreads into the same mix can easily result in the classical 
 "fork-combined-with-threading" pitfall, leading to a leaky-crashy program.
 
 Please refer also to :ref:`the PyQt testsuite<testsuite>` how to do things correctly.
 
-A stand-alone python multiprocessing/Qt sample program is provided here (without any libValkka components):
+A simplified, stand-alone python multiprocessing/Qt sample program is provided here (without any libValkka components):
 
 ::
 
@@ -172,8 +166,6 @@ And follow the code therein.  You will find these classes:
 
 - *MovementDetectorProcess* : multiprocess with Qt signals and OpenCV
 - *QHandlerThread* : the frontend QThread
-
-A more full-blown multiprocess orchestration example can be found as in `this python package <https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic>`_.
     
 C++ API
 -------

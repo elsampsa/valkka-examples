@@ -123,7 +123,7 @@ works is this:
 <li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Cloud Streaming</a></li>
@@ -178,8 +178,9 @@ into the MSE API to achieve low-latency live video.</p>
 device where this approach doesn’t work.
 In that case, you should use dynamically generated <a class="reference external" href="https://developer.apple.com/documentation/http_live_streaming/example_playlists_for_http_live_streaming">HLS playlists</a>, while
 in this approach it is again convenient to use frag-MP4.</p>
-<p>For more information about the frag-MP4 structure, see  <a class="reference external" href="https://stackoverflow.com/questions/54186634/sending-periodic-metadata-in-fragmented-live-mp4-stream">this stack overflow post</a>
-and <a class="reference external" href="https://github.com/elsampsa/websocket-mse-demo">this github repository</a>.</p>
+<p>For more information about the frag-MP4 structure, see
+<a class="reference external" href="https://stackoverflow.com/questions/54186634/sending-periodic-metadata-in-fragmented-live-mp4-stream">this stack overflow post</a>.</p>
+<p>For a full-blown streaming example with libValkka, see <a class="reference external" href="https://github.com/elsampsa/valkka-streamer">valkka-streamer</a>.</p>
 <p>MP4 is described extensively in <a class="reference external" href="https://www.iso.org/standard/68960.html">this document</a>.</p>
 <p>Remember that not all codec + container format combinations are supported by the major browser.  Most typical combination for video is H264 + MP4.
 For a list of supported codec + container formats, please see <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs#codec_details">this link</a>.

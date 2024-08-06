@@ -2,7 +2,7 @@
 OnVif & Discovery
 =================
 
-*(Your short primer to SOAP and OnVif)*
+*(And your short primer to SOAP and OnVif)*
 
 Installing
 ----------
@@ -13,6 +13,26 @@ Onvif and discovery come in a `separate python package <https://github.com/elsam
 
     pip install -U valkka-onvif
 
+Some of the discovery tools in that package employ `arp-scan`, so do also this:
+
+::
+
+    sudo apt-get install arp-scan
+    sudo chmod u+s /usr/sbin/arp-scan
+
+Discovery Quickstart
+--------------------
+
+After installing, you can start discovering cameras with
+
+::
+
+    valkka-camsearch
+
+which combines several discovery strategies (wsdiscovery, rtsp scan, arp-scan) and tries to connect
+to the cameras using onvif.
+
+Use the `--help` argument for more options
 
 Intro
 -----

@@ -124,7 +124,7 @@ works is this:
 <li class="toctree-l1"><a class="reference internal" href="testsuite.html">The PyQt testsuite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
@@ -185,11 +185,15 @@ to see some of the typical video streaming / machine vision problems libValkka c
 <p>This is the recommended learning process:</p>
 <ul class="simple">
 <li><p>Start with the <a class="reference internal" href="tutorial.html#tutorial"><span class="std std-ref">tutorial</span></a></p></li>
-<li><p>Valkka streams video and images between python multiprocesses, so reading <a class="reference external" href="https://medium.com/&#64;sampsa.riikonen/doing-python-multiprocessing-the-right-way-a54c1880e300">this article</a> is a must</p></li>
-<li><p>If you’re into creating PyQt/PySide2 applications, take a look at <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">the PyQt testsuite</span></a></p></li>
-<li><p>If you’re more into cloud apps, check out <a class="reference external" href="https://github.com/elsampsa/valkka-streamer">valkka-streamer</a></p></li>
+<li><p>Proceed with <a class="reference external" href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html">valkka-multiprocessing</a> and the <a class="reference external" href="https://github.com/elsampsa/valkka-examples/tree/master/multiprocess">multiprocessing
+examples</a></p></li>
 </ul>
-<p>For a desktop demo program using Valkka, check out <a class="reference external" href="https://elsampsa.github.io/valkka-live/">Valkka Live</a></p>
+<p>After that, if you’re</p>
+<ul class="simple">
+<li><p>into creating PyQt/PySide2 applications, take a look at <a class="reference internal" href="testsuite.html#testsuite"><span class="std std-ref">the PyQt testsuite</span></a></p></li>
+<li><p>more into cloud apps, check out <a class="reference external" href="https://github.com/elsampsa/valkka-streamer">valkka-streamer</a></p></li>
+</ul>
+<p>For a desktop proof-of-concept program using Valkka, check out <a class="reference external" href="https://elsampsa.github.io/valkka-live/">Valkka Live</a></p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">About Valkka</a><ul>
@@ -236,10 +240,10 @@ to see some of the typical video streaming / machine vision problems libValkka c
 <li class="toctree-l2"><a class="reference internal" href="decoding.html#queueing-frames">Queueing frames</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#qt-integration">Qt integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#basic-organization">Basic organization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qt_notes.html#drawing-video-into-a-widget">Drawing video into a widget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#python-multiprocessing">Python multiprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qt_notes.html#qt-with-multiprocessing">Qt with multiprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="qt_notes.html#c-api">C++ API</a></li>
 </ul>
 </li>
@@ -260,6 +264,7 @@ to see some of the typical video streaming / machine vision problems libValkka c
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onvif.html">OnVif &amp; Discovery</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="onvif.html#installing">Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="onvif.html#discovery-quickstart">Discovery Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="onvif.html#intro">Intro</a></li>
 <li class="toctree-l2"><a class="reference internal" href="onvif.html#python-onvif-with-zeep">Python OnVif with Zeep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="onvif.html#service-classes">Service classes</a></li>

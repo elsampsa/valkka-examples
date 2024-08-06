@@ -135,7 +135,7 @@ works is this:
 <li class="toctree-l4"><a class="reference internal" href="#client-side-api-level-1">Client side: API level 1</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#server-client">Server + Client</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#receiving-frag-mp4-at-python">Receiving frag-MP4 at Python</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#advanced-topics">Advanced topics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multiprocessing">Multiprocessing</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="lesson_5.html">Lesson 5 : Transmitting stream</a></li>
@@ -150,7 +150,7 @@ works is this:
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="decoding.html">Decoding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt and multiprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qt_notes.html">Integrating with Qt</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_gpu.html">Multi-GPU systems</a></li>
 <li class="toctree-l1"><a class="reference internal" href="valkkafs.html">ValkkaFS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Cloud Streaming</a></li>
@@ -683,23 +683,27 @@ python process.</p>
 </pre></div>
 </div>
 </section>
-<section id="advanced-topics">
-<h2>Advanced topics<a class="headerlink" href="#advanced-topics" title="Link to this heading"></a></h2>
-<p>By now you have learned how to pass frames from the libValkka infrastructure into python.</p>
-<p>When creating more serious solutions, you can use a single python program to span multiprocesses (using Python’s multiprocessing module) into servers and clients.</p>
-<p>In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication between them, so that the multiprocesses
-will instantiate the server and client in the correct order.</p>
+<section id="multiprocessing">
+<h2>Multiprocessing<a class="headerlink" href="#multiprocessing" title="Link to this heading"></a></h2>
+<p>By now you have learned the basics of passing frames from the libValkka infrastructure into python.</p>
+<p>When creating more serious solutions, you typically create several python multiprocesses in a single python program, using
+python multiprocessing and the <a class="reference external" href="https://elsampsa.github.io/valkka-multiprocess/_build/html/index.html">valkka-multiprocess</a> module.</p>
+<p>In these cases you must remember to span all multiprocesses in the very beginning of your code and then arrange an interprocess communication
+between them, so that the multiprocesses will instantiate the server and client in the correct order.</p>
 <p>You can also create shared memory servers, where you can feed frames from the python side (vs. at the cpp side)</p>
 <p>LibValkka shared memory server and client also features a posix file-descriptor API. It is convenient in cases, where a single process is listening simultaneously to several shared memory servers,
 and you want to do the i/o efficiently: you can use python’s “select” module to do efficient “multiplexing” of pulling frames from several shmem clients.</p>
-<p>For example, the Valkka Live program takes advantage of these features.  It performs the following joggling of the frames through the shared memory:</p>
+<p>Here are some possibilities:</p>
 <ol class="arabic simple">
 <li><p>Several shared memory servers, each one sending video from one camera.</p></li>
-<li><p>Several client processes, each one receiving video from a shared memory server.  Each client process establish it’s own shared memory server for further sharing of the frames.</p></li>
+<li><p>Several client processes, each one receiving video from a shared memory server.  Each client process establishes it’s own shared memory server for further sharing of the frames.</p></li>
 <li><p>A master process that listens to multiple clients at the same time.</p></li>
 </ol>
-<p>Number (1) works at the cpp side.  (2) Is a separate multiprocess running OpenCV-based analysis.  (3) Is a common Yolo object detector for all the clients.</p>
-<p>For an example of a more serious multiprocessing project, please take a look <a class="reference external" href="https://github.com/elsampsa/valkka-examples/tree/master/example_projects/basic">here</a>.</p>
+<p>So (1) works at the cpp side, then, for example (2) is a separate multiprocess running OpenCV-based analysis and (3) is a common Yolo object detector for all the clients.</p>
+<p>That was a lot to take in!  Fortunately we provide simplified examples of all the topics mentioned above:
+please see <a class="reference external" href="https://github.com/elsampsa/valkka-examples/tree/master/multiprocess">the multiprocessing examples</a>.</p>
+<p>For full-blown programs (however, these are maybe too complex and not always up-to-date), please see
+<a class="reference external" href="https://elsampsa.github.io/valkka-live/">valkka-live</a> and <a class="reference external" href="https://github.com/elsampsa/valkka-streamer">valkka-streamer</a>.</p>
 </section>
 </section>
 
