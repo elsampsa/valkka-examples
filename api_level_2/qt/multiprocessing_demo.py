@@ -1,7 +1,7 @@
 """
 multiprocessing_demo.py : Use Qt with python multiprocesses
 
-Copyright 2018 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

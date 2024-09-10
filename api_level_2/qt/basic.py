@@ -1,7 +1,7 @@
 """
 basic.py : Some basic classes encapsulating filter chains
 
- * Copyright 2017-2020 Valkka Security Ltd. and Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
  *
  * Authors: Sampsa Riikonen <sampsa.riikonen@iki.fi>
  *

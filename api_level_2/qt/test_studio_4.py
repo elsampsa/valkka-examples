@@ -1,7 +1,7 @@
 """
 test_studio_4.py : Test live streaming with Qt.  Jump video from one x-screen (and gpu) to another
 
-Copyright 2017, 2018 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

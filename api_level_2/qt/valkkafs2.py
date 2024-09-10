@@ -1,17 +1,16 @@
 """
 demo_widget.py : Widgets (and widget groups) for the demo programs
 
-Copyright 2019 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
-Authors: Petri Eränkö, Sampsa Riikonen
+Authors: Sampsa Riikonen
 
 This file is part of the Valkka Python3 examples library
 
 Valkka Python3 examples library is free software: you can redistribute it and/or modify it under the terms of the MIT License.  This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the MIT License for more details.
 
-@file    NAME.py
+@file    valkkafs2.py
 @author  Sampsa Riikonen
-@author  Petri Eränkö
 @date    2019
 @version 1.6.1 
 @brief   

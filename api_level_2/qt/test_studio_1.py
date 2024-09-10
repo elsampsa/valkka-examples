@@ -1,7 +1,7 @@
 """
 test_studio_1.py : Test live streaming with Qt
 
-Copyright 2017-2021 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

@@ -1,7 +1,7 @@
 """
 chains.py : Some thread / filterchain classes for valkka qt examples
 
-Copyright 2019 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

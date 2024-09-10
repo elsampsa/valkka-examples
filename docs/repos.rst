@@ -21,11 +21,5 @@ Repository                                                                  Lice
                                                                                     |                                               |
 `valkka-live <https://github.com/elsampsa/valkka-live>`_                    AGPL    | A demo video surveillance program using       | valkka.live
                                                                                     | libValkka                                     | valkka.mvision
-`valkka-cpp-examples <https://github.com/elsampsa/valkka-cpp-examples>`_    MIT     | Create your own Valkka cpp extension module   |
-`valkka-skeleton <https://github.com/elsampsa/valkka-skeleton>`_            MIT     | A skeleton for making valkka python modules   | 
-`darknet-python <https://github.com/elsampsa/darknet-python>`_              MIT     | Python3 bindings for Darknet / YOLO           | darknet.core
-                                                                                    | (pretty obsolete)                             | darknet.api2
-                                                                                    |                                               | darknet.turk
 =========================================================================== ======= =============================================== ==========================
 
-If you need an LGPL license for **valkka-live**, please contact us.

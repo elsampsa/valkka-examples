@@ -1,7 +1,7 @@
 """
 cpp_thread_demo.py : Launch a cpp thread in python.  That thread uses a callback to send a signal to PyQt's signal/slot system
 
-Copyright 2017-2021 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

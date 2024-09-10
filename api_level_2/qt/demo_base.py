@@ -1,7 +1,7 @@
 """
 demo_base.py : Common classes, etc. for the qt streaming, shared-memory and opecv demos
 
-Copyright 2017, 2018 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

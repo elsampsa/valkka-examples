@@ -1,7 +1,7 @@
 """
 analyzer.py : A base class for analyzing image streams using OpenCV and an example movement detector.
 
-Copyright 2018 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

@@ -1,7 +1,7 @@
 """
 test_studio_multicast.py : Test live streaming with Qt.  Copy all streams to multicast.
 
-Copyright 2017-2021 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

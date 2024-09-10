@@ -1,7 +1,7 @@
 """
 xscreen_test.py : Test sending a Qt Widget to another xscreen
 
-Copyright 2018 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

@@ -1,7 +1,7 @@
 """
 demo_filterchains.py : Some custom filterchains for Valkka Python3 examples
 
-Copyright 2018 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

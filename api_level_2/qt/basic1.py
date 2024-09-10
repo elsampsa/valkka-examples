@@ -1,7 +1,7 @@
 """
 basic1.py : Some more custom filterchain classes for different use cases
 
- * Copyright 2017-2020 Valkka Security Ltd. and Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
  * 
  * Authors: Sampsa Riikonen <sampsa.riikonen@iki.fi>
  * 

@@ -1,7 +1,7 @@
 """
 test_studio_detector_2.py : Test live streaming with Qt.  Send copies of the streams to machine vision process.  There is a single machine vision process for all streams.
 
-Copyright 2017 - 2019 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

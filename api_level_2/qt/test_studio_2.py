@@ -1,7 +1,7 @@
 """
 test_studio_2.py : Test live streaming with Qt with floating instead of grouped widgets
 
-Copyright 2017-2021 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

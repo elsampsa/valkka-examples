@@ -1,7 +1,7 @@
 """
 test_studio_detector.py : Test live streaming with Qt.  Send copies of streams to OpenCV movement detector processes.  There is one OpenCV detector & multiprocess for each stream.
 
-Copyright 2017 - 2021 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 

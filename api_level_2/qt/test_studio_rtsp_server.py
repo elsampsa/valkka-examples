@@ -1,7 +1,7 @@
 """
 test_studio_rtsp_server.py : Test live streaming with Qt.  Establish an rtsp server.
 
-Copyright 2017-2021 Sampsa Riikonen
+(c) Copyright 2017-2024 Sampsa Riikonen
 
 Authors: Sampsa Riikonen
 
