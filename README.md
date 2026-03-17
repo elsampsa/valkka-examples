@@ -1,3 +1,7 @@
+# ABANDONWARE WARNING
+
+## LibValkka has been archived.  For a similar project, please take a look at [Limef](https://elsampsa.github.io/limef-docs/sphinx/_build/html/index.html)
+
 # Valkka Python3 Examples
 
 OpenSource Video Surveillance and Management for Linux - Python3 API and Qt examples.

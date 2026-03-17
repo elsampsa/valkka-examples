@@ -6,6 +6,10 @@
 Valkka
 ======
 
+**ABANDONWARE WARNING**
+
+**LibValkka has been archived.  For a similar project, please take a look at** `Limef <https://elsampsa.github.io/limef-docs/sphinx/_build/html/index.html>`_
+
 .. meta::
    :description: A python programming library for building opensource video surveillance, management and analysis programs with Qt
    :keywords: opensource, python, video surveillance, video management, video analysis, machine vision, qt
